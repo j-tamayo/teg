@@ -1,4 +1,5 @@
 from django.db import models
+from cuentas.models import SgtUsuario,RolSgt
 
 # Create your models here.
 class Estado(models.Model):
