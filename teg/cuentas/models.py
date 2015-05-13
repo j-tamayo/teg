@@ -69,6 +69,7 @@ class SgtUsuario(AbstractBaseUser):
 	cedula = models.CharField(max_length=100)
 	clave = models.CharField(max_length=255)
 	correo = models.CharField(max_length=255, unique=True, db_index=True, error_messages={'unique':"Ya existe un usuario registrado con este correo electrónico."})
+	codigo_postal = models.IntegerField()
 	direccion = models.TextField()
 	is_active = models.BooleanField(default=True)
 	is_admin = models.BooleanField(default=False)

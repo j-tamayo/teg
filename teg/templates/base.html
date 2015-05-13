@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html >
+	{% load staticfiles %}
+	<head>
+		<meta charset="UTF-8">
+		<title>..: SISGETICKET :..</title>
+		<meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+
+		{% block css %}
+		<!-- bootstrap 3.3.4 -->
+		<link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<!-- font Awesome 4.3.0 -->
+		<link href="{{ STATIC_URL }}css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+		{% endblock %}
+
+	</head>
+	<body>
+
+		<div class="container">
+			{% block main_content %}            
+			{% endblock %}
+		</div>
+
+
+		{% block javascripts %}
+		<!-- jQuery 1.11.3 -->
+		<script src="{{ STATIC_URL }}js/jquery/jquery.min.js" type="application/javascript"></script>
+		<!-- Bootstrap 3.3.4-->
+		<script src="{{ STATIC_URL }}js/bootstrap.min.js" type="application/javascript"></script>
+		{% endblock %}
+
+	</body>
+</html>

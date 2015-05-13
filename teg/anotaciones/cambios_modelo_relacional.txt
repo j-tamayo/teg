@@ -1,0 +1,10 @@
+Tabla Usuario:
+	- El campo cedula no es INTEGER sino VARCHAR
+	- Se agregó el campo codigo_postal
+
+La relación muchos a muchos entre Usuario y SolicitudInspeccion ya no existe, se convierte en un Usuario tiene Muchas SolicitudInspeccion
+
+La relación 1 a 1 entre CentroInspeccion y NumeroOrden ya no existe porque ya están relacionadas por la relación N a M mediante ColaAtencion
+
+Tabla NumeroOrden:
+	- Se agregó la clave foránea hacia SolicitudInspeccion
