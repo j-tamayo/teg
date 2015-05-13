@@ -1,12 +1,14 @@
 from django.db import models
 from cuentas.models import SgtUsuario,RolSgt
 
+USER_MODEL = SgtUsuario
+
 # Create your models here.
 class Estado(models.Model):
 	nombre = models.CharField(max_length=255)
 
 	def __unicode__(self):
-		return '%s' % self.nombre
+		return u'%s' % self.nombre
 
 
 class Municipio(models.Model):
@@ -14,7 +16,7 @@ class Municipio(models.Model):
 	estado = models.ForeignKey(Estado)
 
 	def __unicode__(self):
-		return '%s' % self.nombre
+		return u'%s' % self.nombre
 
 
 class CentroInspeccion(models.Model):
@@ -25,7 +27,7 @@ class CentroInspeccion(models.Model):
 	numero_orden = models.ManyToManyField('NumeroOrden', through='ColaAtencion')
 
 	def __unicode__(self):
-		return '%s' % self.nombre
+		return u'%s' % self.nombre
 
 
 class Perito(models.Model):
@@ -37,7 +39,7 @@ class Perito(models.Model):
 	tiempo_empresa = models.IntegerField()
 
 	def __unicode__(self):
-		return '%s %s' % self.nombres, self.apellidos
+		return u'%s %s' % (self.nombres, self.apellidos)
 
 
 class TipoInspeccion(models.Model):
@@ -46,7 +48,7 @@ class TipoInspeccion(models.Model):
 	nombre = models.CharField(max_length=255)
 
 	def __unicode__(self):
-		return '%s' % self.nombre
+		return u'%s' % self.nombre
 
 
 class SolicitudInspeccion(models.Model):
@@ -56,17 +58,17 @@ class SolicitudInspeccion(models.Model):
 	tipo_inspeccion = models.ForeignKey(TipoInspeccion)
 
 	def __unicode__(self):
-		return '%s' % self.perito.nombres
+		return u'%s' % self.perito.nombres
 
 
 class NumeroOrden(models.Model):
 	asistencia = models.IntegerField(default=0)
-	centro_inspeccion = models.ForeignKey(CentroInspeccion)
+	solicitud_inspeccion = models.ForeignKey(SolicitudInspeccion)
 	codigo = models.CharField(max_length=50)
 	fecha_atencion = models.DateTimeField(blank=True, null=True)
 
 	def __unicode__(self):
-		return '%s' % self.codigo
+		return u'%s' % self.codigo
 
 
 class Encuesta(models.Model):
@@ -74,9 +76,10 @@ class Encuesta(models.Model):
 	descripcion = models.TextField(blank=True, null=True)
 	nombre = models.CharField(max_length=255)
 	preguntas = models.ManyToManyField('Pregunta')
+	usuarios = models.ManyToManyField(USER_MODEL)
 
 	def __unicode__(self):
-		return '%s' % self.nombre
+		return u'%s' % self.nombre
 
 
 class Pregunta(models.Model):
@@ -85,7 +88,7 @@ class Pregunta(models.Model):
 	respuesta = models.CharField(max_length=255)
 
 	def __unicode__(self):
-		return '%s' % self.codigo
+		return u'%s' % self.codigo
 
 
 class SistemaOperativo(models.Model):
@@ -93,10 +96,29 @@ class SistemaOperativo(models.Model):
 	version = models.CharField(max_length=100)
 
 	def __unicode__(self):
-		return '%s' % self.nombre
+		return u'%s' % self.nombre
 
 
 class ColaAtencion(models.Model):
 	centro_inspeccion = models.ForeignKey(CentroInspeccion)
 	numero_orden = models.ForeignKey(NumeroOrden)
 	orden = models.IntegerField()
+
+
+class Poliza(models.Model):
+	descripcion = models.TextField(blank=True, null=True)
+	numero = models.IntegerField()
+	usuario = models.ForeignKey(USER_MODEL)
+
+	def __unicode__(self):
+		return u'%s' % self.numero
+
+
+class Dispositivo(models.Model):
+	marca = models.CharField(max_length=255)
+	modelo = models.CharField(max_length=255)
+	sistema_operativo = models.ForeignKey(SistemaOperativo)
+	wifi = models.IntegerField(blank=True, null=True)
+
+	def __unicode__(self):
+		return u'%s - %s' % (self.modelo, self.marca)

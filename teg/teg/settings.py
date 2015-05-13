@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for teg project.
 
@@ -54,10 +55,17 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'teg.urls'
 
+
+#Para indicar dónde estarán los templates
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, './templates'),
+)
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, './templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -109,3 +117,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, './static'),
+)
+
+# Para redireccionar a esta URL cuando el usuario no se encuentra logueado
+LOGIN_URL = '/cuentas/ingresar/'

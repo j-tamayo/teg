@@ -16,6 +16,18 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+from cuentas.views import DetectarUsuario
+
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+
+    url(r'^sgt/', include('sgt.urls')),
+
+    # App para la creacion de cuentas y auth
+  	url(r'^cuentas/', include('cuentas.urls')),
+
+  	# Vista que se encarga de enviar el usuario a la vista que le corresponde
+  	url(r'^$',
+  	   DetectarUsuario.as_view(),
+  	   name='cuentas_detectar_usuario'),
 ]
