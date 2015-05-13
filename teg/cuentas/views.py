@@ -12,7 +12,7 @@ class Ingresar(FormView):
 	form_class = AutenticacionUsuarioForm
 	template_name = 'cuentas/ingresar.html'
 	success_url = reverse_lazy('cuentas_detectar_usuario')
-	print "HHH",STATIC_URL
+
 	def dispatch(self, request, *args, **kwargs):
 		if request.user.is_authenticated():
 			print request.user
