@@ -1,1 +1,177 @@
-[{"pk": 1, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-X", "estado": "Amazonas"}}, {"pk": 2, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-B", "estado": "Anzo\u00e1tegui"}}, {"pk": 3, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-C", "estado": "Apure"}}, {"pk": 4, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-D", "estado": "Aragua"}}, {"pk": 5, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-E", "estado": "Barinas"}}, {"pk": 6, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-F", "estado": "Bol\u00edvar"}}, {"pk": 7, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-G", "estado": "Carabobo"}}, {"pk": 8, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-H", "estado": "Cojedes"}}, {"pk": 9, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-Y", "estado": "Delta Amacuro"}}, {"pk": 10, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-I", "estado": "Falc\u00f3n"}}, {"pk": 11, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-J", "estado": "Gu\u00e1rico"}}, {"pk": 12, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-K", "estado": "Lara"}}, {"pk": 13, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-L", "estado": "M\u00e9rida"}}, {"pk": 14, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-M", "estado": "Miranda"}}, {"pk": 15, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-N", "estado": "Monagas"}}, {"pk": 16, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-O", "estado": "Nueva Esparta"}}, {"pk": 17, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-P", "estado": "Portuguesa"}}, {"pk": 18, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-R", "estado": "Sucre"}}, {"pk": 19, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-S", "estado": "T\u00e1chira"}}, {"pk": 20, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-T", "estado": "Trujillo"}}, {"pk": 21, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-W", "estado": "Vargas"}}, {"pk": 22, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-U", "estado": "Yaracuy"}}, {"pk": 23, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-V", "estado": "Zulia"}}, {"pk": 24, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-A", "estado": "Distrito Capital"}}, {"pk": 25, "model": "venezuela.estado", "fields": {"iso_3166_2": "VE-Z", "estado": "Dependencias Federales"}}]
+[
+  {
+    "pk": 1,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Amazonas"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Anzoátegui"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Apure"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Aragua"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Barinas"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Bolívar"
+    }
+  },
+  {
+    "pk": 7,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Carabobo"
+    }
+  },
+  {
+    "pk": 8,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Cojedes"
+    }
+  },
+  {
+    "pk": 9,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Delta Amacuro"
+    }
+  },
+  {
+    "pk": 10,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Falcón"
+    }
+  },
+  {
+    "pk": 11,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Guárico"
+    }
+  },
+  {
+    "pk": 12,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Lara"
+    }
+  },
+  {
+    "pk": 13,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Mérida"
+    }
+  },
+  {
+    "pk": 14,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Miranda"
+    }
+  },
+  {
+    "pk": 15,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Monagas"
+    }
+  },
+  {
+    "pk": 16,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Nueva Esparta"
+    }
+  },
+  {
+    "pk": 17,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Portuguesa"
+    }
+  },
+  {
+    "pk": 18,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Sucre"
+    }
+  },
+  {
+    "pk": 19,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Táchira"
+    }
+  },
+  {
+    "pk": 20,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Trujillo"
+    }
+  },
+  {
+    "pk": 21,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Vargas"
+    }
+  },
+  {
+    "pk": 22,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Yaracuy"
+    }
+  },
+  {
+    "pk": 23,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Zulia"
+    }
+  },
+  {
+    "pk": 24,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Distrito Capital"
+    }
+  },
+  {
+    "pk": 25,
+    "model": "sgt.estado",
+    "fields": {
+      "nombre": "Dependencias Federales"
+    }
+  }
+]

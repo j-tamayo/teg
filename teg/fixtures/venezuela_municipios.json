@@ -1,1 +1,2682 @@
-[{"pk": 1, "model": "venezuela.municipio", "fields": {"estado": 1, "municipio": "Alto Orinoco"}}, {"pk": 2, "model": "venezuela.municipio", "fields": {"estado": 1, "municipio": "Atabapo"}}, {"pk": 3, "model": "venezuela.municipio", "fields": {"estado": 1, "municipio": "Atures"}}, {"pk": 4, "model": "venezuela.municipio", "fields": {"estado": 1, "municipio": "Autana"}}, {"pk": 5, "model": "venezuela.municipio", "fields": {"estado": 1, "municipio": "Manapiare"}}, {"pk": 6, "model": "venezuela.municipio", "fields": {"estado": 1, "municipio": "Maroa"}}, {"pk": 7, "model": "venezuela.municipio", "fields": {"estado": 1, "municipio": "R\u00edo Negro"}}, {"pk": 8, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Anaco"}}, {"pk": 9, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Aragua"}}, {"pk": 10, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Manuel Ezequiel Bruzual"}}, {"pk": 11, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Diego Bautista Urbaneja"}}, {"pk": 12, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Fernando Pe\u00f1alver"}}, {"pk": 13, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Francisco Del Carmen Carvajal"}}, {"pk": 14, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "General Sir Arthur McGregor"}}, {"pk": 15, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Guanta"}}, {"pk": 16, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Independencia"}}, {"pk": 17, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Jos\u00e9 Gregorio Monagas"}}, {"pk": 18, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Juan Antonio Sotillo"}}, {"pk": 19, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Juan Manuel Cajigal"}}, {"pk": 20, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Libertad"}}, {"pk": 21, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Francisco de Miranda"}}, {"pk": 22, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Pedro Mar\u00eda Freites"}}, {"pk": 23, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "P\u00edritu"}}, {"pk": 24, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "San Jos\u00e9 de Guanipa"}}, {"pk": 25, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "San Juan de Capistrano"}}, {"pk": 26, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Santa Ana"}}, {"pk": 27, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Sim\u00f3n Bol\u00edvar"}}, {"pk": 28, "model": "venezuela.municipio", "fields": {"estado": 2, "municipio": "Sim\u00f3n Rodr\u00edguez"}}, {"pk": 29, "model": "venezuela.municipio", "fields": {"estado": 3, "municipio": "Achaguas"}}, {"pk": 30, "model": "venezuela.municipio", "fields": {"estado": 3, "municipio": "Biruaca"}}, {"pk": 31, "model": "venezuela.municipio", "fields": {"estado": 3, "municipio": "Mu\u00f1\u00f3z"}}, {"pk": 32, "model": "venezuela.municipio", "fields": {"estado": 3, "municipio": "P\u00e1ez"}}, {"pk": 33, "model": "venezuela.municipio", "fields": {"estado": 3, "municipio": "Pedro Camejo"}}, {"pk": 34, "model": "venezuela.municipio", "fields": {"estado": 3, "municipio": "R\u00f3mulo Gallegos"}}, {"pk": 35, "model": "venezuela.municipio", "fields": {"estado": 3, "municipio": "San Fernando"}}, {"pk": 36, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Atanasio Girardot"}}, {"pk": 37, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Bol\u00edvar"}}, {"pk": 38, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Camatagua"}}, {"pk": 39, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Francisco Linares Alc\u00e1ntara"}}, {"pk": 40, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Jos\u00e9 \u00c1ngel Lamas"}}, {"pk": 41, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Jos\u00e9 F\u00e9lix Ribas"}}, {"pk": 42, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Jos\u00e9 Rafael Revenga"}}, {"pk": 43, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Libertador"}}, {"pk": 44, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Mario Brice\u00f1o Iragorry"}}, {"pk": 45, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Ocumare de la Costa de Oro"}}, {"pk": 46, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "San Casimiro"}}, {"pk": 47, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "San Sebasti\u00e1n"}}, {"pk": 48, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Santiago Mari\u00f1o"}}, {"pk": 49, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Santos Michelena"}}, {"pk": 50, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Sucre"}}, {"pk": 51, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Tovar"}}, {"pk": 52, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Urdaneta"}}, {"pk": 53, "model": "venezuela.municipio", "fields": {"estado": 4, "municipio": "Zamora"}}, {"pk": 54, "model": "venezuela.municipio", "fields": {"estado": 5, "municipio": "Alberto Arvelo Torrealba"}}, {"pk": 55, "model": "venezuela.municipio", "fields": {"estado": 5, "municipio": "Andr\u00e9s Eloy Blanco"}}, {"pk": 56, "model": "venezuela.municipio", "fields": {"estado": 5, "municipio": "Antonio Jos\u00e9 de Sucre"}}, {"pk": 57, "model": "venezuela.municipio", "fields": {"estado": 5, "municipio": "Arismendi"}}, {"pk": 58, "model": "venezuela.municipio", "fields": {"estado": 5, "municipio": "Barinas"}}, {"pk": 59, "model": "venezuela.municipio", "fields": {"estado": 5, "municipio": "Bol\u00edvar"}}, {"pk": 60, "model": "venezuela.municipio", "fields": {"estado": 5, "municipio": "Cruz Paredes"}}, {"pk": 61, "model": "venezuela.municipio", "fields": {"estado": 5, "municipio": "Ezequiel Zamora"}}, {"pk": 62, "model": "venezuela.municipio", "fields": {"estado": 5, "municipio": "Obispos"}}, {"pk": 63, "model": "venezuela.municipio", "fields": {"estado": 5, "municipio": "Pedraza"}}, {"pk": 64, "model": "venezuela.municipio", "fields": {"estado": 5, "municipio": "Rojas"}}, {"pk": 65, "model": "venezuela.municipio", "fields": {"estado": 5, "municipio": "Sosa"}}, {"pk": 66, "model": "venezuela.municipio", "fields": {"estado": 6, "municipio": "Caron\u00ed"}}, {"pk": 67, "model": "venezuela.municipio", "fields": {"estado": 6, "municipio": "Cede\u00f1o"}}, {"pk": 68, "model": "venezuela.municipio", "fields": {"estado": 6, "municipio": "El Callao"}}, {"pk": 69, "model": "venezuela.municipio", "fields": {"estado": 6, "municipio": "Gran Sabana"}}, {"pk": 70, "model": "venezuela.municipio", "fields": {"estado": 6, "municipio": "Heres"}}, {"pk": 71, "model": "venezuela.municipio", "fields": {"estado": 6, "municipio": "Piar"}}, {"pk": 72, "model": "venezuela.municipio", "fields": {"estado": 6, "municipio": "Angostura (Ra\u00fal Leoni)"}}, {"pk": 73, "model": "venezuela.municipio", "fields": {"estado": 6, "municipio": "Roscio"}}, {"pk": 74, "model": "venezuela.municipio", "fields": {"estado": 6, "municipio": "Sifontes"}}, {"pk": 75, "model": "venezuela.municipio", "fields": {"estado": 6, "municipio": "Sucre"}}, {"pk": 76, "model": "venezuela.municipio", "fields": {"estado": 6, "municipio": "Padre Pedro Chien"}}, {"pk": 77, "model": "venezuela.municipio", "fields": {"estado": 7, "municipio": "Bejuma"}}, {"pk": 78, "model": "venezuela.municipio", "fields": {"estado": 7, "municipio": "Carlos Arvelo"}}, {"pk": 79, "model": "venezuela.municipio", "fields": {"estado": 7, "municipio": "Diego Ibarra"}}, {"pk": 80, "model": "venezuela.municipio", "fields": {"estado": 7, "municipio": "Guacara"}}, {"pk": 81, "model": "venezuela.municipio", "fields": {"estado": 7, "municipio": "Juan Jos\u00e9 Mora"}}, {"pk": 82, "model": "venezuela.municipio", "fields": {"estado": 7, "municipio": "Libertador"}}, {"pk": 83, "model": "venezuela.municipio", "fields": {"estado": 7, "municipio": "Los Guayos"}}, {"pk": 84, "model": "venezuela.municipio", "fields": {"estado": 7, "municipio": "Miranda"}}, {"pk": 85, "model": "venezuela.municipio", "fields": {"estado": 7, "municipio": "Montalb\u00e1n"}}, {"pk": 86, "model": "venezuela.municipio", "fields": {"estado": 7, "municipio": "Naguanagua"}}, {"pk": 87, "model": "venezuela.municipio", "fields": {"estado": 7, "municipio": "Puerto Cabello"}}, {"pk": 88, "model": "venezuela.municipio", "fields": {"estado": 7, "municipio": "San Diego"}}, {"pk": 89, "model": "venezuela.municipio", "fields": {"estado": 7, "municipio": "San Joaqu\u00edn"}}, {"pk": 90, "model": "venezuela.municipio", "fields": {"estado": 7, "municipio": "Valencia"}}, {"pk": 91, "model": "venezuela.municipio", "fields": {"estado": 8, "municipio": "Anzo\u00e1tegui"}}, {"pk": 92, "model": "venezuela.municipio", "fields": {"estado": 8, "municipio": "Tinaquillo"}}, {"pk": 93, "model": "venezuela.municipio", "fields": {"estado": 8, "municipio": "Girardot"}}, {"pk": 94, "model": "venezuela.municipio", "fields": {"estado": 8, "municipio": "Lima Blanco"}}, {"pk": 95, "model": "venezuela.municipio", "fields": {"estado": 8, "municipio": "Pao de San Juan Bautista"}}, {"pk": 96, "model": "venezuela.municipio", "fields": {"estado": 8, "municipio": "Ricaurte"}}, {"pk": 97, "model": "venezuela.municipio", "fields": {"estado": 8, "municipio": "R\u00f3mulo Gallegos"}}, {"pk": 98, "model": "venezuela.municipio", "fields": {"estado": 8, "municipio": "San Carlos"}}, {"pk": 99, "model": "venezuela.municipio", "fields": {"estado": 8, "municipio": "Tinaco"}}, {"pk": 100, "model": "venezuela.municipio", "fields": {"estado": 9, "municipio": "Antonio D\u00edaz"}}, {"pk": 101, "model": "venezuela.municipio", "fields": {"estado": 9, "municipio": "Casacoima"}}, {"pk": 102, "model": "venezuela.municipio", "fields": {"estado": 9, "municipio": "Pedernales"}}, {"pk": 103, "model": "venezuela.municipio", "fields": {"estado": 9, "municipio": "Tucupita"}}, {"pk": 104, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Acosta"}}, {"pk": 105, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Bol\u00edvar"}}, {"pk": 106, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Buchivacoa"}}, {"pk": 107, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Cacique Manaure"}}, {"pk": 108, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Carirubana"}}, {"pk": 109, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Colina"}}, {"pk": 110, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Dabajuro"}}, {"pk": 111, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Democracia"}}, {"pk": 112, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Falc\u00f3n"}}, {"pk": 113, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Federaci\u00f3n"}}, {"pk": 114, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Jacura"}}, {"pk": 115, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Jos\u00e9 Laurencio Silva"}}, {"pk": 116, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Los Taques"}}, {"pk": 117, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Mauroa"}}, {"pk": 118, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Miranda"}}, {"pk": 119, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Monse\u00f1or Iturriza"}}, {"pk": 120, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Palmasola"}}, {"pk": 121, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Petit"}}, {"pk": 122, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "P\u00edritu"}}, {"pk": 123, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "San Francisco"}}, {"pk": 124, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Sucre"}}, {"pk": 125, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Toc\u00f3pero"}}, {"pk": 126, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Uni\u00f3n"}}, {"pk": 127, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Urumaco"}}, {"pk": 128, "model": "venezuela.municipio", "fields": {"estado": 10, "municipio": "Zamora"}}, {"pk": 129, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "Camagu\u00e1n"}}, {"pk": 130, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "Chaguaramas"}}, {"pk": 131, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "El Socorro"}}, {"pk": 132, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "Jos\u00e9 F\u00e9lix Ribas"}}, {"pk": 133, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "Jos\u00e9 Tadeo Monagas"}}, {"pk": 134, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "Juan Germ\u00e1n Roscio"}}, {"pk": 135, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "Juli\u00e1n Mellado"}}, {"pk": 136, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "Las Mercedes"}}, {"pk": 137, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "Leonardo Infante"}}, {"pk": 138, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "Pedro Zaraza"}}, {"pk": 139, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "Ort\u00edz"}}, {"pk": 140, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "San Ger\u00f3nimo de Guayabal"}}, {"pk": 141, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "San Jos\u00e9 de Guaribe"}}, {"pk": 142, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "Santa Mar\u00eda de Ipire"}}, {"pk": 143, "model": "venezuela.municipio", "fields": {"estado": 11, "municipio": "Sebasti\u00e1n Francisco de Miranda"}}, {"pk": 144, "model": "venezuela.municipio", "fields": {"estado": 12, "municipio": "Andr\u00e9s Eloy Blanco"}}, {"pk": 145, "model": "venezuela.municipio", "fields": {"estado": 12, "municipio": "Crespo"}}, {"pk": 146, "model": "venezuela.municipio", "fields": {"estado": 12, "municipio": "Iribarren"}}, {"pk": 147, "model": "venezuela.municipio", "fields": {"estado": 12, "municipio": "Jim\u00e9nez"}}, {"pk": 148, "model": "venezuela.municipio", "fields": {"estado": 12, "municipio": "Mor\u00e1n"}}, {"pk": 149, "model": "venezuela.municipio", "fields": {"estado": 12, "municipio": "Palavecino"}}, {"pk": 150, "model": "venezuela.municipio", "fields": {"estado": 12, "municipio": "Sim\u00f3n Planas"}}, {"pk": 151, "model": "venezuela.municipio", "fields": {"estado": 12, "municipio": "Torres"}}, {"pk": 152, "model": "venezuela.municipio", "fields": {"estado": 12, "municipio": "Urdaneta"}}, {"pk": 179, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Alberto Adriani"}}, {"pk": 180, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Andr\u00e9s Bello"}}, {"pk": 181, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Antonio Pinto Salinas"}}, {"pk": 182, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Aricagua"}}, {"pk": 183, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Arzobispo Chac\u00f3n"}}, {"pk": 184, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Campo El\u00edas"}}, {"pk": 185, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Caracciolo Parra Olmedo"}}, {"pk": 186, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Cardenal Quintero"}}, {"pk": 187, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Guaraque"}}, {"pk": 188, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Julio C\u00e9sar Salas"}}, {"pk": 189, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Justo Brice\u00f1o"}}, {"pk": 190, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Libertador"}}, {"pk": 191, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Miranda"}}, {"pk": 192, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Obispo Ramos de Lora"}}, {"pk": 193, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Padre Noguera"}}, {"pk": 194, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Pueblo Llano"}}, {"pk": 195, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Rangel"}}, {"pk": 196, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Rivas D\u00e1vila"}}, {"pk": 197, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Santos Marquina"}}, {"pk": 198, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Sucre"}}, {"pk": 199, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Tovar"}}, {"pk": 200, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Tulio Febres Cordero"}}, {"pk": 201, "model": "venezuela.municipio", "fields": {"estado": 13, "municipio": "Zea"}}, {"pk": 223, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Acevedo"}}, {"pk": 224, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Andr\u00e9s Bello"}}, {"pk": 225, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Baruta"}}, {"pk": 226, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Bri\u00f3n"}}, {"pk": 227, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Buroz"}}, {"pk": 228, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Carrizal"}}, {"pk": 229, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Chacao"}}, {"pk": 230, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Crist\u00f3bal Rojas"}}, {"pk": 231, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "El Hatillo"}}, {"pk": 232, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Guaicaipuro"}}, {"pk": 233, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Independencia"}}, {"pk": 234, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Lander"}}, {"pk": 235, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Los Salias"}}, {"pk": 236, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "P\u00e1ez"}}, {"pk": 237, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Paz Castillo"}}, {"pk": 238, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Pedro Gual"}}, {"pk": 239, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Plaza"}}, {"pk": 240, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Sim\u00f3n Bol\u00edvar"}}, {"pk": 241, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Sucre"}}, {"pk": 242, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Urdaneta"}}, {"pk": 243, "model": "venezuela.municipio", "fields": {"estado": 14, "municipio": "Zamora"}}, {"pk": 258, "model": "venezuela.municipio", "fields": {"estado": 15, "municipio": "Acosta"}}, {"pk": 259, "model": "venezuela.municipio", "fields": {"estado": 15, "municipio": "Aguasay"}}, {"pk": 260, "model": "venezuela.municipio", "fields": {"estado": 15, "municipio": "Bol\u00edvar"}}, {"pk": 261, "model": "venezuela.municipio", "fields": {"estado": 15, "municipio": "Caripe"}}, {"pk": 262, "model": "venezuela.municipio", "fields": {"estado": 15, "municipio": "Cede\u00f1o"}}, {"pk": 263, "model": "venezuela.municipio", "fields": {"estado": 15, "municipio": "Ezequiel Zamora"}}, {"pk": 264, "model": "venezuela.municipio", "fields": {"estado": 15, "municipio": "Libertador"}}, {"pk": 265, "model": "venezuela.municipio", "fields": {"estado": 15, "municipio": "Matur\u00edn"}}, {"pk": 266, "model": "venezuela.municipio", "fields": {"estado": 15, "municipio": "Piar"}}, {"pk": 267, "model": "venezuela.municipio", "fields": {"estado": 15, "municipio": "Punceres"}}, {"pk": 268, "model": "venezuela.municipio", "fields": {"estado": 15, "municipio": "Santa B\u00e1rbara"}}, {"pk": 269, "model": "venezuela.municipio", "fields": {"estado": 15, "municipio": "Sotillo"}}, {"pk": 270, "model": "venezuela.municipio", "fields": {"estado": 15, "municipio": "Uracoa"}}, {"pk": 271, "model": "venezuela.municipio", "fields": {"estado": 16, "municipio": "Antol\u00edn del Campo"}}, {"pk": 272, "model": "venezuela.municipio", "fields": {"estado": 16, "municipio": "Arismendi"}}, {"pk": 273, "model": "venezuela.municipio", "fields": {"estado": 16, "municipio": "Garc\u00eda"}}, {"pk": 274, "model": "venezuela.municipio", "fields": {"estado": 16, "municipio": "G\u00f3mez"}}, {"pk": 275, "model": "venezuela.municipio", "fields": {"estado": 16, "municipio": "Maneiro"}}, {"pk": 276, "model": "venezuela.municipio", "fields": {"estado": 16, "municipio": "Marcano"}}, {"pk": 277, "model": "venezuela.municipio", "fields": {"estado": 16, "municipio": "Mari\u00f1o"}}, {"pk": 278, "model": "venezuela.municipio", "fields": {"estado": 16, "municipio": "Pen\u00ednsula de Macanao"}}, {"pk": 279, "model": "venezuela.municipio", "fields": {"estado": 16, "municipio": "Tubores"}}, {"pk": 280, "model": "venezuela.municipio", "fields": {"estado": 16, "municipio": "Villalba"}}, {"pk": 281, "model": "venezuela.municipio", "fields": {"estado": 16, "municipio": "D\u00edaz"}}, {"pk": 282, "model": "venezuela.municipio", "fields": {"estado": 17, "municipio": "Agua Blanca"}}, {"pk": 283, "model": "venezuela.municipio", "fields": {"estado": 17, "municipio": "Araure"}}, {"pk": 284, "model": "venezuela.municipio", "fields": {"estado": 17, "municipio": "Esteller"}}, {"pk": 285, "model": "venezuela.municipio", "fields": {"estado": 17, "municipio": "Guanare"}}, {"pk": 286, "model": "venezuela.municipio", "fields": {"estado": 17, "municipio": "Guanarito"}}, {"pk": 287, "model": "venezuela.municipio", "fields": {"estado": 17, "municipio": "Monse\u00f1or Jos\u00e9 Vicente de Unda"}}, {"pk": 288, "model": "venezuela.municipio", "fields": {"estado": 17, "municipio": "Ospino"}}, {"pk": 289, "model": "venezuela.municipio", "fields": {"estado": 17, "municipio": "P\u00e1ez"}}, {"pk": 290, "model": "venezuela.municipio", "fields": {"estado": 17, "municipio": "Papel\u00f3n"}}, {"pk": 291, "model": "venezuela.municipio", "fields": {"estado": 17, "municipio": "San Genaro de Bocono\u00edto"}}, {"pk": 292, "model": "venezuela.municipio", "fields": {"estado": 17, "municipio": "San Rafael de Onoto"}}, {"pk": 293, "model": "venezuela.municipio", "fields": {"estado": 17, "municipio": "Santa Rosal\u00eda"}}, {"pk": 294, "model": "venezuela.municipio", "fields": {"estado": 17, "municipio": "Sucre"}}, {"pk": 295, "model": "venezuela.municipio", "fields": {"estado": 17, "municipio": "Tur\u00e9n"}}, {"pk": 296, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Andr\u00e9s Eloy Blanco"}}, {"pk": 297, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Andr\u00e9s Mata"}}, {"pk": 298, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Arismendi"}}, {"pk": 299, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Ben\u00edtez"}}, {"pk": 300, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Berm\u00fadez"}}, {"pk": 301, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Bol\u00edvar"}}, {"pk": 302, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Cajigal"}}, {"pk": 303, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Cruz Salmer\u00f3n Acosta"}}, {"pk": 304, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Libertador"}}, {"pk": 305, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Mari\u00f1o"}}, {"pk": 306, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Mej\u00eda"}}, {"pk": 307, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Montes"}}, {"pk": 308, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Ribero"}}, {"pk": 309, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Sucre"}}, {"pk": 310, "model": "venezuela.municipio", "fields": {"estado": 18, "municipio": "Vald\u00e9z"}}, {"pk": 341, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Andr\u00e9s Bello"}}, {"pk": 342, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Antonio R\u00f3mulo Costa"}}, {"pk": 343, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Ayacucho"}}, {"pk": 344, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Bol\u00edvar"}}, {"pk": 345, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "C\u00e1rdenas"}}, {"pk": 346, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "C\u00f3rdoba"}}, {"pk": 347, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Fern\u00e1ndez Feo"}}, {"pk": 348, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Francisco de Miranda"}}, {"pk": 349, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Garc\u00eda de Hevia"}}, {"pk": 350, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Gu\u00e1simos"}}, {"pk": 351, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Independencia"}}, {"pk": 352, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "J\u00e1uregui"}}, {"pk": 353, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Jos\u00e9 Mar\u00eda Vargas"}}, {"pk": 354, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Jun\u00edn"}}, {"pk": 355, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Libertad"}}, {"pk": 356, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Libertador"}}, {"pk": 357, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Lobatera"}}, {"pk": 358, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Michelena"}}, {"pk": 359, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Panamericano"}}, {"pk": 360, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Pedro Mar\u00eda Ure\u00f1a"}}, {"pk": 361, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Rafael Urdaneta"}}, {"pk": 362, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Samuel Dar\u00edo Maldonado"}}, {"pk": 363, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "San Crist\u00f3bal"}}, {"pk": 364, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Seboruco"}}, {"pk": 365, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Sim\u00f3n Rodr\u00edguez"}}, {"pk": 366, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Sucre"}}, {"pk": 367, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Torbes"}}, {"pk": 368, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "Uribante"}}, {"pk": 369, "model": "venezuela.municipio", "fields": {"estado": 19, "municipio": "San Judas Tadeo"}}, {"pk": 370, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Andr\u00e9s Bello"}}, {"pk": 371, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Bocon\u00f3"}}, {"pk": 372, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Bol\u00edvar"}}, {"pk": 373, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Candelaria"}}, {"pk": 374, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Carache"}}, {"pk": 375, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Escuque"}}, {"pk": 376, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Jos\u00e9 Felipe M\u00e1rquez Ca\u00f1izalez"}}, {"pk": 377, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Juan Vicente Campos El\u00edas"}}, {"pk": 378, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "La Ceiba"}}, {"pk": 379, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Miranda"}}, {"pk": 380, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Monte Carmelo"}}, {"pk": 381, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Motat\u00e1n"}}, {"pk": 382, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Pamp\u00e1n"}}, {"pk": 383, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Pampanito"}}, {"pk": 384, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Rafael Rangel"}}, {"pk": 385, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "San Rafael de Carvajal"}}, {"pk": 386, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Sucre"}}, {"pk": 387, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Trujillo"}}, {"pk": 388, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Urdaneta"}}, {"pk": 389, "model": "venezuela.municipio", "fields": {"estado": 20, "municipio": "Valera"}}, {"pk": 390, "model": "venezuela.municipio", "fields": {"estado": 21, "municipio": "Vargas"}}, {"pk": 391, "model": "venezuela.municipio", "fields": {"estado": 22, "municipio": "Ar\u00edstides Bastidas"}}, {"pk": 392, "model": "venezuela.municipio", "fields": {"estado": 22, "municipio": "Bol\u00edvar"}}, {"pk": 407, "model": "venezuela.municipio", "fields": {"estado": 22, "municipio": "Bruzual"}}, {"pk": 408, "model": "venezuela.municipio", "fields": {"estado": 22, "municipio": "Cocorote"}}, {"pk": 409, "model": "venezuela.municipio", "fields": {"estado": 22, "municipio": "Independencia"}}, {"pk": 410, "model": "venezuela.municipio", "fields": {"estado": 22, "municipio": "Jos\u00e9 Antonio P\u00e1ez"}}, {"pk": 411, "model": "venezuela.municipio", "fields": {"estado": 22, "municipio": "La Trinidad"}}, {"pk": 412, "model": "venezuela.municipio", "fields": {"estado": 22, "municipio": "Manuel Monge"}}, {"pk": 413, "model": "venezuela.municipio", "fields": {"estado": 22, "municipio": "Nirgua"}}, {"pk": 414, "model": "venezuela.municipio", "fields": {"estado": 22, "municipio": "Pe\u00f1a"}}, {"pk": 415, "model": "venezuela.municipio", "fields": {"estado": 22, "municipio": "San Felipe"}}, {"pk": 416, "model": "venezuela.municipio", "fields": {"estado": 22, "municipio": "Sucre"}}, {"pk": 417, "model": "venezuela.municipio", "fields": {"estado": 22, "municipio": "Urachiche"}}, {"pk": 418, "model": "venezuela.municipio", "fields": {"estado": 22, "municipio": "Jos\u00e9 Joaqu\u00edn Veroes"}}, {"pk": 441, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Almirante Padilla"}}, {"pk": 442, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Baralt"}}, {"pk": 443, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Cabimas"}}, {"pk": 444, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Catatumbo"}}, {"pk": 445, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Col\u00f3n"}}, {"pk": 446, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Francisco Javier Pulgar"}}, {"pk": 447, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "P\u00e1ez"}}, {"pk": 448, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Jes\u00fas Enrique Losada"}}, {"pk": 449, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Jes\u00fas Mar\u00eda Sempr\u00fan"}}, {"pk": 450, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "La Ca\u00f1ada de Urdaneta"}}, {"pk": 451, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Lagunillas"}}, {"pk": 452, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Machiques de Perij\u00e1"}}, {"pk": 453, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Mara"}}, {"pk": 454, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Maracaibo"}}, {"pk": 455, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Miranda"}}, {"pk": 456, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Rosario de Perij\u00e1"}}, {"pk": 457, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "San Francisco"}}, {"pk": 458, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Santa Rita"}}, {"pk": 459, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Sim\u00f3n Bol\u00edvar"}}, {"pk": 460, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Sucre"}}, {"pk": 461, "model": "venezuela.municipio", "fields": {"estado": 23, "municipio": "Valmore Rodr\u00edguez"}}, {"pk": 462, "model": "venezuela.municipio", "fields": {"estado": 24, "municipio": "Libertador"}}]
+[
+  {
+    "pk": 1,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 1,
+      "nombre": "Alto Orinoco"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 1,
+      "nombre": "Atabapo"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 1,
+      "nombre": "Atures"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 1,
+      "nombre": "Autana"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 1,
+      "nombre": "Manapiare"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 1,
+      "nombre": "Maroa"
+    }
+  },
+  {
+    "pk": 7,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 1,
+      "nombre": "Río Negro"
+    }
+  },
+  {
+    "pk": 8,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Anaco"
+    }
+  },
+  {
+    "pk": 9,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Aragua"
+    }
+  },
+  {
+    "pk": 10,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Manuel Ezequiel Bruzual"
+    }
+  },
+  {
+    "pk": 11,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Diego Bautista Urbaneja"
+    }
+  },
+  {
+    "pk": 12,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Fernando Peñalver"
+    }
+  },
+  {
+    "pk": 13,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Francisco Del Carmen Carvajal"
+    }
+  },
+  {
+    "pk": 14,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "General Sir Arthur McGregor"
+    }
+  },
+  {
+    "pk": 15,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Guanta"
+    }
+  },
+  {
+    "pk": 16,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Independencia"
+    }
+  },
+  {
+    "pk": 17,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "José Gregorio Monagas"
+    }
+  },
+  {
+    "pk": 18,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Juan Antonio Sotillo"
+    }
+  },
+  {
+    "pk": 19,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Juan Manuel Cajigal"
+    }
+  },
+  {
+    "pk": 20,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Libertad"
+    }
+  },
+  {
+    "pk": 21,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Francisco de Miranda"
+    }
+  },
+  {
+    "pk": 22,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Pedro María Freites"
+    }
+  },
+  {
+    "pk": 23,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Píritu"
+    }
+  },
+  {
+    "pk": 24,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "San José de Guanipa"
+    }
+  },
+  {
+    "pk": 25,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "San Juan de Capistrano"
+    }
+  },
+  {
+    "pk": 26,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Santa Ana"
+    }
+  },
+  {
+    "pk": 27,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Simón Bolívar"
+    }
+  },
+  {
+    "pk": 28,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 2,
+      "nombre": "Simón Rodríguez"
+    }
+  },
+  {
+    "pk": 29,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 3,
+      "nombre": "Achaguas"
+    }
+  },
+  {
+    "pk": 30,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 3,
+      "nombre": "Biruaca"
+    }
+  },
+  {
+    "pk": 31,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 3,
+      "nombre": "Muñóz"
+    }
+  },
+  {
+    "pk": 32,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 3,
+      "nombre": "Páez"
+    }
+  },
+  {
+    "pk": 33,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 3,
+      "nombre": "Pedro Camejo"
+    }
+  },
+  {
+    "pk": 34,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 3,
+      "nombre": "Rómulo Gallegos"
+    }
+  },
+  {
+    "pk": 35,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 3,
+      "nombre": "San Fernando"
+    }
+  },
+  {
+    "pk": 36,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "Atanasio Girardot"
+    }
+  },
+  {
+    "pk": 37,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "Bolívar"
+    }
+  },
+  {
+    "pk": 38,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "Camatagua"
+    }
+  },
+  {
+    "pk": 39,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "Francisco Linares Alcántara"
+    }
+  },
+  {
+    "pk": 40,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "José Ángel Lamas"
+    }
+  },
+  {
+    "pk": 41,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "José Félix Ribas"
+    }
+  },
+  {
+    "pk": 42,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "José Rafael Revenga"
+    }
+  },
+  {
+    "pk": 43,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "Libertador"
+    }
+  },
+  {
+    "pk": 44,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "Mario Briceño Iragorry"
+    }
+  },
+  {
+    "pk": 45,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "Ocumare de la Costa de Oro"
+    }
+  },
+  {
+    "pk": 46,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "San Casimiro"
+    }
+  },
+  {
+    "pk": 47,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "San Sebastián"
+    }
+  },
+  {
+    "pk": 48,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "Santiago Mariño"
+    }
+  },
+  {
+    "pk": 49,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "Santos Michelena"
+    }
+  },
+  {
+    "pk": 50,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "Sucre"
+    }
+  },
+  {
+    "pk": 51,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "Tovar"
+    }
+  },
+  {
+    "pk": 52,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "Urdaneta"
+    }
+  },
+  {
+    "pk": 53,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 4,
+      "nombre": "Zamora"
+    }
+  },
+  {
+    "pk": 54,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 5,
+      "nombre": "Alberto Arvelo Torrealba"
+    }
+  },
+  {
+    "pk": 55,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 5,
+      "nombre": "Andrés Eloy Blanco"
+    }
+  },
+  {
+    "pk": 56,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 5,
+      "nombre": "Antonio José de Sucre"
+    }
+  },
+  {
+    "pk": 57,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 5,
+      "nombre": "Arismendi"
+    }
+  },
+  {
+    "pk": 58,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 5,
+      "nombre": "Barinas"
+    }
+  },
+  {
+    "pk": 59,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 5,
+      "nombre": "Bolívar"
+    }
+  },
+  {
+    "pk": 60,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 5,
+      "nombre": "Cruz Paredes"
+    }
+  },
+  {
+    "pk": 61,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 5,
+      "nombre": "Ezequiel Zamora"
+    }
+  },
+  {
+    "pk": 62,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 5,
+      "nombre": "Obispos"
+    }
+  },
+  {
+    "pk": 63,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 5,
+      "nombre": "Pedraza"
+    }
+  },
+  {
+    "pk": 64,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 5,
+      "nombre": "Rojas"
+    }
+  },
+  {
+    "pk": 65,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 5,
+      "nombre": "Sosa"
+    }
+  },
+  {
+    "pk": 66,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 6,
+      "nombre": "Caroní"
+    }
+  },
+  {
+    "pk": 67,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 6,
+      "nombre": "Cedeño"
+    }
+  },
+  {
+    "pk": 68,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 6,
+      "nombre": "El Callao"
+    }
+  },
+  {
+    "pk": 69,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 6,
+      "nombre": "Gran Sabana"
+    }
+  },
+  {
+    "pk": 70,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 6,
+      "nombre": "Heres"
+    }
+  },
+  {
+    "pk": 71,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 6,
+      "nombre": "Piar"
+    }
+  },
+  {
+    "pk": 72,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 6,
+      "nombre": "Angostura (Raúl Leoni)"
+    }
+  },
+  {
+    "pk": 73,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 6,
+      "nombre": "Roscio"
+    }
+  },
+  {
+    "pk": 74,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 6,
+      "nombre": "Sifontes"
+    }
+  },
+  {
+    "pk": 75,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 6,
+      "nombre": "Sucre"
+    }
+  },
+  {
+    "pk": 76,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 6,
+      "nombre": "Padre Pedro Chien"
+    }
+  },
+  {
+    "pk": 77,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 7,
+      "nombre": "Bejuma"
+    }
+  },
+  {
+    "pk": 78,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 7,
+      "nombre": "Carlos Arvelo"
+    }
+  },
+  {
+    "pk": 79,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 7,
+      "nombre": "Diego Ibarra"
+    }
+  },
+  {
+    "pk": 80,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 7,
+      "nombre": "Guacara"
+    }
+  },
+  {
+    "pk": 81,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 7,
+      "nombre": "Juan José Mora"
+    }
+  },
+  {
+    "pk": 82,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 7,
+      "nombre": "Libertador"
+    }
+  },
+  {
+    "pk": 83,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 7,
+      "nombre": "Los Guayos"
+    }
+  },
+  {
+    "pk": 84,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 7,
+      "nombre": "Miranda"
+    }
+  },
+  {
+    "pk": 85,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 7,
+      "nombre": "Montalbán"
+    }
+  },
+  {
+    "pk": 86,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 7,
+      "nombre": "Naguanagua"
+    }
+  },
+  {
+    "pk": 87,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 7,
+      "nombre": "Puerto Cabello"
+    }
+  },
+  {
+    "pk": 88,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 7,
+      "nombre": "San Diego"
+    }
+  },
+  {
+    "pk": 89,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 7,
+      "nombre": "San Joaquín"
+    }
+  },
+  {
+    "pk": 90,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 7,
+      "nombre": "Valencia"
+    }
+  },
+  {
+    "pk": 91,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 8,
+      "nombre": "Anzoátegui"
+    }
+  },
+  {
+    "pk": 92,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 8,
+      "nombre": "Tinaquillo"
+    }
+  },
+  {
+    "pk": 93,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 8,
+      "nombre": "Girardot"
+    }
+  },
+  {
+    "pk": 94,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 8,
+      "nombre": "Lima Blanco"
+    }
+  },
+  {
+    "pk": 95,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 8,
+      "nombre": "Pao de San Juan Bautista"
+    }
+  },
+  {
+    "pk": 96,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 8,
+      "nombre": "Ricaurte"
+    }
+  },
+  {
+    "pk": 97,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 8,
+      "nombre": "Rómulo Gallegos"
+    }
+  },
+  {
+    "pk": 98,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 8,
+      "nombre": "San Carlos"
+    }
+  },
+  {
+    "pk": 99,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 8,
+      "nombre": "Tinaco"
+    }
+  },
+  {
+    "pk": 100,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 9,
+      "nombre": "Antonio Díaz"
+    }
+  },
+  {
+    "pk": 101,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 9,
+      "nombre": "Casacoima"
+    }
+  },
+  {
+    "pk": 102,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 9,
+      "nombre": "Pedernales"
+    }
+  },
+  {
+    "pk": 103,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 9,
+      "nombre": "Tucupita"
+    }
+  },
+  {
+    "pk": 104,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Acosta"
+    }
+  },
+  {
+    "pk": 105,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Bolívar"
+    }
+  },
+  {
+    "pk": 106,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Buchivacoa"
+    }
+  },
+  {
+    "pk": 107,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Cacique Manaure"
+    }
+  },
+  {
+    "pk": 108,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Carirubana"
+    }
+  },
+  {
+    "pk": 109,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Colina"
+    }
+  },
+  {
+    "pk": 110,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Dabajuro"
+    }
+  },
+  {
+    "pk": 111,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Democracia"
+    }
+  },
+  {
+    "pk": 112,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Falcón"
+    }
+  },
+  {
+    "pk": 113,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Federación"
+    }
+  },
+  {
+    "pk": 114,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Jacura"
+    }
+  },
+  {
+    "pk": 115,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "José Laurencio Silva"
+    }
+  },
+  {
+    "pk": 116,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Los Taques"
+    }
+  },
+  {
+    "pk": 117,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Mauroa"
+    }
+  },
+  {
+    "pk": 118,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Miranda"
+    }
+  },
+  {
+    "pk": 119,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Monseñor Iturriza"
+    }
+  },
+  {
+    "pk": 120,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Palmasola"
+    }
+  },
+  {
+    "pk": 121,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Petit"
+    }
+  },
+  {
+    "pk": 122,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Píritu"
+    }
+  },
+  {
+    "pk": 123,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "San Francisco"
+    }
+  },
+  {
+    "pk": 124,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Sucre"
+    }
+  },
+  {
+    "pk": 125,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Tocópero"
+    }
+  },
+  {
+    "pk": 126,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Unión"
+    }
+  },
+  {
+    "pk": 127,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Urumaco"
+    }
+  },
+  {
+    "pk": 128,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 10,
+      "nombre": "Zamora"
+    }
+  },
+  {
+    "pk": 129,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "Camaguán"
+    }
+  },
+  {
+    "pk": 130,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "Chaguaramas"
+    }
+  },
+  {
+    "pk": 131,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "El Socorro"
+    }
+  },
+  {
+    "pk": 132,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "José Félix Ribas"
+    }
+  },
+  {
+    "pk": 133,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "José Tadeo Monagas"
+    }
+  },
+  {
+    "pk": 134,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "Juan Germán Roscio"
+    }
+  },
+  {
+    "pk": 135,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "Julián Mellado"
+    }
+  },
+  {
+    "pk": 136,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "Las Mercedes"
+    }
+  },
+  {
+    "pk": 137,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "Leonardo Infante"
+    }
+  },
+  {
+    "pk": 138,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "Pedro Zaraza"
+    }
+  },
+  {
+    "pk": 139,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "Ortíz"
+    }
+  },
+  {
+    "pk": 140,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "San Gerónimo de Guayabal"
+    }
+  },
+  {
+    "pk": 141,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "San José de Guaribe"
+    }
+  },
+  {
+    "pk": 142,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "Santa María de Ipire"
+    }
+  },
+  {
+    "pk": 143,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 11,
+      "nombre": "Sebastián Francisco de Miranda"
+    }
+  },
+  {
+    "pk": 144,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 12,
+      "nombre": "Andrés Eloy Blanco"
+    }
+  },
+  {
+    "pk": 145,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 12,
+      "nombre": "Crespo"
+    }
+  },
+  {
+    "pk": 146,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 12,
+      "nombre": "Iribarren"
+    }
+  },
+  {
+    "pk": 147,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 12,
+      "nombre": "Jiménez"
+    }
+  },
+  {
+    "pk": 148,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 12,
+      "nombre": "Morán"
+    }
+  },
+  {
+    "pk": 149,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 12,
+      "nombre": "Palavecino"
+    }
+  },
+  {
+    "pk": 150,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 12,
+      "nombre": "Simón Planas"
+    }
+  },
+  {
+    "pk": 151,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 12,
+      "nombre": "Torres"
+    }
+  },
+  {
+    "pk": 152,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 12,
+      "nombre": "Urdaneta"
+    }
+  },
+  {
+    "pk": 179,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Alberto Adriani"
+    }
+  },
+  {
+    "pk": 180,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Andrés Bello"
+    }
+  },
+  {
+    "pk": 181,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Antonio Pinto Salinas"
+    }
+  },
+  {
+    "pk": 182,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Aricagua"
+    }
+  },
+  {
+    "pk": 183,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Arzobispo Chacón"
+    }
+  },
+  {
+    "pk": 184,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Campo Elías"
+    }
+  },
+  {
+    "pk": 185,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Caracciolo Parra Olmedo"
+    }
+  },
+  {
+    "pk": 186,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Cardenal Quintero"
+    }
+  },
+  {
+    "pk": 187,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Guaraque"
+    }
+  },
+  {
+    "pk": 188,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Julio César Salas"
+    }
+  },
+  {
+    "pk": 189,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Justo Briceño"
+    }
+  },
+  {
+    "pk": 190,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Libertador"
+    }
+  },
+  {
+    "pk": 191,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Miranda"
+    }
+  },
+  {
+    "pk": 192,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Obispo Ramos de Lora"
+    }
+  },
+  {
+    "pk": 193,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Padre Noguera"
+    }
+  },
+  {
+    "pk": 194,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Pueblo Llano"
+    }
+  },
+  {
+    "pk": 195,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Rangel"
+    }
+  },
+  {
+    "pk": 196,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Rivas Dávila"
+    }
+  },
+  {
+    "pk": 197,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Santos Marquina"
+    }
+  },
+  {
+    "pk": 198,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Sucre"
+    }
+  },
+  {
+    "pk": 199,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Tovar"
+    }
+  },
+  {
+    "pk": 200,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Tulio Febres Cordero"
+    }
+  },
+  {
+    "pk": 201,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 13,
+      "nombre": "Zea"
+    }
+  },
+  {
+    "pk": 223,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Acevedo"
+    }
+  },
+  {
+    "pk": 224,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Andrés Bello"
+    }
+  },
+  {
+    "pk": 225,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Baruta"
+    }
+  },
+  {
+    "pk": 226,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Brión"
+    }
+  },
+  {
+    "pk": 227,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Buroz"
+    }
+  },
+  {
+    "pk": 228,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Carrizal"
+    }
+  },
+  {
+    "pk": 229,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Chacao"
+    }
+  },
+  {
+    "pk": 230,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Cristóbal Rojas"
+    }
+  },
+  {
+    "pk": 231,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "El Hatillo"
+    }
+  },
+  {
+    "pk": 232,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Guaicaipuro"
+    }
+  },
+  {
+    "pk": 233,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Independencia"
+    }
+  },
+  {
+    "pk": 234,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Lander"
+    }
+  },
+  {
+    "pk": 235,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Los Salias"
+    }
+  },
+  {
+    "pk": 236,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Páez"
+    }
+  },
+  {
+    "pk": 237,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Paz Castillo"
+    }
+  },
+  {
+    "pk": 238,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Pedro Gual"
+    }
+  },
+  {
+    "pk": 239,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Plaza"
+    }
+  },
+  {
+    "pk": 240,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Simón Bolívar"
+    }
+  },
+  {
+    "pk": 241,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Sucre"
+    }
+  },
+  {
+    "pk": 242,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Urdaneta"
+    }
+  },
+  {
+    "pk": 243,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 14,
+      "nombre": "Zamora"
+    }
+  },
+  {
+    "pk": 258,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 15,
+      "nombre": "Acosta"
+    }
+  },
+  {
+    "pk": 259,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 15,
+      "nombre": "Aguasay"
+    }
+  },
+  {
+    "pk": 260,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 15,
+      "nombre": "Bolívar"
+    }
+  },
+  {
+    "pk": 261,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 15,
+      "nombre": "Caripe"
+    }
+  },
+  {
+    "pk": 262,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 15,
+      "nombre": "Cedeño"
+    }
+  },
+  {
+    "pk": 263,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 15,
+      "nombre": "Ezequiel Zamora"
+    }
+  },
+  {
+    "pk": 264,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 15,
+      "nombre": "Libertador"
+    }
+  },
+  {
+    "pk": 265,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 15,
+      "nombre": "Maturín"
+    }
+  },
+  {
+    "pk": 266,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 15,
+      "nombre": "Piar"
+    }
+  },
+  {
+    "pk": 267,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 15,
+      "nombre": "Punceres"
+    }
+  },
+  {
+    "pk": 268,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 15,
+      "nombre": "Santa Bárbara"
+    }
+  },
+  {
+    "pk": 269,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 15,
+      "nombre": "Sotillo"
+    }
+  },
+  {
+    "pk": 270,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 15,
+      "nombre": "Uracoa"
+    }
+  },
+  {
+    "pk": 271,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 16,
+      "nombre": "Antolín del Campo"
+    }
+  },
+  {
+    "pk": 272,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 16,
+      "nombre": "Arismendi"
+    }
+  },
+  {
+    "pk": 273,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 16,
+      "nombre": "García"
+    }
+  },
+  {
+    "pk": 274,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 16,
+      "nombre": "Gómez"
+    }
+  },
+  {
+    "pk": 275,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 16,
+      "nombre": "Maneiro"
+    }
+  },
+  {
+    "pk": 276,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 16,
+      "nombre": "Marcano"
+    }
+  },
+  {
+    "pk": 277,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 16,
+      "nombre": "Mariño"
+    }
+  },
+  {
+    "pk": 278,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 16,
+      "nombre": "Península de Macanao"
+    }
+  },
+  {
+    "pk": 279,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 16,
+      "nombre": "Tubores"
+    }
+  },
+  {
+    "pk": 280,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 16,
+      "nombre": "Villalba"
+    }
+  },
+  {
+    "pk": 281,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 16,
+      "nombre": "Díaz"
+    }
+  },
+  {
+    "pk": 282,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 17,
+      "nombre": "Agua Blanca"
+    }
+  },
+  {
+    "pk": 283,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 17,
+      "nombre": "Araure"
+    }
+  },
+  {
+    "pk": 284,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 17,
+      "nombre": "Esteller"
+    }
+  },
+  {
+    "pk": 285,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 17,
+      "nombre": "Guanare"
+    }
+  },
+  {
+    "pk": 286,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 17,
+      "nombre": "Guanarito"
+    }
+  },
+  {
+    "pk": 287,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 17,
+      "nombre": "Monseñor José Vicente de Unda"
+    }
+  },
+  {
+    "pk": 288,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 17,
+      "nombre": "Ospino"
+    }
+  },
+  {
+    "pk": 289,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 17,
+      "nombre": "Páez"
+    }
+  },
+  {
+    "pk": 290,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 17,
+      "nombre": "Papelón"
+    }
+  },
+  {
+    "pk": 291,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 17,
+      "nombre": "San Genaro de Boconoíto"
+    }
+  },
+  {
+    "pk": 292,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 17,
+      "nombre": "San Rafael de Onoto"
+    }
+  },
+  {
+    "pk": 293,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 17,
+      "nombre": "Santa Rosalía"
+    }
+  },
+  {
+    "pk": 294,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 17,
+      "nombre": "Sucre"
+    }
+  },
+  {
+    "pk": 295,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 17,
+      "nombre": "Turén"
+    }
+  },
+  {
+    "pk": 296,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Andrés Eloy Blanco"
+    }
+  },
+  {
+    "pk": 297,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Andrés Mata"
+    }
+  },
+  {
+    "pk": 298,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Arismendi"
+    }
+  },
+  {
+    "pk": 299,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Benítez"
+    }
+  },
+  {
+    "pk": 300,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Bermúdez"
+    }
+  },
+  {
+    "pk": 301,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Bolívar"
+    }
+  },
+  {
+    "pk": 302,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Cajigal"
+    }
+  },
+  {
+    "pk": 303,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Cruz Salmerón Acosta"
+    }
+  },
+  {
+    "pk": 304,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Libertador"
+    }
+  },
+  {
+    "pk": 305,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Mariño"
+    }
+  },
+  {
+    "pk": 306,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Mejía"
+    }
+  },
+  {
+    "pk": 307,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Montes"
+    }
+  },
+  {
+    "pk": 308,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Ribero"
+    }
+  },
+  {
+    "pk": 309,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Sucre"
+    }
+  },
+  {
+    "pk": 310,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 18,
+      "nombre": "Valdéz"
+    }
+  },
+  {
+    "pk": 341,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Andrés Bello"
+    }
+  },
+  {
+    "pk": 342,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Antonio Rómulo Costa"
+    }
+  },
+  {
+    "pk": 343,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Ayacucho"
+    }
+  },
+  {
+    "pk": 344,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Bolívar"
+    }
+  },
+  {
+    "pk": 345,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Cárdenas"
+    }
+  },
+  {
+    "pk": 346,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Córdoba"
+    }
+  },
+  {
+    "pk": 347,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Fernández Feo"
+    }
+  },
+  {
+    "pk": 348,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Francisco de Miranda"
+    }
+  },
+  {
+    "pk": 349,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "García de Hevia"
+    }
+  },
+  {
+    "pk": 350,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Guásimos"
+    }
+  },
+  {
+    "pk": 351,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Independencia"
+    }
+  },
+  {
+    "pk": 352,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Jáuregui"
+    }
+  },
+  {
+    "pk": 353,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "José María Vargas"
+    }
+  },
+  {
+    "pk": 354,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Junín"
+    }
+  },
+  {
+    "pk": 355,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Libertad"
+    }
+  },
+  {
+    "pk": 356,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Libertador"
+    }
+  },
+  {
+    "pk": 357,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Lobatera"
+    }
+  },
+  {
+    "pk": 358,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Michelena"
+    }
+  },
+  {
+    "pk": 359,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Panamericano"
+    }
+  },
+  {
+    "pk": 360,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Pedro María Ureña"
+    }
+  },
+  {
+    "pk": 361,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Rafael Urdaneta"
+    }
+  },
+  {
+    "pk": 362,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Samuel Darío Maldonado"
+    }
+  },
+  {
+    "pk": 363,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "San Cristóbal"
+    }
+  },
+  {
+    "pk": 364,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Seboruco"
+    }
+  },
+  {
+    "pk": 365,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Simón Rodríguez"
+    }
+  },
+  {
+    "pk": 366,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Sucre"
+    }
+  },
+  {
+    "pk": 367,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Torbes"
+    }
+  },
+  {
+    "pk": 368,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "Uribante"
+    }
+  },
+  {
+    "pk": 369,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 19,
+      "nombre": "San Judas Tadeo"
+    }
+  },
+  {
+    "pk": 370,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Andrés Bello"
+    }
+  },
+  {
+    "pk": 371,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Boconó"
+    }
+  },
+  {
+    "pk": 372,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Bolívar"
+    }
+  },
+  {
+    "pk": 373,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Candelaria"
+    }
+  },
+  {
+    "pk": 374,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Carache"
+    }
+  },
+  {
+    "pk": 375,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Escuque"
+    }
+  },
+  {
+    "pk": 376,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "José Felipe Márquez Cañizalez"
+    }
+  },
+  {
+    "pk": 377,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Juan Vicente Campos Elías"
+    }
+  },
+  {
+    "pk": 378,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "La Ceiba"
+    }
+  },
+  {
+    "pk": 379,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Miranda"
+    }
+  },
+  {
+    "pk": 380,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Monte Carmelo"
+    }
+  },
+  {
+    "pk": 381,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Motatán"
+    }
+  },
+  {
+    "pk": 382,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Pampán"
+    }
+  },
+  {
+    "pk": 383,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Pampanito"
+    }
+  },
+  {
+    "pk": 384,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Rafael Rangel"
+    }
+  },
+  {
+    "pk": 385,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "San Rafael de Carvajal"
+    }
+  },
+  {
+    "pk": 386,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Sucre"
+    }
+  },
+  {
+    "pk": 387,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Trujillo"
+    }
+  },
+  {
+    "pk": 388,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Urdaneta"
+    }
+  },
+  {
+    "pk": 389,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 20,
+      "nombre": "Valera"
+    }
+  },
+  {
+    "pk": 390,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 21,
+      "nombre": "Vargas"
+    }
+  },
+  {
+    "pk": 391,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 22,
+      "nombre": "Arístides Bastidas"
+    }
+  },
+  {
+    "pk": 392,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 22,
+      "nombre": "Bolívar"
+    }
+  },
+  {
+    "pk": 407,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 22,
+      "nombre": "Bruzual"
+    }
+  },
+  {
+    "pk": 408,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 22,
+      "nombre": "Cocorote"
+    }
+  },
+  {
+    "pk": 409,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 22,
+      "nombre": "Independencia"
+    }
+  },
+  {
+    "pk": 410,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 22,
+      "nombre": "José Antonio Páez"
+    }
+  },
+  {
+    "pk": 411,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 22,
+      "nombre": "La Trinidad"
+    }
+  },
+  {
+    "pk": 412,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 22,
+      "nombre": "Manuel Monge"
+    }
+  },
+  {
+    "pk": 413,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 22,
+      "nombre": "Nirgua"
+    }
+  },
+  {
+    "pk": 414,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 22,
+      "nombre": "Peña"
+    }
+  },
+  {
+    "pk": 415,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 22,
+      "nombre": "San Felipe"
+    }
+  },
+  {
+    "pk": 416,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 22,
+      "nombre": "Sucre"
+    }
+  },
+  {
+    "pk": 417,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 22,
+      "nombre": "Urachiche"
+    }
+  },
+  {
+    "pk": 418,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 22,
+      "nombre": "José Joaquín Veroes"
+    }
+  },
+  {
+    "pk": 441,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Almirante Padilla"
+    }
+  },
+  {
+    "pk": 442,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Baralt"
+    }
+  },
+  {
+    "pk": 443,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Cabimas"
+    }
+  },
+  {
+    "pk": 444,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Catatumbo"
+    }
+  },
+  {
+    "pk": 445,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Colón"
+    }
+  },
+  {
+    "pk": 446,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Francisco Javier Pulgar"
+    }
+  },
+  {
+    "pk": 447,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Páez"
+    }
+  },
+  {
+    "pk": 448,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Jesús Enrique Losada"
+    }
+  },
+  {
+    "pk": 449,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Jesús María Semprún"
+    }
+  },
+  {
+    "pk": 450,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "La Cañada de Urdaneta"
+    }
+  },
+  {
+    "pk": 451,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Lagunillas"
+    }
+  },
+  {
+    "pk": 452,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Machiques de Perijá"
+    }
+  },
+  {
+    "pk": 453,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Mara"
+    }
+  },
+  {
+    "pk": 454,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Maracaibo"
+    }
+  },
+  {
+    "pk": 455,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Miranda"
+    }
+  },
+  {
+    "pk": 456,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Rosario de Perijá"
+    }
+  },
+  {
+    "pk": 457,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "San Francisco"
+    }
+  },
+  {
+    "pk": 458,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Santa Rita"
+    }
+  },
+  {
+    "pk": 459,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Simón Bolívar"
+    }
+  },
+  {
+    "pk": 460,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Sucre"
+    }
+  },
+  {
+    "pk": 461,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 23,
+      "nombre": "Valmore Rodríguez"
+    }
+  },
+  {
+    "pk": 462,
+    "model": "sgt.municipio",
+    "fields": {
+      "estado": 24,
+      "nombre": "Libertador"
+    }
+  }
+]
