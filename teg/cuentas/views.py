@@ -30,9 +30,17 @@ class Ingresar(FormView):
 
 		return super(IngresarView, self).form_valid(form)
 
+
 class Registro(View):
     def dispatch(self, request, *args, **kwargs):
+    	return super(Registro, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
     	return render(request,'cuentas/registro.html')
+
+    def post(self, request, *args, **kwargs):
+    	pass
+
 
 class Salir(View):
     def get(self, request, *args, **kwargs):
@@ -42,6 +50,7 @@ class Salir(View):
             messages.info(self.request, mensaje)
 
         return redirect(reverse_lazy('cuentas_login'))
+
 
 class DetectarUsuario(LoginRequiredMixin, View):
 	def dispatch(self, request, *args, **kwargs):
