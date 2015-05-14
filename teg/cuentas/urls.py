@@ -8,6 +8,10 @@ urlpatterns = \
         url(r'^$',
          RedirectView.as_view(url=reverse_lazy('cuentas_login'))),
 
+        url(r'^registro/$',
+         views.Registro.as_view(), 
+         name='cuentas_registro'),
+
         url(r'^ingresar/$',
          views.Ingresar.as_view(),
          name='cuentas_login'),

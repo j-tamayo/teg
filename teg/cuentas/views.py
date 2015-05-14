@@ -4,6 +4,7 @@ from braces.views import LoginRequiredMixin
 from django.views.generic import View, FormView
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
 from cuentas.forms import *
 
 # Create your views here.
@@ -29,6 +30,9 @@ class Ingresar(FormView):
 
 		return super(IngresarView, self).form_valid(form)
 
+class Registro(View):
+    def dispatch(self, request, *args, **kwargs):
+    	return render(request,'cuentas/registro.html')
 
 class Salir(View):
     def get(self, request, *args, **kwargs):
@@ -38,7 +42,6 @@ class Salir(View):
             messages.info(self.request, mensaje)
 
         return redirect(reverse_lazy('cuentas_login'))
-
 
 class DetectarUsuario(LoginRequiredMixin, View):
 	def dispatch(self, request, *args, **kwargs):
