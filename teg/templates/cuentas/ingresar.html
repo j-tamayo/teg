@@ -3,16 +3,47 @@
 {% block main_content %}
 <header class="header">
 	<div class="row">
-		
+		<div class="col-xs-2 col-lg-offset-5 text-success text-center" style="margin-top: 10%;">
+			<h1>SIGETICK</h1>
+		</div>
+		<div class="col-xs-5 pull-right">
+			<img src="../../static/img_generic/car-icon.png" class="img-rounded">
+		</div>
 	</div>
 </header>
-<div class="row">
-	<div class="col-xs-4 col-lg-offset-4">
-		<div class="form-box">
-			<div class="header">Iniciar sesi&oacute;n</div>
-			<form action="{% url 'cuentas_login' %}" method="post">
-				
-			</form>
+
+<div class="container-fluid Absolute-Center bg-info">
+	<div class="row">
+		<div class="col-xs-4 col-lg-offset-4 text-success text-center">
+			<br>
+			<h3>Iniciar sesi&oacute;n</h3>
+		</div>
+	</div>
+	<br>	
+	<div class="row">
+		<div class="col-xs-6 col-lg-offset-3">
+			<div class="form-box">
+				<form action="{% url 'cuentas_login' %}" method="post">
+					<div class="form-group">
+						<label for="exampleInputEmail1" class="text-muted">Correo:</label>
+						<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Correo electr&oacute;nico...">
+					</div>
+					<div class="form-group">
+						<label for="exampleInputPassword1" class="text-muted">Contrase&ntilde;a:</label>
+						<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Contrase&ntilde;a...">
+					</div>
+					<div class="pull-right">
+						<button type="button" class="btn btn-primary">Registrar</button>
+						<button type="submit" class="btn btn-success">Entrar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6 col-lg-offset-6">
+			<br>
+			<a class="btn btn-link text-center">¿Olvid&oacute; su contrase&ntilde;a?</a>
 		</div>
 	</div>
 </div>
