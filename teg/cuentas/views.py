@@ -5,6 +5,8 @@ from django.views.generic import View, FormView
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from cuentas.forms import *
 
 # Create your views here.
@@ -28,7 +30,7 @@ class Ingresar(FormView):
 		usuario = authenticate(correo=correo, password=password)
 		login(self.request, usuario)
 
-		return super(IngresarView, self).form_valid(form)
+		return super(Ingresar, self).form_valid(form)
 
 
 class Registro(View):
@@ -36,7 +38,11 @@ class Registro(View):
     	return super(Registro, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-    	return render(request,'cuentas/registro.html')
+    	form = RegistroForm()
+    	context = {
+    		'form': form,
+    	}
+    	return render(request,'cuentas/registro.html', context)
 
     def post(self, request, *args, **kwargs):
     	pass
@@ -57,6 +63,7 @@ class DetectarUsuario(LoginRequiredMixin, View):
 		usuario = request.user
 
 		if usuario.is_authenticated():
+			print "HEYY"
 			pass
 
 		elif usuario.is_authenticated() and not usuario.is_active:

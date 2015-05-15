@@ -23,17 +23,24 @@
 	<div class="row">
 		<div class="col-xs-6 col-xs-offset-3">
 			<div class="form-box">
-				<form action="{% url 'cuentas_login' %}" method="post">
+				<form id="login_form" action="{% url 'cuentas_login' %}" method="post" data-toggle="validator">
+					{% csrf_token %}
+					<div class="row errors">
+						{{ form.non_field_errors }}
+					</div>
 					<div class="row">
 						<div class="form-group">
 							<label for="exampleInputEmail1" class="text-muted">Correo:</label>
-							<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Correo electr&oacute;nico...">
+							<!-- <input name="correo" type="email" class="form-control" id="exampleInputEmail1" placeholder="Correo electr&oacute;nico..."> -->
+							{{form.correo}}
+							<div class="help-block with-errors"></div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="form-group">
 							<label for="exampleInputPassword1" class="text-muted">Contrase&ntilde;a:</label>
-							<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Contrase&ntilde;a...">
+							<!-- <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Contrase&ntilde;a..."> -->
+							{{form.password}}
 						</div>
 					</div>
 					<div class="row ">
@@ -41,7 +48,7 @@
 							<a href="{% url 'cuentas_registro' %}" class="btn btn-primary col-xs-4 col-xs-offset-3">Registrar</a>
 						<!-- </div>
 						<div class="col-xs-5"> -->
-							<a href="#" class="btn btn-success col-xs-4 col-xs-offset-1">Entrar</a>
+							<input type="submit" value="Entrar" class="btn btn-success col-xs-4 col-xs-offset-1"></input>
 						<!-- </div> -->
 					</div>
 				</form>
@@ -63,7 +70,9 @@
 	<script type="application/javascript">
 
 		$(function(){
-			alert('hey');
+			$('#enviar_form').click(function(){
+				$('#login_form').submit();
+			});
 		});
 
 	</script>
