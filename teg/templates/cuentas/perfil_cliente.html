@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+
+<header class="header" style="margin-top: 3%; margin-bottom: 2%;">
+	<div class="row">
+		<div class="col-xs-7 text-success text-center">
+			<h1>Bienvenido "Nombre de Usuario"</h1>
+		</div>
+		<div class="col-xs-5 pull-right">
+			<img src="../../static/img_generic/car-icon.png" class="img-rounded" style="width: 40%; margin-left:50%">
+		</div>
+	</div>
+</header>
+
+<div class="container-fluid">
+	<div role="tabpanel">
+		<ul class="nav nav-tabs nav-justified">
+			<li role="presentation" class="active" data-toggle="tab"><a href="#Perfil">Ver Perfil</a></li>
+			<li role="presentation" data-toggle="tab"><a href="#Solicitudes">Solicitudes</a></li>
+			<li role="presentation" data-toggle="tab"><a href="#Notificaciones">Notificaciones</a></li>
+			<li role="presentation" data-toggle="tab">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#Opciones" role="button" aria-expanded="false">Opciones<span class="caret"></span></a>
+			    <ul class="dropdown-menu" role="menu">
+					<li><a href="#">Action</a></li>
+		            <li><a href="#">Another action</a></li>
+		            <li><a href="#">Something else here</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Separated link</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">One more separated link</a></li>
+			    </ul>
+			</li>
+		</ul>
+		<div class="tab-content" style="margin-top: 3%;">
+		    <div role="tabpanel" class="tab-pane active" id="Perfil">
+		    	<div class="row">
+					<div class="col-xs-5 col-xs-offset-1">
+						<h3 class="text-success">Informaci&oacute;n del usuario</h3>
+						<br>
+						<p>Nombre: "Nombre Usuario"</p>
+						<p>Apellido: "Apellido Usuario"</p>
+						<p>C&eacute;dula: V-12345678</p>
+						<p>Estado: "Estado Usuario"</p>
+						<p>Ciudad: "Cuidad Usuario"</p>
+						<p>Dirección: "Direcci&oacute;n Usuario"</p>
+						<p>Correo: usuario@gmail.com</p>		
+					</div>
+					<div class="col-xs-1">
+						<div style="border-left:1px solid #000;height:500px"></div>
+					</div>
+					<div class="col-xs-5">
+						<h3 class="text-success">P&oacute;liza asociada</h3>
+						<br>
+						<p>N&uacute;mero: "N&uacute;mero P&oacute;liza"</p>
+						<p>Fecha Vencimiento: "dd/mm/aaaa"</p>
+						<p>Tipo de P&oacute;liza: "Tipo X"</p>
+						<p>Descripci&oacute;n: "Descripci&oacute;n P&oacute;liza"</p>
+					</div>  
+		    	</div>
+		    </div>
+		    <div role="tabpanel" class="tab-pane" id="Solicitudes">
+		    	<h3 class="text-success">Solicitudes</h3>
+		    </div>
+		    <div role="tabpanel" class="tab-pane" id="Notificaciones">
+		    	<h3 class="text-success">Notificaciones</h3>
+		    </div>
+	  	</div>
+	 </div>
+</div>
+
+{% endblock %}
