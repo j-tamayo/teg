@@ -5,7 +5,11 @@ from sgt import views
 
 urlpatterns = \
     patterns('',
-        url(r'^$',
-         RedirectView.as_view(url=reverse_lazy('cuentas_login'))),
+
+        url(
+            r'^obtener-municipios/(?P<estado_id>\d+)$',
+            views.ObtenerMunicipios.as_view(),
+            name='obtener_municipios'
+        ),
 
 )

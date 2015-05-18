@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.auth import authenticate
+from sgt.models import Estado, Municipio
 
 class AutenticacionUsuarioForm(forms.Form):
 	""" Formulario para la autenticación de los usuarios """
@@ -50,16 +51,65 @@ class AutenticacionUsuarioForm(forms.Form):
 class RegistroForm(forms.Form):
 	""" Formulario para el registro de usuarios """
 	nombres = forms.CharField(
-		label=u'Nombre',
+		label = u'Nombre',
 		widget=forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
 	)
 
 	apellidos = forms.CharField(
-		label=u'Apellidos',
+		label = u'Apellidos',
 		widget=forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
 	)
 
 	cedula = forms.CharField(
-		label=u'Cédula',
+		label = u'Cédula',
 		widget=forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
 	)
+
+	estado = forms.ModelChoiceField(
+		label = u'Estado',
+		queryset = Estado.objects.all().order_by('nombre'),
+		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
+	)
+
+	municipio = forms.ModelChoiceField(
+		label = u'Municipio',
+		queryset = Municipio.objects.all(),
+		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
+	)
+
+	codigo_postal = forms.IntegerField(
+		label = u'Código postal',
+		widget = forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
+	)
+
+	direccion = forms.ChoiceField(
+		label = u'Dirección',
+		widget = forms.Textarea(attrs={'class':'form-control'})
+	)
+
+	correo = forms.EmailField(
+		label = u'Correo',
+		widget = forms.EmailInput(attrs={'class':'form-control','required':'','data-error':'El formato de correo es inválido'})
+	)
+
+	password = forms.CharField(
+		label = u'Contraseña',
+		widget = forms.PasswordInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
+	)
+
+	password_confirm = forms.CharField(
+		label = u'Contraseña',
+		widget = forms.PasswordInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
+	)
+
+	def clean_password_confirm(self):
+		password1 = self.cleaned_data.get('password')
+		password2 = self.cleaned_data.get('password_confirm')
+
+		if not password2:
+			raise forms.ValidationError(u'Este campo es obligatorio')
+
+		if password1 != password2:
+			raise forms.ValidationError(u'Las contraseñas deben conincidir')
+
+		return password2

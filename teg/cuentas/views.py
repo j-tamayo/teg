@@ -45,7 +45,22 @@ class Registro(View):
     	return render(request,'cuentas/registro.html', context)
 
     def post(self, request, *args, **kwargs):
-    	pass
+    	form = RegistroForm(request.POST)
+    	if form.is_valid():
+    		pass
+
+    	else:
+    		print form.errors
+    		municipios = Municipio.objects.filter(estado__id = request.POST.get('estado', None))
+    		mun_sel = request.POST.get('municipio', None)
+    		if mun_sel:
+    			mun_sel = int(mun_sel)
+    		context = {
+    			'form': form,
+    			'municipios': municipios,
+    			'mun_sel': mun_sel
+    		}
+    		return render(request,'cuentas/registro.html', context)
 
 
 class Salir(View):

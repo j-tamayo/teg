@@ -23,54 +23,66 @@
 	<div class="row">
 		<div class="col-xs-12">
 			<div class="form-box">
-				<form action="{% url 'cuentas_login' %}" method="post">
+				<form action="{% url 'cuentas_registro' %}" method="post" data-toggle="validator">
+				{% csrf_token %}
 					<div class="row">
 						<div class="col-xs-6">
 							<div class="form-group">
 								<label class="text-muted">Nombres:</label>
 								{{form.nombres}}
+								<div class="help-block with-errors"></div>
 							</div>
 							<div class="form-group">
 								<label class="text-muted">Apellidos:</label>
-								<input type="text" class="form-control">
+								{{form.apellidos}}
+								<div class="help-block with-errors"></div>
 							</div>
 							<div class="form-group">
 								<label class="text-muted">C&eacute;dula:</label>
-								<input type="text" class="form-control">
+								{{form.cedula}}
+								<div class="help-block with-errors"></div>
 							</div>
 							<div class="form-group">
 								<label class="text-muted">Estado:</label>
-								<select class="form-control">
-									<option value="" selected>-- Seleccione --</option>
-								</select> 
+								{{form.estado}}
+								<div class="help-block with-errors"></div>
 							</div>
 							<div class="form-group">
 								<label class="text-muted">Municipio:</label>
-								<select class="form-control">
-									<option value="" selected>-- Seleccione --</option>
+								<select id="id_municipio" name="municipio" class="form-control">
+									<option value="">---------</option>
+									{% for m in municipios %}
+									<option value="{{m.pk}}" {% ifequal m.pk mun_sel %}selected{% endifequal %}>{{m.nombre}}</option>
+									{% endfor %}
 								</select> 
+								<div class="help-block with-errors"></div>
 							</div>
 							<div class="form-group">
-								<label class="text-muted">C&oacute;digo Postal:</label>
-								<input type="text" class="form-control">
+								<label class="text-muted">Direcci&oacute;n:</label>
+								{{form.direccion}}
+								<div class="help-block with-errors"></div>
 							</div>
 						</div>
 						<div class="col-xs-6">
 							<div class="form-group">
-								<label class="text-muted">Direcci&oacute;n:</label>
-								<textarea class="form-control"></textarea>
+								<label class="text-muted">C&oacute;digo Postal:</label>
+								{{form.codigo_postal}}
+								<div class="help-block with-errors"></div>
 							</div>
 							<div class="form-group">
 								<label for="exampleInputEmail1" class="text-muted">Correo:</label>
-								<input type="email" class="form-control" id="exampleInputEmail1">
+								{{form.correo}}
+								<div class="help-block with-errors"></div>
 							</div>
 							<div class="form-group">
 								<label for="exampleInputPassword1" class="text-muted">Contrase&ntilde;a:</label>
-								<input type="password" class="form-control" id="exampleInputPassword1">
+								{{form.password}}
+								<div class="help-block with-errors"></div>
 							</div>
 							<div class="form-group">
 								<label for="exampleInputPassword1" class="text-muted">Repetir Contrase&ntilde;a:</label>
-								<input type="password" class="form-control" id="exampleInputPassword1">
+								{{form.password_confirm}}
+								<div class="help-block with-errors">{{form.password_confirm.errors}}</div>
 							</div>
 							<div class="pull-right" style="margin-top: 20%;">
 								<a href="#" class="btn btn-danger">Cancelar</a>
@@ -87,4 +99,40 @@
 	</div>
 
 </div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ block.super }}
+
+	<script type="application/javascript">
+
+		$(function(){
+			/********** PARA CARGAR LOS MUNICIPIOS POR ESTADO *************/
+			$('#id_estado').change(function(){
+				value = $(this).val();
+				if(value.length > 0){
+					// LLamada AJAX para obtener los municipios
+					$.ajax({
+						method: 'GET',
+						url: '/sgt/obtener-municipios/'+value,
+						dataType: "json"
+					})
+					.done(function(data){
+						if(!data.hasOwnProperty('error_msg')){
+							// Se reinicia el Select de municipios
+							$('#id_municipio').html('<option value="">---------</option>');
+							$.each(data, function(key, value){
+								$('#id_municipio').append('<option value="'+value.pk+'">'+value.fields.nombre+'</option>');
+							});
+						}
+						else{
+							console.lg('Error');
+						}
+					});
+				}
+			});
+		});
+
+	</script>
+
 {% endblock %}
