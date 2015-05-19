@@ -1,1 +1,1 @@
-[{"fields": {"descripcion": null, "nombre": "Administrador", "codigo": "admin", "permisos": []}, "model": "cuentas.rolsgt", "pk": 1}]
+[{"fields": {"descripcion": null, "nombre": "Administrador", "codigo": "admin", "permisos": []}, "model": "cuentas.rolsgt", "pk": 1}, {"fields": {"descripcion": null, "nombre": "Cliente", "codigo": "cliente", "permisos": []}, "model": "cuentas.rolsgt", "pk": 2}]

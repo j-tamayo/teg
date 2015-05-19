@@ -26,11 +26,9 @@ class AutenticacionUsuarioForm(forms.Form):
 	)
 
 	def clean(self):
-		print self.cleaned_data
 		correo = self.cleaned_data.get('correo')
 		password = self.cleaned_data.get('password')
 		usuario = authenticate(correo=correo, password=password)
-		# print usuario
 		if not usuario:
 			msg = u'La combinación correo electrónico y contraseña son incorrectos.'
 			raise forms.ValidationError(msg)
@@ -82,9 +80,9 @@ class RegistroForm(forms.Form):
 		widget = forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
 	)
 
-	direccion = forms.ChoiceField(
+	direccion = forms.CharField(
 		label = u'Dirección',
-		widget = forms.Textarea(attrs={'class':'form-control'})
+		widget = forms.Textarea(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
 	)
 
 	correo = forms.EmailField(

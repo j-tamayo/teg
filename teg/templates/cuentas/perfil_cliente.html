@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 
 {% block main_content %}
+{% include 'cuentas/modales_usuario.html' %}
 
 <header class="header" style="margin-top: 3%; margin-bottom: 2%;">
 	<div class="row">
 		<div class="col-xs-7 text-success text-center">
-			<h1>Bienvenido "Nombre de Usuario"</h1>
+			<h1>Bienvenido {{ usuario.nombres }}</h1>
 		</div>
 		<div class="col-xs-5 pull-right">
 			<img src="../../static/img_generic/car-icon.png" class="img-rounded" style="width: 40%; margin-left:50%">
@@ -22,29 +23,30 @@
 			<li role="presentation">
 				<a class="dropdown-toggle" data-toggle="dropdown" href="#Opciones" role="button" aria-expanded="false">Opciones<span class="caret"></span></a>
 			    <ul class="dropdown-menu" role="menu">
-					<li><a href="#">Action</a></li>
-		            <li><a href="#">Another action</a></li>
-		            <li><a href="#">Something else here</a></li>
+					<li><a href="#">Opci&oacute;n1</a></li>
+		            <li><a href="#">Opci&oacute;n2</a></li>
+		            <li><a href="#">Opci&oacute;n3</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#">Separated link</a></li>
+		            <li><a href="#">Opci&oacute;n4</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#">One more separated link</a></li>
+		            <li><a href="{% url 'cuentas_logout' %}">Salir</a></li>
 			    </ul>
 			</li>
 		</ul>
+
 		<div class="tab-content" style="margin-top: 3%;">
 		    <div role="tabpanel" class="tab-pane active" id="Perfil">
 		    	<div class="row">
 					<div class="col-xs-5 col-xs-offset-1">
 						<h3 class="text-success">Informaci&oacute;n del usuario</h3>
 						<br>
-						<p>Nombre: "Nombre Usuario"</p>
-						<p>Apellido: "Apellido Usuario"</p>
-						<p>C&eacute;dula: V-12345678</p>
-						<p>Estado: "Estado Usuario"</p>
-						<p>Ciudad: "Cuidad Usuario"</p>
-						<p>Dirección: "Direcci&oacute;n Usuario"</p>
-						<p>Correo: usuario@gmail.com</p>		
+						<p>Nombre: {{ usuario.nombres }}</p>
+						<p>Apellido: {{ usuario.apellidos }}</p>
+						<p>C&eacute;dula: {{ usuario.cedula }}</p>
+						<p>Estado: {{ usuario.municipio.estado }}</p>
+						<p>Municipio: {{ usuario.municipio }}</p>
+						<p>Dirección: {{ usuario.direccion }}</p>
+						<p>Correo: {{ usuario.correo }}</p>		
 					</div>
 					<div class="col-xs-1">
 						<div style="border-left:1px solid #000;height:500px"></div>
@@ -59,11 +61,93 @@
 					</div>  
 		    	</div>
 		    </div>
+
 		    <div role="tabpanel" class="tab-pane" id="Solicitudes">
-		    	<h3 class="text-success">Solicitudes</h3>
+		    	<div class="row">
+					<div class="col-xs-3 col-xs-offset-1">
+		    			<h3 class="text-success">Solicitudes Enviadas</h3>
+		    		</div>
+		    		<div class="col-xs-5 col-xs-offset-3">
+		    			<br>
+						<a class="btn btn-danger" data-toggle="modal" data-target="#Reclamo">Presentar Reclamo</a>
+						<a class="btn btn-primary" data-toggle="modal" data-target="#Solicitud">Crear Solicitud</a>
+						<a class="btn btn-success" data-toggle="modal" data-target="#Buscar">Buscar</a>
+		    		</div>
+		    	</div>
+		    	<div class="row">
+		    		<br>
+					<div class="col-xs-10 col-xs-offset-1">
+		    			<table class="table table-bordered">
+							<tr>
+							 	<th style="width:30%">Tipo Solicitud</th>
+								<th style="width:20%">N&uacute;mero de Orden</th>
+								<th style="width:30%">Estado</th>
+								<th style="width:20%">Opciones</th>
+							</tr>
+							<tr>
+								<td>Suscripci&oacute;n</td>
+								<td>SSI-1234</td>
+								<td>Realizada</td>
+								<td>...</td>
+							</tr>
+							<tr>
+								<td>Reclamo</td>
+								<td>SRI-4567</td>
+								<td>En proceso</td>
+								<td>...</td>
+							</tr>
+							<tr>
+								<td>Reinspecci&oacute;n</td>
+								<td>SRII-3216</td>
+								<td>No procesada</td>
+								<td>...</td>
+							</tr>
+						</table>
+		    		</div>
+		    	</div>
 		    </div>
+
 		    <div role="tabpanel" class="tab-pane" id="Notificaciones">
-		    	<h3 class="text-success">Notificaciones</h3>
+		    	<div class="row">
+					<div class="col-xs-5 col-xs-offset-1">
+		    			<h3 class="text-success">Notificaciones Recibidas</h3>
+		    		</div>
+		    		<div class="col-xs-2 col-xs-offset-4">
+		    			<br>
+						<a class="btn btn-success" data-toggle="modal" data-target="#Buscar">Buscar</a>
+		    		</div>
+		    	</div>
+		    	<div class="row">
+		    		<br>
+					<div class="col-xs-10 col-xs-offset-1">
+		    			<table class="table table-bordered">
+							<tr>
+							 	<th style="width:30%">Tipo Solicitud</th>
+								<th style="width:20%">N&uacute;mero de Orden</th>
+								<th style="width:30%">Estado</th>
+								<th style="width:20%">Opciones</th>
+							</tr>
+							<tr>
+								<td>Suscripci&oacute;n</td>
+								<td>SSI-1234</td>
+								<td>Realizada</td>
+								<td>...</td>
+							</tr>
+							<tr>
+								<td>Reclamo</td>
+								<td>SRI-4567</td>
+								<td>En proceso</td>
+								<td>...</td>
+							</tr>
+							<tr>
+								<td>Reinspecci&oacute;n</td>
+								<td>SRII-3216</td>
+								<td>No procesada</td>
+								<td>...</td>
+							</tr>
+						</table>
+		    		</div>
+		    	</div>
 		    </div>
 	  	</div>
 	 </div>
