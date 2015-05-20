@@ -7,6 +7,7 @@ from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from datetime import datetime
 from cuentas.forms import *
 from cuentas.models import *
 
@@ -49,9 +50,23 @@ class Registro(View):
             registro = form.cleaned_data
             rol_cliente = RolSgt.objects.get(codigo="cliente")
 
-            usuario = SgtUsuario(nombres=registro['nombres'],apellidos=registro['apellidos'],cedula=registro['cedula'],
-                municipio=registro['municipio'],direccion=registro['direccion'],codigo_postal=registro['codigo_postal'],
-                correo=registro['correo'],fecha_nacimiento="1991-01-01",sexo="1",rol=rol_cliente)
+            #registro['fecha_nacimiento'] = datetime.strptime(registro['fecha_nacimiento'],'%d/%m/%Y')
+            # registro['fecha_nacimiento'] = registro['fecha_nacimiento'].strftime('%Y-%m-%d')
+            # print registro['fecha_nacimiento']
+
+            usuario = SgtUsuario(
+                nombres = registro['nombres'],
+                apellidos = registro['apellidos'],
+                cedula = registro['cedula'],
+                municipio = registro['municipio'],
+                direccion = registro['direccion'],
+                codigo_postal = registro['codigo_postal'],
+                correo = registro['correo'],
+                fecha_nacimiento = registro['fecha_nacimiento'],
+                telefono_local = registro['telefono_local'],
+                telefono_movil = registro['telefono_movil'],
+                sexo = registro['sexo'],
+                rol = rol_cliente)
             
             usuario.set_password(registro['password'])
             usuario.save()

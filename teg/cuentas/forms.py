@@ -48,6 +48,8 @@ class AutenticacionUsuarioForm(forms.Form):
 
 class RegistroForm(forms.Form):
 	""" Formulario para el registro de usuarios """
+	sex_choices = [('0','Masculino'),('1','Femenino')]
+
 	nombres = forms.CharField(
 		label = u'Nombre',
 		widget=forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
@@ -100,6 +102,27 @@ class RegistroForm(forms.Form):
 		widget = forms.PasswordInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
 	)
 
+	sexo = forms.ChoiceField(
+		label  = u'Sexo',
+		choices = sex_choices,
+		widget = forms.RadioSelect(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
+	)
+
+	telefono_local = forms.CharField(
+		label = u'Teléfono local',
+		widget = forms.TextInput(attrs={'class':'form-control'})
+	)
+
+	telefono_movil = forms.CharField(
+		label = u'Teléfono móvil',
+		widget = forms.TextInput(attrs={'class':'form-control'})
+	)
+
+	fecha_nacimiento = forms.DateField(
+		label = u'Fecha de nacimiento',
+		widget = forms.TextInput(attrs={'class':'col-xs-10','required':'','readonly':'','data-error':'Este campo es obligatorio'})
+	)
+
 	def clean_password_confirm(self):
 		password1 = self.cleaned_data.get('password')
 		password2 = self.cleaned_data.get('password_confirm')
@@ -111,6 +134,7 @@ class RegistroForm(forms.Form):
 			raise forms.ValidationError(u'Las contraseñas deben conincidir')
 
 		return password2
+
 
 class SolicitudInspeccionForm(forms.Form):
 	""" Formulario para el registro de usuarios """
