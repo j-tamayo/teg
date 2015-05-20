@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.auth import authenticate
-from sgt.models import Estado, Municipio
+from sgt.models import Estado, Municipio, TipoInspeccion
 
 class AutenticacionUsuarioForm(forms.Form):
 	""" Formulario para la autenticación de los usuarios """
@@ -111,3 +111,12 @@ class RegistroForm(forms.Form):
 			raise forms.ValidationError(u'Las contraseñas deben conincidir')
 
 		return password2
+
+class SolicitudInspeccionForm(forms.Form):
+	""" Formulario para el registro de usuarios """
+	tipo_solicitud = forms.ModelChoiceField(
+		label = u'Tipo de solicitud',
+		queryset = TipoInspeccion.objects.all().order_by('nombre'),
+		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
+	)
+

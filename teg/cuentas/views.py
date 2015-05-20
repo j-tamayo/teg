@@ -87,9 +87,13 @@ class DetectarUsuario(LoginRequiredMixin, View):
 
         if usuario.is_authenticated():
             request.session['usuario_id'] = usuario.id
+            tipo_solicitudes = TipoInspeccion.objects.all()
+            form = SolicitudInspeccionForm(request.POST)
             
             context = {
                 'usuario': usuario,
+                'tipo_solicitudes': tipo_solicitudes,
+                'form': form
             }
 
             return render(request,'cuentas/perfil_cliente.html', context)		
