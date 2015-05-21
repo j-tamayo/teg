@@ -106,6 +106,10 @@ class SgtUsuario(AbstractBaseUser):
 		# Simplest possible answer: Yes, always
 		return True
 
+	def es_cliente(self):
+		rol_cliente = RolSgt.objects.filter(codigo =  'cliente').first()
+		return self.rol == rol_cliente
+
 	def __unicode__(self):
 		return u'%s - %s' % (self.correo, self.cedula)
 

@@ -8,8 +8,8 @@ then
 fi
 
 # Sinconizamos y migramos la BD
-echo -e "\n\n- Haciendo las migraciones para la base de datos..."
-/usr/bin/env python2.7 manage.py makemigrations
+# echo -e "\n\n- Haciendo las migraciones para la base de datos..."
+# /usr/bin/env python2.7 manage.py makemigrations
 
 # Sinconizamos y migramos la BD
 echo -e "\n\n- Aplicando las migraciones para la base de datos..."
@@ -26,3 +26,12 @@ echo -e "\n\n- Cargando fixtures: Sgt - Estado"
 
 echo -e "\n\n- Cargando fixtures: Sgt - Municipio"
 /usr/bin/env python2.7 manage.py loaddata fixtures/venezuela_municipios.json
+
+echo -e "\n\n- Cargando fixtures: Sgt - TipoInspeccion"
+/usr/bin/env python2.7 manage.py loaddata fixtures/sgt_tipoinspeccion.json
+
+echo -e "\n\n- Cargando fixtures: Sgt - Perito"
+/usr/bin/env python2.7 manage.py loaddata fixtures/sgt_perito.json
+
+echo -e "\n\n- Cargando fixtures: Sgt - CentroInspeccion"
+/usr/bin/env python2.7 manage.py loaddata fixtures/sgt_centroinspeccion.json

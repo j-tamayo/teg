@@ -4,7 +4,7 @@ from braces.views import LoginRequiredMixin
 from django.views.generic import View, FormView
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from datetime import datetime
@@ -89,7 +89,7 @@ class Registro(View):
 class Salir(View):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated():
-            del request.session['usuario_id']
+            #del request.session['usuario_id']
             
             logout(request)
             mensaje = u'¡Ha cerrado sesión correctamente!'
@@ -101,22 +101,16 @@ class Salir(View):
 class DetectarUsuario(LoginRequiredMixin, View):
     def dispatch(self, request, *args, **kwargs):
         usuario = request.user
-
+        
         if usuario.is_authenticated():
-            request.session['usuario_id'] = usuario.id
-            tipo_solicitudes = TipoInspeccion.objects.all()
-            form = SolicitudInspeccionForm(request.POST)
-            
-            context = {
-                'usuario': usuario,
-                'tipo_solicitudes': tipo_solicitudes,
-                'form': form
-            }
+            if usuario.es_cliente():
+                return redirect(reverse_lazy('bandeja_cliente'))
 
-            return render(request,'cuentas/perfil_cliente.html', context)		
+            else:
+                return HttpResponse('Admin')		
             #pass
 
         elif usuario.is_authenticated() and not usuario.is_active:
-            pass
+            print "NO ACTIVE"
 
         return redirect(reverse_lazy('cuentas_logout'))

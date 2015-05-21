@@ -12,4 +12,10 @@ urlpatterns = \
             name='obtener_municipios'
         ),
 
+        url(
+            r'^bandeja-cliente$',
+            views.BandejaCliente.as_view(),
+            name='bandeja_cliente'
+        ),
+
 )
