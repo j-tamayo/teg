@@ -137,10 +137,14 @@ class RegistroForm(forms.Form):
 
 
 class SolicitudInspeccionForm(forms.Form):
-	""" Formulario para el registro de usuarios """
+	""" Formulario para la solicitud de inspecciones """
 	tipo_solicitud = forms.ModelChoiceField(
 		label = u'Tipo de solicitud',
 		queryset = TipoInspeccion.objects.all().order_by('nombre'),
 		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
 	)
 
+	fecha_asistencia = forms.DateField(
+		label = u'Fecha de nacimiento',
+		widget = forms.TextInput(attrs={'class':'col-xs-10','required':'','readonly':'','data-error':'Este campo es obligatorio'})
+	)

@@ -22,6 +22,8 @@ class Municipio(models.Model):
 class CentroInspeccion(models.Model):
 	nombre = models.CharField(max_length=255)
 	direccion = models.TextField()
+	capacidad = models.IntegerField(default=0)
+	tiempo_atencion = models.IntegerField(default=0)
 	municipio = models.ForeignKey(Municipio)
 	peritos = models.ManyToManyField('Perito')
 	numero_orden = models.ManyToManyField('NumeroOrden', through='ColaAtencion')

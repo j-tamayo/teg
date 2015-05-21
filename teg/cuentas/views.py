@@ -89,6 +89,8 @@ class Registro(View):
 class Salir(View):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated():
+            del request.session['usuario_id']
+            
             logout(request)
             mensaje = u'¡Ha cerrado sesión correctamente!'
             messages.info(self.request, mensaje)

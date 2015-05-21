@@ -99,7 +99,7 @@
 								<div class="help-block with-errors"></div>
 							</div>
 							<div class="form-group">
-								<label for="exampleInputEmail1" class="text-muted">Fecha de nacimiento:</label>
+								<label for="id_fecha_nacimiento" class="text-muted">Fecha de nacimiento:</label>
 								<div class="input-append date">
 									{{form.fecha_nacimiento}}
 									<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
@@ -117,7 +117,7 @@
 								<div class="help-block with-errors">{{form.password_confirm.errors}}</div>
 							</div>
 							<div class="pull-right" style="margin-top: 20%;">
-								<a href="#" class="btn btn-danger">Cancelar</a>
+								<a href="{% url 'cuentas_login' %}" class="btn btn-danger">Cancelar</a>
 								<button type="submit" class="btn btn-primary">Guardar</button>
 							</div>
 						</div>
@@ -125,11 +125,7 @@
 				</form>
 			</div>
 		</div>
-
-
-
 	</div>
-
 </div>
 {% endblock %}
 
@@ -163,15 +159,6 @@
 					});
 				}
 			});
-
-			// Activar datepickers
-			$('.date').datepicker({
-			  autoclose: true,
-			  clearBtn: true,
-			  language: "es",
-			  startView: 1,
-			});
-
 		});
 
 	</script>
