@@ -74,16 +74,18 @@ class Registro(View):
             return HttpResponseRedirect(reverse_lazy('cuentas_login'))
 
     	else:
-    		municipios = Municipio.objects.filter(estado__id = request.POST.get('estado', None))
-    		mun_sel = request.POST.get('municipio', None)
-    		if mun_sel:
-    			mun_sel = int(mun_sel)
-    		context = {
-    			'form': form,
-    			'municipios': municipios,
-    			'mun_sel': mun_sel
-    		}
-    		return render(request,'cuentas/registro.html', context)
+            print form.errors
+            municipios = Municipio.objects.filter(estado__id = request.POST.get('estado', None))
+            mun_sel = request.POST.get('municipio', None)
+            if mun_sel:
+                mun_sel = int(mun_sel)
+            
+            context = {
+                'form': form,
+                'municipios': municipios,
+                'mun_sel': mun_sel
+            }
+            return render(request,'cuentas/registro.html', context)
 
 
 class Salir(View):
