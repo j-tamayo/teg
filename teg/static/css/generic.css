@@ -15,3 +15,18 @@
 	position: absolute; /* Break it out of the regular flow */
 	top: 0; left: 0; bottom: 0; right: 0; /* Set the bounds in which to center it, relative to its parent/container */
 }
+
+.panel-dashboard-gray {
+    border-color: #dbd6d6;
+}
+
+.panel-dashboard-gray > .panel-heading {
+    background-color: #f5f5f5;
+    border-color: #dbd6d6;
+}
+
+.btn.btn-flat {
+    border-radius: 0;
+    border-width: 1px;
+    box-shadow: none;
+}

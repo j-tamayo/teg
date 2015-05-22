@@ -42,6 +42,32 @@ class ObtenerCentroInspeccion(View):
 		"""" Vista que retorna en formato JSON los centros de inspección dependiendo del municipio_id recibido """
 
 
+class CrearSolicitudInspeccion(View):
+	def dispatch(self, *args, **kwargs):
+		return super(CrearSolicitudInspeccion, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		estado_id = request.GET.get('estado', None)
+		tipo_solicitudes = TipoInspeccion.objects.all()
+		centros = CentroInspeccion.objects.all()
+		municipios = Municipio.objects.filter(estado__id = estado_id)
+
+		if estado_id:
+			# pass
+			centros = centros.filter(municipio__estado__id = estado_id)
+
+		form = SolicitudInspeccionForm(request.GET)
+		
+		context = {
+		    'centros': centros,
+		    'form': form,
+		    'municipios': municipios,
+		    'tipo_solicitudes': tipo_solicitudes,
+		}
+
+		return render(request,'crear_solicitud.html', context)
+
+
 class BandejaCliente(View):
 	def dispatch(self, *args, **kwargs):
 		return super(BandejaCliente, self).dispatch(*args, **kwargs)

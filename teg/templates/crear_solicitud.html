@@ -1,0 +1,78 @@
+<br>
+<div class="panel panel-dashboard-gray">
+	
+	<div class="panel-heading">
+		<h4>Crear solicitud</h4>
+	</div>
+
+	<div class="panel-body">
+		
+		<form id="crear_solicitud_form" action="" method="POST">
+		<br>
+		<div class="row">
+
+			<div class="col-xs-3">
+				<label class="text-muted">Tipo de solicitud:</label>
+				{{form.tipo_solicitud}}
+			</div>
+
+			<div class="col-xs-3">
+				<label class="text-muted">Estado:</label>
+				{{form.estado}}
+			</div>
+
+			<div class="col-xs-3">
+				<label class="text-muted">Municipio:</label>
+				<select id="select_solicitud_municipio" name="municipio" class="form-control" required="" data-error="Este campo es obligatorio">
+				  <option value="">---------</option>
+				  {% for m in municipios %}
+				  <option value="{{m.pk}}" {% ifequal m.pk mun_sel %}selected{% endifequal %}>{{m.nombre}}</option>
+				  {% endfor %}
+				</select>
+			</div>
+
+			<div class="col-xs-3">
+				<label class="text-muted">Fecha de asistencia:</label>
+				<div class="input-append date">
+				  {{form.fecha_asistencia}}
+				  <span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
+				</div>
+			</div>
+
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-xs-12">
+			<table class="table table-striped">
+
+				<thead>
+					<tr>
+						<th>Nombre</th>
+						<th>Direcci&oacute;n</th>
+						<th>Disponibilidad</th>
+						<th>Opci&oacute;n</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for c in centros %}
+					<tr>
+						<td>{{c.nombre}}</td>
+						<td>{{c.direccion}}</td>
+						<td>1</td>
+						<td>
+							<input name="centro_inspeccion" value="{{c.pk}}" type="radio" >
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+
+			</table>
+			</div>
+		</div>
+
+		</form>
+
+	</div>
+
+
+</div>

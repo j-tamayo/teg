@@ -18,4 +18,10 @@ urlpatterns = \
             name='bandeja_cliente'
         ),
 
+        url(
+            r'^crear-solicitud$',
+            views.CrearSolicitudInspeccion.as_view(),
+            name='crear_solicitud'
+        ),
+
 )
