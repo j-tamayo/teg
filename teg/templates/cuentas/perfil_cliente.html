@@ -69,14 +69,14 @@
 		    <div role="tabpanel" class="tab-pane" id="Solicitudes">
 
 		    	<div class="row">
-					<div class="col-xs-3">
+					<div class="col-xs-3 col-xs-offset-1">
 		    			<h3 class="text-success">Solicitudes Enviadas</h3>
 		    		</div>
-		    		<div class="col-xs-5 col-xs-offset-4">
+		    		<div class="col-xs-5 col-xs-offset-3">
 		    			<br>
-						<a class="btn btn-danger col-xs-4" data-toggle="modal" data-target="#Reclamo">Presentar Reclamo</a>
-						<a class="btn btn-primary col-xs-4" id="crear_solicitud">Crear Solicitud</a>
-						<a class="btn btn-success col-xs-4" data-toggle="modal" data-target="#Buscar">Buscar</a>
+						<a class="btn btn-danger" data-toggle="modal" data-target="#Reclamo">Presentar Reclamo</a>
+						<a class="btn btn-primary" id="crear_solicitud">Crear Solicitud</a>
+						<a class="btn btn-success" data-toggle="modal" data-target="#Buscar">Buscar</a>
 		    		</div>
 		    	</div>
 		    	<div id="contenedor_solicitudes">
@@ -120,7 +120,7 @@
 					    	<img src="{% static "img/ajax-loader.gif" %}" alt="Cargando Formulario..."/>
 					    </center>
 					</div>
-					<div id="contenido"></div>
+					<div id="contenido" class="row"></div>
 				</div>
 
 		    </div>
@@ -180,7 +180,7 @@
 
 		$(function(){
 			/********** PARA CARGAR LA INTERFAZ DE LA CREACIÓN DE SOLICITUD *************/
-			$('#crear_solicitud').click(function(){
+			$(document).on('click', '#crear_solicitud', function(){
 				$('#contenedor_solicitudes').hide();
 				$('#contenedor_crear_solicitud').show();
 				$.ajax({
@@ -192,18 +192,29 @@
 					dataType: 'html',
 					complete: function(){
 					  $('#spinner_form').hide();
+					  $('#crear_solicitud').html('Ver Solicitudes');
+					  $('#crear_solicitud').attr('id','ver_solicitudes');
 					}
 				})
 				.done(function(data){
 					$('#contenido').html(data);
+					init_dates($('#fecha_asistencia'));
 				})
 
 			});
 			/********** END *************/
 
+			$(document).on('click', '#ver_solicitudes', function(){
+				$('#contenedor_solicitudes').show();
+				$('#contenedor_crear_solicitud').hide();
+				$('#ver_solicitudes').html('Crear Solicitud');
+				$('#ver_solicitudes').attr('id','crear_solicitud');
+			});
+
 			/********** PARA CARGAR LOS MUNICIPIOS POR ESTADO EN EL FORMULARIO DE CREACION DE SOLICITUD *************/
-			$('#select_solicitud_estado').change(function(){
+			$(document).on('change', '#select_solicitud_estado', function(){
 				value = $(this).val();
+				
 				if(value.length > 0){
 					// LLamada AJAX para obtener los municipios
 					$.ajax({
@@ -218,6 +229,7 @@
 						if(!data.hasOwnProperty('error_msg')){
 							// Se reinicia el Select de municipios
 							$('#select_solicitud_municipio').html('<option value="">---------</option>');
+							
 							$.each(data, function(key, value){
 								$('#select_solicitud_municipio').append('<option value="'+value.pk+'">'+value.fields.nombre+'</option>');
 							});
@@ -231,7 +243,8 @@
 			/********** END *************/
 
 			/********** PARA CARGAR LOS CENTROS DE INSPECCION POR MUNICIPIO EN EL FORMULARIO DE CREACION DE SOLICITUD *************/
-			$('#select_solicitud_municipio').change(function(){
+			//$('#select_solicitud_municipio').change(function(){
+			$(document).on('change', '#select_solicitud_municipio', function(){
 				value = $(this).val();
 				if(value.length > 0){
 					// Llamada AJAX para obtener los centros de inspección
@@ -242,10 +255,15 @@
 					})
 					.done(function(data){
 						if(!data.hasOwnProperty('error_msg')){
-							// Se reinicia el Select de municipios
-							$('#id_municipio').html('<option value="">---------</option>');
+							// Se reinicia los centros de inspeccion
+							$('#tabla_centros_insp > tbody').html('');
 							$.each(data, function(key, value){
-								$('#id_municipio').append('<option value="'+value.pk+'">'+value.fields.nombre+'</option>');
+								$('#tabla_centros_insp > tbody').append('<tr id="'+value.pk+'">\
+									<td>'+value.fields.nombre+'</td>\
+									<td>'+value.fields.direccion+'</td>\
+									<td>1</td>\
+									<td><input name="centro_inspeccion" value="'+value.pk+'" type="radio" ></td>\
+									</tr>');
 							});
 						}
 						else{

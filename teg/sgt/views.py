@@ -13,7 +13,6 @@ class ObtenerMunicipios(View):
 		estado_id = kwargs['estado_id']
 		if estado_id:
 			municipios = Municipio.objects.filter(estado__id = estado_id)
-
 			# Para obtener los municipios que tengan asociado al menos un centro de inspeccion
 			if request.GET.get('con_centro', None):
 				centros = CentroInspeccion.objects.filter(municipio__estado__id = estado_id)
@@ -40,7 +39,25 @@ class ObtenerMunicipios(View):
 class ObtenerCentroInspeccion(View):
 	def get(self, request, *args, **kwargs):
 		"""" Vista que retorna en formato JSON los centros de inspección dependiendo del municipio_id recibido """
+		municipio_id = kwargs['municipio_id']
+		if municipio_id:
+			centros = CentroInspeccion.objects.filter(municipio__id = municipio_id)
+			centros = serializers.serialize('json', centros)
+			
+			return HttpResponse(
+				centros,
+				content_type="application/json"
+			)
 
+		else:
+			respuesta = {
+				'msg_error': 'No se suministró el id del estado'
+			}
+
+			return HttpResponse(
+			    json.dumps(respuesta),
+			    content_type="application/json"
+			)
 
 class CrearSolicitudInspeccion(View):
 	def dispatch(self, *args, **kwargs):
@@ -53,11 +70,12 @@ class CrearSolicitudInspeccion(View):
 		municipios = Municipio.objects.filter(estado__id = estado_id)
 
 		if estado_id:
-			# pass
-			centros = centros.filter(municipio__estado__id = estado_id)
+			aux = centros.filter(municipio__estado__id = estado_id)
+			if aux:
+				centros = aux
 
 		form = SolicitudInspeccionForm(request.GET)
-		
+
 		context = {
 		    'centros': centros,
 		    'form': form,

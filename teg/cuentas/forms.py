@@ -145,6 +145,12 @@ class SolicitudInspeccionForm(forms.Form):
 	)
 
 	fecha_asistencia = forms.DateField(
-		label = u'Fecha de nacimiento',
+		label = u'Fecha de asistencia',
 		widget = forms.TextInput(attrs={'class':'col-xs-10','required':'','readonly':'','data-error':'Este campo es obligatorio'})
+	)
+
+	estado = forms.ModelChoiceField(
+		label = u'Estado',
+		queryset = Estado.objects.all().order_by('nombre'),
+		widget = forms.Select(attrs={'id':'select_solicitud_estado','class':'form-control','required': '','data-error':'Este campo es obligatorio'})
 	)

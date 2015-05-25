@@ -13,6 +13,12 @@ urlpatterns = \
         ),
 
         url(
+            r'^obtener-centros/(?P<municipio_id>\d+)$',
+            views.ObtenerCentroInspeccion.as_view(),
+            name='obtener_centros'
+        ),
+
+        url(
             r'^bandeja-cliente$',
             views.BandejaCliente.as_view(),
             name='bandeja_cliente'
