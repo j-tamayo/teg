@@ -59,6 +59,7 @@ class ObtenerCentroInspeccion(View):
 			    content_type="application/json"
 			)
 
+
 class CrearSolicitudInspeccion(View):
 	def dispatch(self, *args, **kwargs):
 		return super(CrearSolicitudInspeccion, self).dispatch(*args, **kwargs)
@@ -74,6 +75,24 @@ class CrearSolicitudInspeccion(View):
 			if aux:
 				centros = aux
 
+		#Para calcular la disponibilidad de cada centro
+		for c in centros:
+			en_cola = ColaAtencion.objects.filter(centro_inspeccion = c).count()
+			c.disponibilidad = c.capacidad - en_cola
+			# Para calcular la disponibilidad (Alta, media, baja y muy baja)
+			if c.disponibilidad > (3 * c.capacidad)/4:
+				c.etiqueta = 'Alta'
+				c.etiqueta_clase = 'success'
+			elif c.disponibilidad > (2 * c.capacidad)/4:
+				c.etiqueta = 'Media'
+				c.etiqueta_clase = 'warning'
+			elif c.disponibilidad > (1 * c.capacidad)/4:
+				c.etiqueta = 'Baja'
+				c.etiqueta_clase = 'low'
+			else:
+				c.etiqueta = 'Muy baja'
+				c.etiqueta_clase = 'danger'
+
 		form = SolicitudInspeccionForm(request.GET)
 
 		context = {
@@ -84,6 +103,12 @@ class CrearSolicitudInspeccion(View):
 		}
 
 		return render(request,'crear_solicitud.html', context)
+
+	def post(self, request, *args, **kwargs):
+		form = SolicitudInspeccionForm(request.GET)
+		if form.is_valid():
+			datos = form.cleaned_data
+			
 
 
 class BandejaCliente(View):

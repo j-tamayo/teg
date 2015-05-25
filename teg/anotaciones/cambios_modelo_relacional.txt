@@ -8,3 +8,7 @@ La relación 1 a 1 entre CentroInspeccion y NumeroOrden ya no existe porque ya e
 
 Tabla NumeroOrden:
 	- Se agregó la clave foránea hacia SolicitudInspeccion
+
+Tabla CentroInspeccion:
+	- Se agregó el campo codigo
+	- Se agregó el campo telefonos

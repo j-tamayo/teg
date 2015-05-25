@@ -14,7 +14,7 @@ class SolicitudInspeccionForm(forms.Form):
 	)
 
 	fecha_asistencia = forms.DateField(
-		label = u'Fecha de nacimiento',
+		label = u'Fecha de solicitud',
 		widget = forms.TextInput(attrs={'class':'col-xs-10','required':'','readonly':'','data-error':'Este campo es obligatorio'})
 	)
 
@@ -27,7 +27,7 @@ class SolicitudInspeccionForm(forms.Form):
 	municipio = forms.ModelChoiceField(
 		label = u'Municipio',
 		queryset = Municipio.objects.all(),
-		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
+		widget = forms.Select(attrs={'class':'form-control'})
 	)
 
 	centro_inspeccion = forms.ModelChoiceField(

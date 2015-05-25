@@ -30,3 +30,7 @@
     border-width: 1px;
     box-shadow: none;
 }
+
+.label-low {
+	background-color: #FF7454;
+}

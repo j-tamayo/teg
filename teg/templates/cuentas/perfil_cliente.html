@@ -199,6 +199,7 @@
 				.done(function(data){
 					$('#contenido').html(data);
 					init_dates($('#fecha_asistencia'));
+					$('#crear_solicitud_form').validator();
 				})
 
 			});
