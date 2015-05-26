@@ -61,7 +61,7 @@
 							<td>{{c.direccion}}</td>
 							<td>{{c.disponibilidad}} <span class=" label label-{{c.etiqueta_clase}}">{{c.etiqueta}}</span></td>
 							<td>
-								<input name="centro_inspeccion" value="{{c.pk}}" type="radio" required="">
+								<input name="centro_inspeccion" value="{{c.pk}}" type="radio" required="" data-error="Este campo es obligatorio">
 							</td>
 						</tr>
 						{% endfor %}

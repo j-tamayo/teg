@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.auth import authenticate
-from sgt.models import Estado, Municipio, TipoInspeccion
+from sgt.models import CentroInspeccion, Estado, Municipio, TipoInspeccion
 
 class AutenticacionUsuarioForm(forms.Form):
 	""" Formulario para la autenticación de los usuarios """
@@ -144,13 +144,24 @@ class SolicitudInspeccionForm(forms.Form):
 		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
 	)
 
+	estado = forms.ModelChoiceField(
+		label = u'Estado',
+		queryset = Estado.objects.all().order_by('nombre'),
+		widget = forms.Select(attrs={'id':'select_solicitud_estado','class':'form-control','required': '','data-error':'Este campo es obligatorio'})
+	)
+
+	municipio = forms.ModelChoiceField(
+		label = u'Municipio',
+		queryset = Municipio.objects.all(),
+		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
+	)
+
 	fecha_asistencia = forms.DateField(
 		label = u'Fecha de asistencia',
 		widget = forms.TextInput(attrs={'class':'col-xs-10','required':'','readonly':'','data-error':'Este campo es obligatorio'})
 	)
 
-	estado = forms.ModelChoiceField(
-		label = u'Estado',
-		queryset = Estado.objects.all().order_by('nombre'),
-		widget = forms.Select(attrs={'id':'select_solicitud_estado','class':'form-control','required': '','data-error':'Este campo es obligatorio'})
+	centros_inspeccion = forms.ChoiceField(
+		choices = CentroInspeccion.objects.all(),
+		widget = forms.RadioSelect(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
 	)

@@ -6,6 +6,8 @@ from django.views.generic import View
 from sgt.models import *
 from sgt.forms import *
 
+import json
+
 # Create your views here.
 class ObtenerMunicipios(View):
 	def get(self, request, *args, **kwargs):
@@ -42,8 +44,29 @@ class ObtenerCentroInspeccion(View):
 		municipio_id = kwargs['municipio_id']
 		if municipio_id:
 			centros = CentroInspeccion.objects.filter(municipio__id = municipio_id)
-			centros = serializers.serialize('json', centros)
 			
+			#Para calcular la disponibilidad de cada centro
+			for c in centros:
+				en_cola = ColaAtencion.objects.filter(centro_inspeccion = c).count()
+				c.disponibilidad = c.capacidad - en_cola
+				# Para calcular la disponibilidad (Alta, media, baja y muy baja)
+				if c.disponibilidad > (3 * c.capacidad)/4:
+					c.etiqueta = 'Alta'
+					c.etiqueta_clase = 'success'
+				elif c.disponibilidad > (2 * c.capacidad)/4:
+					c.etiqueta = 'Media'
+					c.etiqueta_clase = 'warning'
+				elif c.disponibilidad > (1 * c.capacidad)/4:
+					c.etiqueta = 'Baja'
+					c.etiqueta_clase = 'low'
+				else:
+					c.etiqueta = 'Muy baja'
+					c.etiqueta_clase = 'danger'
+			
+			print centros 
+			centros = json.dumps(centros)
+			print centros 
+
 			return HttpResponse(
 				centros,
 				content_type="application/json"

@@ -260,10 +260,12 @@
 							$('#tabla_centros_insp > tbody').html('');
 							$.each(data, function(key, value){
 								$('#tabla_centros_insp > tbody').append('<tr id="'+value.pk+'">\
-									<td>'+value.fields.nombre+'</td>\
-									<td>'+value.fields.direccion+'</td>\
-									<td>1</td>\
-									<td><input name="centro_inspeccion" value="'+value.pk+'" type="radio" ></td>\
+									<td>'+value.nombre+'</td>\
+									<td>'+value.direccion+'</td>\
+									<td>'+value.disponibilidad+'\
+										<span class="label label-'+value.etiqueta_clase+'">'+value.etiqueta+'</span>\
+									</td>\
+									<td><input name="centro_inspeccion" value="'+value.pk+'" type="radio" required="" data-error="Este campo es obligatorio"></td>\
 									</tr>');
 							});
 						}
