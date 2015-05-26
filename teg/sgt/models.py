@@ -1,5 +1,6 @@
 from django.db import models
 from cuentas.models import SgtUsuario,RolSgt
+from datetime import datetime
 
 USER_MODEL = SgtUsuario
 
@@ -29,6 +30,8 @@ class CentroInspeccion(models.Model):
 	municipio = models.ForeignKey(Municipio)
 	peritos = models.ManyToManyField('Perito')
 	numero_orden = models.ManyToManyField('NumeroOrden', through='ColaAtencion')
+	hora_apertura = models.TimeField(blank=True, null=True)
+	hora_cierre = models.TimeField(blank=True, null=True)
 
 	def __unicode__(self):
 		return u'%s' % self.nombre

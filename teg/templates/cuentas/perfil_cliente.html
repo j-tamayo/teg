@@ -275,6 +275,32 @@
 					});
 				}
 			});
+			
+			$(document).on('click', '#mostrar_ticket', function(){
+				value = $('[name="centro_inspeccion"]').val();
+				if(value.length > 0){
+					// Llamada AJAX para obtener los centros de inspección
+					$.ajax({
+						method: 'GET',
+						url: '/sgt/obtener-numero/'+value,
+						dataType: "json"
+					})
+					.done(function(data){
+						if(!data.hasOwnProperty('error_msg')){
+							$('#t_nombre_centro').html('<p>'+data[0].nombre+'</p>');
+							//$('#t_fecha_asistencia').html('<p>'++'</p>');
+							$('#t_estado_centro').html('<p>'+data[0].estado+'</p>');
+							$('#t_municipio_centro').html('<p>'+data[0].municipio+'</p>');
+							//$('#t_numero_orden').html('<p>'++'</p>');
+							//$('#t_hora_asistencia').html('<p>'++'</p>');
+							$('#Ticket').modal('show'); 
+						}
+						else{
+							console.lg('Error');
+						}
+					});
+				}
+			});
 
 		});
 

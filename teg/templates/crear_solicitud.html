@@ -8,7 +8,7 @@
 
 		<div class="panel-body">
 			
-			<form id="crear_solicitud_form" action="" method="POST" data-toggle="validator">
+			<form id="crear_solicitud_form" action="{% url 'crear_solicitud' %}" method="POST" data-toggle="validator">
 			<br>
 			<div class="row">
 
@@ -73,7 +73,7 @@
 			<br>
 			<div class ="row">
 				<div class ="col-xs-3 col-xs-offset-9">
-					<button type="submit" class="btn btn-primary pull-right">Crear</button>
+					<a id="mostrar_ticket" class="btn btn-primary pull-right">Crear</a>
 				</div>
 			</div>
 

@@ -71,10 +71,8 @@ class ObtenerCentroInspeccion(View):
 					'etiqueta': c.etiqueta,
 					'etiqueta_clase': c.etiqueta_clase
 				})
-			
-			print centros 
+
 			centros = json.dumps(centros)
-			print "HEYY",centros 
 
 			return HttpResponse(
 				centros,
@@ -91,6 +89,46 @@ class ObtenerCentroInspeccion(View):
 			    content_type="application/json"
 			)
 
+class GenerarNumeroOrden(View):
+	def get(self, request, *args, **kwargs):
+		centro_id = kwargs['centro_id']
+		print centro_id
+		centro_inspeccion = CentroInspeccion.objects.get(id=centro_id)
+		
+		centro = []
+		en_cola = ColaAtencion.objects.filter(centro_inspeccion = centro_inspeccion).count()
+		centro_inspeccion.disponibilidad = centro_inspeccion.capacidad - en_cola
+		# Para calcular la disponibilidad (Alta, media, baja y muy baja)
+		if centro_inspeccion.disponibilidad > (3 * centro_inspeccion.capacidad)/4:
+			centro_inspeccion.etiqueta = 'Alta'
+			centro_inspeccion.etiqueta_clase = 'success'
+		elif centro_inspeccion.disponibilidad > (2 * centro_inspeccion.capacidad)/4:
+			centro_inspeccion.etiqueta = 'Media'
+			centro_inspeccion.etiqueta_clase = 'warning'
+		elif centro_inspeccion.disponibilidad > (1 * centro_inspeccion.capacidad)/4:
+			centro_inspeccion.etiqueta = 'Baja'
+			centro_inspeccion.etiqueta_clase = 'low'
+		else:
+			centro_inspeccion.etiqueta = 'Muy baja'
+			centro_inspeccion.etiqueta_clase = 'danger'
+
+		#Falta calcular Informacion para generar numero de orden y hora de asistencia...
+
+		centro.append({
+			'nombre': centro_inspeccion.nombre,
+			'estado': centro_inspeccion.municipio.estado.nombre,
+			'municipio': centro_inspeccion.municipio.nombre,
+			#'fecha_asistencia': ,
+			#'numer_orden': ,
+			#'hora_asistencia':
+		})
+		centro = json.dumps(centro)
+		print centro
+
+		return HttpResponse(
+			centro,
+			content_type="application/json"
+		)
 
 class CrearSolicitudInspeccion(View):
 	def dispatch(self, *args, **kwargs):

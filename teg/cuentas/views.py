@@ -75,7 +75,6 @@ class Registro(View):
 
     	else:
             print form.errors
-            print form.fecha_nacimiento
             municipios = Municipio.objects.filter(estado__id = request.POST.get('estado', None))
             mun_sel = request.POST.get('municipio', None)
             if mun_sel:

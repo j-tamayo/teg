@@ -13,6 +13,12 @@ urlpatterns = \
         ),
 
         url(
+            r'^obtener-numero/(?P<centro_id>\d+)$',
+            views.GenerarNumeroOrden.as_view(),
+            name='obtener_numero'
+        ),
+
+        url(
             r'^obtener-centros/(?P<municipio_id>\d+)$',
             views.ObtenerCentroInspeccion.as_view(),
             name='obtener_centros'
