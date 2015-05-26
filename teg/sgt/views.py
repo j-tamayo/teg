@@ -42,11 +42,12 @@ class ObtenerCentroInspeccion(View):
 	def get(self, request, *args, **kwargs):
 		"""" Vista que retorna en formato JSON los centros de inspección dependiendo del municipio_id recibido """
 		municipio_id = kwargs['municipio_id']
+		centros = []
 		if municipio_id:
-			centros = CentroInspeccion.objects.filter(municipio__id = municipio_id)
+			centros_query = CentroInspeccion.objects.filter(municipio__id = municipio_id)
 			
 			#Para calcular la disponibilidad de cada centro
-			for c in centros:
+			for c in centros_query:
 				en_cola = ColaAtencion.objects.filter(centro_inspeccion = c).count()
 				c.disponibilidad = c.capacidad - en_cola
 				# Para calcular la disponibilidad (Alta, media, baja y muy baja)
@@ -62,10 +63,18 @@ class ObtenerCentroInspeccion(View):
 				else:
 					c.etiqueta = 'Muy baja'
 					c.etiqueta_clase = 'danger'
+
+				centros.append({
+					'pk': c.pk,
+					'direccion': c.direccion,
+					'disponibilidad': c.disponibilidad,
+					'etiqueta': c.etiqueta,
+					'etiqueta_clase': c.etiqueta_clase
+				})
 			
 			print centros 
 			centros = json.dumps(centros)
-			print centros 
+			print "HEYY",centros 
 
 			return HttpResponse(
 				centros,
