@@ -276,19 +276,25 @@
 				}
 			});
 			
-			$(document).on('click', '#mostrar_ticket', function(){
-				value = $('[name="centro_inspeccion"]').val();
-				if(value.length > 0){
+			$(document).on('click', '#mostrar_ticket', function(event){
+				event.preventDefault();
+
+				tipo_solicitud = $('#id_tipo_solicitud').val();
+				fecha_asistencia = $('#id_fecha_asistencia').val();
+				value = $('input[name="centro_inspeccion"]:checked');
+
+				if(value.length > 0 && tipo_solicitud.length > 0 && fecha_asistencia.length > 0){
+					value = value.val();
 					// Llamada AJAX para obtener los centros de inspección
 					$.ajax({
 						method: 'GET',
 						url: '/sgt/obtener-numero/'+value,
-						dataType: "json"
+						dataType: 'json'
 					})
 					.done(function(data){
 						if(!data.hasOwnProperty('error_msg')){
 							$('#t_nombre_centro').html('<p>'+data[0].nombre+'</p>');
-							//$('#t_fecha_asistencia').html('<p>'++'</p>');
+							$('#t_fecha_asistencia').html('<p>'+fecha_asistencia+'</p>');
 							$('#t_estado_centro').html('<p>'+data[0].estado+'</p>');
 							$('#t_municipio_centro').html('<p>'+data[0].municipio+'</p>');
 							//$('#t_numero_orden').html('<p>'++'</p>');

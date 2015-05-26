@@ -113,6 +113,7 @@ class GenerarNumeroOrden(View):
 			centro_inspeccion.etiqueta_clase = 'danger'
 
 		#Falta calcular Informacion para generar numero de orden y hora de asistencia...
+		
 
 		centro.append({
 			'nombre': centro_inspeccion.nombre,
