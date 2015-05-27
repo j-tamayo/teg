@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="format-detection" content="telephone=no" />
+        
+        <!--*************************** CSS *********************************-->
+        <!-- bootstrap 3.3.4 -->
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css"/>
+        <!-- jQueryMobile 1.4.5 -->
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+
+        <!--********************** JAVASCRIPT *******************************-->
+        <!-- jQueryMobile 1.4.5 -->
+        <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+        <!-- jQuery 1.11.3 -->
+        <script type="application/javascript" src="js/jquery-1.11.3.min.js"></script>
+        <!-- Bootstrap 3.3.4-->
+        <script type="application/javascript" src="js/bootstrap.min.js"></script>
+    </head>
+    <body class="bg-info">
+        <div class="container">
+            <div class="row page-header">
+                <header class="header">
+                    <div class="col-xs-2 col-xs-offset-1 text-success text-center">
+                        <h1>SIGETICK</h1>
+                    </div>
+                    <div class="col-xs-5 pull-right">
+                        <img src="img/car-icon.png" class="img-rounded" style="width: 90%">
+                    </div>
+                </header>
+            </div>
+            <div class="row">
+                <div class="col-xs-8 col-xs-offset-2 text-success text-center">
+                    <h3>Iniciar sesi&oacute;n</h3>
+                </div>
+            </div>
+            <br>    
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="form-box">
+                        <form id="login_form" action="#" method="post" data-toggle="validator">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1" class="text-muted">Correo:</label>
+                                        <input name="correo" type="email" class="form-control" id="exampleInputEmail1" placeholder="Correo electr&oacute;nico...">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1" class="text-muted">Contrase&ntilde;a:</label>
+                                        <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Contrase&ntilde;a...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-4 col-xs-offset-3 col-xs-push-3">
+                                    <a href="#" class="btn btn-primary">Registrar</a>
+                                </div>
+                                <div class="col-xs-4 pull-right">
+                                    <input type="submit" value="Entrar" class="btn btn-success" style="margin-left:30%"></input>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-8 col-xs-offset-2 text-center">
+                    <br><br>
+                    <a class="btn btn-link">&iquest;Olvid&oacute; su contrase&ntilde;a?</a>
+                    <br><br>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
