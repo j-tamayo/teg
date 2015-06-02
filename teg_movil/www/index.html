@@ -1,146 +1,234 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta name="format-detection" content="telephone=no" />
-        
+        <!-- <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+
         <!--*************************** CSS *********************************-->
-        <!-- bootstrap 3.3.4 -->
-        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css"/>
+        <!-- jQuery-ui 1.11.4 -->
+        <link rel="stylesheet" href="css/jquery-ui.min.css" />
         <!-- jQueryMobile 1.4.5 -->
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
-        <!-- bootstrap-fullscreen-select -->
-        <link rel="stylesheet" type="text/css" href="css/bootstrap-fullscreen-select.css"/>
+        <link rel="stylesheet" href="css/jquery_mobile_custom.min.css" />
+        <link rel="stylesheet" href="css/jquery.mobile.icons.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css"/>
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile.datepicker.css"/>
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile.datepicker.theme.css"/>
+
+        <!-- generic -->
+        <link rel="stylesheet" type="text/css" href="css/generic.css"/>
 
         <!--********************** JAVASCRIPT *******************************-->
         <!-- jQuery 1.11.3 -->
         <script type="application/javascript" src="js/jquery-1.11.3.min.js"></script>
+        <!-- jQuery-ui 1.11.4 -->
+        <script type="application/javascript" src="js/jquery-ui.min.js"></script>
         <!-- jQueryMobile 1.4.5 -->
-        <!-- <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script> -->
-        <!-- Bootstrap 3.3.4-->
-        <script type="application/javascript" src="js/bootstrap.min.js"></script>
-        <!-- bootstrap-fullscreen-select -->
-        <script type="application/javascript" src="js/bootstrap-fullscreen-select.min.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+        <!-- Datepicker -->
+        <script type="text/javascript" src="js/jquery.mobile.datepicker.js"></script>
+        <script type="text/javascript" src="js/datepicker-es.js"></script>
         
+        <!-- generic -->
+        <script type="text/javascript" src="js/generic.js"></script>
+
         <script>
             $(document).ready(function(){
                 /* Funciones para inicializar el documento HTML */
-                // Activar bootstrap-fullscreen-select
-                $('.mobileSelect').mobileSelect();
-                // Activar datepickers
-                $('.mobileSelect').each(function(key, value){
-                    $(value).width($(window).width());
+                $( ".datepicker" ).datepicker({
+                  changeYear: true,
+                  yearRange : '1900:2100'
                 });
-
             });
         </script>
 
     </head>
-    <body class="bg-info">
-        <div class="container">
-            <div class="row page-header">
-                <header class="header">
-                    <div class="col-xs-2 col-xs-offset-1 text-success text-center">
-                        <h1>SIGETICK</h1>
-                    </div>
-                    <div class="col-xs-5 pull-right">
-                        <img src="img/car-icon.png" class="img-rounded" style="width: 90%">
-                    </div>
-                </header>
-            </div>
-            <!-- <div id="login_content">
-                <div class="row">
-                    <div class="col-xs-8 col-xs-offset-2 text-success text-center">
-                        <h3>Iniciar sesi&oacute;n</h3>
-                    </div>
+
+    <body>
+        <div id="login_page" data-role="page" data-theme="d">
+            <div role="main" class="ui-content">
+                <br><br><br><br>
+                <div class="ui-grid-a">
+                    <div class="ui-block-a" align="right"><h1 class="text-success">SIGETICK</h1></div>
+                    <div class="ui-block-b" align="center"><img src="img/car-icon.png" style="width:50%;"></div>
                 </div>
-                <br>    
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="form-box">
-                            <form id="login_form" action="#" method="post" data-toggle="validator">
-                                <div class="row">
-                                    <div class="col-xs-12">
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1" class="text-muted">Correo:</label>
-                                            <input name="correo" type="email" class="form-control" id="exampleInputEmail1" placeholder="Correo electr&oacute;nico...">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1" class="text-muted">Contrase&ntilde;a:</label>
-                                            <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Contrase&ntilde;a...">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-4 col-xs-offset-3 col-xs-push-3">
-                                        <a href="#" class="btn btn-primary">Registrar</a>
-                                    </div>
-                                    <div class="col-xs-4 pull-right">
-                                        <input type="submit" value="Entrar" class="btn btn-success" style="margin-left:30%"></input>
-                                    </div>
-                                </div>
-                            </form>
+                <form id="login_form">
+                    <div class="ui-grid-solo">
+                        <div class="ui-block-a">
+                            <label for="text-basic">Correo:</label>
+                            <input name="text-basic" id="text-basic" value="" type="text">
+                            <label for="password">Contrase&ntilde;a:</label>
+                            <input name="password" id="password" value="" autocomplete="off" type="password">
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-8 col-xs-offset-2 text-center">
-                        <br><br>
-                        <a class="btn btn-link">&iquest;Olvid&oacute; su contrase&ntilde;a?</a>
-                        <br><br>
+                    <div class="ui-grid-a">
+                        <div class="ui-block-a">
+                            <a href="#register_page" data-transition="flip" class="ui-btn ui-btn-c ui-corner-all">Registrar</a>
+                        </div>
+                        <div class="ui-block-b">
+                            <!-- <button class="ui-btn ui-btn-d ui-corner-all" type="submit">Entrar</button> -->
+                            <a href="#profile_page" data-transition="slidefade" class="ui-btn ui-btn-d ui-corner-all">Entrar</a>
+                        </div>
                     </div>
-                </div>
-            </div> -->
-            <div id="registro_content">
-                <div class="row">
-                    <div class="col-xs-12 text-success text-center">
-                        <h3>Registro de Usuario<br>(Paso 1)</h3>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="form-group">
-                                    <label class="text-muted">Nombres:</label>
-                                    <input id="nombre_usuario" name="nombres_usuario" type="text" class="form-control" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="form-group">
-                                    <label class="text-muted">Apellidos:</label>
-                                    <input name="apellidos_usuario" type="text" class="form-control" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="form-group">
-                                    <label class="text-muted">C&eacute;dula:</label>
-                                    <input name="cedula_usuario" type="text" class="form-control" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="form-group">
-                                    <label class="text-muted">Estado:</label><br>
-                                    <select name="municipio_usuario" class="form-control mobileSelect" data-theme="mac" data-animation='none' data-title="Estado" style="width:100%;">
-                                        <option value="Opcion1">Opcion1</option>
-                                        <option value="Opcion2">Opcion2</option>
-                                        <option value="Opcion3">Opcion3</option>
-                                    </select> 
-                                </div>
-                            </div>
-                        </div>
+                </form>
+                <br><br><br><br>
+                <div class="ui-grid-solo">
+                    <div class="ui-block-a" align="center">
+                        <a href="#">&iquest;Olvid&oacute; su contrase&ntilde;a?</a>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div id="register_page" data-role="page" data-theme="d">
+            <div data-role="header" data-theme="b">
+                <a href="#login_page" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-back ui-corner-all">Volver</a>
+                <h1>Registro de Usuario<br>(Paso 1)</h1>
+            </div>
+            <div role="main" class="ui-content">
+                <div class="ui-grid-solo">
+                    <div class="ui-block-a">
+                        <form id="registro_form">
+                            <div class="ui-field-contain">
+                                <label for="nombres_usuario">Nombres:</label>
+                                <input name="nombres_usuario" id="nombres_usuario" type="text" required>
+                            </div>
+                            <div class="ui-field-contain">
+                                <label for="apellidos_usuario">Apellidos:</label>
+                                <input name="apellidos_usuario" id="apellidos_usuario" type="text" required>
+                            </div>
+                            <div class="ui-field-contain">
+                                <label for="fecha_nacimiento_usuario">Fecha de nacimiento:</label>
+                                <input name="fecha_nacimiento_usuario" id="fecha_nacimiento_usuario" class="datepicker" data-role="date" type="text">
+                            </div>
+                            <div class="ui-field-contain">
+                                <label for="ci_usuario">C&eacute;dula:</label>
+                                <input name="ci_usuario" id="ci_usuario" type="text" required>
+                            </div>
+                            <div class="ui-field-contain">
+                                <label for="estado_usuario" class="select">Estado:</label>
+                                <select name="estado_usuario" id="estado_usuario" data-theme="a" data-native-menu="false" required>
+                                    <option>---Seleccione un estado---</option>
+                                    <option value="Estado1">Estado1</option>
+                                    <option value="Estado2">Estado2</option>
+                                    <option value="Estado3">Estado3</option>
+                                    <option value="Estado4">Estado4</option>
+                                </select>
+                            </div>
+                            <div class="ui-field-contain">
+                                <label for="municipio_usuario" class="select">Municipio:</label>
+                                <select name="municipio_usuario" id="municipio_usuario" data-theme="a" data-native-menu="false" required>
+                                    <option>---Seleccione un municipio---</option>
+                                    <option value="Municipio1">Municipio1</option>
+                                    <option value="Municipio2">Municipio2</option>
+                                    <option value="Municipio3">Municipio3</option>
+                                    <option value="Municipio4">Municipio4</option>
+                                </select>
+                            </div>
+                            <div class="ui-field-contain">
+                                <label for="direccion_usuario">Direcci&oacute;n:</label>
+                                <textarea cols="40" rows="8" name="direccion_usuario" id="direccion_usuario" required></textarea>
+                            </div>
+                            <div class="ui-field-contain">
+                                <label for="cp_usuario">C&oacute;digo postal:</label>
+                                <input name="cp_usuario" id="cp_usuario" type="text" required>
+                            </div>
+                            <div class="ui-field-contain">
+                                <label for="tlf_local">Tel&eacute;fono local:</label>
+                                <input name="tlf_local" id="tlf_local" value="" type="tel" required>
+                            </div>
+                            <div class="ui-field-contain">
+                                <label for="tlf_movil">Tel&eacute;fono m&oacute;vil:</label>
+                                <input name="tlf_movil" id="tlf_movil" value="" type="tel" required>
+                            </div>
+                            <div class="ui-field-contain">
+                                <fieldset data-role="controlgroup" data-iconpos="right" data-theme="a">
+                                    <legend>Sexo:</legend>
+                                    <input name="sexo_usuario" id="sexo_usuario0" value="0" checked="checked" type="radio">
+                                    <label for="sexo_usuario0">Masculino</label>
+                                    <input name="sexo_usuario" id="sexo_usuario1" value="1" type="radio">
+                                    <label for="sexo_usuario1">Femenino</label>
+                                </fieldset>
+                            </div>
+                            <div class="ui-field-contain">
+                                <label for="text-basic">Correo:</label>
+                                <input name="text-basic" id="text-basic" type="text" required>
+                            </div>
+                            <div class="ui-field-contain">
+                                <label for="password1">Contrase&ntilde;a:</label>
+                                <input name="password1" id="password1" value="" autocomplete="off" type="password" required>
+                            </div>
+                            <div class="ui-field-contain">
+                                <label for="password2">Repetir Contrase&ntilde;a:</label>
+                                <input name="password2" id="password2" value="" autocomplete="off" type="password" required>        
+                            </div>
+                            <br>
+                            <button class="ui-btn ui-btn-c ui-corner-all" type="submit">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- <div data-role="footer"></div> -->
+        </div>
+
+        <div id="profile_page" class="multi_page" data-role="page" data-theme="d">
+            <div data-role="header" data-theme="b">
+                <div class="ui-body-b ui-body">
+                    <h3>Bienvenido<br>"Nombre Usuario"</h3>
+                    <a href="#" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>
+                    <div data-role="navbar">
+                        <ul>
+                            <li><a token="profile_page_ref" target="profile_page" data-icon="user" class="ui-btn-active change_page">Ver Perfil</a></li>
+                            <li><a target="request_page" data-icon="bullets" class="change_page">Solicitudes</a></li>
+                            <li><a target="mail_page" data-icon="mail" class="change_page">Notificaciones</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div role="main" class="ui-content">
+                <p>Holaaaaaaaaaa</p>
+            </div>
+            <!-- <div data-role="footer"></div> -->
+        </div>
+
+        <div id="request_page" class="multi_page" data-role="page" data-theme="d">
+            <div data-role="header" data-theme="b">
+                <div class="ui-body-b ui-body">
+                    <h3>Bienvenido<br>"Nombre Usuario"</h3>
+                    <a href="#" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>
+                    <div data-role="navbar">
+                        <ul>
+                            <li><a target="profile_page" data-icon="user" class="change_page">Ver Perfil</a></li>
+                            <li><a token="request_page_ref" target="request_page" data-icon="bullets" class="ui-btn-active change_page">Solicitudes</a></li>
+                            <li><a target="mail_page" data-icon="mail" class="change_page">Notificaciones</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div role="main" class="ui-content">
+                <p>comooooooooo</p>
+            </div>
+            <!-- <div data-role="footer"></div> -->
+        </div>
+
+        <div id="mail_page" class="multi_page" data-role="page" data-theme="d">
+            <div data-role="header" data-theme="b">
+                <div class="ui-body-b ui-body">
+                    <h3>Bienvenido<br>"Nombre Usuario"</h3>
+                    <a href="#" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>
+                    <div data-role="navbar">
+                        <ul>
+                            <li><a target="profile_page" data-icon="user" class="change_page">Ver Perfil</a></li>
+                            <li><a target="request_page" data-icon="bullets" class="change_page">Solicitudes</a></li>
+                            <li><a token="mail_page_ref" target="mail_page" data-icon="mail" class="ui-btn-active change_page">Notificaciones</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div role="main" class="ui-content">
+                <p>estaaaaaaaaas???</p>
+            </div>
+            <!-- <div data-role="footer"></div> -->
+        </div>
+
     </body>
 </html>
