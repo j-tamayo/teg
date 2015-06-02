@@ -11,3 +11,8 @@ class SgtUsuarioSerializer(serializers.ModelSerializer):
 	# def create(self, validated_data):
 
 	# 	print "h"
+
+
+class LoginSerializer(serializers.Serializer):
+	correo = serializers.EmailField()
+	password = serializers.CharField(style={'input_type': 'password'})
