@@ -26,6 +26,9 @@ urlpatterns = [
     # App para la creacion de cuentas y auth
   	url(r'^cuentas/', include('cuentas.urls')),
 
+    # App para la API REST
+    url(r'^api/', include('api.urls')),
+
   	# Vista que se encarga de enviar el usuario a la vista que le corresponde
   	url(r'^$',
   	   DetectarUsuario.as_view(),
