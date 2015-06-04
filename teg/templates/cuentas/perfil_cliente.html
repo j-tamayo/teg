@@ -212,6 +212,44 @@
 				$('#ver_solicitudes').attr('id','crear_solicitud');
 			});
 
+			function cargar_centros(filtro, valor){
+				data_object = {}
+
+				if(filtro==='municipio'){
+					data_object['municipio_id'] = valor;
+				}
+				else if(filtro==='estado'){
+					data_object['estado_id'] = valor;
+				}
+
+				// Llamada AJAX para obtener los centros de inspección
+				$.ajax({
+					method: 'GET',
+					url: '/sgt/obtener-centros',
+					data: data_object,
+					dataType: "json"
+				})
+				.done(function(data){
+					if(!data.hasOwnProperty('error_msg')){
+						// Se reinicia los centros de inspeccion
+						$('#tabla_centros_insp > tbody').html('');
+						$.each(data, function(key, value){
+							$('#tabla_centros_insp > tbody').append('<tr id="'+value.pk+'">\
+								<td>'+value.nombre+'</td>\
+								<td>'+value.direccion+'</td>\
+								<td>'+value.disponibilidad+'\
+									<span class="label label-'+value.etiqueta_clase+'">'+value.etiqueta+'</span>\
+								</td>\
+								<td><input name="centro_inspeccion" value="'+value.pk+'" type="radio" required="" data-error="Este campo es obligatorio"></td>\
+								</tr>');
+						});
+					}
+					else{
+						console.lg('Error');
+					}
+				});
+			}
+
 			/********** PARA CARGAR LOS MUNICIPIOS POR ESTADO EN EL FORMULARIO DE CREACION DE SOLICITUD *************/
 			$(document).on('change', '#select_solicitud_estado', function(){
 				value = $(this).val();
@@ -239,6 +277,8 @@
 							console.lg('Error');
 						}
 					});
+					// Llamada a la función para obtener los centros por estado
+					cargar_centros('estado', value);
 				}
 			});
 			/********** END *************/
@@ -248,31 +288,8 @@
 			$(document).on('change', '#select_solicitud_municipio', function(){
 				value = $(this).val();
 				if(value.length > 0){
-					// Llamada AJAX para obtener los centros de inspección
-					$.ajax({
-						method: 'GET',
-						url: '/sgt/obtener-centros/'+value,
-						dataType: "json"
-					})
-					.done(function(data){
-						if(!data.hasOwnProperty('error_msg')){
-							// Se reinicia los centros de inspeccion
-							$('#tabla_centros_insp > tbody').html('');
-							$.each(data, function(key, value){
-								$('#tabla_centros_insp > tbody').append('<tr id="'+value.pk+'">\
-									<td>'+value.nombre+'</td>\
-									<td>'+value.direccion+'</td>\
-									<td>'+value.disponibilidad+'\
-										<span class="label label-'+value.etiqueta_clase+'">'+value.etiqueta+'</span>\
-									</td>\
-									<td><input name="centro_inspeccion" value="'+value.pk+'" type="radio" required="" data-error="Este campo es obligatorio"></td>\
-									</tr>');
-							});
-						}
-						else{
-							console.lg('Error');
-						}
-					});
+					// Llamada a la función para obtener los centros por estado
+					cargar_centros('municipio', value);
 				}
 			});
 			

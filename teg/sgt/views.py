@@ -18,7 +18,7 @@ class ObtenerMunicipios(View):
 			# Para obtener los municipios que tengan asociado al menos un centro de inspeccion
 			if request.GET.get('con_centro', None):
 				centros = CentroInspeccion.objects.filter(municipio__estado__id = estado_id)
-				municipios = municipios.filter(centroinspeccion = centros)
+				municipios = municipios.filter(centroinspeccion = centros).distinct('id')
 
 			municipios = serializers.serialize('json', municipios)
 
@@ -41,10 +41,14 @@ class ObtenerMunicipios(View):
 class ObtenerCentroInspeccion(View):
 	def get(self, request, *args, **kwargs):
 		"""" Vista que retorna en formato JSON los centros de inspección dependiendo del municipio_id recibido """
-		municipio_id = kwargs['municipio_id']
+		municipio_id = request.GET.get('municipio_id', None)
+		estado_id = request.GET.get('estado_id', None)
 		centros = []
-		if municipio_id:
-			centros_query = CentroInspeccion.objects.filter(municipio__id = municipio_id)
+		if municipio_id or estado_id:
+			if municipio_id:
+				centros_query = CentroInspeccion.objects.filter(municipio__id = municipio_id)
+			else:
+				centros_query = CentroInspeccion.objects.filter(municipio__estado__id = estado_id)
 			
 			#Para calcular la disponibilidad de cada centro
 			for c in centros_query:
@@ -66,6 +70,7 @@ class ObtenerCentroInspeccion(View):
 
 				centros.append({
 					'pk': c.pk,
+					'nombre': c.nombre,
 					'direccion': c.direccion,
 					'disponibilidad': c.disponibilidad,
 					'etiqueta': c.etiqueta,
@@ -88,6 +93,7 @@ class ObtenerCentroInspeccion(View):
 			    json.dumps(respuesta),
 			    content_type="application/json"
 			)
+
 
 class GenerarNumeroOrden(View):
 	def get(self, request, *args, **kwargs):
