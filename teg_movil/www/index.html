@@ -169,61 +169,37 @@
             </div>
             <!-- <div data-role="footer"></div> -->
         </div>
-
-        <div id="profile_page" class="multi_page" data-role="page" data-theme="d">
-            <div data-role="header" data-theme="b">
-                <div class="ui-body-b ui-body">
-                    <h3>Bienvenido<br>"Nombre Usuario"</h3>
-                    <a href="#" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>
-                    <div data-role="navbar">
-                        <ul>
-                            <li><a token="profile_page_ref" target="profile_page" data-icon="user" class="ui-btn-active change_page">Ver Perfil</a></li>
-                            <li><a target="request_page" data-icon="bullets" class="change_page">Solicitudes</a></li>
-                            <li><a target="mail_page" data-icon="mail" class="change_page">Notificaciones</a></li>
-                        </ul>
-                    </div>
+        
+        <div id="profile_header" data-role="header">
+            <div class="ui-body-b ui-body">
+                <h3>Bienvenido<br>"Nombre Usuario"</h3>
+                <a href="#" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>
+                <div data-role="navbar">
+                    <ul>
+                        <li><a target="profile_page" data-icon="user">Ver Perfil</a></li>
+                        <li><a target="request_page" data-icon="bullets">Solicitudes</a></li>
+                        <li><a target="mail_page" data-icon="mail">Notificaciones</a></li>
+                    </ul>
                 </div>
             </div>
+        </div>
+
+        <div data-url="profile_page" data-role="page" id="profile_page" class="multi_page" data-dom-cache="true" data-theme="d" data-next="request_page">
+
             <div role="main" class="ui-content">
                 <p>Holaaaaaaaaaa</p>
             </div>
             <!-- <div data-role="footer"></div> -->
         </div>
 
-        <div id="request_page" class="multi_page" data-role="page" data-theme="d">
-            <div data-role="header" data-theme="b">
-                <div class="ui-body-b ui-body">
-                    <h3>Bienvenido<br>"Nombre Usuario"</h3>
-                    <a href="#" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>
-                    <div data-role="navbar">
-                        <ul>
-                            <li><a target="profile_page" data-icon="user" class="change_page">Ver Perfil</a></li>
-                            <li><a token="request_page_ref" target="request_page" data-icon="bullets" class="ui-btn-active change_page">Solicitudes</a></li>
-                            <li><a target="mail_page" data-icon="mail" class="change_page">Notificaciones</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+        <div data-url="request_page" data-role="page" id="request_page" class="multi_page" data-dom-cache="true" data-theme="d" data-prev="profile_page" data-next="mail_page">
             <div role="main" class="ui-content">
                 <p>comooooooooo</p>
             </div>
             <!-- <div data-role="footer"></div> -->
         </div>
 
-        <div id="mail_page" class="multi_page" data-role="page" data-theme="d">
-            <div data-role="header" data-theme="b">
-                <div class="ui-body-b ui-body">
-                    <h3>Bienvenido<br>"Nombre Usuario"</h3>
-                    <a href="#" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>
-                    <div data-role="navbar">
-                        <ul>
-                            <li><a target="profile_page" data-icon="user" class="change_page">Ver Perfil</a></li>
-                            <li><a target="request_page" data-icon="bullets" class="change_page">Solicitudes</a></li>
-                            <li><a token="mail_page_ref" target="mail_page" data-icon="mail" class="ui-btn-active change_page">Notificaciones</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+        <div data-url="mail_page" data-role="page" id="mail_page" class="multi_page" data-dom-cache="true" data-theme="d" data-prev="request_page">
             <div role="main" class="ui-content">
                 <p>estaaaaaaaaas???</p>
             </div>
