@@ -1,6 +1,13 @@
 $(document).ready(function(){
     $("#profile_header").hide();
 
+    $( ".datepicker" ).datepicker({
+        changeYear: true,
+        yearRange: '1900:2100'
+    });
+
+    init_db();
+    
     $(document).one("pagecreate", ".multi_page", function(){
         $("#profile_header").toolbar({theme: "b", position: "fixed"});
 
@@ -18,10 +25,11 @@ $(document).ready(function(){
         }
 
         $(document).on("swipeleft", ".ui-page", function(event){
-            $('a[target='+$(this).attr("id")+']').removeClass("ui-btn-active");
             next = $(this).jqmData("next");
-            if(next && (event.target === $(this)[0]))
+            if(next && (event.target === $(this)[0])){
+                $('a[target='+$(this).attr("id")+']').removeClass("ui-btn-active");
                 navnext(next);
+            }
         });
 
         $(document).on("click", ".next", function(){
@@ -31,10 +39,11 @@ $(document).ready(function(){
         });
 
         $(document).on("swiperight", ".ui-page", function(event){
-            $('a[target='+$(this).attr("id")+']').removeClass("ui-btn-active");
             prev = $(this).jqmData("prev");
-            if(prev && (event.target === $(this)[0]))
-                navprev( prev );
+            if(prev && (event.target === $(this)[0])){
+                $('a[target='+$(this).attr("id")+']').removeClass("ui-btn-active");
+                navprev(prev);
+            }
         });
 
         $(document).on("click",".prev",function(){
@@ -62,6 +71,16 @@ $(document).ready(function(){
 
         $("#profile_header").show("fold","down");
     });
+
+    $( "#registro_form" ).submit(function(event){
+        formData = $(this).serializeArray();
+        data = {};
+        $(formData).each(function(index, obj){
+            data[obj.name] = obj.value;
+        });
+        console.log(data);
+    });
+
 });
 
 // $(document).ready(function(){

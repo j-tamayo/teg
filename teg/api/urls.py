@@ -7,6 +7,9 @@ urlpatterns = [
     # url(r'^snippets/(?P<pk>[0-9]+)/$', views.snippet_detail),
     url(r'^usuarios/$', views.Usuarios.as_view()),
     url(r'^login/$', views.LoginUser.as_view()),
+    url(r'^estados/$', views.Estados.as_view()),
+    url(r'^municipios/$', views.Municipios.as_view()),
+    url(r'^centros/$', views.Centros.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

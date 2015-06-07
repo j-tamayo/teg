@@ -2,10 +2,13 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from api.serializers import SgtUsuarioSerializer,LoginSerializer
+from api.serializers import *
 from cuentas.models import SgtUsuario, RolSgt
-from sgt.models import Municipio
+from sgt.models import Estado, Municipio, CentroInspeccion
 from django.contrib.auth import authenticate, login
+from django.core import serializers
+
+import json
 
 # Create your views here.
 class Usuarios(APIView):
@@ -77,3 +80,42 @@ class LoginUser(APIView):
 			else:
 				return Response(status=status.HTTP_404_NOT_FOUND)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class Estados(APIView):
+	"""
+	List all snippets, or create a new snippet.
+	"""
+	def get(self, request, format = None):
+		estados = Estado.objects.all()
+		serializer = EstadoSerializer(estados, many=True)
+
+		if serializer:
+			return Response(serializer.data, status=status.HTTP_200_OK)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class Municipios(APIView):
+	"""
+	List all snippets, or create a new snippet.
+	"""
+	def get(self, request, format = None):
+		municipios = Municipio.objects.all()
+		serializer = MunicipioSerializer(municipios, many=True)
+
+		if serializer:
+			return Response(serializer.data, status=status.HTTP_200_OK)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class Centros(APIView):
+	"""
+	List all snippets, or create a new snippet.
+	"""
+	def get(self, request, format = None):
+		centros = CentroInspeccion.objects.all()
+		serializer = CentroSerializer(centros, many=True)
+
+		if serializer:
+			return Response(serializer.data, status=status.HTTP_200_OK)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

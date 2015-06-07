@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <!-- <meta name="format-detection" content="telephone=no" />
-        <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!--*************************** CSS *********************************-->
         <!-- jQuery-ui 1.11.4 -->
@@ -28,19 +28,10 @@
         <script type="text/javascript" src="js/jquery.mobile.datepicker.js"></script>
         <script type="text/javascript" src="js/datepicker-es.js"></script>
         
+        <!-- Database -->
+        <script type="text/javascript" src="js/database_manager.js"></script>
         <!-- generic -->
         <script type="text/javascript" src="js/generic.js"></script>
-
-        <script>
-            $(document).ready(function(){
-                /* Funciones para inicializar el documento HTML */
-                $( ".datepicker" ).datepicker({
-                  changeYear: true,
-                  yearRange : '1900:2100'
-                });
-            });
-        </script>
-
     </head>
 
     <body>
@@ -66,7 +57,7 @@
                         </div>
                         <div class="ui-block-b">
                             <!-- <button class="ui-btn ui-btn-d ui-corner-all" type="submit">Entrar</button> -->
-                            <a href="#profile_page" data-transition="slidefade" class="ui-btn ui-btn-d ui-corner-all">Entrar</a>
+                            <a href="#profile_page" data-transition="flow" class="ui-btn ui-btn-d ui-corner-all">Entrar</a>
                         </div>
                     </div>
                 </form>
@@ -82,7 +73,7 @@
         <div id="register_page" data-role="page" data-theme="d">
             <div data-role="header" data-theme="b">
                 <a href="#login_page" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-back ui-corner-all">Volver</a>
-                <h1>Registro de Usuario<br>(Paso 1)</h1>
+                <h1>Registro de Usuario</h1>
             </div>
             <div role="main" class="ui-content">
                 <div class="ui-grid-solo">
@@ -98,7 +89,7 @@
                             </div>
                             <div class="ui-field-contain">
                                 <label for="fecha_nacimiento_usuario">Fecha de nacimiento:</label>
-                                <input name="fecha_nacimiento_usuario" id="fecha_nacimiento_usuario" class="datepicker" data-role="date" type="text">
+                                <input name="fecha_nacimiento_usuario" id="fecha_nacimiento_usuario" class="datepicker" data-role="date" type="text" required>
                             </div>
                             <div class="ui-field-contain">
                                 <label for="ci_usuario">C&eacute;dula:</label>
@@ -143,9 +134,9 @@
                             <div class="ui-field-contain">
                                 <fieldset data-role="controlgroup" data-iconpos="right" data-theme="a">
                                     <legend>Sexo:</legend>
-                                    <input name="sexo_usuario" id="sexo_usuario0" value="0" checked="checked" type="radio">
+                                    <input name="sexo_usuario" id="sexo_usuario0" value="0" checked="checked" type="radio" required>
                                     <label for="sexo_usuario0">Masculino</label>
-                                    <input name="sexo_usuario" id="sexo_usuario1" value="1" type="radio">
+                                    <input name="sexo_usuario" id="sexo_usuario1" value="1" type="radio" required>
                                     <label for="sexo_usuario1">Femenino</label>
                                 </fieldset>
                             </div>
