@@ -30,4 +30,4 @@ class MunicipioSerializer(serializers.ModelSerializer):
 class CentroSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = CentroInspeccion
-		fields = ('id','nombre','direccion','capacidad','telefonos','tiempo_atencion','municipio','numero_orden','hora_apertura','hora_cierre')
+		fields = ('id','codigo','nombre','direccion','capacidad','telefonos','tiempo_atencion','municipio','hora_apertura','hora_cierre')

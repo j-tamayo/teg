@@ -6,8 +6,6 @@ $(document).ready(function(){
         yearRange: '1900:2100'
     });
 
-    init_db();
-    
     $(document).one("pagecreate", ".multi_page", function(){
         $("#profile_header").toolbar({theme: "b", position: "fixed"});
 
@@ -81,6 +79,11 @@ $(document).ready(function(){
         console.log(data);
     });
 
+    $(document).on("click", "#aux", function(){
+        selectTable('sgt_estado', ['id','nombre']);
+        selectTable('sgt_municipio', ['id','nombre']);
+        //selectTable('sgt_centroinspeccion', ['nombre']);
+    });
 });
 
 // $(document).ready(function(){
