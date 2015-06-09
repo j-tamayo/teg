@@ -1,5 +1,6 @@
 $(document).ready(function(){
     $("#profile_header").hide();
+    init_db();
 
     $( ".datepicker" ).datepicker({
         changeYear: true,
@@ -81,7 +82,6 @@ $(document).ready(function(){
 
     $(document).on("click", "#aux", function(){
         selectTable('sgt_estado', ['id','nombre']);
-        selectTable('sgt_municipio', ['id','nombre']);
         //selectTable('sgt_centroinspeccion', ['nombre']);
     });
 });
