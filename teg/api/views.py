@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -119,3 +120,38 @@ class Centros(APIView):
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class InitialData(APIView):
+	"""
+	Obtiene la data inicial necesaria para el llenado de la base de datos móvil por primera vez
+	"""
+	def get(self, request, format = None):
+		respuesta = {}
+		estados = Estado.objects.all()
+		estados_serializer = EstadoSerializer(estados, many=True)
+		if estados_serializer:
+			respuesta['sgt_estado'] = estados_serializer.data
+
+		municipios = Municipio.objects.all()
+		municipios_serializer = MunicipioSerializer(municipios, many=True)
+		if municipios_serializer:
+			respuesta['sgt_municipio'] = municipios_serializer.data
+
+		centros = CentroInspeccion.objects.all()
+		centros_serializer = CentroSerializer(centros, many=True)
+		if centros_serializer:
+			respuesta['sgt_centroinspeccion'] = centros_serializer.data
+
+		tipos_inspeccion = TipoInspeccion.objects.all()
+		tipos_inspeccion_serializer = TipoInspeccionSerializer(tipos_inspeccion, many=True)
+		if tipos_inspeccion_serializer:
+			respuesta['sgt_tipoinspeccion'] = tipos_inspeccion_serializer.data
+
+		#print respuesta
+
+		if respuesta:
+			return Response(respuesta, status=status.HTTP_200_OK)
+		else:
+			respuesta['errores'] = {'causa':'No se envía nada'}
+			return Response(respuesta, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

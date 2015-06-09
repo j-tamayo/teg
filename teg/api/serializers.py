@@ -1,7 +1,7 @@
 #from django.forms import widgets
 from rest_framework import serializers
 from cuentas.models import SgtUsuario
-from sgt.models import Estado, Municipio, CentroInspeccion
+from sgt.models import Estado, Municipio, CentroInspeccion, TipoInspeccion
 #from django.contrib.auth.models import User
 
 class SgtUsuarioSerializer(serializers.ModelSerializer):
@@ -31,3 +31,8 @@ class CentroSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = CentroInspeccion
 		fields = ('id','codigo','nombre','direccion','capacidad','telefonos','tiempo_atencion','municipio','hora_apertura','hora_cierre')
+
+class TipoInspeccionSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = TipoInspeccion
+		feilds = ('id','codigo','descripcion','nombre')

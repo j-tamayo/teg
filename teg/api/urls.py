@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^estados/$', views.Estados.as_view()),
     url(r'^municipios/$', views.Municipios.as_view()),
     url(r'^centros/$', views.Centros.as_view()),
+    url(r'^data-inicial/$', views.InitialData.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
