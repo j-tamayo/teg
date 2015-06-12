@@ -137,6 +137,7 @@ class GenerarNumeroOrden(View):
 			content_type="application/json"
 		)
 
+
 class CrearSolicitudInspeccion(View):
 	def dispatch(self, *args, **kwargs):
 		return super(CrearSolicitudInspeccion, self).dispatch(*args, **kwargs)
