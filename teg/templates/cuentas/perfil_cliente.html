@@ -306,7 +306,10 @@
 					$.ajax({
 						method: 'GET',
 						url: '/sgt/obtener-numero/'+value,
-						dataType: 'json'
+						dataType: 'json',
+						data:{
+							fecha_asistencia: fecha_asistencia
+						}
 					})
 					.done(function(data){
 						if(!data.hasOwnProperty('error_msg')){

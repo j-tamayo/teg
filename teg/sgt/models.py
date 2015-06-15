@@ -30,8 +30,10 @@ class CentroInspeccion(models.Model):
 	municipio = models.ForeignKey(Municipio)
 	peritos = models.ManyToManyField('Perito')
 	numero_orden = models.ManyToManyField('NumeroOrden', through='ColaAtencion')
-	hora_apertura = models.TimeField(blank=True, null=True)
-	hora_cierre = models.TimeField(blank=True, null=True)
+	hora_apertura_manana = models.TimeField(blank=True, null=True)
+	hora_cierre_manana = models.TimeField(blank=True, null=True)
+	hora_apertura_tarde = models.TimeField(blank=True, null=True)
+	hora_cierre_tarde = models.TimeField(blank=True, null=True)
 
 	def __unicode__(self):
 		return u'%s' % self.nombre
@@ -63,9 +65,10 @@ class SolicitudInspeccion(models.Model):
 	fecha_culminacion = models.DateTimeField(blank=True, null=True)
 	perito = models.ForeignKey(Perito, blank=True, null=True)
 	tipo_inspeccion = models.ForeignKey(TipoInspeccion)
+	usuario = models.ForeignKey(USER_MODEL)
 
 	def __unicode__(self):
-		return u'%s' % self.perito.nombres
+		return u'%s' % self.tipo_inspeccion.nombre
 
 
 class NumeroOrden(models.Model):

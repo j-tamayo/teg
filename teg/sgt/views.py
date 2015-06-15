@@ -100,6 +100,9 @@ class GenerarNumeroOrden(View):
 		centro_id = kwargs['centro_id']
 		print centro_id
 		centro_inspeccion = CentroInspeccion.objects.get(id=centro_id)
+		fecha_asistencia = request.GET.get('fecha_asistencia', None)
+
+		horarios = []
 		
 		centro = []
 		en_cola = ColaAtencion.objects.filter(centro_inspeccion = centro_inspeccion).count()

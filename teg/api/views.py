@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from api.serializers import *
 from cuentas.models import SgtUsuario, RolSgt
-from sgt.models import Estado, Municipio, CentroInspeccion
+from sgt.models import *
 from django.contrib.auth import authenticate, login
 from django.core import serializers
 
@@ -155,3 +155,32 @@ class InitialData(APIView):
 		else:
 			respuesta['errores'] = {'causa':'No se envía nada'}
 			return Response(respuesta, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UserInfo(APIView):
+	"""
+	Obtiene toda la información del Usuarios
+	"""
+	def get(self, request, pk, format = None):
+		usuario = SgtUsuario.objects.get(id=pk)
+		serializer = SgtUsuarioSerializer(usuario)
+		return Response(serializer.data)
+
+	def post(self, request, pk, format=None):
+		respuesta = {}
+		usuario = SgtUsuario.objects.filter(id=pk)
+		if usuario:
+			encuestas = Encuesta.objects.filter(usuarios = usuario)
+			encuestas_serializer = EncuestaSerializer(encuestas, many=True)
+			respuesta['sgt_encuesta'] = encuestas_serializer.data
+			poliza = Poliza.objects.filter(usuario = usuario)
+			poliza_serializer = PolizaSerializer(poliza, many=True)
+			respuesta['sgt_poliza'] = poliza_serializer.data
+			solicitudes = SolicitudInspeccion.objects.filter(usuario = usuario)
+			solicitudes_serializer = SolicitudInspeccionSerializer(solicitudes, many=True)
+			respuesta['sgt_solicitud'] = solicitudes_serializer.data
+			
+			return Response(respuesta, status=status.HTTP_200_OK)
+
+		else:
+			raise Http404
