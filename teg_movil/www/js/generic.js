@@ -1,6 +1,7 @@
 $(document).ready(function(){
-    $("#profile_header").hide();
     init_db();
+    
+    $("#profile_header").hide();
 
     $( ".datepicker" ).datepicker({
         changeYear: true,
@@ -71,17 +72,28 @@ $(document).ready(function(){
         $("#profile_header").show("fold","down");
     });
 
-    $( "#registro_form" ).submit(function(event){
+    $("#registro_form").submit(function(event){
         formData = $(this).serializeArray();
+        console.log(formData);
         data = {};
         $(formData).each(function(index, obj){
             data[obj.name] = obj.value;
         });
-        console.log(data);
+
+        date_parts = data['fecha_nacimiento'].split('/');
+        data['fecha_nacimiento'] = date_parts[2] + '-' + date_parts[1] + '-' + date_parts[0];
+
+        $.post("http://192.168.1.101:8000/api/usuarios/", data)
+        .done(function(json){
+            console.log("Usuario guardados exitosamente!");
+        })
+        .fail(function(json) {
+            console.log("Error de carga!");
+        });
     });
 
     $(document).on("click", "#aux", function(){
-        selectTable('sgt_estado', ['id','nombre']);
+        alert(selectTable('sgt_estado', ['id','nombre']));
         //selectTable('sgt_centroinspeccion', ['nombre']);
     });
 });

@@ -45,15 +45,15 @@
                 <form id="login_form">
                     <div class="ui-grid-solo">
                         <div class="ui-block-a">
-                            <label for="text-basic">Correo:</label>
-                            <input name="text-basic" id="text-basic" value="" type="text">
-                            <label for="password">Contrase&ntilde;a:</label>
-                            <input name="password" id="password" value="" autocomplete="off" type="password">
+                            <label for="correo_reg">Correo:</label>
+                            <input name="correo" id="correo_reg" value="" type="text">
+                            <label for="password_reg">Contrase&ntilde;a:</label>
+                            <input name="password" id="password_reg" value="" autocomplete="off" type="password">
                         </div>
                     </div>
                     <div class="ui-grid-a">
                         <div class="ui-block-a">
-                            <a href="#register_page" data-transition="flip" class="ui-btn ui-btn-c ui-corner-all">Registrar</a>
+                            <a href="#register_page" class="ui-btn ui-btn-c ui-corner-all">Registrar</a>
                         </div>
                         <div class="ui-block-b">
                             <!-- <button class="ui-btn ui-btn-d ui-corner-all" type="submit">Entrar</button> -->
@@ -70,7 +70,7 @@
             </div>
         </div>
 
-        <div id="register_page" data-role="page" data-theme="d">
+        <div id="register_page" class="init_data" data-role="page" data-theme="d">
             <div data-role="header" data-theme="b">
                 <a href="#login_page" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-back ui-corner-all">Volver</a>
                 <h1>Registro de Usuario</h1>
@@ -80,77 +80,77 @@
                     <div class="ui-block-a">
                         <form id="registro_form">
                             <div class="ui-field-contain">
-                                <label for="nombres_usuario">Nombres:</label>
-                                <input name="nombres_usuario" id="nombres_usuario" type="text" required>
+                                <label for="nombres_reg">Nombres:</label>
+                                <input name="nombres" id="nombres_reg" type="text" required>
                             </div>
                             <div class="ui-field-contain">
-                                <label for="apellidos_usuario">Apellidos:</label>
-                                <input name="apellidos_usuario" id="apellidos_usuario" type="text" required>
+                                <label for="apellidos_reg">Apellidos:</label>
+                                <input name="apellidos" id="apellidos_reg" type="text" required>
                             </div>
                             <div class="ui-field-contain">
-                                <label for="fecha_nacimiento_usuario">Fecha de nacimiento:</label>
-                                <input name="fecha_nacimiento_usuario" id="fecha_nacimiento_usuario" class="datepicker" data-role="date" type="text" required>
+                                <label for="fecha_nacimiento_reg">Fecha de nacimiento:</label>
+                                <input name="fecha_nacimiento" id="fecha_nacimiento_reg" class="datepicker" data-role="date" type="text" required>
                             </div>
                             <div class="ui-field-contain">
-                                <label for="ci_usuario">C&eacute;dula:</label>
-                                <input name="ci_usuario" id="ci_usuario" type="text" required>
+                                <label for="cedula_reg">C&eacute;dula:</label>
+                                <input name="cedula" id="cedula_reg" type="text" required>
                             </div>
                             <div class="ui-field-contain">
-                                <label for="estado_usuario" class="select">Estado:</label>
-                                <select name="estado_usuario" id="estado_usuario" data-theme="a" data-native-menu="false" required>
+                                <label for="estado_reg">Estado:</label>
+                                <select name="estado" id="estado_reg" target="municipio_reg" data-theme="a" data-native-menu="false" class="estados" required>
                                     <option>---Seleccione un estado---</option>
-                                    <option value="Estado1">Estado1</option>
+                                    <!-- <option value="Estado1">Estado1</option>
                                     <option value="Estado2">Estado2</option>
                                     <option value="Estado3">Estado3</option>
-                                    <option value="Estado4">Estado4</option>
+                                    <option value="Estado4">Estado4</option> -->
                                 </select>
                             </div>
                             <div class="ui-field-contain">
-                                <label for="municipio_usuario" class="select">Municipio:</label>
-                                <select name="municipio_usuario" id="municipio_usuario" data-theme="a" data-native-menu="false" required>
+                                <label for="municipio_reg" class="select">Municipio:</label>
+                                <select name="municipio" id="municipio_reg" data-theme="a" data-native-menu="false" class="municipios" required>
                                     <option>---Seleccione un municipio---</option>
-                                    <option value="Municipio1">Municipio1</option>
+                                    <!-- <option value="Municipio1">Municipio1</option>
                                     <option value="Municipio2">Municipio2</option>
                                     <option value="Municipio3">Municipio3</option>
-                                    <option value="Municipio4">Municipio4</option>
+                                    <option value="Municipio4">Municipio4</option> -->
                                 </select>
                             </div>
                             <div class="ui-field-contain">
-                                <label for="direccion_usuario">Direcci&oacute;n:</label>
-                                <textarea cols="40" rows="8" name="direccion_usuario" id="direccion_usuario" required></textarea>
+                                <label for="direccion_reg">Direcci&oacute;n:</label>
+                                <textarea cols="40" rows="8" name="direccion" id="direccion_reg" required></textarea>
                             </div>
                             <div class="ui-field-contain">
-                                <label for="cp_usuario">C&oacute;digo postal:</label>
-                                <input name="cp_usuario" id="cp_usuario" type="text" required>
+                                <label for="codigo_postal_reg">C&oacute;digo postal:</label>
+                                <input name="codigo_postal" id="codigo_postal_reg" type="text" required>
                             </div>
                             <div class="ui-field-contain">
-                                <label for="tlf_local">Tel&eacute;fono local:</label>
-                                <input name="tlf_local" id="tlf_local" value="" type="tel" required>
+                                <label for="telefono_local_reg">Tel&eacute;fono local:</label>
+                                <input name="telefono_local" id="telefono_local_reg" value="" type="tel" required>
                             </div>
                             <div class="ui-field-contain">
-                                <label for="tlf_movil">Tel&eacute;fono m&oacute;vil:</label>
-                                <input name="tlf_movil" id="tlf_movil" value="" type="tel" required>
+                                <label for="telefono_movil_reg">Tel&eacute;fono m&oacute;vil:</label>
+                                <input name="telefono_movil" id="telefono_movil_reg" value="" type="tel" required>
                             </div>
                             <div class="ui-field-contain">
                                 <fieldset data-role="controlgroup" data-iconpos="right" data-theme="a">
                                     <legend>Sexo:</legend>
-                                    <input name="sexo_usuario" id="sexo_usuario0" value="0" checked="checked" type="radio" required>
-                                    <label for="sexo_usuario0">Masculino</label>
-                                    <input name="sexo_usuario" id="sexo_usuario1" value="1" type="radio" required>
-                                    <label for="sexo_usuario1">Femenino</label>
+                                    <input name="sexo" id="sexo_reg0" value="0" checked="checked" type="radio" required>
+                                    <label for="sexo_reg0">Masculino</label>
+                                    <input name="sexo" id="sexo_reg1" value="1" type="radio">
+                                    <label for="sexo_reg1">Femenino</label>
                                 </fieldset>
                             </div>
                             <div class="ui-field-contain">
-                                <label for="text-basic">Correo:</label>
-                                <input name="text-basic" id="text-basic" type="text" required>
+                                <label for="correo_reg">Correo:</label>
+                                <input name="correo" id="correo_reg" type="text" required>
                             </div>
                             <div class="ui-field-contain">
-                                <label for="password1">Contrase&ntilde;a:</label>
-                                <input name="password1" id="password1" value="" autocomplete="off" type="password" required>
+                                <label for="password_reg">Contrase&ntilde;a:</label>
+                                <input name="password" id="password_reg" value="" autocomplete="off" type="password" required>
                             </div>
                             <div class="ui-field-contain">
-                                <label for="password2">Repetir Contrase&ntilde;a:</label>
-                                <input name="password2" id="password2" value="" autocomplete="off" type="password" required>        
+                                <label for="password_confirm_reg">Repetir Contrase&ntilde;a:</label>
+                                <input name="password_confirm" id="password_confirm_reg" value="" autocomplete="off" type="password" required>        
                             </div>
                             <br>
                             <button class="ui-btn ui-btn-c ui-corner-all" type="submit">Enviar</button>
