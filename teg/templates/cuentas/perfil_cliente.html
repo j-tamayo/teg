@@ -198,7 +198,12 @@
 				})
 				.done(function(data){
 					$('#contenido').html(data);
-					init_dates($('#fecha_asistencia'));
+					$('#fecha_asistencia').datepicker({
+					  autoclose: true,
+					  clearBtn: true,
+					  language: "es",
+					  startView: 1,
+					});
 					$('#crear_solicitud_form').validator();
 				})
 

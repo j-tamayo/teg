@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.views.generic import View
 from sgt.models import *
 from sgt.forms import *
+from sgt.helpers import solicitudes,dates
 
 import json
 
@@ -121,8 +122,9 @@ class GenerarNumeroOrden(View):
 			centro_inspeccion.etiqueta = 'Muy baja'
 			centro_inspeccion.etiqueta_clase = 'danger'
 
+		fecha_asistencia = dates.convert(fecha_asistencia, '%d/%m/%Y', '%Y-%m-%d')
 		#Falta calcular Informacion para generar numero de orden y hora de asistencia...
-		
+		horarios = solicitudes.generar_horarios(centro_inspeccion)
 
 		centro.append({
 			'nombre': centro_inspeccion.nombre,
