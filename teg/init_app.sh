@@ -9,7 +9,7 @@ fi
 
 Sinconizamos y migramos la BD
 echo -e "\n\n- Haciendo las migraciones para la base de datos..."
-/usr/bin/env python2.7 manage.py makemigrations
+#/usr/bin/env python2.7 manage.py makemigrations
 
 # Sinconizamos y migramos la BD
 echo -e "\n\n- Aplicando las migraciones para la base de datos..."
