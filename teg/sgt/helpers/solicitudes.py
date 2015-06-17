@@ -1,14 +1,14 @@
 from datetime import datetime
 from sgt.models import *
 
-class Bloque():
-	hora_inicio = datetime.time()
-	hora_fin = datetime.time()
-	capacidad = 0
+# class Bloque():
+# 	hora_inicio = datetime.time()
+# 	hora_fin = datetime.time()
+# 	capacidad = 0
 
-	def __init__(self, hora_inicio, hora_fin):
-		self.hora_inicio = hora_inicio
-		self.hora_fin = hora_fin
+# 	def __init__(self, hora_inicio, hora_fin):
+# 		self.hora_inicio = hora_inicio
+# 		self.hora_fin = hora_fin
 
 
 def generar_horarios(centro):
