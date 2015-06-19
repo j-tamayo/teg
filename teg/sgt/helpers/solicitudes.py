@@ -1,5 +1,6 @@
 from datetime import datetime
 from sgt.models import *
+import datetime
 
 # class Bloque():
 # 	hora_inicio = datetime.time()
@@ -12,8 +13,16 @@ from sgt.models import *
 
 
 def generar_horarios(centro):
-	cantidad_minutos = diff_times_in_minutes(centro.hora_apertura_manana,centro.hora_cierre_manana) + diff_times_in_hours(centro.hora_apertura_tarde,centro.hora_cierre_tarde)
-	cantidad_bloques = cantidad_minutos / centro.tiempo_atencion
+	cantidad_minutos_manana = diff_times_in_minutes(centro.hora_apertura_manana,centro.hora_cierre_manana)
+	cantidad_minutos_tarde = diff_times_in_hours(centro.hora_apertura_tarde,centro.hora_cierre_tarde)
+	cantidad_bloques_manana = cantidad_minutos_manana / centro.tiempo_atencion
+	cantidad_bloques_tarde = cantidad_minutos_tarde / centro.tiempo_atencion
+	lista_bloques = []
+	contador_horas = centro.hora_apertura_manana
+	# for i in range(0,cantidad_bloques_manana):
+	# 	proxima_hora = contador_horas + datetime.deltatime(minutes = centro.tiempo_atencion)
+	# 	bloque = Bloque(contador_horas, proxima_hora)
+		
 
 
 
