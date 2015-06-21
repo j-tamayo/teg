@@ -45,10 +45,10 @@
                 <form id="login_form">
                     <div class="ui-grid-solo">
                         <div class="ui-block-a">
-                            <label for="correo_reg">Correo:</label>
-                            <input name="correo" id="correo_reg" value="" type="text">
-                            <label for="password_reg">Contrase&ntilde;a:</label>
-                            <input name="password" id="password_reg" value="" autocomplete="off" type="password">
+                            <label for="correo_log">Correo:</label>
+                            <input name="correo" id="correo_log" value="" type="text">
+                            <label for="password_log">Contrase&ntilde;a:</label>
+                            <input name="password" id="password_log" value="" autocomplete="off" type="password">
                         </div>
                     </div>
                     <div class="ui-grid-a">
@@ -56,8 +56,8 @@
                             <a href="#register_page" class="ui-btn ui-btn-c ui-corner-all">Registrar</a>
                         </div>
                         <div class="ui-block-b">
-                            <!-- <button class="ui-btn ui-btn-d ui-corner-all" type="submit">Entrar</button> -->
-                            <a href="#profile_page" data-transition="flow" class="ui-btn ui-btn-d ui-corner-all">Entrar</a>
+                            <button class="ui-btn ui-btn-d ui-corner-all" type="submit">Entrar</button>
+                            <!-- <a href="#profile_page" data-transition="flow" class="ui-btn ui-btn-d ui-corner-all">Entrar</a> -->
                         </div>
                     </div>
                 </form>
@@ -163,10 +163,10 @@
         
         <div id="profile_header" data-role="header">
             <div class="ui-body-b ui-body">
-                <h3>Bienvenido<br>"Nombre Usuario"</h3>
+                <h3 id="user_title">Bienvenido<br>"Nombre Usuario"</h3>
                 <a href="#" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>
                 <div data-role="navbar">
-                    <ul>
+                    <ul id="nav">
                         <li><a target="profile_page" data-icon="user">Ver Perfil</a></li>
                         <li><a target="request_page" data-icon="bullets">Solicitudes</a></li>
                         <li><a target="mail_page" data-icon="mail">Notificaciones</a></li>
@@ -176,7 +176,6 @@
         </div>
 
         <div data-url="profile_page" data-role="page" id="profile_page" class="multi_page" data-dom-cache="true" data-theme="d" data-next="request_page">
-
             <div role="main" class="ui-content">
                 <p>Holaaaaaaaaaa</p>
             </div>

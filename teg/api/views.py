@@ -166,21 +166,27 @@ class UserInfo(APIView):
 		serializer = SgtUsuarioSerializer(usuario)
 		return Response(serializer.data)
 
-	def post(self, request, pk, format=None):
+	def post(self, request, format=None):
+		serializer = request.data
 		respuesta = {}
-		usuario = SgtUsuario.objects.filter(id=pk)
-		if usuario:
-			encuestas = Encuesta.objects.filter(usuarios = usuario)
-			encuestas_serializer = EncuestaSerializer(encuestas, many=True)
-			respuesta['sgt_encuesta'] = encuestas_serializer.data
-			poliza = Poliza.objects.filter(usuario = usuario)
-			poliza_serializer = PolizaSerializer(poliza, many=True)
-			respuesta['sgt_poliza'] = poliza_serializer.data
-			solicitudes = SolicitudInspeccion.objects.filter(usuario = usuario)
-			solicitudes_serializer = SolicitudInspeccionSerializer(solicitudes, many=True)
-			respuesta['sgt_solicitud'] = solicitudes_serializer.data
-			
-			return Response(respuesta, status=status.HTTP_200_OK)
 
+		if serializer:
+			usuario = SgtUsuario.objects.filter(id=serializer['id'])
+			if usuario:
+				encuestas = Encuesta.objects.filter(usuarios = usuario)
+				encuestas_serializer = EncuestaSerializer(encuestas, many=True)
+				respuesta['sgt_encuesta'] = encuestas_serializer.data
+				poliza = Poliza.objects.filter(usuario = usuario)
+				poliza_serializer = PolizaSerializer(poliza, many=True)
+				respuesta['sgt_poliza'] = poliza_serializer.data
+				solicitudes = SolicitudInspeccion.objects.filter(usuario = usuario)
+				solicitudes_serializer = SolicitudInspeccionSerializer(solicitudes, many=True)
+				respuesta['sgt_solicitud'] = solicitudes_serializer.data
+				
+				return Response(respuesta, status=status.HTTP_200_OK)
+
+			else:
+				raise Http404
 		else:
-			raise Http404
+			respuesta['errores'] = {'causa':'No se envía nada'}
+			return Response(respuesta, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
