@@ -192,6 +192,7 @@ function login(correo, password, user_info){
 	    	}
 	    	else{
 	    		if(user_info){
+	    			/* Insertar información del usuario vía web service */
 	    			id_usuario = user_info['id'];
 	    			insertTable('cuentas_sgtusuario', 
 	    						['id', 'password', 'apellidos', 'cedula', 'correo', 'direccion', 'fecha_nacimiento', 'nombres', 'sexo', 'telefono_local', 'telefono_movil', 'municipio', 'codigo_postal'],
@@ -209,10 +210,6 @@ function login(correo, password, user_info){
 			throw new Error(err.message);
 		});
 	}, errorCB, load_user_tables);
-}
-
-function load_profile_info(user_info){
-	$("#user_title").html('Bienvenido<br>'+user_info['nombres']);
 }
 
 function load_user_tables(){
@@ -300,7 +297,6 @@ function updateTable(table, cols, values){
 
 function selectTable(table, cols){
 	str_cols = '';
-	
 	for(i = 0; i < cols.length; i++){
 		if(i > 0)
 			str_cols = str_cols + ', ' + cols[i];
@@ -367,4 +363,29 @@ function fill_municipios(sel_estado){
 			});
 		}, errorCB, successCB);
 	});
+}
+
+function load_profile_info(user_info){
+	$("#user_title").html('Bienvenido<br>'+user_info['nombres']);
+	db.transaction(function(tx){
+		tx.executeSql('SELECT e.nombre as estado, m.nombre as municipio FROM sgt_estado e, sgt_municipio m WHERE e.id = m.estado AND m.id = '+user_info['municipio']+';', [], 
+	    function(tx, results){
+	    	row = results.rows.item(0);
+	    	console.log(row);
+	    	$("#profile_page").children(".ui-content").html('<h3 class="text-success">Informaci&oacute;n del usuario</h3>\
+				<p>Nombre: '+user_info['nombres']+'</p>\
+				<p>Apellido: '+user_info['apellidos']+'</p>\
+				<p>C&eacute;dula: '+user_info['cedula']+'</p>\
+				<p>Estado: '+row['estado']+'</p>\
+				<p>Municipio: '+row['municipio']+'</p>\
+				<p>Direcci&oacute;n: '+user_info['direccion']+'</p>\
+				<p>Correo: '+user_info['correo']+'</p>'	
+			);
+	    },
+		function(tx, err){
+			console.log("error");
+			throw new Error(err.message);
+		});
+	}, errorCB, successCB);
+	// 'select e.nombre, m.nombre from sgt_estado e, sgt_municipio m where e.id = m.estado and m.id = 2;'
 }

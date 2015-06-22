@@ -9,7 +9,6 @@ $(document).ready(function(){
     });
 
     $(document).one("pagecreate", ".multi_page", function(){
-        console.log("hola");
         $("#profile_header").toolbar({theme: "b"});
 
         function navnext(next){
@@ -109,6 +108,7 @@ $(document).ready(function(){
     });
 
     $("#registro_form").submit(function(event){
+        event.preventDefault();
         formData = $(this).serializeArray();
         console.log(formData);
         data = {};
@@ -122,6 +122,10 @@ $(document).ready(function(){
         $.post("http://192.168.1.101:8000/api/usuarios/", data)
         .done(function(json){
             console.log("Usuario guardados exitosamente!");
+            $.mobile.changePage("#profile_page", {
+                changeHash: false, 
+                transition: "flip"
+            });
         })
         .fail(function(json) {
             console.log("Error de carga!");
@@ -155,6 +159,14 @@ $(document).ready(function(){
         });
     });
 
+    $(document).on("click", ".back_btn", function(){
+        event.preventDefault();
+        $.mobile.changePage($(this).attr('href'), {
+            changeHash: false,
+            transition: $(this).attr('data-transition')
+        });
+    });
+
     $(document).on("click", "#aux", function(){
         //$("#profile_header").hide();
         //alert(selectTable('sgt_estado', ['id','nombre']));
@@ -163,19 +175,19 @@ $(document).ready(function(){
 });
 
 /* Funcion declarada para el manejo de eventos relacionados con la navegacion */
-$(function(){
-    $(window).hashchange(function(){
-        hash = location.hash;
-        //console.log('<------------cambio de pag----------->');
-        $( "#nav li a" ).each(function(){
-            that = $(this);
-            aux = '#' + that.attr( "target" );
-            //console.log(aux + '->' + (aux === hash ? "addClass" : "removeClass"));
-            that[ aux === hash ? "addClass" : "removeClass" ]("ui-btn-active");
-        });
-    });
+// $(function(){
+//     $(window).hashchange(function(){
+//         hash = location.hash;
+//         //console.log('<------------cambio de pag----------->');
+//         $( "#nav li a" ).each(function(){
+//             that = $(this);
+//             aux = '#' + that.attr( "target" );
+//             //console.log(aux + '->' + (aux === hash ? "addClass" : "removeClass"));
+//             that[ aux === hash ? "addClass" : "removeClass" ]("ui-btn-active");
+//         });
+//     });
 
-    $(window).hashchange();
+//     $(window).hashchange();
 
 
     //Respond to back/forward navigation
@@ -198,7 +210,7 @@ $(function(){
     //     // reset the content based on the url
     //     //alterContent(data.state.url);
     // });
-});
+//});
 
 // $(document).ready(function(){
 
@@ -237,4 +249,3 @@ $(function(){
 //     });
 
 // });
-
