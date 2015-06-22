@@ -323,7 +323,11 @@
 							$('#t_estado_centro').html('<p>'+data[0].estado+'</p>');
 							$('#t_municipio_centro').html('<p>'+data[0].municipio+'</p>');
 							//$('#t_numero_orden').html('<p>'++'</p>');
-							//$('#t_hora_asistencia').html('<p>'++'</p>');
+							$('#t_hora_asistencia').html('<select class="form-control" name="hora_asistencia"></select>');
+							$.each(data[0].horarios, function(key,val){
+								$('#t_hora_asistencia>select').append(
+									'<option value="'+val.value+'">'+val.text+'</option>');
+							});
 							$('#Ticket').modal('show'); 
 						}
 						else{

@@ -122,20 +122,28 @@ class GenerarNumeroOrden(View):
 			centro_inspeccion.etiqueta = 'Muy baja'
 			centro_inspeccion.etiqueta_clase = 'danger'
 
-		fecha_asistencia = dates.convert(fecha_asistencia, '%d/%m/%Y', '%Y-%m-%d')
+		fecha_asistencia = dates.convert(fecha_asistencia, '%m/%d/%Y', '%Y-%m-%d')
 		#Falta calcular Informacion para generar numero de orden y hora de asistencia...
-		horarios = solicitudes.generar_horarios(centro_inspeccion)
+		horarios = []
+		bloques = solicitudes.generar_horarios(centro_inspeccion, fecha_asistencia)
+		for b in bloques:
+			if b.capacidad > 0:
+				horarios.append({
+					'value':dates.to_string(b.hora_inicio,'%H:%M'),
+					'text':dates.to_string(b.hora_inicio,'%H:%M')
+				})
 
 		centro.append({
 			'nombre': centro_inspeccion.nombre,
 			'estado': centro_inspeccion.municipio.estado.nombre,
 			'municipio': centro_inspeccion.municipio.nombre,
+			'horarios': horarios,
 			#'fecha_asistencia': ,
 			#'numer_orden': ,
 			#'hora_asistencia':
 		})
 		centro = json.dumps(centro)
-		print centro
+		
 
 		return HttpResponse(
 			centro,

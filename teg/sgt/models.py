@@ -75,7 +75,8 @@ class NumeroOrden(models.Model):
 	asistencia = models.IntegerField(default=0)
 	solicitud_inspeccion = models.ForeignKey(SolicitudInspeccion)
 	codigo = models.CharField(max_length=50)
-	fecha_atencion = models.DateTimeField(blank=True, null=True)
+	fecha_atencion = models.DateField(blank=True, null=True)
+	hora_atencion = models.TimeField(blank=True, null=True)
 
 	def __unicode__(self):
 		return u'%s' % self.codigo
