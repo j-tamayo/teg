@@ -9,17 +9,19 @@ $(document).ready(function(){
     });
 
     $(document).one("pagecreate", ".multi_page", function(){
-        $("#profile_header").toolbar({theme: "b", position: "fixed"});
+        $("#profile_header").toolbar({theme: "b"});
 
         function navnext(next){
-            $(":mobile-pagecontainer").pagecontainer("change", "#"+next, {
-                transition: "slide"
+            $(":mobile-pagecontainer").pagecontainer("change", "#" + next, {
+                transition: "slide",
+                changeHash: false
             });
         }
 
         function navprev(prev){
-            $(":mobile-pagecontainer").pagecontainer("change", "#"+prev, {
+            $(":mobile-pagecontainer").pagecontainer("change", "#" + prev, {
                 transition: "slide",
+                changeHash: false,
                 reverse: true
             });
         }
@@ -34,12 +36,14 @@ $(document).ready(function(){
 
         $(document).on("click", ".next", function(){
             next = $(this).attr("target");
+            $(this).removeClass("next");
             if(next)
                 navnext(next);
         });
 
         $(document).on("swiperight", ".ui-page", function(event){
             prev = $(this).jqmData("prev");
+            //console.log(next);
             if(prev && (event.target === $(this)[0])){
                 $('a[target='+$(this).attr("id")+']').removeClass("ui-btn-active");
                 navprev(prev);
@@ -48,6 +52,7 @@ $(document).ready(function(){
 
         $(document).on("click",".prev",function(){
             prev = $(this).attr("target");
+            $(this).removeClass("prev");
             if(prev)
                 navprev(prev);
         });
@@ -55,7 +60,13 @@ $(document).ready(function(){
 
     $(document).on("pageshow", ".multi_page", function(){
         thePage = $(this);
-        $('a[target='+thePage.attr("id")+']').addClass("ui-btn-active");
+        link = $('a[target='+thePage.attr("id")+']');
+        
+        link.addClass("ui-btn-active");
+        if(link.hasClass("next"))
+            link.removeClass("next");
+        if(link.hasClass("prev"))
+            link.removeClass("prev");
 
         next = thePage.jqmData("next");
         while(next){
@@ -72,7 +83,32 @@ $(document).ready(function(){
         $("#profile_header").show("fold","down");
     });
 
+    $(document).on('pagecontainerbeforechange', function(e, data){  
+        to = data.toPage;
+        if(typeof to  === 'string'){
+            url = $.mobile.path.parseUrl(to);
+            to = url.hash || '#' + url.pathname.substring(1);
+            prev_page = '#' + data.prevPage[0].id;
+
+            //console.log(data.options);
+            if($(prev_page).hasClass("multi_page") && data.options.direction == "back"){
+                $("#profile_header").hide("fold","down");
+                //window.location.replace("#login_page");
+
+                //data.toPage = "#login_page";
+                //data.prevPage = $("#login_page");
+                // var lent = history.length - 1; //count total row in history
+                // history.go(-lent); //destroy all history and make it as null
+                
+                //window.history.go((-2)); 
+                //e.preventDefault();
+                //e.stopPropagation();
+            }
+        }
+    });
+
     $("#registro_form").submit(function(event){
+        event.preventDefault();
         formData = $(this).serializeArray();
         console.log(formData);
         data = {};
@@ -86,17 +122,95 @@ $(document).ready(function(){
         $.post("http://192.168.1.101:8000/api/usuarios/", data)
         .done(function(json){
             console.log("Usuario guardados exitosamente!");
+            $.mobile.changePage("#profile_page", {
+                changeHash: false, 
+                transition: "flip"
+            });
         })
         .fail(function(json) {
             console.log("Error de carga!");
+            console.log(json.responseText);
+        });
+    });
+
+    $("#login_form").submit(function(event){
+        event.preventDefault();
+        formData = $(this).serializeArray();
+        console.log(formData);
+        data = {};
+        $(formData).each(function(index, obj){
+            data[obj.name] = obj.value;
+        });
+
+        $.post("http://192.168.1.101:8000/api/login/", data)
+        .done(function(json){
+            console.log("iniciando sesión...");
+            json['password'] = data['password'];
+            login(data['correo'], data['password'], json);
+        })
+        .fail(function(json){
+            if(json.status == 0){
+                console.log("Error de conexión!");
+                console.log("Intentando iniciar sesión localmente...");
+                login(data['correo'], data['password'], {});
+            }else{ //(json.status == 400)
+                console.log("Usuario inválido...");
+            }
+        });
+    });
+
+    $(document).on("click", ".back_btn", function(){
+        event.preventDefault();
+        $.mobile.changePage($(this).attr('href'), {
+            changeHash: false,
+            transition: $(this).attr('data-transition')
         });
     });
 
     $(document).on("click", "#aux", function(){
-        alert(selectTable('sgt_estado', ['id','nombre']));
+        //$("#profile_header").hide();
+        //alert(selectTable('sgt_estado', ['id','nombre']));
         //selectTable('sgt_centroinspeccion', ['nombre']);
     });
 });
+
+/* Funcion declarada para el manejo de eventos relacionados con la navegacion */
+// $(function(){
+//     $(window).hashchange(function(){
+//         hash = location.hash;
+//         //console.log('<------------cambio de pag----------->');
+//         $( "#nav li a" ).each(function(){
+//             that = $(this);
+//             aux = '#' + that.attr( "target" );
+//             //console.log(aux + '->' + (aux === hash ? "addClass" : "removeClass"));
+//             that[ aux === hash ? "addClass" : "removeClass" ]("ui-btn-active");
+//         });
+//     });
+
+//     $(window).hashchange();
+
+
+    //Respond to back/forward navigation
+    // $(window).on("navigate", function(event, data){
+    //     // if(data.state.foo) {
+    //     //     // Make use of the arbitrary data stored
+    //     // }
+
+    //     // // console.log( data.state.info );
+    //     // // console.log( data.state.direction );
+    //     // // console.log( data.state.url );
+    //     // //console.log( data.state.hash );
+
+    //     // if(data.state.direction == "back"){
+            
+           
+    //     //     // Make use of the directional information
+    //     // }
+
+    //     // reset the content based on the url
+    //     //alterContent(data.state.url);
+    // });
+//});
 
 // $(document).ready(function(){
 
@@ -135,4 +249,3 @@ $(document).ready(function(){
 //     });
 
 // });
-
