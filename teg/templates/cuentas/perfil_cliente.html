@@ -83,32 +83,31 @@
 			    	<div class="row">
 			    		<br>
 						<div class="col-xs-10 col-xs-offset-1">
+							{% if solicitudes %}
 			    			<table class="table table-bordered">
-								<tr>
-								 	<th style="width:30%">Tipo Solicitud</th>
-									<th style="width:20%">N&uacute;mero de Orden</th>
-									<th style="width:30%">Estado</th>
-									<th style="width:20%">Opciones</th>
-								</tr>
-								<tr>
-									<td>Suscripci&oacute;n</td>
-									<td>SSI-1234</td>
-									<td>Realizada</td>
-									<td>...</td>
-								</tr>
-								<tr>
-									<td>Reclamo</td>
-									<td>SRI-4567</td>
-									<td>En proceso</td>
-									<td>...</td>
-								</tr>
-								<tr>
-									<td>Reinspecci&oacute;n</td>
-									<td>SRII-3216</td>
-									<td>No procesada</td>
-									<td>...</td>
-								</tr>
+			    				<thead>
+									<tr>
+									 	<th style="width:30%">Tipo Solicitud</th>
+										<th style="width:20%">N&uacute;mero de Orden</th>
+										<th style="width:30%">Estado</th>
+										<th style="width:20%">Opciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for s in solicitudes %}
+									<tr>
+										<td>{{s.tipo_inspeccion}}</td>
+										<td>{{s.nnumero_orden.codigo}}</td>
+										<td>{{s.estatus}}</td>
+										<td>...</td>
+									</tr>
+									
+									{% endfor %}
+								</tbody>
 							</table>
+							{% else %}
+							<h4>No hay solicitudes</h4>
+							{% endif %}
 			    		</div>
 			    	</div>
 		    	</div>
@@ -298,6 +297,7 @@
 				}
 			});
 			
+			/********** CARGAR MODAL DE CONFIRMACION DE TICKET *************/
 			$(document).on('click', '#mostrar_ticket', function(event){
 				event.preventDefault();
 
@@ -336,6 +336,24 @@
 					});
 				}
 			});
+			/********** END *************/
+
+			/********** CREAR TICKET *************/
+			$(document).on('click','#generar_ticket',function(){
+				// Llamada AJAX para generar el ticket
+				$.ajax({
+					method:'POST',
+					url:'',
+					dataType:'json',
+					data:{
+
+					}
+				})
+				.done(function(data){
+					
+				});
+			});
+			/********** END *************/
 
 		});
 

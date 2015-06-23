@@ -196,9 +196,15 @@ class CrearSolicitudInspeccion(View):
 		return render(request,'crear_solicitud.html', context)
 
 	def post(self, request, *args, **kwargs):
-		form = SolicitudInspeccionForm(request.GET)
-		if form.is_valid():
-			datos = form.cleaned_data
+		# form = SolicitudInspeccionForm(request.GET)
+		# if form.is_valid():
+		# 	datos = form.cleaned_data
+		centro_id = request.POST.get('centro_id',None)
+		fecha_asistencia = request.POST.get('fecha_asistencia', None)
+		hora_asistencia = request.POST.get('hora_asistencia', None)
+		if centro_id and fecha_asistencia and hora_asistencia:
+			cantidad_citas = NumeroOrden.objects.filter(fecha_atencion = fecha_asistencia, hora_atencion = hora_asistencia).count()
+			
 			
 
 
@@ -212,12 +218,17 @@ class BandejaCliente(View):
 		tipo_solicitudes = TipoInspeccion.objects.all()
 		form = SolicitudInspeccionForm(request.POST)
 		poliza = Poliza.objects.filter(usuario = usuario).first()
+		solicitudes = SolicitudInspeccion.objects.filter()
+
+		for s in solicitudes:
+			s.numero_orden = NumeroOrden.objects.filter(solicitud = s).first()
 
 		context = {
 		    'usuario': usuario,
 		    'tipo_solicitudes': tipo_solicitudes,
 		    'form': form,
-		    'poliza': poliza
+		    'poliza': poliza,
+		    'solicitudes': solicitudes,
 		}
 
 		return render(request,'cuentas/perfil_cliente.html', context)

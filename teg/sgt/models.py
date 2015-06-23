@@ -65,6 +65,7 @@ class SolicitudInspeccion(models.Model):
 	fecha_culminacion = models.DateTimeField(blank=True, null=True)
 	perito = models.ForeignKey(Perito, blank=True, null=True)
 	tipo_inspeccion = models.ForeignKey(TipoInspeccion)
+	estatus = models.ForeignKey('Estatus')
 	usuario = models.ForeignKey(USER_MODEL)
 
 	def __unicode__(self):
@@ -77,6 +78,7 @@ class NumeroOrden(models.Model):
 	codigo = models.CharField(max_length=50)
 	fecha_atencion = models.DateField(blank=True, null=True)
 	hora_atencion = models.TimeField(blank=True, null=True)
+	estatus = models.ForeignKey('Estatus')
 
 	def __unicode__(self):
 		return u'%s' % self.codigo
@@ -133,3 +135,11 @@ class Dispositivo(models.Model):
 
 	def __unicode__(self):
 		return u'%s - %s' % (self.modelo, self.marca)
+
+
+class Estatus(models.Model):
+	nombre = models.CharField(max_length=255)
+	codigo = models.CharField(max_length=100)
+
+	def __unicode__(self):
+		return u'%s' % self.nombre
