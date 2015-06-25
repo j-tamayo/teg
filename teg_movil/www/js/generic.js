@@ -1,15 +1,22 @@
 $(document).ready(function(){
     init_db();
     
+    $('request_content').css('margin: -1 0');
+
     $("#profile_header").hide();
+    $("#request_footer").hide();
 
     $( ".datepicker" ).datepicker({
         changeYear: true,
         yearRange: '1900:2100'
     });
 
+    $('ul,.request').html(function(i,h){
+        return h.replace(/&nbsp;/g,'');
+    });
+
     $(document).one("pagecreate", ".multi_page", function(){
-        $("#profile_header").toolbar({theme: "b"});
+        $("#profile_header").toolbar({theme: "b", position:"fixed"});
 
         function navnext(next){
             $(":mobile-pagecontainer").pagecontainer("change", "#" + next, {
@@ -80,6 +87,9 @@ $(document).ready(function(){
             prev = $("#"+prev).jqmData("prev");
         }
 
+        if(thePage.attr("id") == "request_page")
+            $("#request_footer").show("fold","up");
+
         $("#profile_header").show("fold","down");
     });
 
@@ -89,6 +99,7 @@ $(document).ready(function(){
             url = $.mobile.path.parseUrl(to);
             to = url.hash || '#' + url.pathname.substring(1);
             prev_page = '#' + data.prevPage[0].id;
+            from_page = '#' + data.options.fromPage[0].id;
 
             //console.log(data.options);
             if($(prev_page).hasClass("multi_page") && data.options.direction == "back"){
@@ -103,6 +114,11 @@ $(document).ready(function(){
                 //window.history.go((-2)); 
                 //e.preventDefault();
                 //e.stopPropagation();
+            }
+
+            if(from_page == "#request_page"){
+                console.log("hola");
+                $("#request_footer").hide("fold","down");
             }
         }
     });

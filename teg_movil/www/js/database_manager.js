@@ -372,14 +372,16 @@ function load_profile_info(user_info){
 	    function(tx, results){
 	    	row = results.rows.item(0);
 	    	console.log(row);
-	    	$("#profile_page").children(".ui-content").html('<h3 class="text-success">Informaci&oacute;n del usuario</h3>\
+	    	$("#profile_page").children(".ui-content").html('<h3 class="text-success" style="text-align: center;">Informaci&oacute;n del usuario</h3>\
 				<p>Nombre: '+user_info['nombres']+'</p>\
 				<p>Apellido: '+user_info['apellidos']+'</p>\
 				<p>C&eacute;dula: '+user_info['cedula']+'</p>\
 				<p>Estado: '+row['estado']+'</p>\
 				<p>Municipio: '+row['municipio']+'</p>\
 				<p>Direcci&oacute;n: '+user_info['direccion']+'</p>\
-				<p>Correo: '+user_info['correo']+'</p>'	
+				<p>Correo: '+user_info['correo']+'</p>\
+				<hr>\
+				<h3 class="text-success" style="text-align: center;">El usuario no posee<br>póliza asociada</h3>'	
 			);
 	    },
 		function(tx, err){
