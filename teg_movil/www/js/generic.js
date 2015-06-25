@@ -117,7 +117,6 @@ $(document).ready(function(){
             }
 
             if(from_page == "#request_page"){
-                console.log("hola");
                 $("#request_footer").hide("fold","down");
             }
         }
@@ -138,7 +137,7 @@ $(document).ready(function(){
         $.post("http://192.168.1.101:8000/api/usuarios/", data)
         .done(function(json){
             console.log("Usuario guardados exitosamente!");
-            $.mobile.changePage("#profile_page", {
+            $.mobile.changePage("#login_page", {
                 changeHash: false, 
                 transition: "flip"
             });

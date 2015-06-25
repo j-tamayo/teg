@@ -73,3 +73,8 @@ class NumeroOrdenSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = NumeroOrden
 		fields = ('id','asistencia','solicitud_inspeccion','codigo','fecha_atencion','hora_atencion','estatus')
+
+class EstatusSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Estatus
+		fields = ('id', 'nombre', 'codigo')

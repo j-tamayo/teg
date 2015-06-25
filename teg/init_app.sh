@@ -35,3 +35,6 @@ echo -e "\n\n- Cargando fixtures: Sgt - Perito"
 
 echo -e "\n\n- Cargando fixtures: Sgt - CentroInspeccion"
 /usr/bin/env python2.7 manage.py loaddata fixtures/sgt_centroinspeccion.json
+
+echo -e "\n\n- Cargando fixtures: Sgt - Estatus"
+/usr/bin/env python2.7 manage.py loaddata fixtures/sgt_estatus.json

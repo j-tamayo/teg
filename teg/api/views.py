@@ -149,6 +149,11 @@ class InitialData(APIView):
 		if tipos_inspeccion_serializer:
 			respuesta['sgt_tipoinspeccion'] = tipos_inspeccion_serializer.data
 
+		estatus = Estatus.objects.all()
+		estatus_serializer = TipoInspeccionSerializer(estatus, many=True)
+		if estatus_serializer:
+			respuesta['sgt_estatus'] = estatus_serializer.data
+
 		#print respuesta
 
 		if respuesta:
@@ -183,6 +188,9 @@ class UserInfo(APIView):
 				solicitudes = SolicitudInspeccion.objects.filter(usuario = usuario)
 				solicitudes_serializer = SolicitudInspeccionSerializer(solicitudes, many=True)
 				respuesta['sgt_solicitud'] = solicitudes_serializer.data
+				numero_orden = NumeroOrden.objects.filter(solicitud_inspeccion__in = solicitudes)
+				numero_orden_serializer = NumeroOrdenSerializer(solicitudes, many=True)
+				respuesta['sgt_numeroorden'] = numero_orden_serializer.data
 				
 				return Response(respuesta, status=status.HTTP_200_OK)
 
