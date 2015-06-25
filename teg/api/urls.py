@@ -12,7 +12,9 @@ urlpatterns = [
     url(r'^centros/$', views.Centros.as_view()),
     url(r'^data-inicial/$', views.InitialData.as_view()),
     url(r'^usuario-info/(?P<pk>[0-9]+)/$', views.UserInfo.as_view()),
-    url(r'^usuario-info/$', views.UserInfo.as_view())
+    url(r'^usuario-info/$', views.UserInfo.as_view()),
+    url(r'^horarios/$', views.Horarios.as_view()),
+    url(r'^crear-solicitud/$', views.CrearSolicitud.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

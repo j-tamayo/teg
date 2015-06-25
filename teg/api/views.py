@@ -8,6 +8,7 @@ from cuentas.models import SgtUsuario, RolSgt
 from sgt.models import *
 from django.contrib.auth import authenticate, login
 from django.core import serializers
+from sgt.helpers import solicitudes,dates
 
 import json
 
@@ -190,3 +191,92 @@ class UserInfo(APIView):
 		else:
 			respuesta['errores'] = {'causa':'No se envía nada'}
 			return Response(respuesta, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class Horarios(APIView):
+	"""
+	Obtiene los horarios disponibles para solicitar una inspección
+	"""
+	def get(self, request, format = None):
+		usuario = SgtUsuario.objects.get(id=1)
+		serializer = SgtUsuarioSerializer(usuario)
+		return Response(serializer.data)
+
+	def post(self, request, format=None):
+		id_centro = request.data['id_centro']
+		fecha_asistencia = request.data['fecha']
+		fecha_asistencia = dates.str_to_datetime(fecha_asistencia, '%d/%m/%Y')
+		id_tipo_solicitud = request.data['id_tipo_inspeccion']
+
+		centro_inspeccion = CentroInspeccion.objects.get(id=id_centro)
+
+		horarios = []
+		bloques = solicitudes.generar_horarios(centro_inspeccion, fecha_asistencia)
+		for b in bloques:
+			if b.capacidad > 0:
+				horarios.append({
+					'value':dates.to_string(b.hora_inicio,'%H:%M'),
+					'text':dates.to_string(b.hora_inicio,'%I:%M %p')
+				})
+
+		return Response(horarios, status=status.HTTP_200_OK)
+
+		respuesta = {}
+		respuesta['errores'] = {'causa':'No se envía nada'}
+		return Response(respuesta, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class CrearSolicitud(APIView):
+	"""
+	Crear una solicitud para una fecha determinada de un centro determinado a una hora determinada
+	"""
+	def get(self, request, format = None):
+		usuario = SgtUsuario.objects.get(id=1)
+		serializer = SgtUsuarioSerializer(usuario)
+		return Response(serializer.data)
+
+	def post(self, request, format=None):
+		respuesta = {}
+
+		id_centro = request.data['id_centro']
+		fecha_asistencia = request.data['fecha']
+		fecha_asistencia = dates.str_to_datetime(fecha_asistencia, '%d/%m/%Y')
+		fecha_asistencia = fecha_asistencia.date()
+		id_tipo_solicitud = request.data['id_tipo_inspeccion']
+		hora_asistencia = request.data['hora']
+		hora_asistencia = dates.str_to_datetime(hora_asistencia, '%H:%M')
+		hora_asistencia = hora_asistencia.time()
+		usuario = SgtUsuario.objects.get(correo = request.data['usuario'])
+
+		centro_inspeccion = CentroInspeccion.objects.get(id=id_centro)
+
+		cantidad_citas = NumeroOrden.objects.filter(solicitud_inspeccion__centro_inspeccion = centro_inspeccion, fecha_atencion = fecha_asistencia, hora_atencion = hora_asistencia).count()
+		if cantidad_citas < centro_inspeccion.peritos.all().count():
+			estatus = Estatus.objects.get(codigo='solicitud_en_proceso')
+			solicitud = SolicitudInspeccion(
+				centro_inspeccion = centro_inspeccion,
+				tipo_inspeccion_id = id_tipo_solicitud,
+				estatus = estatus,
+				usuario = usuario
+			)
+			solicitud.save()
+
+			print solicitud.pk
+			numero_orden = NumeroOrden(
+				solicitud_inspeccion = solicitud,
+				codigo = 'XYZ',
+				fecha_atencion = fecha_asistencia,
+				hora_atencion = hora_asistencia,
+				estatus = estatus
+			)
+			numero_orden.save()
+
+			respuesta['solicitud'] = SolicitudInspeccionSerializer(solicitud).data
+			respuesta['numero_orden'] = NumeroOrdenSerializer(numero_orden).data
+
+			return Response(respuesta, status=status.HTTP_200_OK)
+
+		else:
+			respuesta['errores'] = {'causa':'No hay disponibilidad'}
+			return Response(respuesta, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

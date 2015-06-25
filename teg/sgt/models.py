@@ -61,6 +61,7 @@ class TipoInspeccion(models.Model):
 
 
 class SolicitudInspeccion(models.Model):
+	centro_inspeccion = models.ForeignKey(CentroInspeccion)
 	fecha_creacion = models.DateTimeField(auto_now_add=True)
 	fecha_culminacion = models.DateTimeField(blank=True, null=True)
 	perito = models.ForeignKey(Perito, blank=True, null=True)

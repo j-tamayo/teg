@@ -67,3 +67,9 @@ class TipoInspeccionSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = TipoInspeccion
 		fields = ('id', 'codigo', 'descripcion', 'nombre')
+
+
+class NumeroOrdenSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = NumeroOrden
+		fields = ('id','asistencia','solicitud_inspeccion','codigo','fecha_atencion','hora_atencion','estatus')

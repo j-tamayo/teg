@@ -130,7 +130,7 @@ class GenerarNumeroOrden(View):
 			if b.capacidad > 0:
 				horarios.append({
 					'value':dates.to_string(b.hora_inicio,'%H:%M'),
-					'text':dates.to_string(b.hora_inicio,'%H:%M')
+					'text':dates.to_string(b.hora_inicio,'%I:%M %p')
 				})
 
 		centro.append({
