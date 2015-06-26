@@ -35,7 +35,7 @@
 
 				<div class="col-xs-3 form-group has-error">
 					<label class="text-muted">Fecha de asistencia:</label>
-					<div id="fecha_asistencia" class="input-append date">
+					<div id="fecha_asistencia" class="input-append date" data-date-start-date="today">
 					  {{form.fecha_asistencia}}
 					  <span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
 					</div>
@@ -57,7 +57,7 @@
 					<tbody>
 						{% for c in centros %}
 						<tr>
-							<td>{{c.nombre}}</td>
+							<td id="centro_{{c.pk}}">{{c.nombre}}</td>
 							<td>{{c.direccion}}</td>
 							<td>{{c.disponibilidad}} <span class=" label label-{{c.etiqueta_clase}}">{{c.etiqueta}}</span></td>
 							<td>

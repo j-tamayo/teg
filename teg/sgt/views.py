@@ -199,13 +199,63 @@ class CrearSolicitudInspeccion(View):
 		# form = SolicitudInspeccionForm(request.GET)
 		# if form.is_valid():
 		# 	datos = form.cleaned_data
-		centro_id = request.POST.get('centro_id',None)
+		respuesta = {}
+		usuario = request.user
+
+		centro_id = request.POST.get('centro',None)
+		centro_inspeccion = CentroInspeccion.objects.filter(id=centro_id).first()
 		fecha_asistencia = request.POST.get('fecha_asistencia', None)
+		fecha_asistencia = dates.str_to_datetime(fecha_asistencia, '%m/%d/%Y')
+		fecha_asistencia = fecha_asistencia.date()
 		hora_asistencia = request.POST.get('hora_asistencia', None)
-		if centro_id and fecha_asistencia and hora_asistencia:
-			cantidad_citas = NumeroOrden.objects.filter(fecha_atencion = fecha_asistencia, hora_atencion = hora_asistencia).count()
-			
-			
+		hora_asistencia = dates.str_to_datetime(hora_asistencia, '%H:%M')
+		hora_asistencia = hora_asistencia.time()
+		tipo_inspeccion = request.POST.get('tipo_inspeccion', None)
+	
+		if centro_inspeccion and fecha_asistencia and hora_asistencia and tipo_inspeccion:
+			cantidad_citas = NumeroOrden.objects.filter(solicitud_inspeccion__centro_inspeccion = centro_inspeccion, fecha_atencion = fecha_asistencia, hora_atencion = hora_asistencia).count()
+			if cantidad_citas < centro_inspeccion.peritos.all().count():
+				estatus = Estatus.objects.get(codigo='solicitud_en_proceso')
+				
+				solicitud = SolicitudInspeccion(
+					centro_inspeccion = centro_inspeccion,
+					tipo_inspeccion_id = tipo_inspeccion,
+					estatus = estatus,
+					usuario = usuario
+				)
+				solicitud.save()
+
+				numero_orden = NumeroOrden(
+					solicitud_inspeccion = solicitud,
+					codigo = 'XYZ',
+					fecha_atencion = fecha_asistencia,
+					hora_atencion = hora_asistencia,
+					estatus = estatus
+				)
+				numero_orden.save()
+
+				respuesta['solicitud'] = {
+					'tipo_solicitud': solicitud.tipo_inspeccion.nombre,
+					'numero_orden': numero_orden.codigo,
+					'estatus': solicitud.estatus.nombre,
+				}
+
+				respuesta['resultado'] = 0
+
+				return HttpResponse(
+				    json.dumps(respuesta),
+				    content_type="application/json"
+				)
+
+			else:
+				respuesta['resultado'] = 1
+				respuesta['error_msg'] = 'Ya no quedan cupos disponibles'
+
+				return HttpResponse(
+				    json.dumps(respuesta),
+				    content_type="application/json"
+				)
+
 
 
 class BandejaCliente(View):
@@ -221,7 +271,7 @@ class BandejaCliente(View):
 		solicitudes = SolicitudInspeccion.objects.filter()
 
 		for s in solicitudes:
-			s.numero_orden = NumeroOrden.objects.filter(solicitud = s).first()
+			s.numero_orden = NumeroOrden.objects.filter(solicitud_inspeccion = s).first()
 
 		context = {
 		    'usuario': usuario,
