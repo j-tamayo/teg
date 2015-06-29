@@ -6,12 +6,21 @@ $(document).ready(function(){
     $("#profile_header").hide();
     $("#request_footer").hide();
 
-    $( ".datepicker" ).datepicker({
+    $("#prev_request_page").hide();
+    $("#request_form_page2").hide();
+
+
+    $(".datepicker").datepicker({
         changeYear: true,
         yearRange: '1900:2100'
     });
 
-    $('ul,.request').html(function(i,h){
+    $("#fecha_asistencia_sol").datepicker({
+        changeYear: true,
+        yearRange: '1900:2100'
+    });
+
+    $('ul,.request,.aux').html(function(i,h){
         return h.replace(/&nbsp;/g,'');
     });
 
@@ -116,8 +125,19 @@ $(document).ready(function(){
                 //e.stopPropagation();
             }
 
-            if(from_page == "#request_page"){
+            if(from_page == "#request_page" && (to == "#mail_page" ||  to == "#profile_page")){
                 $("#request_footer").hide("fold","down");
+            }
+
+            if(from_page == "#request_page" && to == "#create_request_page"){
+                $("#profile_header").toolbar("disable");
+                $("#profile_header").hide("fold","up");
+            }
+
+            if(from_page == "#create_request_page" && to == "#request_page"){
+                //console.log("hi!!!");
+                //$("#profile_header").toolbar("enable");
+                $("#profile_header").show("fold","down");
             }
         }
     });
@@ -180,6 +200,44 @@ $(document).ready(function(){
             changeHash: false,
             transition: $(this).attr('data-transition')
         });
+    });
+
+    var page_sol = 1;
+    $(document).on("click", "#next_request_page", function(){
+        if(page_sol >= 1 && page_sol < 2){
+            $("#request_form_page"+page_sol).hide("fade");
+            
+            page_sol++;
+            if(page_sol > 1)
+                $("#prev_request_page").show("fade");
+
+
+            if(page_sol == 2){
+                $.post("http://192.168.1.101:8000/api/centros-sol/", {'municipio_id': $('#municipio_sol').val(), 'estado_id':$('#estado_sol').val()})
+                .done(function(json){
+                    console.log(json);
+                })
+                .fail(function(json){
+                    console.log(json);
+                });
+            }
+
+            $("#request_form_page"+page_sol).show("fade");
+        }
+        console.log(page_sol);
+    });
+
+    $(document).on("click", "#prev_request_page", function(){
+        if(page_sol > 1 && page_sol <= 2){
+            $("#request_form_page"+page_sol).hide("fade");
+
+            page_sol--;
+            if(page_sol == 1)
+                $("#prev_request_page").hide("fade");
+
+            $("#request_form_page"+page_sol).show("fade");
+        }
+        console.log(page_sol);
     });
 
     $(document).on("click", "#aux", function(){

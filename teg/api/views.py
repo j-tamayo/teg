@@ -201,6 +201,60 @@ class UserInfo(APIView):
 			return Response(respuesta, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class ObtenerCentros(APIView):
+	def post(self, request, format=None):
+		"""" Vista que retorna en formato JSON los centros de inspección dependiendo del municipio_id recibido """
+		municipio_id = request.data['municipio_id']
+		estado_id = request.data['estado_id']
+
+		centros = []
+		if municipio_id or estado_id:
+			if municipio_id:
+				centros_query = CentroInspeccion.objects.filter(municipio__id = municipio_id)
+			else:
+				centros_query = CentroInspeccion.objects.filter(municipio__estado__id = estado_id)
+			
+			print centros_query
+			#Para calcular la disponibilidad de cada centro
+			for c in centros_query:
+				en_cola = ColaAtencion.objects.filter(centro_inspeccion = c).count()
+				c.disponibilidad = c.capacidad - en_cola
+				# Para calcular la disponibilidad (Alta, media, baja y muy baja)
+				if c.disponibilidad > (3 * c.capacidad)/4:
+					c.etiqueta = 'Alta'
+					c.etiqueta_clase = 'success'
+				elif c.disponibilidad > (2 * c.capacidad)/4:
+					c.etiqueta = 'Media'
+					c.etiqueta_clase = 'warning'
+				elif c.disponibilidad > (1 * c.capacidad)/4:
+					c.etiqueta = 'Baja'
+					c.etiqueta_clase = 'low'
+				else:
+					c.etiqueta = 'Muy baja'
+					c.etiqueta_clase = 'danger'
+
+				centros.append({
+					'pk': c.pk,
+					'nombre': c.nombre,
+					'direccion': c.direccion,
+					'disponibilidad': c.disponibilidad,
+					'etiqueta': c.etiqueta,
+					'telefonos': c.telefonos,
+					'etiqueta_clase': c.etiqueta_clase
+				})
+
+			print centros
+			centros = json.dumps(centros)
+			print centros
+			return Response(centros, status=status.HTTP_200_OK)
+
+		else:
+			respuesta = {
+				'msg_error': 'No se suministró el id del estado'
+			}
+
+			return Response(respuesta, status=status.HTTP_400_BAD_REQUEST)
+
 class Horarios(APIView):
 	"""
 	Obtiene los horarios disponibles para solicitar una inspección

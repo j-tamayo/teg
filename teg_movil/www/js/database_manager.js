@@ -14,6 +14,7 @@ function successCB(){
 function init_page(){
 	console.log('Inicializando páginas...');
 	$(".init_data").bind("pagebeforecreate", fill_estados());
+	$(".init_data").bind("pagebeforecreate", fill_tipos_inspeccion());
 }
 
 function init_db(){
@@ -364,6 +365,26 @@ function fill_municipios(sel_estado){
 			});
 		}, errorCB, successCB);
 	});
+}
+
+function fill_tipos_inspeccion(){
+	db.transaction(function(tx){
+		tx.executeSql('SELECT id, nombre FROM sgt_tipoinspeccion;', [], 
+	    function(tx, results){
+	    	num = results.rows.length;
+	    	aux = '<option value="">---Seleccione un tipo---</option>';
+			for(i = 0; i < num; i++){
+				row = results.rows.item(i);
+				aux += '<option value="'+row['id']+'">'+row['nombre']+'</option>'
+			}
+			$(".tipos_inspeccion").each(function(){
+				$(this).html(aux);
+			});
+	    },
+		function(tx, err){
+			throw new Error(err.message);
+		});
+	}, errorCB, successCB);
 }
 
 function load_profile_info(user_info){

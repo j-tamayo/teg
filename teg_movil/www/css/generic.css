@@ -98,3 +98,17 @@
     margin: -1.6% 0;
 } 
 */
+
+.footer-button-left,
+.footer-button-right{
+    position: absolute;
+    margin: 0;
+    top: auto;
+    bottom: 0.24em;
+}
+.footer-button-left{
+    left: 0.4em;
+}
+.footer-button-right{
+    right: 0.4em;
+}
