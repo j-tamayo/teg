@@ -189,7 +189,7 @@ class UserInfo(APIView):
 				solicitudes_serializer = SolicitudInspeccionSerializer(solicitudes, many=True)
 				respuesta['sgt_solicitud'] = solicitudes_serializer.data
 				numero_orden = NumeroOrden.objects.filter(solicitud_inspeccion__in = solicitudes)
-				numero_orden_serializer = NumeroOrdenSerializer(solicitudes, many=True)
+				numero_orden_serializer = NumeroOrdenSerializer(numero_orden, many=True)
 				respuesta['sgt_numeroorden'] = numero_orden_serializer.data
 				
 				return Response(respuesta, status=status.HTTP_200_OK)
@@ -202,19 +202,22 @@ class UserInfo(APIView):
 
 
 class ObtenerCentros(APIView):
+	def get(self, request, format = None):
+		usuario = SgtUsuario.objects.get(id=1)
+		serializer = SgtUsuarioSerializer(usuario)
+		return Response(serializer.data)
+
 	def post(self, request, format=None):
 		"""" Vista que retorna en formato JSON los centros de inspección dependiendo del municipio_id recibido """
-		municipio_id = request.data['municipio_id']
-		estado_id = request.data['estado_id']
+		municipio_id = request.data.get('municipio_id',None)
+		estado_id = request.data.get('estado_id',None)
 
 		centros = []
 		if municipio_id or estado_id:
+			centros_query = CentroInspeccion.objects.filter(municipio__estado__id = estado_id)
 			if municipio_id:
-				centros_query = CentroInspeccion.objects.filter(municipio__id = municipio_id)
-			else:
-				centros_query = CentroInspeccion.objects.filter(municipio__estado__id = estado_id)
+				centros_query = centros_query.filter(municipio__id = municipio_id)
 			
-			print centros_query
 			#Para calcular la disponibilidad de cada centro
 			for c in centros_query:
 				en_cola = ColaAtencion.objects.filter(centro_inspeccion = c).count()
@@ -243,9 +246,6 @@ class ObtenerCentros(APIView):
 					'etiqueta_clase': c.etiqueta_clase
 				})
 
-			print centros
-			centros = json.dumps(centros)
-			print centros
 			return Response(centros, status=status.HTTP_200_OK)
 
 		else:
