@@ -144,3 +144,22 @@ class Estatus(models.Model):
 
 	def __unicode__(self):
 		return u'%s' % self.nombre
+
+
+class Notificacion(models.Model):
+	fecha_creacion = models.DateTimeField(auto_now_add=True)
+	leida = models.BooleanField(default=False)
+	texto = models.TextField()
+	tipo_notificacion = models.ForeignKey('TipoNotificacion')
+	usuario = models.ForeignKey(USER_MODEL)
+
+	def __unicode__(self):
+		return u'%s - %s' % (self.fecha_creacion,self.texto)
+
+
+class TipoNotificacion(models.Model):
+	codigo = models.CharField(max_length=100)
+	nombre = models.CharField(max_length=255)
+
+	def __unicode__(self):
+		return u'%s' % self.nombre

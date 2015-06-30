@@ -67,7 +67,6 @@ class SgtUsuarioManager(BaseUserManager):
 class SgtUsuario(AbstractBaseUser):
 	apellidos = models.CharField(max_length=200)
 	cedula = models.CharField(max_length=100)
-	clave = models.CharField(max_length=255)
 	correo = models.CharField(max_length=255, unique=True, db_index=True, error_messages={'unique':"Ya existe un usuario registrado con este correo electrónico."})
 	codigo_postal = models.IntegerField()
 	direccion = models.TextField()
