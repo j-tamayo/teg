@@ -1,0 +1,1 @@
+[{"fields": {"nombre": "No asistencia a la cita", "codigo": "no_asistencia"}, "model": "sgt.tiponotificacion", "pk": 1}, {"fields": {"nombre": "Asistencia a la cita", "codigo": "asistencia"}, "model": "sgt.tiponotificacion", "pk": 2}]
