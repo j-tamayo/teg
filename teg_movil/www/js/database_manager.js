@@ -13,8 +13,9 @@ function successCB(){
 
 function init_page(){
 	console.log('Inicializando páginas...');
-	$(".init_data").bind("pagebeforecreate", fill_estados());
-	$(".init_data").bind("pagebeforecreate", fill_tipos_inspeccion());
+	$(".init_data").bind("pagebeforecreate", fill_estados('SELECT id, nombre FROM sgt_estado;', 0));
+	$(".init_data_sol").bind("pagebeforecreate", fill_estados('SELECT DISTINCT e.id, e.nombre FROM sgt_estado e, sgt_municipio m, sgt_centroinspeccion c WHERE m.estado = e.id AND c.municipio =  m.id;', 1));
+	$(".init_data_sol").bind("pagebeforecreate", fill_tipos_inspeccion());
 }
 
 function init_db(){
@@ -323,19 +324,27 @@ function selectTable(table, cols){
 
 /* Funciones definidas para la carga inicial de datos en la APP móvil */
 
-function fill_estados(){
+function fill_estados(query, flag){
 	db.transaction(function(tx){
-		tx.executeSql('SELECT id, nombre FROM sgt_estado;', [], 
+		tx.executeSql(query, [], 
 	    function(tx, results){
 	    	num = results.rows.length;
 	    	aux = '<option value="">---Seleccione un estado---</option>';
 			for(i = 0; i < num; i++){
 				row = results.rows.item(i);
-				aux += '<option value="'+row['id']+'">'+row['nombre']+'</option>'
+				aux += '<option value="'+row['id']+'">'+row['nombre']+'</option>';
 			}
-			$(".estados").each(function(){
+
+			sel_estados = '.estados'
+			query_municipio = 'SELECT id, nombre FROM sgt_municipio WHERE estado = ';
+			if(flag == 1){
+				sel_estados = '.estados_centros';
+				query_municipio = 'SELECT DISTINCT m.id, m.nombre FROM sgt_estado e, sgt_municipio m, sgt_centroinspeccion c WHERE m.estado = e.id AND c.municipio =  m.id AND e.id = ';
+			}
+
+			$(sel_estados).each(function(){
 				$(this).html(aux);
-				fill_municipios($(this));
+				fill_municipios($(this), query_municipio);
 			});
 	    },
 		function(tx, err){
@@ -344,17 +353,17 @@ function fill_estados(){
 	}, errorCB, successCB);
 }
 
-function fill_municipios(sel_estado){
+function fill_municipios(sel_estado, query){
 	sel_estado.bind('change', function(){
 		db.transaction(function(tx){
 			sel_municipio = $('#' + sel_estado.attr('target'));
-			tx.executeSql('SELECT id, nombre FROM sgt_municipio WHERE estado='+sel_estado.val()+';', [], 
+			tx.executeSql(query+sel_estado.val()+';', [], 
 		    function(tx, results){
 		    	num = results.rows.length;
 		    	aux = '<option value="">---Seleccione un municipio---</option>';
 				for(i = 0; i < num; i++){
 					row = results.rows.item(i);
-					aux += '<option value="'+row['id']+'">'+row['nombre']+'</option>'
+					aux += '<option value="'+row['id']+'">'+row['nombre']+'</option>';
 				}
 				sel_municipio.html(aux);
 				sel_municipio.selectmenu("refresh");
@@ -375,7 +384,7 @@ function fill_tipos_inspeccion(){
 	    	aux = '<option value="">---Seleccione un tipo---</option>';
 			for(i = 0; i < num; i++){
 				row = results.rows.item(i);
-				aux += '<option value="'+row['id']+'">'+row['nombre']+'</option>'
+				aux += '<option value="'+row['id']+'">'+row['nombre']+'</option>';
 			}
 			$(".tipos_inspeccion").each(function(){
 				$(this).html(aux);
@@ -412,4 +421,40 @@ function load_profile_info(user_info){
 		});
 	}, errorCB, successCB);
 	// 'select e.nombre, m.nombre from sgt_estado e, sgt_municipio m where e.id = m.estado and m.id = 2;'
+}
+
+function load_centros_inspeccion(json, sel){
+	db.transaction(function(tx){
+		sel.children("ul").html('');
+		$(json).each(function(key, value){
+			tx.executeSql('SELECT nombre, telefonos, direccion FROM sgt_centroinspeccion WHERE id = '+value['id']+';', [], 
+		    function(tx, results){
+		   		aux = '';
+		   		num_rows = results.rows.length;
+		   		for(var i = 0; i < results.rows.length; i++){
+					row = results.rows.item(i);
+					aux += '<li><a id='+value['id']+' disp='+value['disponibilidad']+' href="#" class="centro_inspeccion_item">\
+								<br><h2>'+row['nombre']+'</h2>\
+                                <p><strong>Tel&eacute;fonos: </strong>'+row['telefonos']+'</p>\
+                                <p><strong>Direcci&oacute;n: </strong>'+row['direccion']+'</p>\
+                                <p class="ui-li-aside text-'+value['etiqueta_clase']+'"><strong>Disponibilidad: '+value['etiqueta']+'</strong></p>\
+                                </a>\
+							</li>';
+				}
+				sel.children("ul").append(aux);
+		    },
+			function(tx, err){
+				throw new Error(err.message);
+			});
+		});
+	}, errorCB, function(){
+		sel.children("ul").html(function(i,h){
+	        return h.replace(/&nbsp;/g,'');
+	    });
+		sel.children("ul").listview("refresh");
+
+		sel.show("fade");
+		$("#prev_request_page").show("fade");
+		console.log('Transacción exitosa!');
+	});
 }

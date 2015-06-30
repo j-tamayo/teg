@@ -112,3 +112,7 @@
 .footer-button-right{
     right: 0.4em;
 }
+
+.ui-listview > li p{
+  white-space: normal;
+}

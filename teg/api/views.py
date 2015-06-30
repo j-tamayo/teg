@@ -209,8 +209,11 @@ class ObtenerCentros(APIView):
 
 	def post(self, request, format=None):
 		"""" Vista que retorna en formato JSON los centros de inspección dependiendo del municipio_id recibido """
-		municipio_id = request.data.get('municipio_id',None)
-		estado_id = request.data.get('estado_id',None)
+		municipio_id = request.data['municipio_id']
+		estado_id = request.data['estado_id']
+
+		print municipio_id
+		print estado_id
 
 		centros = []
 		if municipio_id or estado_id:
@@ -218,6 +221,7 @@ class ObtenerCentros(APIView):
 			if municipio_id:
 				centros_query = centros_query.filter(municipio__id = municipio_id)
 			
+			print centros_query
 			#Para calcular la disponibilidad de cada centro
 			for c in centros_query:
 				en_cola = ColaAtencion.objects.filter(centro_inspeccion = c).count()
@@ -237,12 +241,9 @@ class ObtenerCentros(APIView):
 					c.etiqueta_clase = 'danger'
 
 				centros.append({
-					'pk': c.pk,
-					'nombre': c.nombre,
-					'direccion': c.direccion,
+					'id': c.pk,
 					'disponibilidad': c.disponibilidad,
 					'etiqueta': c.etiqueta,
-					'telefonos': c.telefonos,
 					'etiqueta_clase': c.etiqueta_clase
 				})
 
@@ -300,15 +301,15 @@ class CrearSolicitud(APIView):
 	def post(self, request, format=None):
 		respuesta = {}
 
-		id_centro = request.data['id_centro']
-		fecha_asistencia = request.data['fecha']
+		id_centro = request.data['centro_id']
+		fecha_asistencia = request.data['fecha_asistencia']
 		fecha_asistencia = dates.str_to_datetime(fecha_asistencia, '%d/%m/%Y')
 		fecha_asistencia = fecha_asistencia.date()
-		id_tipo_solicitud = request.data['id_tipo_inspeccion']
-		hora_asistencia = request.data['hora']
+		id_tipo_solicitud = request.data['tipo']
+		hora_asistencia = request.data['horario']
 		hora_asistencia = dates.str_to_datetime(hora_asistencia, '%H:%M')
 		hora_asistencia = hora_asistencia.time()
-		usuario = SgtUsuario.objects.get(correo = request.data['usuario'])
+		usuario = SgtUsuario.objects.get(id=request.data['usuario'])
 
 		centro_inspeccion = CentroInspeccion.objects.get(id=id_centro)
 

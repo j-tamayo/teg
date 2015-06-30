@@ -291,15 +291,14 @@
         </div>
 
         <div data-url="mail_page" data-role="page" id="mail_page" class="multi_page" data-dom-cache="true" data-theme="d" data-prev="request_page">
-
             <div role="main" class="ui-content">
-                <p>estaaaaaaaaas???</p>
+
             </div>
             <!-- <div data-role="footer"></div> -->
         </div>
 
         <!-- Formularios utilizados en el perfil de usuario -->
-        <div id="create_request_page" class="init_data" data-role="page" data-theme="d">
+        <div id="create_request_page" class="init_data_sol" data-role="page" data-theme="d">
             <div data-role="header" data-theme="b">
                 <a href="#request_page" data-transition="fade" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-delete ui-corner-all back_btn">Cancelar</a>
                 <h1>Crear Solicitud</h1>
@@ -309,6 +308,7 @@
                 <div class="ui-grid-solo">
                     <div class="ui-block-a">
                         <div id="request_form_page1">
+                            <input name="centro_id" id="centro_id_sol" type="hidden">
                             <div class="ui-field-contain">
                                 <label for="tipo_sol" class="select">Tipo de solicitud:</label>
                                 <select name="tipo" id="tipo_sol" data-theme="a" data-native-menu="false" class="tipos_inspeccion" required>
@@ -318,7 +318,7 @@
                             <br>
                             <div class="ui-field-contain">
                                 <label for="estado_sol" class="select">Estado:</label>
-                                <select name="estado" id="estado_sol" data-theme="a" data-native-menu="false" class="estados" target="municipio_sol" required>
+                                <select name="estado" id="estado_sol" data-theme="a" data-native-menu="false" class="estados_centros" target="municipio_sol" required>
                                     <option>---Seleccione un estado---</option>
                                 </select>
                             </div>
@@ -336,9 +336,10 @@
                             </div>
                         </div>
                         <div id="request_form_page2">
-                            <h3 class="text-success" style="text-align: center;">Seleccione un centro<br>de inspecci&oacute;n</h3>
-                            <ul data-role="listview" data-inset="true" data-theme="a">
-                                <li><a href="#">
+                            <br>
+                            <label>Seleccione un centro de inspecci&oacute;n</label>
+                            <ul id="centros_inspeccion_sol" data-role="listview" data-inset="true" data-theme="a">
+                               <!--  <li><a href="#">
                                     <h2>Centro el Carrazo</h2>
                                     <p><strong>Tel&eacute;fonos:</strong> 0212-123456 / 0416-123456</p>
                                     <p><strong>Direcci&oacute;n:</strong> Caracas, Pza España, Ctro Carrazo,<br>Nivel XY, La Candelaria</p>
@@ -358,8 +359,36 @@
                                     <p><strong>Direcci&oacute;n: Caracas,</strong> Pza España, Ctro Carrazo,<br>Nivel XY, La Candelaria</p>
                                     <p class="ui-li-aside text-danger"><strong>Disponibilidad: Baja</strong></p>
                                     </a>
-                                </li>
+                                </li> -->
                             </ul>
+                        </div>
+                        <div id="request_form_page3">
+                            <div class="ui-field-contain">
+                                <label for="preview_centro_sol">Centro de inspecci&oacute;n:</label>
+                                <p id="preview_centro"></p>
+                            </div>
+                            <br>
+                            <div class="ui-field-contain">
+                                <label for="preview_fecha_sol">Fecha de asistencia:</label>
+                                <p id="preview_fecha_sol"></p>
+                            </div>
+                            <br>
+                            <div class="ui-field-contain">
+                                <label for="preview_estado_sol">Estado:</label>
+                                <p id="preview_estado_sol"></p>
+                            </div>
+                            <br>
+                            <div class="ui-field-contain">
+                                <label for="preview_municipio_sol">Municipio:</label>
+                                <p id="preview_municipio_sol"></p>
+                            </div>
+                            <br>
+                            <div class="ui-field-contain">
+                                <label for="horario_sol" class="select">Hora aproximada de asistencia:</label>
+                                <select name="horario" id="horario_sol" data-theme="a" data-native-menu="false" class="horarios" required>
+                                    <option>---Seleccione una hora---</option>
+                                </select>
+                            </div>
                         </div>
                         <!-- <br>
                         <button class="ui-btn ui-btn-c ui-corner-all" type="submit">Enviar</button> -->

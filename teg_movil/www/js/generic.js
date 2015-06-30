@@ -6,10 +6,6 @@ $(document).ready(function(){
     $("#profile_header").hide();
     $("#request_footer").hide();
 
-    $("#prev_request_page").hide();
-    $("#request_form_page2").hide();
-
-
     $(".datepicker").datepicker({
         changeYear: true,
         yearRange: '1900:2100'
@@ -23,6 +19,9 @@ $(document).ready(function(){
     $('ul,.request,.aux').html(function(i,h){
         return h.replace(/&nbsp;/g,'');
     });
+
+    /* Variables auxiliares */
+    var page_sol = 1;
 
     $(document).one("pagecreate", ".multi_page", function(){
         $("#profile_header").toolbar({theme: "b", position:"fixed"});
@@ -130,6 +129,11 @@ $(document).ready(function(){
             }
 
             if(from_page == "#request_page" && to == "#create_request_page"){
+                page_sol = 1;
+                $("#request_form_page1").show();
+                $("#request_form_page2").hide();
+                $("#request_form_page3").hide();
+                $("#prev_request_page").hide();
                 $("#profile_header").toolbar("disable");
                 $("#profile_header").hide("fold","up");
             }
@@ -202,42 +206,102 @@ $(document).ready(function(){
         });
     });
 
-    var page_sol = 1;
+    
     $(document).on("click", "#next_request_page", function(){
-        if(page_sol >= 1 && page_sol < 2){
+        if(page_sol == 3){
+            data = {};
+            formData = $('#request_form').serializeArray();
+
+            $(formData).each(function(index, obj){
+                data[obj.name] = obj.value;
+            });
+
+            //date_parts = data['fecha_asistencia'].split('/');
+            //data['fecha_asistencia'] = date_parts[2] + '-' + date_parts[1] + '-' + date_parts[0];
+            data['usuario'] = id_usuario;
+
+            $.post("http://192.168.1.101:8000/api/crear-solicitud/", data)
+            .done(function(json){
+                
+                /* Refrescar lista de solicitudes */
+
+                $('#request_form').trigger('reset');
+                $('#next_request_page').text('Siguiente');
+                $.mobile.changePage('#request_page', {
+                    changeHash: false,
+                    transition: 'fade'
+                });
+            })
+            .fail(function(json){
+                console.log("Error de conexión!");
+            });
+        }
+
+        if(page_sol >= 1 && page_sol < 3){
             $("#request_form_page"+page_sol).hide("fade");
             
             page_sol++;
-            if(page_sol > 1)
-                $("#prev_request_page").show("fade");
 
+            if(page_sol == 1)
+                $("#request_form_page"+page_sol).show("fade");
 
             if(page_sol == 2){
                 $.post("http://192.168.1.101:8000/api/centros-sol/", {'municipio_id': $('#municipio_sol').val(), 'estado_id':$('#estado_sol').val()})
                 .done(function(json){
-                    console.log(json);
+                    load_centros_inspeccion(json, $("#request_form_page"+page_sol));
                 })
                 .fail(function(json){
                     console.log(json);
                 });
             }
 
-            $("#request_form_page"+page_sol).show("fade");
+            if(page_sol == 3){
+                $.post("http://192.168.1.101:8000/api/horarios/", {'id_centro': $('#centro_id_sol').val(), 'fecha': $('#fecha_asistencia_sol').val(), 'id_tipo_inspeccion': $('#tipo_sol').val()})
+                .done(function(json){
+                    $('#preview_centro').text($($('#centros_inspeccion_sol').children('li').find('a.ui-btn-active')).children('h2').text());
+                    $('#preview_fecha_sol').text($('#fecha_asistencia_sol').val());
+                    $('#preview_estado_sol').text($('#estado_sol :selected').text());
+                    $('#preview_municipio_sol').text($('#municipio_sol :selected').text());
+
+                    $('#next_request_page').text('Enviar');
+
+                    aux = '<option value="">---Seleccione un tipo---</option>';
+                    $(json).each(function(key, value){
+                        aux += '<option value="'+value['value']+'">'+value['text']+'</option>';
+                    });
+                    $('#horario_sol').html(aux);
+                    $('#horario_sol').selectmenu("refresh");
+                    $("#request_form_page"+page_sol).show("fade");
+                })
+                .fail(function(json){
+                    console.log(json);
+                });
+            }  
         }
         console.log(page_sol);
     });
 
     $(document).on("click", "#prev_request_page", function(){
-        if(page_sol > 1 && page_sol <= 2){
+        if(page_sol > 1 && page_sol <= 3){
             $("#request_form_page"+page_sol).hide("fade");
 
             page_sol--;
+
+            if(page_sol != 3)
+                $('#next_request_page').text('Siguiente');
+
             if(page_sol == 1)
                 $("#prev_request_page").hide("fade");
 
             $("#request_form_page"+page_sol).show("fade");
         }
         console.log(page_sol);
+    });
+
+    $(document).on("click", ".centro_inspeccion_item", function(){
+        $(this).closest('ul').find('a').removeClass('ui-btn-active');
+        $(this).addClass('ui-btn-active');
+        $('#centro_id_sol').val($(this).attr('id'));
     });
 
     $(document).on("click", "#aux", function(){
