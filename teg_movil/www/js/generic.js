@@ -224,6 +224,7 @@ $(document).ready(function(){
             .done(function(json){
                 
                 /* Refrescar lista de solicitudes */
+                console.log(json);
 
                 $('#request_form').trigger('reset');
                 $('#next_request_page').text('Siguiente');

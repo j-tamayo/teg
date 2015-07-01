@@ -1,4 +1,5 @@
 var id_usuario = -1;
+var load_data_id = 0;
 var db;
 
 //------------ PROCEDIMIENTO QUE MUESTRA QUE OCURRIO UN ERROR CON UNA OPERACION EN LA BASE DE DATOS
@@ -11,11 +12,25 @@ function successCB(){
 	console.log('Transacción exitosa!');
 }
 
-function init_page(){
-	console.log('Inicializando páginas...');
-	$(".init_data").bind("pagebeforecreate", fill_estados('SELECT id, nombre FROM sgt_estado;', 0));
-	$(".init_data_sol").bind("pagebeforecreate", fill_estados('SELECT DISTINCT e.id, e.nombre FROM sgt_estado e, sgt_municipio m, sgt_centroinspeccion c WHERE m.estado = e.id AND c.municipio =  m.id;', 1));
-	$(".init_data_sol").bind("pagebeforecreate", fill_tipos_inspeccion());
+function init_data(){
+	if(load_data_id == 0)
+		console.log('Transacción exitosa!');
+
+	if(load_data_id == 1){
+		console.log('Inicializando páginas...');
+		$(".init_data").bind("pagebeforecreate", fill_estados('SELECT id, nombre FROM sgt_estado;', 0));
+		$(".init_data_sol").bind("pagebeforecreate", fill_estados('SELECT DISTINCT e.id, e.nombre FROM sgt_estado e, sgt_municipio m, sgt_centroinspeccion c WHERE m.estado = e.id AND c.municipio =  m.id;', 1));
+		$(".init_data_sol").bind("pagebeforecreate", fill_tipos_inspeccion());
+	}
+
+	if(load_data_id == 2){
+		console.log('Inicializando perfil del usuario...');
+
+		$.mobile.changePage("#profile_page", {
+			changeHash: false, 
+			transition: "flow"
+		});
+	}
 }
 
 function init_db(){
@@ -50,8 +65,8 @@ function createTables(){
 		tx.executeSql('create table if not exists sgt_centroinspeccion(id serial NOT NULL, nombre character varying(255) NOT NULL, direccion text NOT NULL, municipio integer NOT NULL, capacidad integer NOT NULL, tiempo_atencion integer NOT NULL, codigo character varying(20) NOT NULL, telefonos character varying(255) NOT NULL, hora_apertura_manana time without time zone, hora_apertura_tarde time without time zone, hora_cierre_manana time without time zone, hora_cierre_tarde time without time zone, CONSTRAINT sgt_centroinspeccion_pkey PRIMARY KEY (id), CONSTRAINT sgt_centroinsp_municipio_120feb748cc19ed_fk_sgt_municipio FOREIGN KEY (municipio) REFERENCES sgt_municipio (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
 		tx.executeSql('create table if not exists sgt_tipoinspeccion(id serial NOT NULL, codigo character varying(50) NOT NULL, descripcion text, nombre character varying(255) NOT NULL, CONSTRAINT sgt_tipoinspeccion_pkey PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_estatus(id serial NOT NULL, nombre character varying(255) NOT NULL, codigo character varying(100) NOT NULL, CONSTRAINT sgt_estatus_pkey PRIMARY KEY (id));');
-		// tx.executeSql('create table if not exists sgt_solicitudinspeccion(id serial NOT NULL, fecha_creacion timestamp with time zone NOT NULL, fecha_culminacion timestamp with time zone, tipo_inspeccion_id integer NOT NULL, CONSTRAINT sgt_solicitudinspeccion_pkey PRIMARY KEY (id), CONSTRAINT sg_tipo_inspeccion_id_69234f78eec7e48a_fk_sgt_tipoinspeccion_id FOREIGN KEY (tipo_inspeccion_id) REFERENCES sgt_tipoinspeccion (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
-		// tx.executeSql('create table if not exists sgt_numeroorden(id serial NOT NULL, asistencia integer NOT NULL, codigo character varying(50) NOT NULL, fecha_atencion timestamp with time zone, solicitud_inspeccion_id integer NOT NULL, CONSTRAINT sgt_numeroorden_pkey PRIMARY KEY (id), CONSTRAINT "D46cf1f67ff511d5a357a31d83dde78e" FOREIGN KEY (solicitud_inspeccion_id) REFERENCES sgt_solicitudinspeccion (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
+		tx.executeSql('create table if not exists sgt_solicitudinspeccion(id serial NOT NULL, fecha_creacion timestamp with time zone NOT NULL, fecha_culminacion timestamp with time zone, perito character varying(200), tipo_inspeccion integer NOT NULL, usuario integer NOT NULL, estatus integer NOT NULL, centro_inspeccion integer NOT NULL, CONSTRAINT sgt_solicitudinspeccion_pkey PRIMARY KEY (id), CONSTRAINT "D8b278793b57d48fd3675e8c02078be7" FOREIGN KEY (centro_inspeccion) REFERENCES sgt_centroinspeccion (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sg_tipo_inspeccion_id_69234f78eec7e48a_fk_sgt_tipoinspeccion_id FOREIGN KEY (tipo_inspeccion) REFERENCES sgt_tipoinspeccion (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sgt_solici_usuario_id_7aee7c4e16426600_fk_cuentas_sgtusuario_id FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sgt_solicitudinsp_estatus_id_3a1feabe663ac6e1_fk_sgt_estatus_id FOREIGN KEY (estatus) REFERENCES sgt_estatus (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
+		tx.executeSql('create table if not exists sgt_numeroorden(id serial NOT NULL, asistencia integer NOT NULL, codigo character varying(50) NOT NULL, fecha_atencion date, solicitud_inspeccion integer NOT NULL, hora_atencion time without time zone, estatus integer NOT NULL, CONSTRAINT sgt_numeroorden_pkey PRIMARY KEY (id), CONSTRAINT "D46cf1f67ff511d5a357a31d83dde78e" FOREIGN KEY (solicitud_inspeccion) REFERENCES sgt_solicitudinspeccion (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sgt_numeroorden_estatus_id_69d79e459cbdeeea_fk_sgt_estatus_id FOREIGN KEY (estatus) REFERENCES sgt_estatus (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
 		// tx.executeSql('create table if not exists sgt_encuesta(id serial NOT NULL, codigo character varying(50) NOT NULL, descripcion text, nombre character varying(255) NOT NULL, CONSTRAINT sgt_encuesta_pkey PRIMARY KEY (id));');
 		// tx.executeSql('create table if not exists sgt_pregunta(id serial NOT NULL, codigo character varying(50) NOT NULL, pregunta character varying(255) NOT NULL, respuesta character varying(255) NOT NULL, CONSTRAINT sgt_pregunta_pkey PRIMARY KEY (id));');
 		// tx.executeSql('create table if not exists sgt_encuesta_usuarios(id serial NOT NULL, encuesta_id integer NOT NULL, sgtusuario_id integer NOT NULL, CONSTRAINT sgt_encuesta_usuarios_pkey PRIMARY KEY (id), CONSTRAINT sgt_enc_sgtusuario_id_7f348c4d32e5a6d0_fk_cuentas_sgtusuario_id FOREIGN KEY (sgtusuario_id) REFERENCES cuentas_sgtusuario (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sgt_encuesta_us_encuesta_id_174f2ddb7905f1b0_fk_sgt_encuesta_id FOREIGN KEY (encuesta_id) REFERENCES sgt_encuesta (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
@@ -78,95 +93,97 @@ function dropTables(){
 function loadTables(){
 	console.log("tablas cargadas exitosamente...");
 	console.log("procediendo a cargar registros de la web APP...");
+	load_data_id = 1;
 
 	$.getJSON("http://192.168.1.101:8000/api/data-inicial/")
-	.done(function(json){
-		db.transaction(function(tx){
-			$.each(json, function(table, data){
-				$.each(data, function(parent_key, parent_value){
-					tx.executeSql('SELECT * FROM '+table+' where id = "'+parent_value.id+'";', [],
-					function(tx, results){
-						val = [];
-						col = [];
+	.done(load_json_data)
+	.fail(function(){
+	    console.log("Error de conexión!");
+	});
+}
+
+function load_json_data(json){
+	db.transaction(function(tx){
+		$.each(json, function(table, data){
+			$.each(data, function(parent_key, parent_value){
+				tx.executeSql('SELECT * FROM '+table+' where id = "'+parent_value.id+'";', [],
+				function(tx, results){
+					val = [];
+					col = [];
+					first = true;
+					str_cols = '';
+					str_values = '';
+
+					$.each(parent_value, function(key, value){
+						val.push(value);
+						col.push(key);
+						if(!first){
+							str_cols = str_cols + ',' + key;
+							str_values = str_values + ',' + '?';
+						}
+						else{
+							first = false;
+							str_cols = str_cols + key;
+							str_values = str_values + '?';
+						}
+					});
+					flag = true;
+
+					num_rows = results.rows.length;
+					
+					if(num_rows > 0){
+						pk = -1;
+						str_up = '';
+						val_up = [];
 						first = true;
-						str_cols = '';
-						str_values = '';
-
-						$.each(parent_value, function(key, value){
-							val.push(value);
-							col.push(key);
-							if(!first){
-								str_cols = str_cols + ',' + key;
-								str_values = str_values + ',' + '?';
-							}
-							else{
-								first = false;
-								str_cols = str_cols + key;
-								str_values = str_values + '?';
-							}
-						});
-						flag = true;
-
-						num_rows = results.rows.length;
-						
-						if(num_rows > 0){
-							pk = -1;
-							str_up = '';
-							val_up = [];
-							first = true;
-							for (var i = 0; i < results.rows.length; i++){
-								row = results.rows.item(i);
-								pk = row[col[0]];
-								for(j = 0; j < col.length; j++){
-									if(row[col[j]] != val[j]){
-										val_up.push(val[j]);
-										if(!first)
-											str_up = str_up + ', ' + col[j] + '=?';
-										else{
-											first = false;
-											str_up = str_up + col[j] + '=?';
-										}
+						for (var i = 0; i < results.rows.length; i++){
+							row = results.rows.item(i);
+							pk = row[col[0]];
+							for(j = 0; j < col.length; j++){
+								if(row[col[j]] != val[j]){
+									val_up.push(val[j]);
+									if(!first)
+										str_up = str_up + ', ' + col[j] + '=?';
+									else{
+										first = false;
+										str_up = str_up + col[j] + '=?';
 									}
 								}
 							}
-
-							if(val_up.length > 0){
-								console.log('UPDATE '+table+' SET '+str_up+' where id = "'+pk+'";');
-								console.log(val_up);
-
-								tx.executeSql('UPDATE '+table+' SET '+str_up+' where id = "'+pk+'";', val_up,
-								function(){
-									console.log("registro actualizado exitosamente!");
-								},
-								function(tx, err){
-									throw new Error(err.message);
-								});
-							}
 						}
-						else{
-							console.log('INSERT INTO '+table+'('+str_cols+') values ('+str_values+');');
-							console.log(val);
 
-							tx.executeSql('INSERT INTO '+table+'('+str_cols+') values ('+str_values+');', val,
+						if(val_up.length > 0){
+							console.log('UPDATE '+table+' SET '+str_up+' where id = "'+pk+'";');
+							console.log(val_up);
+
+							tx.executeSql('UPDATE '+table+' SET '+str_up+' where id = "'+pk+'";', val_up,
 							function(){
-								console.log("registro cargado exitosamente!");
+								console.log("registro actualizado exitosamente!");
 							},
 							function(tx, err){
 								throw new Error(err.message);
 							});
 						}
-					}, 
-					function(tx, err){
-						throw new Error(err.message);
-					});
+					}
+					else{
+						console.log('INSERT INTO '+table+'('+str_cols+') values ('+str_values+');');
+						console.log(val);
+
+						tx.executeSql('INSERT INTO '+table+'('+str_cols+') values ('+str_values+');', val,
+						function(){
+							console.log("registro cargado exitosamente!");
+						},
+						function(tx, err){
+							throw new Error(err.message);
+						});
+					}
+				}, 
+				function(tx, err){
+					throw new Error(err.message);
 				});
 			});
-		}, errorCB, init_page);
-		
-	})
-	.fail(function(){
-	    console.log("Error de conexión!");
-	});
+		});
+	}, errorCB, init_data);
 }
 
 function login(correo, password, user_info){
@@ -217,16 +234,11 @@ function login(correo, password, user_info){
 
 function load_user_tables(){
 	console.log("login extitoso, procediendo a cargar información de usuario...");
+	load_data_id = 2;
+
 	/* Buscar y guardar información del usuario vía web service */
 	$.post("http://192.168.1.101:8000/api/usuario-info/", {'id': id_usuario})
-	.done(function(json){
-		console.log("data proveniente del servidor...");
-		console.log(json);
-		$.mobile.changePage("#profile_page", {
-			changeHash: false, 
-			transition: "flow"
-		});
-	})
+	.done(load_json_data)
 	.fail(function(){
 	    console.log("Error de conexión!");
 	});
@@ -457,4 +469,25 @@ function load_centros_inspeccion(json, sel){
 		$("#prev_request_page").show("fade");
 		console.log('Transacción exitosa!');
 	});
+}
+
+function load_solicitudes_inspeccion(){
+	db.transaction(function(tx){
+		$('#solicitudes_usuario').html('');
+		tx.executeSql('SELECT n.fecha_atencion, n.hora_atencion, c.nombre, n.codigo, t.nombre, s.perito, e.nombre FROM cuentas_sgtusuario u, sgt_numeroorden n, sgt_solicitudinspeccion s, sgt_centroinspeccion c, sgt_tipoinspeccion t, sgt_estatus e WHERE n.solicitud_inspeccion = s.id AND s.centro_inspeccion = c.id AND s.tipo_inspeccion = t.id AND s.estatus = e.id AND u.id ='+id_usuario+';', [], 
+	    function(tx, results){
+	    	num = results.rows.length;
+	    	aux = '';
+			for(i = 0; i < num; i++){
+				row = results.rows.item(i);
+				
+				/* Espacio reservado para armar la lista de solicitudes del usuario */
+			}
+
+			$('#solicitudes_usuario').html(aux);
+	    },
+		function(tx, err){
+			throw new Error(err.message);
+		});
+	}, errorCB, successCB);
 }

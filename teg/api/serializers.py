@@ -56,11 +56,23 @@ class PolizaSerializer(serializers.ModelSerializer):
 
 
 class SolicitudInspeccionSerializer(serializers.ModelSerializer):
-	tipo_inspeccion = TipoInspeccionSerializer(read_only=True)
+	usuario = serializers.ReadOnlyField(source='usuario.id')
+	estatus = serializers.ReadOnlyField(source='estatus.id')
+	tipo_inspeccion = serializers.ReadOnlyField(source='tipo_inspeccion.id')
+	centro_inspeccion = serializers.ReadOnlyField(source='centro_inspeccion.id')
+	fecha_creacion = serializers.DateTimeField(format='%d-%m-%Y')
+	fecha_creacion = serializers.DateTimeField(format='%d-%m-%Y')
+	perito = serializers.SerializerMethodField('nombres_apellidos_perito')
 
 	class Meta:
 		model = SolicitudInspeccion
-		fields = ('id','fecha_creacion','fecha_culminacion','perito','tipo_inspeccion')
+		fields = ('id','fecha_creacion','fecha_culminacion','perito','tipo_inspeccion','usuario','estatus','centro_inspeccion')
+
+	def nombres_apellidos_perito(self, obj):
+		if obj.perito:
+			return obj.perito.nombres + ' ' + obj.perito.apellidos
+		else:
+			return ''
 
 
 class TipoInspeccionSerializer(serializers.ModelSerializer):
@@ -70,6 +82,10 @@ class TipoInspeccionSerializer(serializers.ModelSerializer):
 
 
 class NumeroOrdenSerializer(serializers.ModelSerializer):
+	estatus = serializers.ReadOnlyField(source='estatus.id')
+	solicitud_inspeccion = serializers.ReadOnlyField(source='solicitud_inspeccion.id')
+	fecha_atencion = serializers.DateField(format='%d-%m-%Y')
+
 	class Meta:
 		model = NumeroOrden
 		fields = ('id','asistencia','solicitud_inspeccion','codigo','fecha_atencion','hora_atencion','estatus')

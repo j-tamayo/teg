@@ -187,7 +187,7 @@ class UserInfo(APIView):
 				respuesta['sgt_poliza'] = poliza_serializer.data
 				solicitudes = SolicitudInspeccion.objects.filter(usuario = usuario)
 				solicitudes_serializer = SolicitudInspeccionSerializer(solicitudes, many=True)
-				respuesta['sgt_solicitud'] = solicitudes_serializer.data
+				respuesta['sgt_solicitudinspeccion'] = solicitudes_serializer.data
 				numero_orden = NumeroOrden.objects.filter(solicitud_inspeccion__in = solicitudes)
 				numero_orden_serializer = NumeroOrdenSerializer(numero_orden, many=True)
 				respuesta['sgt_numeroorden'] = numero_orden_serializer.data
@@ -312,9 +312,11 @@ class CrearSolicitud(APIView):
 		usuario = SgtUsuario.objects.get(id=request.data['usuario'])
 
 		centro_inspeccion = CentroInspeccion.objects.get(id=id_centro)
+		codigo_solicitud = TipoInspeccion.objects.get(id=id_tipo_solicitud).codigo
 
-		cantidad_citas = NumeroOrden.objects.filter(solicitud_inspeccion__centro_inspeccion = centro_inspeccion, fecha_atencion = fecha_asistencia, hora_atencion = hora_asistencia).count()
-		if cantidad_citas < centro_inspeccion.peritos.all().count():
+		total_citas = NumeroOrden.objects.filter(solicitud_inspeccion__centro_inspeccion = centro_inspeccion, fecha_atencion = fecha_asistencia).count()
+		cantidad_citas_bloque = NumeroOrden.objects.filter(solicitud_inspeccion__centro_inspeccion = centro_inspeccion, fecha_atencion = fecha_asistencia, hora_atencion = hora_asistencia).count()
+		if cantidad_citas_bloque < centro_inspeccion.peritos.all().count():
 			estatus = Estatus.objects.get(codigo='solicitud_en_proceso')
 			solicitud = SolicitudInspeccion(
 				centro_inspeccion = centro_inspeccion,
@@ -325,9 +327,10 @@ class CrearSolicitud(APIView):
 			solicitud.save()
 
 			print solicitud.pk
+			numero = codigo_solicitud + '-' + str(total_citas + 1)
 			numero_orden = NumeroOrden(
 				solicitud_inspeccion = solicitud,
-				codigo = 'XYZ',
+				codigo = numero,
 				fecha_atencion = fecha_asistencia,
 				hora_atencion = hora_asistencia,
 				estatus = estatus
@@ -342,4 +345,3 @@ class CrearSolicitud(APIView):
 		else:
 			respuesta['errores'] = {'causa':'No hay disponibilidad'}
 			return Response(respuesta, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
