@@ -1,8 +1,7 @@
 $(document).ready(function(){
-    init_db();
-    
-    $('request_content').css('margin: -1 0');
+    init_db(); // cargando BD Móvil...
 
+    /* Inicializando elementos en las interfaces de la APP Móvil */
     $("#profile_header").hide();
     $("#request_footer").hide();
 
@@ -206,7 +205,6 @@ $(document).ready(function(){
         });
     });
 
-    
     $(document).on("click", "#next_request_page", function(){
         if(page_sol == 3){
             data = {};
@@ -216,23 +214,12 @@ $(document).ready(function(){
                 data[obj.name] = obj.value;
             });
 
-            //date_parts = data['fecha_asistencia'].split('/');
-            //data['fecha_asistencia'] = date_parts[2] + '-' + date_parts[1] + '-' + date_parts[0];
             data['usuario'] = id_usuario;
-
+            $('#request_form').trigger('reset');
+            
+            load_data_id = 3;
             $.post("http://192.168.1.101:8000/api/crear-solicitud/", data)
-            .done(function(json){
-                
-                /* Refrescar lista de solicitudes */
-                console.log(json);
-
-                $('#request_form').trigger('reset');
-                $('#next_request_page').text('Siguiente');
-                $.mobile.changePage('#request_page', {
-                    changeHash: false,
-                    transition: 'fade'
-                });
-            })
+            .done(load_json_data)
             .fail(function(json){
                 console.log("Error de conexión!");
             });
@@ -305,85 +292,9 @@ $(document).ready(function(){
         $('#centro_id_sol').val($(this).attr('id'));
     });
 
-    $(document).on("click", "#aux", function(){
-        //$("#profile_header").hide();
-        //alert(selectTable('sgt_estado', ['id','nombre']));
-        //selectTable('sgt_centroinspeccion', ['nombre']);
+    $(document).on("click", "#recordar_contraseña", function(){
+
+        /* Espacio reservado para recuperar contraseña por parte del usuario */
+
     });
 });
-
-/* Funcion declarada para el manejo de eventos relacionados con la navegacion */
-// $(function(){
-//     $(window).hashchange(function(){
-//         hash = location.hash;
-//         //console.log('<------------cambio de pag----------->');
-//         $( "#nav li a" ).each(function(){
-//             that = $(this);
-//             aux = '#' + that.attr( "target" );
-//             //console.log(aux + '->' + (aux === hash ? "addClass" : "removeClass"));
-//             that[ aux === hash ? "addClass" : "removeClass" ]("ui-btn-active");
-//         });
-//     });
-
-//     $(window).hashchange();
-
-
-    //Respond to back/forward navigation
-    // $(window).on("navigate", function(event, data){
-    //     // if(data.state.foo) {
-    //     //     // Make use of the arbitrary data stored
-    //     // }
-
-    //     // // console.log( data.state.info );
-    //     // // console.log( data.state.direction );
-    //     // // console.log( data.state.url );
-    //     // //console.log( data.state.hash );
-
-    //     // if(data.state.direction == "back"){
-            
-           
-    //     //     // Make use of the directional information
-    //     // }
-
-    //     // reset the content based on the url
-    //     //alterContent(data.state.url);
-    // });
-//});
-
-// $(document).ready(function(){
-
-//     $(document).on('swipeleft', '.ui-page', function(event){    
-//         if(event.handled !== true){  // This will prevent event triggering more then once
-//             var nextpage = $.mobile.activePage.next('.multi_page');
-//             // swipe using id of next page if exists
-//             if (nextpage.length > 0){
-//                 $('[token="'+$.mobile.activePage.attr("id")+'_ref"]').removeClass("ui-btn-active");
-//                 $('[token="'+nextpage.attr("id")+'_ref"]').addClass("ui-btn-active");
-//                 $.mobile.changePage(nextpage, {transition: "slide", reverse: false}, true, true);
-//             }
-//             event.handled = true;
-//         }
-//         return false;         
-//     });
-
-//     $(document).on('swiperight', '.ui-page', function(event){     
-//         if(event.handled !== true){ // This will prevent event triggering more then once
-//             var prevpage = $(this).prev('.multi_page');
-//             if (prevpage.length > 0) {
-//                 $('[token="'+$.mobile.activePage.attr("id")+'_ref"]').removeClass("ui-btn-active");
-//                 $('[token="'+prevpage.attr("id")+'_ref"]').addClass("ui-btn-active");
-//                 $.mobile.changePage(prevpage, {transition: "slide", reverse: true}, true, true);
-//             }
-//             event.handled = true;
-//         }
-//         return false;            
-//     });
-
-//     $(document).on('click', '.change_page', function(event){
-//         nextpage = $(this).attr("target");
-//         $('[token="'+nextpage+'_ref"]').addClass("ui-btn-active");
-//         $(this).removeClass("ui-btn-active");
-//         $.mobile.changePage($('#'+nextpage), {transition: "fade"}, true, true);
-//     });
-
-// });

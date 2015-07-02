@@ -337,8 +337,8 @@ class CrearSolicitud(APIView):
 			)
 			numero_orden.save()
 
-			respuesta['solicitud'] = SolicitudInspeccionSerializer(solicitud).data
-			respuesta['numero_orden'] = NumeroOrdenSerializer(numero_orden).data
+			respuesta['sgt_solicitudinspeccion'] = [SolicitudInspeccionSerializer(solicitud).data]
+			respuesta['sgt_numeroorden'] = [NumeroOrdenSerializer(numero_orden).data]
 
 			return Response(respuesta, status=status.HTTP_200_OK)
 

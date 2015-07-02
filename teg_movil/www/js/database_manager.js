@@ -25,11 +25,22 @@ function init_data(){
 
 	if(load_data_id == 2){
 		console.log('Inicializando perfil del usuario...');
+		$("#request_page").bind("pagebeforeshow", load_solicitudes_inspeccion(false));
 
 		$.mobile.changePage("#profile_page", {
 			changeHash: false, 
 			transition: "flow"
 		});
+	}
+
+	if(load_data_id == 3){
+		console.log('Cargando nueva solicitud...');
+		$("#request_page").bind("pagebeforeshow", load_solicitudes_inspeccion(true));
+
+        $.mobile.changePage('#request_page', {
+            changeHash: false,
+            transition: 'fade'
+        });
 	}
 }
 
@@ -80,8 +91,9 @@ function dropTables(){
 		// tx.executeSql("drop table sgt_encuesta_usuarios;");
 		// tx.executeSql("drop table sgt_pregunta;");
 		// tx.executeSql("drop table sgt_encuesta;");
-		// tx.executeSql("drop table sgt_numeroorden;");
-		// tx.executeSql("drop table sgt_solicitudinspeccion;");
+		tx.executeSql("drop table sgt_numeroorden;");
+		tx.executeSql("drop table sgt_solicitudinspeccion;");
+		tx.executeSql("drop table sgt_estatus;");
 		tx.executeSql("drop table sgt_tipoinspeccion;");
 		tx.executeSql("drop table sgt_centroinspeccion;");
 		tx.executeSql("drop table cuentas_sgtusuario;");
@@ -103,6 +115,7 @@ function loadTables(){
 }
 
 function load_json_data(json){
+	console.log(json);
 	db.transaction(function(tx){
 		$.each(json, function(table, data){
 			$.each(data, function(parent_key, parent_value){
@@ -453,38 +466,70 @@ function load_centros_inspeccion(json, sel){
                                 </a>\
 							</li>';
 				}
+
 				sel.children("ul").append(aux);
+				sel.children("ul").html(function(i,h){
+			        return h.replace(/&nbsp;/g,'');
+			    });
+				sel.children("ul").listview("refresh");
+
+				sel.show("fade");
+				$("#prev_request_page").show("fade");
 		    },
 			function(tx, err){
 				throw new Error(err.message);
 			});
 		});
-	}, errorCB, function(){
-		sel.children("ul").html(function(i,h){
-	        return h.replace(/&nbsp;/g,'');
-	    });
-		sel.children("ul").listview("refresh");
-
-		sel.show("fade");
-		$("#prev_request_page").show("fade");
-		console.log('Transacción exitosa!');
-	});
+	}, errorCB, successCB);
 }
 
-function load_solicitudes_inspeccion(){
+var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+var dias_semana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+
+function load_solicitudes_inspeccion(refresh){
 	db.transaction(function(tx){
 		$('#solicitudes_usuario').html('');
-		tx.executeSql('SELECT n.fecha_atencion, n.hora_atencion, c.nombre, n.codigo, t.nombre, s.perito, e.nombre FROM cuentas_sgtusuario u, sgt_numeroorden n, sgt_solicitudinspeccion s, sgt_centroinspeccion c, sgt_tipoinspeccion t, sgt_estatus e WHERE n.solicitud_inspeccion = s.id AND s.centro_inspeccion = c.id AND s.tipo_inspeccion = t.id AND s.estatus = e.id AND u.id ='+id_usuario+';', [], 
+		tx.executeSql('SELECT n.fecha_atencion, n.hora_atencion, c.nombre AS centro_inspeccion, n.codigo, t.nombre AS tipo_inspeccion, s.perito, e.nombre AS estatus FROM cuentas_sgtusuario u, sgt_numeroorden n, sgt_solicitudinspeccion s, sgt_centroinspeccion c, sgt_tipoinspeccion t, sgt_estatus e WHERE n.solicitud_inspeccion = s.id AND s.centro_inspeccion = c.id AND s.tipo_inspeccion = t.id AND s.estatus = e.id AND u.id ='+id_usuario+';', [], 
 	    function(tx, results){
-	    	num = results.rows.length;
 	    	aux = '';
+	    	num = results.rows.length;
 			for(i = 0; i < num; i++){
 				row = results.rows.item(i);
-				
-				/* Espacio reservado para armar la lista de solicitudes del usuario */
-			}
 
+				fecha_atencion = row['fecha_atencion'].split("-");
+				fecha_atencion = new Date(fecha_atencion[2] + '-' + fecha_atencion[1] + '-' + fecha_atencion[0]);
+				fecha_atencion = dias_semana[fecha_atencion.getDay()] + ", " + fecha_atencion.getDate() + " de " + meses[fecha_atencion.getMonth()] + " del " + fecha_atencion.getFullYear();
+
+				estatus_color_bg = '';
+				estatus_color_text = 'text-primary';
+				if(row['estatus'] == 'solicitud_en_proceso'){
+					estatus_color_bg = 'class = "brand-warning"';
+					estatus_color_text = 'text-warning';
+				}
+				if(row['estatus'] == 'solicitud_no_procesada'){
+					estatus_color_bg = 'class = "brand-danger"';
+					estatus_color_text = 'text-danger';
+				}
+
+				perito_asignado = row['perito'];
+				if(perito_asignado == '')
+					perito_asignado = 'N/A'; 
+
+				aux += '<li data-role="list-divider" data-theme="c" '+estatus_color_bg+'>'+fecha_atencion+'<span class="ui-li-count">'+row['hora_atencion']+'</span></li>\
+						<li>\
+							<a href="#">\
+								<h2 class="text-success">'+row['centro_inspeccion']+'</h2>\
+								<p><strong>N&uacute;mero: '+row['codigo']+'&emsp;-&emsp;Tipo: '+row['tipo_inspeccion']+'</strong></p>\
+								<p>Perito asignado: '+perito_asignado+'</p>\
+								<p class="ui-li-aside '+estatus_color_text+'"><strong>'+row['estatus']+'</strong></p>\
+							</a>\
+							<a href="#" class="ui-btn ui-shadow ui-icon-delete ui-nodisc-icon ui-alt-icon"></a>\
+						</li>';
+			}
 			$('#solicitudes_usuario').html(aux);
+
+			if(refresh)
+				$('#solicitudes_usuario').listview("refresh");
 	    },
 		function(tx, err){
 			throw new Error(err.message);
