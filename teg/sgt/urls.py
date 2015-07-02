@@ -36,4 +36,28 @@ urlpatterns = \
             name='crear_solicitud'
         ),
 
+        url(
+            r'^admin/centros$',
+            views.AdminBandejaCentros.as_view(),
+            name='admin_centros'
+        ),
+
+        url(
+            r'^admin/crear-centro$',
+            views.AdminAgregarCentro.as_view(),
+            name='admin_crear_centro'
+        ),
+
+        url(
+            r'^admin/usuarios$',
+            views.AdminBandejaUsuarios.as_view(),
+            name='admin_usuarios'
+        ),
+
+        url(
+            r'^admin/encuestas$',
+            views.AdminBandejaEncuestas.as_view(),
+            name='admin_encuestas'
+        ),
+
 )

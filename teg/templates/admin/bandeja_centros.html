@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+{% load i18n %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-2 col-xs-offset-10">
+			<a href="{% url 'admin_crear_centro' %}" class="btn btn-info pull-right">
+				<i class="fa fa-plus"></i> Agregar
+			</a>
+		</div>
+	</div>
+
+	<div class="row">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Nombre</th>
+					<th>Direcci&oacute;n</th>
+					<th>Estado</th>
+					<th>Municipio</th>
+					<th>Opciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for centro in centros.object_list %}
+				<tr>
+					<td>{{centro.nombre}}</td>
+					<td>{{centro.direccion}}</td>
+					<td>{{centro.municipio.estado.nombre}}</td>
+					<td>{{centro.municipio.nombre}}</td>
+					<td>
+						<a href="#" class="btn btn-info" data-toggle="tooltip" data-original-title="Editar">
+							<i class="fa fa-pencil"></i>
+						</a>
+						<a href="#" class="btn btn-info" data-toggle="tooltip" data-original-title="Gestionar">
+							<i class="fa fa-cog"></i>
+						</a>
+						<a href="#" class="btn btn-danger" data-toggle="tooltip" data-original-title="Eliminar">
+							<i class="fa fa-trash"></i>
+						</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div class="pagination center-block text-center">
+		<div class="row">
+			<ul class="pagination">
+			{% if centros.has_previous %}
+		        <li>
+		        	<a href="?{{ centros.previous_page_number.querystring }}" class="prev">&lsaquo;&lsaquo; {% trans "anterior" %}</a>
+		        </li>
+		    {% else %}
+		    	<li class="disabled">
+					<span class="disabled prev">&lsaquo;&lsaquo; {% trans "anterior" %}</span>
+				</li>
+			{% endif %}
+			{% for page in centros.pages %}
+		        {% if page %}
+		            {% ifequal page centros.number %}
+		                <li><span class="current page">{{ page }}</span></li>
+		            {% else %}
+		                <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
+		            {% endifequal %}
+		        {% else %}
+		            <li class="disabled"><a>...</a></li>
+		        {% endif %}
+		    {% endfor %}
+		    {% if centros.has_next %}
+		        <li>
+		        	<a href="?{{ centros.next_page_number.querystring }}" class="next">{% trans "siguiente" %} &rsaquo;&rsaquo;</a>
+		        </li>
+		    {% else %}
+		    	<li class="disabled">
+		        	<span class="disabled next">{% trans "next" %} &rsaquo;&rsaquo;</span>
+		        </li>
+		    {% endif %}
+		    </ul>
+		</div>
+	</div>
+</div> <!-- / .container-fluid -->
+{% endblock %}

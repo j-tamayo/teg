@@ -35,3 +35,14 @@ class SolicitudInspeccionForm(forms.Form):
 		queryset = CentroInspeccion.objects.filter(),
 		widget = forms.Select(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
 	)
+
+
+class CentroInspeccionForm(forms.ModelForm):
+	class Meta:
+		model = CentroInspeccion
+		fields = ['codigo','nombre','direccion','telefonos','municipio','peritos','hora_apertura_manana','hora_cierre_manana','hora_apertura_tarde','hora_cierre_tarde']
+		widgets = {
+			'codigo': forms.TextInput(attrs={'class':'form-control'}),
+			'nombre': forms.TextInput(attrs={'class':'form-control'}),
+			'hora_apertura_manana': forms.TextInput(attrs={'class':'timepicker','readonly':True})
+		}

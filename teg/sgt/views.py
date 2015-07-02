@@ -6,6 +6,7 @@ from django.views.generic import View
 from sgt.models import *
 from sgt.forms import *
 from sgt.helpers import solicitudes,dates
+from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 import json
 
@@ -282,3 +283,108 @@ class BandejaCliente(View):
 		}
 
 		return render(request,'cuentas/perfil_cliente.html', context)
+
+
+class AdminBandejaCentros(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminBandejaCentros, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		""" Vista que lista los centros de inspección al administrador """
+		usuario = request.user
+
+		try:
+			page = request.GET.get('page', 1)
+		except PageNotAnInteger:
+			page = 1
+
+		centros = CentroInspeccion.objects.all()
+
+		# Provide Paginator with the request object for complete querystring generation
+		paginator = Paginator(centros, 10, request=request)
+		centros = paginator.page(page)
+		print centros.object_list
+		context = {
+			'admin': True,
+			'centros': centros,
+			'seccion_centros': True,
+			'usuario': usuario,
+		}
+
+		return render(request, 'admin/bandeja_centros.html', context)
+
+
+class AdminAgregarCentro(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminAgregarCentro, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Crea un centro de inspección"""
+		usuario = request.user
+
+		form = CentroInspeccionForm()
+
+		context = {
+			'admin': True,
+			'form': form,
+			'seccion_centros': True,
+			'usuario': usuario,
+		}
+
+		return render(request, 'admin/crear_centro.html', context)
+
+
+class AdminBandejaUsuarios(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminBandejaUsuarios, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		""" Vista que lista los usuarios taquilla al administrador"""
+		usuario = request.user
+
+		usuarios = SgtUsuario.objects.filter(rol__codigo = 'taquilla')
+
+		try:
+			page = request.GET.get('page', 1)
+		except PageNotAnInteger:
+			page = 1
+
+		paginator = Paginator(usuarios, 10, request=request)
+		usuarios = paginator.page(page)
+
+		context = {
+			'admin': True,
+			'seccion_usuarios':True,
+			'usuarios': usuarios,
+			'usuario': usuario,
+		}
+
+		return render(request, 'admin/bandeja_usuarios.html', context)
+
+
+class AdminBandejaEncuestas(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminBandejaEncuestas, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		""" Vista que lista las encuestas al administrador"""
+		usuario = request.user
+
+		encuestas = Encuesta.objects.all()
+
+		try:
+			page = request.GET.get('page', 1)
+		except PageNotAnInteger:
+			page = 1
+
+		paginator = Paginator(encuestas, 10, request=request)
+		encuestas = paginator.page(page)
+
+		context = {
+			'admin': True,
+			'seccion_encuestas':True,
+			'encuestas': encuestas,
+			'usuario': usuario,
+		}
+
+		return render(request, 'admin/bandeja_encuestas.html', context)

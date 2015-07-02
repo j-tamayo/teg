@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'api',
     'corsheaders',
+    'pure_pagination',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -131,3 +132,9 @@ STATICFILES_DIRS = (
 LOGIN_URL = '/cuentas/ingresar/'
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Paginator settings  https://github.com/jamespacileo/django-pure-pagination
+PAGINATION_SETTINGS = {
+    'PAGE_RANGE_DISPLAYED': 5,
+    'MARGIN_PAGES_DISPLAYED': 3,
+}

@@ -13,6 +13,8 @@
 		<link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" type="text/css" />
 		<!-- bootstrap-datepicker -->
 		<link href="{% static 'css/bootstrap-datepicker.min.css' %}" rel="stylesheet" type="text/css" />
+		<!-- bootstrap-timepicker -->
+		<link href="{% static 'css/bootstrap-timepicker.min.css' %}" rel="stylesheet" type="text/css" />
 
 		<!-- generic.css -->
 		<link href="{% static 'css/generic.css' %}" rel="stylesheet" type="text/css" />
@@ -22,6 +24,11 @@
 	<body>
 
 		<div class="container">
+
+			{% if admin %}
+				{% include 'admin/menu.html' %}
+			{% endif %}
+
 			{% block main_content %}            
 			{% endblock %}
 		</div>
@@ -37,10 +44,18 @@
 		<script src="{% static 'js/bootstrap-datepicker.min.js' %}" type="application/javascript"></script>
 		<!-- bootstrap-datepicker Español -->
 		<script src="{% static 'js/bootstrap-datepicker.es.js' %}" charset="UTF-8" type="application/javascript"></script>
+		<!-- bootstrap-datepicker -->
+		<script src="{% static 'js/bootstrap-timepicker.min.js' %}" type="application/javascript"></script>
 		
 		<!-- generic.js -->
 		<script src="{% static 'js/generic.js' %}" type="application/javascript"></script>
 		{% endblock %}
+
+		<script type="text/javascript">
+			$(function(){
+				$('[data-toggle="tooltip"]').tooltip();
+			});
+		</script>
 
 	</body>
 </html>
