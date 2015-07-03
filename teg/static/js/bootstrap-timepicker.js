@@ -39,8 +39,8 @@
     _init: function() {
       var self = this;
 
-      if (this.showWidgetOnAddonClick && (this.$element.parent().hasClass('input-append') || this.$element.parent().hasClass('input-prepend'))) {
-        this.$element.parent('.input-append, .input-prepend').find('.add-on').on({
+      if (this.showWidgetOnAddonClick && (this.$element.parent().hasClass('input-group') || this.$element.parent().hasClass('input-prepend'))) {
+        this.$element.parent('.input-group, .input-prepend').find('.input-group-addon').on({
           'click.timepicker': $.proxy(this.showWidget, this)
         });
         this.$element.on({
@@ -242,10 +242,10 @@
         templateContent;
 
       if (this.showInputs) {
-        hourTemplate = '<input type="text" class="bootstrap-timepicker-hour" maxlength="2"/>';
-        minuteTemplate = '<input type="text" class="bootstrap-timepicker-minute" maxlength="2"/>';
-        secondTemplate = '<input type="text" class="bootstrap-timepicker-second" maxlength="2"/>';
-        meridianTemplate = '<input type="text" class="bootstrap-timepicker-meridian" maxlength="2"/>';
+        hourTemplate = '<input type="text" data-name="hour" class="bootstrap-timepicker-hour form-control" maxlength="2"/>';
+        minuteTemplate = '<input type="text" data-name="minute" class="bootstrap-timepicker-minute form-control" maxlength="2"/>';
+        secondTemplate = '<input type="text" data-name="second" class="bootstrap-timepicker-second form-control" maxlength="2"/>';
+        meridianTemplate = '<input type="text" data-name="meridian" class="bootstrap-timepicker-meridian form-control" maxlength="2"/>';
       } else {
         hourTemplate = '<span class="bootstrap-timepicker-hour"></span>';
         minuteTemplate = '<span class="bootstrap-timepicker-minute"></span>';
@@ -255,59 +255,63 @@
 
       templateContent = '<table>'+
          '<tr>'+
-           '<td><a href="#" data-action="incrementHour"><i class="icon-chevron-up"></i></a></td>'+
+           '<td><a href="#" data-action="incrementHour"><i class="glyphicon glyphicon-chevron-up"></i></a></td>'+
            '<td class="separator">&nbsp;</td>'+
-           '<td><a href="#" data-action="incrementMinute"><i class="icon-chevron-up"></i></a></td>'+
+           '<td><a href="#" data-action="incrementMinute"><i class="glyphicon glyphicon-chevron-up"></i></a></td>'+
            (this.showSeconds ?
              '<td class="separator">&nbsp;</td>'+
-             '<td><a href="#" data-action="incrementSecond"><i class="icon-chevron-up"></i></a></td>'
+             '<td><a href="#" data-action="incrementSecond"><i class="glyphicon glyphicon-chevron-up"></i></a></td>'
            : '') +
            (this.showMeridian ?
              '<td class="separator">&nbsp;</td>'+
-             '<td class="meridian-column"><a href="#" data-action="toggleMeridian"><i class="icon-chevron-up"></i></a></td>'
+             '<td class="meridian-column"><a href="#" data-action="toggleMeridian"><i class="glyphicon glyphicon-chevron-up"></i></a></td>'
            : '') +
          '</tr>'+
          '<tr>'+
-           '<td>'+ hourTemplate +'</td> '+
+           '<td><span>'+ hourTemplate +'</span></td> '+
            '<td class="separator">:</td>'+
-           '<td>'+ minuteTemplate +'</td> '+
+           '<td><span>'+ minuteTemplate +'</span></td> '+
            (this.showSeconds ?
             '<td class="separator">:</td>'+
-            '<td>'+ secondTemplate +'</td>'
+            '<td><span>'+ secondTemplate +'</span></td>'
            : '') +
            (this.showMeridian ?
             '<td class="separator">&nbsp;</td>'+
-            '<td>'+ meridianTemplate +'</td>'
+            '<td><span>'+ meridianTemplate +'</span></td>'
            : '') +
          '</tr>'+
          '<tr>'+
-           '<td><a href="#" data-action="decrementHour"><i class="icon-chevron-down"></i></a></td>'+
+           '<td><a href="#" data-action="decrementHour"><i class="glyphicon glyphicon-chevron-down"></i></a></td>'+
            '<td class="separator"></td>'+
-           '<td><a href="#" data-action="decrementMinute"><i class="icon-chevron-down"></i></a></td>'+
+           '<td><a href="#" data-action="decrementMinute"><i class="glyphicon glyphicon-chevron-down"></i></a></td>'+
            (this.showSeconds ?
             '<td class="separator">&nbsp;</td>'+
-            '<td><a href="#" data-action="decrementSecond"><i class="icon-chevron-down"></i></a></td>'
+            '<td><a href="#" data-action="decrementSecond"><i class="glyphicon glyphicon-chevron-down"></i></a></td>'
            : '') +
            (this.showMeridian ?
             '<td class="separator">&nbsp;</td>'+
-            '<td><a href="#" data-action="toggleMeridian"><i class="icon-chevron-down"></i></a></td>'
+            '<td><a href="#" data-action="toggleMeridian"><i class="glyphicon glyphicon-chevron-down"></i></a></td>'
            : '') +
          '</tr>'+
        '</table>';
 
       switch(this.template) {
       case 'modal':
-        template = '<div class="bootstrap-timepicker-widget modal hide fade in" data-backdrop="'+ (this.modalBackdrop ? 'true' : 'false') +'">'+
-          '<div class="modal-header">'+
-            '<a href="#" class="close" data-dismiss="modal">×</a>'+
-            '<h3>Pick a Time</h3>'+
-          '</div>'+
-          '<div class="modal-content">'+
-            templateContent +
-          '</div>'+
-          '<div class="modal-footer">'+
-            '<a href="#" class="btn btn-primary" data-dismiss="modal">OK</a>'+
-          '</div>'+
+        template = '<div class="bootstrap-timepicker-widget modal fade" data-backdrop="'+ (this.modalBackdrop ? 'true' : 'false') +'">'+
+          '<div class="modal-dialog">' +
+            '<div class="modal-content">' +
+              '<div class="modal-header">'+
+                '<a href="#" class="close" data-dismiss="modal">×</a>'+
+                '<h3>Pick a Time</h3>'+
+              '</div>'+
+              '<div class="modal-body">'+
+                templateContent +
+              '</div>'+
+              '<div class="modal-footer">'+
+                '<a href="#" class="btn btn-primary" data-dismiss="modal">OK</a>'+
+              '</div>'+
+            '</div>'+
+          '</div>' +
         '</div>';
         break;
       case 'dropdown':
@@ -611,15 +615,24 @@
       if (this.isInline) {
         return;
       }
-      var widgetWidth = this.$widget.outerWidth(), widgetHeight = this.$widget.outerHeight(), visualPadding = 10, windowWidth =
-        $(window).width(), windowHeight = $(window).height(), scrollTop = $(window).scrollTop();
+
+      if (this.template === 'modal'){
+        return ;
+      }
+
+      var widgetWidth = this.$widget.outerWidth(); 
+      var widgetHeight = this.$widget.outerHeight();
+      var visualPadding = 10;
+      var windowWidth = $(window).width();
+      var windowHeight = $(window).height();
+      var scrollTop = $(window).scrollTop();
 
       var zIndex = parseInt(this.$element.parents().filter(function() {}).first().css('z-index'), 10) + 10;
       var offset = this.component ? this.component.parent().offset() : this.$element.offset();
       var height = this.component ? this.component.outerHeight(true) : this.$element.outerHeight(false);
       var width = this.component ? this.component.outerWidth(true) : this.$element.outerWidth(false);
       var left = offset.left, top = offset.top;
-
+      
       this.$widget.removeClass('timepicker-orient-top timepicker-orient-bottom timepicker-orient-right timepicker-orient-left');
 
       if (this.orientation.x !== 'auto') {
@@ -878,6 +891,9 @@
       });
 
       this.place();
+
+      //this.$widget.popover();
+
       if (this.disableFocus) {
         this.$element.blur();
       }
@@ -997,7 +1013,7 @@
 
     widgetKeydown: function(e) {
       var $input = $(e.target),
-          name = $input.attr('class').replace('bootstrap-timepicker-', '');
+          name = $input.data('name');
 
       switch (e.keyCode) {
       case 9: //tab
@@ -1050,7 +1066,7 @@
     },
 
     widgetKeyup: function(e) {
-      if ((e.keyCode === 65) || (e.keyCode === 77) || (e.keyCode === 80) || (e.keyCode === 46) || (e.keyCode === 8) || (e.keyCode >= 46 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105)) {
+      if ((e.keyCode === 65) || (e.keyCode === 77) || (e.keyCode === 80) || (e.keyCode === 46) || (e.keyCode === 8) || (e.keyCode >= 46 && e.keyCode <= 57)) {
         this.updateFromWidgetInputs();
       }
     }

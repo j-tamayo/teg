@@ -2,26 +2,65 @@
 
 {% block main_content %}
 <div class="container-fluid">
-	<div class="row">
+	<!-- <div class="row">
 		<div class="col-xs-10">
 			<h4>Agregar Centro de Inspecci&oacute;n</h4>
 		</div>
-	</div>
+	</div> -->
 	<div class="row">
 		<div class="panel panel-dashboard-gray">
 			<div class="panel-heading">
 				<h4>Agregar Centro de Inspecci&oacute;n</h4>
 			</div>
 			<div class="panel-body">
-				<form action="">
+				<form action="{% url 'admin_crear_centro' %}" method="POST" data-toggle="validator" role="form">
+				{% csrf_token %}
 				<div class="row">
 					<div class="col-xs-6">
 						<label >C&oacute;digo:</label>
 						{{form.codigo}}
+						<span class="help-block with-errors"></span>
 					</div>
 					<div class="col-xs-6">
 						<label >Nombre:</label>
 						{{form.nombre}}
+						<span class="help-block with-errors"></span>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-6">
+						<label>Estado</label>
+						<select id="id_estado" name="estado" class="form-control">
+							<option value="">--Seleccionar--</option>
+							{% for estado in estados %}
+							<option value="{{estado.pk}}">{{estado.nombre}}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="col-xs-6">
+						<label>Municipio</label>
+						<select id="id_municipio" name="municipio" class="form-control" required>
+							<option value="">--Seleccionar--</option>
+						</select>
+					</div>
+				</div>	
+				<br>
+				<div class="row">
+					<div class="col-xs-6">
+						<label>Direcci&oacute;n</label>
+						{{form.direccion}}
+					</div>
+					<div class="col-xs-6">
+						<label>Tel&eacute;fonos</label>
+						{{form.telefonos}}
+						<br>
+						<label>Peritos</label>
+						<select multiple id="id_peritos" name="peritos" class="form-control select-mul">
+							{% for perito in peritos %}
+							<option value="{{perito.pk}}">{{perito.nombres}} {{perito.apellidos}}</option>
+							{% endfor %}
+						</select>
 					</div>
 				</div>
 				<br>
@@ -35,8 +74,38 @@
 					</div>
 					<div class="col-xs-6">
 						<label>Hora de cierre ma&ntilde;ana</label>
+						<div class="input-append bootstrap-timepicker">
+							{{form.hora_cierre_manana}}
+							<span class="add-on"><i class="icon-time"></i></span>
+						</div>
 					</div>
 				</div>	
+				<br>
+				<div class="row">
+					<div class="col-xs-6">
+						<label>Hora de apertura tarde</label>
+						<div class="input-append bootstrap-timepicker">
+							{{form.hora_apertura_tarde}}
+							<span class="add-on"><i class="icon-time"></i></span>
+						</div>
+					</div>
+					<div class="col-xs-6">
+						<label>Hora de cierre tarde</label>
+						<div class="input-append bootstrap-timepicker">
+							{{form.hora_cierre_tarde}}
+							<span class="add-on"><i class="icon-time"></i></span>
+						</div>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-6">
+						<a href="#" class="btn btn-danger col-xs-12">Volver</a>
+					</div>
+					<div class="col-xs-6">
+						<input type="submit" class="btn btn-primary col-xs-12" value="Guardar">
+					</div>
+				</div>
 				</form>
 			</div>
 		</div> <!-- / .panel-dashboard-gray -->
@@ -48,7 +117,40 @@
 	<script type="application/javascript">
 	$(function(){
 		//Inicialización del timepicker
-		$('.timepicker').timepicker();
+		$('.timepicker').timepicker({
+			minuteStep: 10
+		});
+		//INcialización de chosen para los selects múltiples
+		$('.select-mul').chosen({
+  			no_results_text: 'No se encontraron resultados para'
+		});
+
+		/********** PARA CARGAR LOS MUNICIPIOS POR ESTADO *************/
+		$('#id_estado').change(function(){
+			value = $(this).val();
+			if(value.length > 0){
+				// LLamada AJAX para obtener los municipios
+				$.ajax({
+					method: 'GET',
+					url: '/sgt/obtener-municipios/'+value,
+					dataType: "json"
+				})
+				.done(function(data){
+					if(!data.hasOwnProperty('error_msg')){
+						// Se reinicia el Select de municipios
+						$('#id_municipio').html('<option value="">--Seleccionar--</option>');
+						$.each(data, function(key, value){
+							$('#id_municipio').append('<option value="'+value.pk+'">'+value.fields.nombre+'</option>');
+						});
+					}
+					else{
+						console.lg('Error');
+					}
+				});
+			}
+		});
+		/********** FIN  *************/
+
 	});
 	</script>
 {% endblock %}

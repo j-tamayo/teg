@@ -859,9 +859,9 @@
             box-sizing: border-box;
   }
   .input-prepend input,
-  .input-append input,
+  .input-group input,
   .input-prepend input[class*="span"],
-  .input-append input[class*="span"] {
+  .input-group input[class*="span"] {
     display: inline-block;
     width: auto;
   }

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.auth import authenticate
-from sgt.models import Estado, Municipio, TipoInspeccion, CentroInspeccion
+from sgt.models import Estado, Municipio, TipoInspeccion, CentroInspeccion, Perito
+from datetime import datetime
 
 class SolicitudInspeccionForm(forms.Form):
 	""" Formulario para la solicitud de inspecciones """
@@ -38,11 +39,54 @@ class SolicitudInspeccionForm(forms.Form):
 
 
 class CentroInspeccionForm(forms.ModelForm):
+	hora_apertura_manana = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control timepicker','required':True,'readonly':True}))
+	hora_cierre_manana = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control timepicker','required':True,'readonly':True}))
+	hora_apertura_tarde = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control timepicker','required':True,'readonly':True}))
+	hora_cierre_tarde = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control timepicker','required':True,'readonly':True}))
+	peritos = forms.ModelMultipleChoiceField(queryset=Perito.objects.all(), required=False)
+
 	class Meta:
 		model = CentroInspeccion
-		fields = ['codigo','nombre','direccion','telefonos','municipio','peritos','hora_apertura_manana','hora_cierre_manana','hora_apertura_tarde','hora_cierre_tarde']
+		fields = ['codigo','nombre','direccion','telefonos','municipio','hora_apertura_manana','hora_cierre_manana','hora_apertura_tarde','hora_cierre_tarde']
 		widgets = {
-			'codigo': forms.TextInput(attrs={'class':'form-control'}),
-			'nombre': forms.TextInput(attrs={'class':'form-control'}),
-			'hora_apertura_manana': forms.TextInput(attrs={'class':'timepicker','readonly':True})
+			'codigo': forms.TextInput(
+				attrs={
+					'class':'form-control',
+					'required':'',
+					'data-error':'Este campo es obligatorio'
+				}
+			),
+			'nombre': forms.TextInput(
+				attrs={
+					'class':'form-control', 
+					'required':True,
+					'data-error':'Este campo es obligatorio'
+				}
+			),
+			'direccion': forms.Textarea(
+				attrs={
+					'class':'form-control', 
+					'required':True
+				}
+			),
+			'telefonos': forms.TextInput(
+				attrs={
+					'class':'form-control',
+					'required':True,
+				}
+			)
 		}
+
+	def save(self):
+		instance = forms.ModelForm.save(self)
+		peritos = self.cleaned_data.get('peritos', None)
+		for perito in peritos:
+			instance.peritos.add(perito)
+
+	def clean_hora_apertura_manana(self):
+		field = self.cleaned_data.get('hora_apertura_manana', None)
+		if field:
+			print field
+			field = datetime.strptime(field,'%I:%M %p').time()
+
+			return field

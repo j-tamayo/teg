@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import render
+from django.shortcuts import render,redirect
+from django.core.urlresolvers import reverse
 from django.core import serializers
 from django.http import HttpResponse
 from django.views.generic import View
@@ -319,19 +320,48 @@ class AdminAgregarCentro(View):
 		return super(AdminAgregarCentro, self).dispatch(*args, **kwargs)
 
 	def get(self, request, *args, **kwargs):
-		"""Crea un centro de inspección"""
+		"""Despliega el formulario para crear un centro de inspección"""
 		usuario = request.user
 
 		form = CentroInspeccionForm()
+		estados = Estado.objects.all()
+		peritos = Perito.objects.all()
 
 		context = {
 			'admin': True,
 			'form': form,
+			'estados': estados,
+			'peritos': peritos,
 			'seccion_centros': True,
 			'usuario': usuario,
 		}
 
 		return render(request, 'admin/crear_centro.html', context)
+
+	def post(self, request, *args, **kwargs):
+		"""Crea el centro de inspección"""
+		usuario = request.user
+
+		estados = Estado.objects.all()
+		peritos = Perito.objects.all()
+		form = CentroInspeccionForm(request.POST)
+
+		if form.is_valid():
+			form.save()
+			return redirect(reverse('admin_centros'))
+
+		else:
+			print "MALLLL", form.errors
+			context = {
+				'admin': True,
+				'form': form,
+				'estados': estados,
+				'peritos': peritos,
+				'seccion_centros': True,
+				'usuario': usuario,
+			}
+
+			return render(request, 'admin/crear_centro.html', context)
 
 
 class AdminBandejaUsuarios(View):
