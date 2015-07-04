@@ -1,13 +1,14 @@
+/* Variables Globales Auxiliares */
 var id_usuario = -1;
 var load_data_id = 0;
 var db;
 
-//------------ PROCEDIMIENTO QUE MUESTRA QUE OCURRIO UN ERROR CON UNA OPERACION EN LA BASE DE DATOS
+/* PROCEDIMIENTO QUE MUESTRA QUE OCURRIO UN ERROR CON UNA OPERACION EN LA BASE DE DATOS */
 function errorCB(){
 	console.log('Error en la transacción');
 }
 	
-//------------ PROCEDIMIENTO QUE MUESTRA QUE UNA OPERACION CON LA BASE DE DATOS FUE EXITOSA
+/* PROCEDIMIENTO QUE MUESTRA QUE UNA OPERACION CON LA BASE DE DATOS FUE EXITOSA */
 function successCB(){
 	console.log('Transacción exitosa!');
 }
@@ -25,7 +26,7 @@ function init_data(){
 
 	if(load_data_id == 2){
 		console.log('Inicializando perfil del usuario...');
-		$("#request_page").bind("pagebeforeshow", load_solicitudes_inspeccion(false));
+		$("#request_page").bind("pagebeforeshow", load_solicitudes_inspeccion());
 
 		$.mobile.changePage("#profile_page", {
 			changeHash: false, 
@@ -35,7 +36,7 @@ function init_data(){
 
 	if(load_data_id == 3){
 		console.log('Cargando nueva solicitud...');
-		$("#request_page").bind("pagebeforeshow", load_solicitudes_inspeccion(true));
+		$("#request_page").bind("pagebeforeshow", load_solicitudes_inspeccion());
 
         $.mobile.changePage('#request_page', {
             changeHash: false,
@@ -85,6 +86,18 @@ function createTables(){
 	}, errorCB, loadTables);
 }
 
+function loadTables(){
+	console.log("tablas cargadas exitosamente...");
+	console.log("procediendo a cargar registros de la web APP...");
+	load_data_id = 1;
+
+	$.getJSON("http://192.168.1.101:8000/api/data-inicial/")
+	.done(load_json_data)
+	.fail(function(){
+	    console.log("Error de conexión!");
+	});
+}
+
 function dropTables(){
 	db.transaction(function(tx){
 		// tx.executeSql("drop table sgt_encuesta_preguntas;");
@@ -102,19 +115,8 @@ function dropTables(){
 	}, errorCB, successCB);
 }
 
-function loadTables(){
-	console.log("tablas cargadas exitosamente...");
-	console.log("procediendo a cargar registros de la web APP...");
-	load_data_id = 1;
-
-	$.getJSON("http://192.168.1.101:8000/api/data-inicial/")
-	.done(load_json_data)
-	.fail(function(){
-	    console.log("Error de conexión!");
-	});
-}
-
 function load_json_data(json){
+	console.log("cargando json en BD...");
 	console.log(json);
 	db.transaction(function(tx){
 		$.each(json, function(table, data){
@@ -211,7 +213,6 @@ function login(correo, password, user_info){
 	    		col_up = [];
 	    		val_up = [];
 				$.each(row, function(key, value){
-					console.log(key+' -> '+value);
 					if(value != user_info[key]){
 						col_up.push(key);
 						val_up.push(user_info[key]);
@@ -348,7 +349,6 @@ function selectTable(table, cols){
 }
 
 /* Funciones definidas para la carga inicial de datos en la APP móvil */
-
 function fill_estados(query, flag){
 	db.transaction(function(tx){
 		tx.executeSql(query, [], 
@@ -445,7 +445,6 @@ function load_profile_info(user_info){
 			throw new Error(err.message);
 		});
 	}, errorCB, successCB);
-	// 'select e.nombre, m.nombre from sgt_estado e, sgt_municipio m where e.id = m.estado and m.id = 2;'
 }
 
 function load_centros_inspeccion(json, sel){
@@ -486,9 +485,10 @@ function load_centros_inspeccion(json, sel){
 var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 var dias_semana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
-function load_solicitudes_inspeccion(refresh){
+function load_solicitudes_inspeccion(){
+	flag_refresh = $('#request_list').is(':empty');
 	db.transaction(function(tx){
-		$('#solicitudes_usuario').html('');
+		$('#request_list').html('');
 		tx.executeSql('SELECT n.fecha_atencion, n.hora_atencion, c.nombre AS centro_inspeccion, n.codigo, t.nombre AS tipo_inspeccion, s.perito, e.nombre AS estatus FROM cuentas_sgtusuario u, sgt_numeroorden n, sgt_solicitudinspeccion s, sgt_centroinspeccion c, sgt_tipoinspeccion t, sgt_estatus e WHERE n.solicitud_inspeccion = s.id AND s.centro_inspeccion = c.id AND s.tipo_inspeccion = t.id AND s.estatus = e.id AND u.id ='+id_usuario+';', [], 
 	    function(tx, results){
 	    	aux = '';
@@ -496,9 +496,21 @@ function load_solicitudes_inspeccion(refresh){
 			for(i = 0; i < num; i++){
 				row = results.rows.item(i);
 
-				fecha_atencion = row['fecha_atencion'].split("-");
+				fecha_atencion = row['fecha_atencion'].split('-');
 				fecha_atencion = new Date(fecha_atencion[2] + '-' + fecha_atencion[1] + '-' + fecha_atencion[0]);
 				fecha_atencion = dias_semana[fecha_atencion.getDay()] + ", " + fecha_atencion.getDate() + " de " + meses[fecha_atencion.getMonth()] + " del " + fecha_atencion.getFullYear();
+
+				hora_atencion = row['hora_atencion'].split(':');
+				hora_aux = parseInt(hora_atencion[0]);
+				
+				am_pm = 'AM';
+				if(hora_aux > 11)
+					am_pm = 'PM';
+
+				if(hora_aux >= 12)
+					hora_aux = hora_aux - 12;
+
+				hora_atencion = hora_aux + ':' + hora_atencion[1] + ' ' + am_pm;
 
 				estatus_color_bg = '';
 				estatus_color_text = 'text-primary';
@@ -515,10 +527,10 @@ function load_solicitudes_inspeccion(refresh){
 				if(perito_asignado == '')
 					perito_asignado = 'N/A'; 
 
-				aux += '<li data-role="list-divider" data-theme="c" '+estatus_color_bg+'>'+fecha_atencion+'<span class="ui-li-count">'+row['hora_atencion']+'</span></li>\
+				aux += '<li data-role="list-divider" data-theme="c" '+estatus_color_bg+'>'+fecha_atencion+'<span class="ui-li-count">'+hora_atencion+'</span></li>\
 						<li>\
 							<a href="#">\
-								<h2 class="text-success">'+row['centro_inspeccion']+'</h2>\
+								<h2 class="text-success"><br>'+row['centro_inspeccion']+'</h2>\
 								<p><strong>N&uacute;mero: '+row['codigo']+'&emsp;-&emsp;Tipo: '+row['tipo_inspeccion']+'</strong></p>\
 								<p>Perito asignado: '+perito_asignado+'</p>\
 								<p class="ui-li-aside '+estatus_color_text+'"><strong>'+row['estatus']+'</strong></p>\
@@ -526,10 +538,10 @@ function load_solicitudes_inspeccion(refresh){
 							<a href="#" class="ui-btn ui-shadow ui-icon-delete ui-nodisc-icon ui-alt-icon"></a>\
 						</li>';
 			}
-			$('#solicitudes_usuario').html(aux);
+			$('#request_list').html(aux);
 
-			if(refresh)
-				$('#solicitudes_usuario').listview("refresh");
+			if(!flag_refresh)
+				$('#request_list').listview("refresh");
 	    },
 		function(tx, err){
 			throw new Error(err.message);

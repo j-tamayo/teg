@@ -1,16 +1,11 @@
+/* Variables Globales Auxiliares */
+var page_sol = 1;
+
 $(document).ready(function(){
-    init_db(); // cargando BD Móvil...
+    init_db();  // cargando BD Móvil...
 
     /* Inicializando elementos en las interfaces de la APP Móvil */
-    $("#profile_header").hide();
-    $("#request_footer").hide();
-
     $(".datepicker").datepicker({
-        changeYear: true,
-        yearRange: '1900:2100'
-    });
-
-    $("#fecha_asistencia_sol").datepicker({
         changeYear: true,
         yearRange: '1900:2100'
     });
@@ -19,12 +14,8 @@ $(document).ready(function(){
         return h.replace(/&nbsp;/g,'');
     });
 
-    /* Variables auxiliares */
-    var page_sol = 1;
-
+    /* Definición de los eventos dentro de la APP Móvil */ 
     $(document).one("pagecreate", ".multi_page", function(){
-        $("#profile_header").toolbar({theme: "b", position:"fixed"});
-
         function navnext(next){
             $(":mobile-pagecontainer").pagecontainer("change", "#" + next, {
                 transition: "slide",
@@ -96,8 +87,6 @@ $(document).ready(function(){
 
         if(thePage.attr("id") == "request_page")
             $("#request_footer").show("fold","up");
-
-        $("#profile_header").show("fold","down");
     });
 
     $(document).on('pagecontainerbeforechange', function(e, data){  
@@ -108,19 +97,10 @@ $(document).ready(function(){
             prev_page = '#' + data.prevPage[0].id;
             from_page = '#' + data.options.fromPage[0].id;
 
-            //console.log(data.options);
             if($(prev_page).hasClass("multi_page") && data.options.direction == "back"){
-                $("#profile_header").hide("fold","down");
-                //window.location.replace("#login_page");
-
-                //data.toPage = "#login_page";
-                //data.prevPage = $("#login_page");
-                // var lent = history.length - 1; //count total row in history
-                // history.go(-lent); //destroy all history and make it as null
                 
-                //window.history.go((-2)); 
-                //e.preventDefault();
-                //e.stopPropagation();
+                /* Espacio Reservado para el Logout de la APP Móvil */
+
             }
 
             if(from_page == "#request_page" && (to == "#mail_page" ||  to == "#profile_page")){
@@ -133,14 +113,17 @@ $(document).ready(function(){
                 $("#request_form_page2").hide();
                 $("#request_form_page3").hide();
                 $("#prev_request_page").hide();
-                $("#profile_header").toolbar("disable");
-                $("#profile_header").hide("fold","up");
+
+                inject_toolbar(false);
             }
 
             if(from_page == "#create_request_page" && to == "#request_page"){
-                //console.log("hi!!!");
-                //$("#profile_header").toolbar("enable");
-                $("#profile_header").show("fold","down");
+                inject_toolbar(true);
+            }
+
+            if(from_page == "#login_page" && to == "#profile_page"){
+                inject_toolbar(true);
+                $("#request_footer").hide();
             }
         }
     });
@@ -206,7 +189,7 @@ $(document).ready(function(){
     });
 
     $(document).on("click", "#next_request_page", function(){
-        if(page_sol == 3){
+        if(page_sol == 3 && $('#horario_sol').val().trim()){
             data = {};
             formData = $('#request_form').serializeArray();
 
@@ -226,14 +209,10 @@ $(document).ready(function(){
         }
 
         if(page_sol >= 1 && page_sol < 3){
-            $("#request_form_page"+page_sol).hide("fade");
-            
-            page_sol++;
+            if(page_sol == 1 && ($('#tipo_sol').val().trim() && $('#estado_sol').val().trim() && $('#municipio_sol').val().trim() && $('#fecha_asistencia_sol').val().trim())){
+                $("#request_form_page"+page_sol).hide("fade");
 
-            if(page_sol == 1)
-                $("#request_form_page"+page_sol).show("fade");
-
-            if(page_sol == 2){
+                page_sol++;
                 $.post("http://192.168.1.101:8000/api/centros-sol/", {'municipio_id': $('#municipio_sol').val(), 'estado_id':$('#estado_sol').val()})
                 .done(function(json){
                     load_centros_inspeccion(json, $("#request_form_page"+page_sol));
@@ -242,31 +221,34 @@ $(document).ready(function(){
                     console.log(json);
                 });
             }
+            else{
+                if(page_sol == 2 && $("#centros_inspeccion_sol").find('a').hasClass('ui-btn-active')){
+                    $("#request_form_page"+page_sol).hide("fade");
 
-            if(page_sol == 3){
-                $.post("http://192.168.1.101:8000/api/horarios/", {'id_centro': $('#centro_id_sol').val(), 'fecha': $('#fecha_asistencia_sol').val(), 'id_tipo_inspeccion': $('#tipo_sol').val()})
-                .done(function(json){
-                    $('#preview_centro').text($($('#centros_inspeccion_sol').children('li').find('a.ui-btn-active')).children('h2').text());
-                    $('#preview_fecha_sol').text($('#fecha_asistencia_sol').val());
-                    $('#preview_estado_sol').text($('#estado_sol :selected').text());
-                    $('#preview_municipio_sol').text($('#municipio_sol :selected').text());
+                    page_sol++;
+                    $.post("http://192.168.1.101:8000/api/horarios/", {'id_centro': $('#centro_id_sol').val(), 'fecha': $('#fecha_asistencia_sol').val(), 'id_tipo_inspeccion': $('#tipo_sol').val()})
+                    .done(function(json){
+                        $('#preview_centro').text($($('#centros_inspeccion_sol').children('li').find('a.ui-btn-active')).children('h2').text());
+                        $('#preview_fecha_sol').text($('#fecha_asistencia_sol').val());
+                        $('#preview_estado_sol').text($('#estado_sol :selected').text());
+                        $('#preview_municipio_sol').text($('#municipio_sol :selected').text());
 
-                    $('#next_request_page').text('Enviar');
+                        $('#next_request_page').text('Enviar');
 
-                    aux = '<option value="">---Seleccione un tipo---</option>';
-                    $(json).each(function(key, value){
-                        aux += '<option value="'+value['value']+'">'+value['text']+'</option>';
+                        aux = '<option value="">---Seleccione un tipo---</option>';
+                        $(json).each(function(key, value){
+                            aux += '<option value="'+value['value']+'">'+value['text']+'</option>';
+                        });
+                        $('#horario_sol').html(aux);
+                        $('#horario_sol').selectmenu("refresh");
+                        $("#request_form_page"+page_sol).show("fade");
+                    })
+                    .fail(function(json){
+                        console.log(json);
                     });
-                    $('#horario_sol').html(aux);
-                    $('#horario_sol').selectmenu("refresh");
-                    $("#request_form_page"+page_sol).show("fade");
-                })
-                .fail(function(json){
-                    console.log(json);
-                });
+                }
             }  
         }
-        console.log(page_sol);
     });
 
     $(document).on("click", "#prev_request_page", function(){
@@ -283,13 +265,14 @@ $(document).ready(function(){
 
             $("#request_form_page"+page_sol).show("fade");
         }
-        console.log(page_sol);
     });
 
     $(document).on("click", ".centro_inspeccion_item", function(){
-        $(this).closest('ul').find('a').removeClass('ui-btn-active');
-        $(this).addClass('ui-btn-active');
         $('#centro_id_sol').val($(this).attr('id'));
+        $(this).closest('ul').find('a').removeClass('ui-btn-active');
+        $(this).closest('ul').find('a').children('.ui-li-aside').css('color', '');
+        $(this).addClass('ui-btn-active');
+        $(this).children('.ui-li-aside').css('color', '#FFFFFF');
     });
 
     $(document).on("click", "#recordar_contraseña", function(){
@@ -298,3 +281,33 @@ $(document).ready(function(){
 
     });
 });
+
+/* Funciones auxiliares definidas utilizadas por los eventos dentro de la APP móvil */
+function inject_toolbar(inject_flag){
+    if(inject_flag && $('#profile_header').is(':empty')){
+        $('#profile_header').attr('data-role','header');
+        $('#profile_header').html('<div class="ui-body-b ui-body">\
+                    <h3 id="user_title">Bienvenido<br>"Nombre Usuario"</h3>\
+                    <a href="#" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>\
+                    <div data-role="navbar">\
+                        <ul id="nav">\
+                            <li><a target="profile_page" data-icon="user">Ver Perfil</a></li>\
+                            <li><a target="request_page" data-icon="bullets">Solicitudes</a></li>\
+                            <li><a target="mail_page" data-icon="mail">Notificaciones</a></li>\
+                        </ul>\
+                    </div>\
+                </div>');
+
+        $('#profile_header').toolbar({theme: 'a', position: 'fixed'});
+        $('#profile_header').show('fold','down');
+        $.mobile.resetActivePageHeight();
+    }
+
+    if(!inject_flag && !$('#profile_header').is(':empty')){
+        $('#profile_header').hide('fold','up');
+        $('#profile_header').toolbar('destroy');
+        $('#profile_header').html('');
+        $('#profile_header').removeAttr('data-role');
+        $.mobile.resetActivePageHeight();
+    }
+}
