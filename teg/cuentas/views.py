@@ -108,8 +108,8 @@ class DetectarUsuario(LoginRequiredMixin, View):
             if usuario.es_cliente():
                 return redirect(reverse_lazy('bandeja_cliente'))
 
-            else:
-                return HttpResponse('Admin')		
+            elif usuario.es_admin():
+                return redirect(reverse_lazy('admin_centros'))		
             #pass
 
         elif usuario.is_authenticated() and not usuario.is_active:

@@ -109,6 +109,10 @@ class SgtUsuario(AbstractBaseUser):
 		rol_cliente = RolSgt.objects.filter(codigo =  'cliente').first()
 		return self.rol == rol_cliente
 
+	def es_admin(self):
+		rol_admin = RolSgt.objects.filter(codigo = 'admin').first()
+		return self.rol == rol_admin
+
 	def __unicode__(self):
 		return u'%s - %s' % (self.correo, self.cedula)
 
