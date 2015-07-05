@@ -287,7 +287,7 @@ function inject_toolbar(inject_flag){
     if(inject_flag && $('#profile_header').is(':empty')){
         $('#profile_header').attr('data-role','header');
         $('#profile_header').html('<div class="ui-body-b ui-body">\
-                    <h3 id="user_title">Bienvenido<br>"Nombre Usuario"</h3>\
+                    <h3 id="user_title">Bienvenido<br>'+user_title+'</h3>\
                     <a href="#" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>\
                     <div data-role="navbar">\
                         <ul id="nav">\

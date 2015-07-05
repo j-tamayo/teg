@@ -1,4 +1,5 @@
 /* Variables Globales Auxiliares */
+var user_title = '';
 var id_usuario = -1;
 var load_data_id = 0;
 var db;
@@ -422,7 +423,8 @@ function fill_tipos_inspeccion(){
 }
 
 function load_profile_info(user_info){
-	$("#user_title").html('Bienvenido<br>'+user_info['nombres']);
+	user_title = user_info['nombres'];
+	//$("#user_title").html('Bienvenido<br>'+user_info['nombres']);
 	db.transaction(function(tx){
 		tx.executeSql('SELECT e.nombre as estado, m.nombre as municipio FROM sgt_estado e, sgt_municipio m WHERE e.id = m.estado AND m.id = '+user_info['municipio']+';', [], 
 	    function(tx, results){
@@ -489,7 +491,7 @@ function load_solicitudes_inspeccion(){
 	flag_refresh = $('#request_list').is(':empty');
 	db.transaction(function(tx){
 		$('#request_list').html('');
-		tx.executeSql('SELECT n.fecha_atencion, n.hora_atencion, c.nombre AS centro_inspeccion, n.codigo, t.nombre AS tipo_inspeccion, s.perito, e.nombre AS estatus FROM cuentas_sgtusuario u, sgt_numeroorden n, sgt_solicitudinspeccion s, sgt_centroinspeccion c, sgt_tipoinspeccion t, sgt_estatus e WHERE n.solicitud_inspeccion = s.id AND s.centro_inspeccion = c.id AND s.tipo_inspeccion = t.id AND s.estatus = e.id AND u.id ='+id_usuario+';', [], 
+		tx.executeSql('SELECT n.fecha_atencion, n.hora_atencion, c.nombre AS centro_inspeccion, n.codigo, t.nombre AS tipo_inspeccion, s.perito, e.nombre AS estatus FROM sgt_solicitudinspeccion s, sgt_numeroorden n, sgt_centroinspeccion c, sgt_tipoinspeccion t, sgt_estatus e WHERE n.solicitud_inspeccion = s.id AND s.centro_inspeccion = c.id AND s.tipo_inspeccion = t.id AND s.estatus = e.id AND s.usuario = '+id_usuario+';', [], 
 	    function(tx, results){
 	    	aux = '';
 	    	num = results.rows.length;
