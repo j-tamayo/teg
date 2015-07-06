@@ -13,7 +13,7 @@
 				<h4>Agregar Centro de Inspecci&oacute;n</h4>
 			</div>
 			<div class="panel-body">
-				<form action="{% url 'admin_crear_centro' %}" method="POST" data-toggle="validator" role="form">
+				<form {%if editar%}action="{% url 'admin_editar_centro' centro_id %}"{%else%}action="{% url 'admin_crear_centro' %}"{%endif%} method="POST" novalidate role="form">
 				{% csrf_token %}
 				<div class="row">
 					<div class="col-xs-6">
@@ -33,8 +33,8 @@
 						<label>Estado</label>
 						<select id="id_estado" name="estado" class="form-control">
 							<option value="">--Seleccionar--</option>
-							{% for estado in estados %}
-							<option value="{{estado.pk}}">{{estado.nombre}}</option>
+							{% for e in estados %}
+							<option {% ifequal e.pk c_estado_id %}selected{%endifequal%} value="{{e.pk}}">{{e.nombre}}</option>
 							{% endfor %}
 						</select>
 					</div>
@@ -42,6 +42,9 @@
 						<label>Municipio</label>
 						<select id="id_municipio" name="municipio" class="form-control" required>
 							<option value="">--Seleccionar--</option>
+							{% for m in c_municipios %}
+							<option {% ifequal m.pk c_municipio_id %}selected{%endifequal%} value="{{m.pk}}">{{m.nombre}}</option>
+							{% endfor %}
 						</select>
 					</div>
 				</div>	

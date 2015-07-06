@@ -352,9 +352,89 @@ class AdminAgregarCentro(View):
 
 		else:
 			print "MALLLL", form.errors
+			c_estado_id = request.POST.get('estado', None)
+			c_municipios = Municipio.objects.filter(estado__id = c_estado_id)
+			c_municipio_id = request.POST.get('municipio', None)
+			if c_estado_id:
+				c_estado_id = int(c_estado_id)
+			if c_municipio_id:
+				c_municipio_id = int(c_municipio_id)
+
 			context = {
 				'admin': True,
 				'form': form,
+				'c_estado_id': c_estado_id,
+				'c_municipios': c_municipios,
+				'c_municipio_id': c_municipio_id,
+				'estados': estados,
+				'peritos': peritos,
+				'seccion_centros': True,
+				'usuario': usuario,
+			}
+
+			return render(request, 'admin/crear_centro.html', context)
+
+
+class AdminEditarCentro(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEditarCentro, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Despliega el formulario para editar un centro de inspección"""
+		usuario = request.user
+
+		centro = CentroInspeccion.objects.filter(id=kwargs['centro_id']).first()
+
+		if centro:
+			c_estado_id = centro.municipio.estado.pk
+			c_municipios = Municipio.objects.filter(estado__id = c_estado_id)
+			c_municipio_id = centro.municipio.pk
+			form = CentroInspeccionForm(instance = centro)
+			estados = Estado.objects.all()
+			peritos = Perito.objects.all()
+
+			context = {
+				'admin': True,
+				'c_estado_id': c_estado_id,
+				'c_municipios': c_municipios,
+				'c_municipio_id': c_municipio_id,
+				'centro_id': kwargs['centro_id'],
+				'editar': True,
+				'form': form,
+				'estados': estados,
+				'peritos': peritos,
+				'seccion_centros': True,
+				'usuario': usuario,
+			}
+
+			return render(request, 'admin/crear_centro.html', context)
+
+		else:
+			return redirect(reverse('admin_centros'))
+
+	def post(self, request, *args, **kwargs):
+		"""Edita el centro de inspección"""
+		usuario = request.user
+
+		estados = Estado.objects.all()
+		peritos = Perito.objects.all()
+		form = CentroInspeccionForm(request.POST)
+
+		if form.is_valid():
+			form.save()
+			return redirect(reverse('admin_centros'))
+
+		else:
+			print "MALLLL", form.errors
+
+			context = {
+				'admin': True,
+				'form': form,
+				'c_estado_id': c_estado_id,
+				'c_municipios': c_municipios,
+				'c_municipio_id': c_municipio_id,
+				'centro_id': kwargs['centro_id'],
+				'editar': True,
 				'estados': estados,
 				'peritos': peritos,
 				'seccion_centros': True,

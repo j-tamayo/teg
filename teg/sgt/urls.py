@@ -49,6 +49,12 @@ urlpatterns = \
         ),
 
         url(
+            r'^admin/editar-centro/(?P<centro_id>\d+)$',
+            views.AdminEditarCentro.as_view(),
+            name='admin_editar_centro'
+        ),
+
+        url(
             r'^admin/usuarios$',
             views.AdminBandejaUsuarios.as_view(),
             name='admin_usuarios'
