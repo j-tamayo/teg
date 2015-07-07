@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block main_content %}
+{% include 'cuentas/modales_usuario.html' %}
 {% load i18n %}
 <div class="container-fluid">
 	<div class="row">
@@ -19,7 +20,7 @@
 					<th>Direcci&oacute;n</th>
 					<th>Estado</th>
 					<th>Municipio</th>
-					<th>Opciones</th>
+					<th style="width:15%">Opciones</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -30,13 +31,13 @@
 					<td>{{centro.municipio.estado.nombre}}</td>
 					<td>{{centro.municipio.nombre}}</td>
 					<td>
-						<a href="{% url 'admin_editar_centro' centro.pk %}" class="btn btn-info" data-toggle="tooltip" data-original-title="Editar">
+						<a href="{% url 'admin_editar_centro' centro.pk %}" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Editar">
 							<i class="fa fa-pencil"></i>
 						</a>
-						<a href="#" class="btn btn-info" data-toggle="tooltip" data-original-title="Gestionar">
+						<a href="#" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Gestionar">
 							<i class="fa fa-cog"></i>
 						</a>
-						<a href="#" class="btn btn-danger" data-toggle="tooltip" data-original-title="Eliminar">
+						<a href="#" class="btn btn-danger btn-sm eliminar" target="{{centro.pk}}" data-toggle="tooltip" data-original-title="Eliminar" >
 							<i class="fa fa-trash"></i>
 						</a>
 					</td>
@@ -81,4 +82,50 @@
 		</div>
 	</div>
 </div> <!-- / .container-fluid -->
+<form id="eliminar_centro" method="POST" action="{% url 'admin_eliminar_centro' %}">
+{% csrf_token %}
+<input type="hidden" name="page" value="{{centros.number}}">
+</form>
+{% endblock %}
+
+{% block javascripts %}
+	{{ block.super }}
+
+	<script type="application/javascript">
+	$(function(){
+		$('#eliminar_centro').hide();
+		/******** MODAL PARA CONFIRMAR LA ELIMINACIÓN DE UN CENTRO DE INSPECCIÓN ********/
+		$(document).on('click', '.eliminar', function(event){
+			event.preventDefault();
+			target = $(this).attr('target');
+
+			$('#eliminar_centro').append('<input type="hidden" name="centro_id" value="'+target+'">');
+			$('#title_modal_generic').html('Confirmación');
+			$('#body_modal_generic').html(
+				'<div class="row">\
+					<div class="col-xs-12"><h4>¿Está seguro que desea eliminar este centro de inspección?</h4></div>\
+				</div><br>'
+			);
+			$('#footer_modal_generic').html(
+				'<div class="col-xs-6">\
+					<a id="cancelar" href="#" class="btn btn-danger col-xs-12">Cancelar</a>\
+				</div>\
+				<div class="col-xs-6">\
+					<a id="confirmar" href="#" class="btn btn-primary col-xs-12">Aceptar</a>\
+				</div>'
+			);
+			$('#modal_generic').modal({
+				backdrop: 'static',
+				keyboard: false
+			});
+		});
+		/******** FIN ********/
+
+		/******* ELIMINAR CENTRO DE INSPECCIÓN *********/
+		$(document).on('click', '#confirmar', function(){
+			$('#eliminar_centro').submit();
+		});
+		/******* FIN *******/
+	})
+	</script>
 {% endblock %}
