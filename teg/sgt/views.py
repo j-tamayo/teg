@@ -8,6 +8,8 @@ from sgt.models import *
 from sgt.forms import *
 from sgt.helpers import solicitudes,dates
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
+from cuentas import forms as CuentasForm
+from cuentas.models import *
 
 import json
 
@@ -502,6 +504,88 @@ class AdminBandejaUsuarios(View):
 		}
 
 		return render(request, 'admin/bandeja_usuarios.html', context)
+
+
+class AdminCrearUsuario(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminCrearUsuario, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Vista que despliega el formulario para la creación de usuarios Taquilla """
+		usuario = request. user
+		estados = Estado.objects.all()
+
+		form = CuentasForm.RegistroForm()
+
+		context = {
+			'admin': True,
+			'form': form,
+			'estados': estados,
+			'seccion_usuarios': True,
+			'usuario': usuario,
+		}
+
+		return render(request, 'admin/crear_usuario.html', context)
+
+	def post(self, request, *args, **kwargs):
+		usuario = request.user
+
+		estados = Estado.objects.all()
+		form = CuentasForm.RegistroForm(request.POST)
+
+		if form.is_valid():
+			registro = form.cleaned_data
+			rol_cliente = RolSgt.objects.get(codigo="taquilla")
+
+			usuario = SgtUsuario(
+                nombres = registro['nombres'],
+                apellidos = registro['apellidos'],
+                cedula = registro['cedula'],
+                municipio = registro['municipio'],
+                direccion = registro['direccion'],
+                codigo_postal = registro['codigo_postal'],
+                correo = registro['correo'],
+                fecha_nacimiento = registro['fecha_nacimiento'],
+                telefono_local = registro['telefono_local'],
+                telefono_movil = registro['telefono_movil'],
+                sexo = registro['sexo'],
+                rol = rol_cliente)
+            
+			usuario.set_password(registro['password'])
+			usuario.save()
+
+			return redirect(reverse('admin_usuarios'))
+
+		else:
+			u_estado_id = request.POST.get('estado', None)
+			u_municipios = Municipio.objects.filter(estado__id = u_estado_id)
+			u_municipio_id = request.POST.get('municipio', None)
+			if u_estado_id:
+				u_estado_id = int(u_estado_id)
+			if u_municipio_id:
+				u_municipio_id = int(u_municipio_id)
+
+			context = {
+				'admin': True,
+				'form': form,
+				'u_estado_id': u_estado_id,
+				'u_municipios': u_municipios,
+				'u_municipio_id': u_municipio_id,
+				'estados': estados,
+				'seccion_usuarios': True,
+				'usuario': usuario,
+			}
+
+			return render(request, 'admin/crear_usuario.html', context)
+
+
+class AdminEditarUsuarios(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEditarUsuarios, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Despliega el formulario para editar un usuario"""
+		usuario = request.user 
 
 
 class AdminBandejaEncuestas(View):

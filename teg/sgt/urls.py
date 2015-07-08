@@ -67,6 +67,12 @@ urlpatterns = \
         ),
 
         url(
+            r'^admin/crear-usuario$',
+            views.AdminCrearUsuario.as_view(),
+            name='admin_crear_usuario'
+        ),
+
+        url(
             r'^admin/encuestas$',
             views.AdminBandejaEncuestas.as_view(),
             name='admin_encuestas'
