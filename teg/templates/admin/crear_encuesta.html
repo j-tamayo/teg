@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<div class="container-fluid">
+
+	<div class="row">
+		<div class="panel panel-dashboard-gray">
+			<div class="panel-heading">
+				<h4>Agregar Centro de Inspecci&oacute;n</h4>
+			</div>
+			<div class="panel-body">
+				<form {%if editar%}action="{% url 'admin_editar_encuesta' centro_id %}"{%else%}action="{% url 'admin_crear_encuesta' %}"{%endif%} method="POST" novalidate role="form">
+					{% csrf_token %}
+					<div class="row">
+						<div class="col-xs-6">
+							<label >C&oacute;digo:</label>
+							{{form.nombre}}
+							<span class="help-block with-errors"></span>
+						</div>
+						<div class="col-xs-6">
+							<label >Nombre:</label>
+							{{form.descripcion}}
+							<span class="help-block with-errors"></span>
+						</div>
+					</div>
+					<br>
+
+				</form>
+			</div>
+
+
+
+		</div>
+	</div> <!-- / .panel-dashboard-gray -->
+
+</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ block.super }}
+	<script type="application/javascript">
+
+
+	</script>
+{% endblock %}

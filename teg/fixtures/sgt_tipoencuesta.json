@@ -1,0 +1,1 @@
+[{"fields": {"descripcion": "Encuesta de conformidad", "codigo": "ENC_CONF"}, "model": "sgt.tipoencuesta", "pk": 1}, {"fields": {"descripcion": "Encuesta general", "codigo": "ENC_GEN"}, "model": "sgt.tipoencuesta", "pk": 2}]

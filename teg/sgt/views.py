@@ -498,3 +498,62 @@ class AdminBandejaEncuestas(View):
 		}
 
 		return render(request, 'admin/bandeja_encuestas.html', context)
+
+class AdminAgregarEncuesta(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminAgregarEncuesta, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Despliega el formulario para crear encuestas"""
+		usuario = request.user
+		form = CrearEncuestaForm()
+
+		preguntas = Pregunta.objects.all()
+		valores = ValorPosible.objects.all()
+
+		context = {
+			'admin': True,
+			'form': form,
+			'preguntas': preguntas,
+			'valores': valores,
+			'editar': False,
+			'usuario': usuario,
+		}
+
+		return render(request, 'admin/crear_encuesta.html', context)
+
+	# def post(self, request, *args, **kwargs):
+		# """Crea el centro de inspección"""
+		# usuario = request.user
+
+		# estados = Estado.objects.all()
+		# peritos = Perito.objects.all()
+		# form = CentroInspeccionForm(request.POST)
+
+		# if form.is_valid():
+		# 	form.save()
+		# 	return redirect(reverse('admin_centros'))
+
+		# else:
+		# 	print "MALLLL", form.errors
+		# 	c_estado_id = request.POST.get('estado', None)
+		# 	c_municipios = Municipio.objects.filter(estado__id = c_estado_id)
+		# 	c_municipio_id = request.POST.get('municipio', None)
+		# 	if c_estado_id:
+		# 		c_estado_id = int(c_estado_id)
+		# 	if c_municipio_id:
+		# 		c_municipio_id = int(c_municipio_id)
+
+		# 	context = {
+		# 		'admin': True,
+		# 		'form': form,
+		# 		'c_estado_id': c_estado_id,
+		# 		'c_municipios': c_municipios,
+		# 		'c_municipio_id': c_municipio_id,
+		# 		'estados': estados,
+		# 		'peritos': peritos,
+		# 		'seccion_centros': True,
+		# 		'usuario': usuario,
+		# 	}
+
+		# 	return render(request, 'admin/crear_centro.html', context)

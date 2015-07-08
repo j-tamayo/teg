@@ -1,0 +1,1 @@
+[{"fields": {"descripcion": "Respuesta definida", "codigo": "RESP_DEF"}, "model": "sgt.tiporespuesta", "pk": 1}, {"fields": {"descripcion": "Respuesta indefinida", "codigo": "RESP_INDEF"}, "model": "sgt.tiporespuesta", "pk": 2}]

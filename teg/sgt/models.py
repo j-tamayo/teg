@@ -84,26 +84,79 @@ class NumeroOrden(models.Model):
 	def __unicode__(self):
 		return u'%s' % self.codigo
 
+# MANEJO DE ENCUESTAS...
+
+class TipoEncuesta(models.Model):
+	codigo = models.CharField(max_length=50)
+	descripcion = models.CharField(max_length=255)
+
+	def __unicode__(self):
+		return u'%s' % self.descripcion
+
 
 class Encuesta(models.Model):
-	codigo = models.CharField(max_length=50)
-	descripcion = models.TextField(blank=True, null=True)
+	#codigo = models.CharField(max_length=50)
 	nombre = models.CharField(max_length=255)
 	preguntas = models.ManyToManyField('Pregunta')
 	usuarios = models.ManyToManyField(USER_MODEL)
+	descripcion = models.TextField(blank=True, null=True)
+	tipo_encuesta = models.ForeignKey(TipoEncuesta, null=True)
 
 	def __unicode__(self):
 		return u'%s' % self.nombre
 
 
-class Pregunta(models.Model):
+class TipoRespuesta(models.Model):
 	codigo = models.CharField(max_length=50)
-	pregunta = models.CharField(max_length=255)
-	respuesta = models.CharField(max_length=255)
+	descripcion = models.CharField(max_length=255)
 
 	def __unicode__(self):
-		return u'%s' % self.codigo
+		return u'%s' % self.descripcion
 
+
+class Pregunta(models.Model):
+	#codigo = models.CharField(max_length=50)
+	enunciado = models.CharField(max_length=255)
+	requerida = models.BooleanField(default=False)
+	tipo_respuesta = models.ForeignKey(TipoRespuesta, null=True)
+	#respuesta = models.CharField(max_length=255)
+
+	def __unicode__(self):
+		return u'%s' % self.enunciado
+
+
+class ValorPosible(models.Model):
+	valor = models.CharField(max_length=255)
+	valor_pregunta = models.ManyToManyField('Pregunta')
+
+	def __unicode__(self):
+		return u'%s' % self.valor
+
+
+class Respuesta(models.Model):
+	pregunta = models.ForeignKey(Pregunta)
+	usuario = models.ForeignKey(USER_MODEL, null=True)
+
+	def __unicode__(self):
+		return u'%s' % self.id
+
+
+class RespuestaIndefinida(models.Model):
+	respuesta = models.ForeignKey(Respuesta)
+	valor_indefinido = models.CharField(max_length=255)
+
+	def __unicode__(self):
+		return u'%s' % self.valor_indefinido
+
+
+class RespuestaDefinida(models.Model):
+	respuesta = models.ForeignKey(Respuesta)
+	valor_definido = models.ForeignKey(ValorPosible)
+
+	def __unicode__(self):
+		return u'%s' % self.valor_definido
+
+#FIN MANEJO DE ENCUESTAS...
 
 class SistemaOperativo(models.Model):
 	nombre = models.CharField(max_length=255)

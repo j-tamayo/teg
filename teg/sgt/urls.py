@@ -66,4 +66,9 @@ urlpatterns = \
             name='admin_encuestas'
         ),
 
+        url(
+            r'^admin/crear-encuesta$',
+            views.AdminAgregarEncuesta.as_view(),
+            name='admin_crear_encuesta'
+        ),
 )

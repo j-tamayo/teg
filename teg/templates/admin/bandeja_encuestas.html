@@ -1,13 +1,20 @@
 {% extends "base.html" %}
 
 {% block main_content %}
-{% load i18n %}
 <div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-2 col-xs-offset-10">
+			<a href="{% url 'admin_crear_encuesta' %}" class="btn btn-info pull-right">
+				<i class="fa fa-plus"></i> Agregar
+			</a>
+		</div>
+	</div>
+
 	<table class="table">
 		<thead>
 			<tr>
-				<th>C&oacute;digo</th>
 				<th>Nombre</th>
+				<th>Tipo</th>
 				<th>Descripci&oacute;n</th>
 				<th>Opciones</th>
 			</tr>
@@ -15,8 +22,8 @@
 		<tbody>
 			{% for encuesta in encuestas.object_list %}
 			<tr>
-				<td>{{encuesta.codigo}}</td>
 				<td>{{encuesta.nombres}}</td>
+				<td>{{encuesta.tipo_encuesta}}</td>
 				<td>{{encuesta.descripcion}}</td>
 				<td>...</td>
 			</tr>
@@ -28,11 +35,11 @@
 			<ul class="pagination">
 			{% if encuesta.has_previous %}
 		        <li>
-		        	<a href="?{{ encuesta.previous_page_number.querystring }}" class="prev">&lsaquo;&lsaquo; {% trans "anterior" %}</a>
+		        	<a href="?{{ encuesta.previous_page_number.querystring }}" class="prev">&lsaquo;&lsaquo; anterior</a>
 		        </li>
 		    {% else %}
 		    	<li class="disabled">
-					<span class="disabled prev">&lsaquo;&lsaquo; {% trans "anterior" %}</span>
+					<span class="disabled prev">&lsaquo;&lsaquo; anterior</span>
 				</li>
 			{% endif %}
 			{% for page in encuesta.pages %}
@@ -48,11 +55,11 @@
 		    {% endfor %}
 		    {% if encuesta.has_next %}
 		        <li>
-		        	<a href="?{{ encuesta.next_page_number.querystring }}" class="next">{% trans "siguiente" %} &rsaquo;&rsaquo;</a>
+		        	<a href="?{{ encuesta.next_page_number.querystring }}" class="next">siguiente &rsaquo;&rsaquo;</a>
 		        </li>
 		    {% else %}
 		    	<li class="disabled">
-		        	<span class="disabled next">{% trans "next" %} &rsaquo;&rsaquo;</span>
+		        	<span class="disabled next">siguiente &rsaquo;&rsaquo;</span>
 		        </li>
 		    {% endif %}
 		    </ul>
