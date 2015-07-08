@@ -541,6 +541,7 @@ class AdminAgregarEncuesta(View):
 		form = CrearEncuestaForm()
 
 		preguntas = Pregunta.objects.all()
+		tipos_respuesta = TipoRespuesta.objects.all()
 		valores = ValorPosible.objects.all()
 
 		context = {
@@ -549,14 +550,41 @@ class AdminAgregarEncuesta(View):
 			'preguntas': preguntas,
 			'valores': valores,
 			'editar': False,
+			'tipos_respuesta': tipos_respuesta,
 			'usuario': usuario,
 		}
 
 		return render(request, 'admin/crear_encuesta.html', context)
 
-	# def post(self, request, *args, **kwargs):
-		# """Crea el centro de inspección"""
-		# usuario = request.user
+	def post(self, request, *args, **kwargs):
+		"""Crea el centro de inspección"""
+		usuario = request.user
+		form = RegistroForm(request.POST)
+
+		if form.is_valid():
+
+			print "guardando data..."
+
+			return redirect(reverse('admin_encuestas'))
+
+		else:
+			preguntas = Pregunta.objects.all()
+			tipos_respuesta = TipoRespuesta.objects.all()
+			valores = ValorPosible.objects.all()
+
+			context = {
+				'admin': True,
+				'form': form,
+				'preguntas': preguntas,
+				'valores': valores,
+				'editar': False,
+				'tipos_respuesta': tipos_respuesta,
+				'usuario': usuario,
+			}
+
+			return render(request, 'admin/crear_encuesta.html', context)
+
+
 
 		# estados = Estado.objects.all()
 		# peritos = Perito.objects.all()

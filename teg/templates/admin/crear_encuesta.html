@@ -6,40 +6,150 @@
 	<div class="row">
 		<div class="panel panel-dashboard-gray">
 			<div class="panel-heading">
-				<h4>Agregar Centro de Inspecci&oacute;n</h4>
+				<h4>Agregar Encuesta</h4>
 			</div>
 			<div class="panel-body">
 				<form {%if editar%}action="{% url 'admin_editar_encuesta' centro_id %}"{%else%}action="{% url 'admin_crear_encuesta' %}"{%endif%} method="POST" novalidate role="form">
 					{% csrf_token %}
 					<div class="row">
 						<div class="col-xs-6">
-							<label >C&oacute;digo:</label>
+							<label >Nombre:</label>
 							{{form.nombre}}
 							<span class="help-block with-errors"></span>
 						</div>
 						<div class="col-xs-6">
-							<label >Nombre:</label>
+							<label >Descripci&oacute;n:</label>
 							{{form.descripcion}}
 							<span class="help-block with-errors"></span>
 						</div>
 					</div>
 					<br>
+					<div class="row">
+						<div class="col-xs-6">
+							<div class="row">
+								<div class="col-xs-11">
+									<label>Pregunta:</label>
+									<select data-placeholder="Seleccione una pregunta..." multiple id="id_pregunta" name="pregunta" class="form-control select-mul">
+										{% for pregunta in preguntas %}
+											<option value="{{pregunta.id}}">{{pregunta.enunciado}}</option>
+										{% endfor %}
+									</select>
+								</div>
+								<div class="col-xs-1">
+									<br>
+									<a class="btn btn-info" href="#" role="button" data-toggle="modal" title="Crear pregunta" data-target="#modal_pregunta" style="margin-left: -100%; margin-top:14%;">
+							  			<i class="fa fa-plus"></i> 
+							  		</a>
+								</div>
+							</div>
+						</div>
+						<div class="col-xs-6">
+							<label>Tipo respuesta:</label>
+							<select id="id_tipo_respuesta" name="tipo_respuesta" class="form-control">
+								{% for tipo_respuesta in tipos_respuesta %}
+									<option value="{{tipo_respuesta.id}}">{{tipo_respuesta.descripcion}}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<br>
+					<div class="row">
+						<div class="col-xs-6">
+							<label>Respuesta:</label>
+							<select data-placeholder="Seleccione la respuesta..." multiple id="id_valor" name="valor" class="form-control select-mul">
+								{% for valor in valores %}
+									<option value="{{valor.id}}">{{valor.enunciado}}</option>
+								{% endfor %}
+							</select>
+						</div>
+						<div class="col-xs-6">
+							<label>Respuestas asociadas:</label>
+							<ul id="lista_valores" class="list-group">
 
+								<!-- Agregar lista de respuestas -->
+								<li class="list-group-item">
+									<div align="right">
+										<p class="pull-left">Valor XYZ</p>
+								  		<a class="btn btn-danger" href="#" role="button">
+								  			<i class="fa fa-trash"></i> 
+								  		</a>
+							  		</div>
+							  	</li>
+							  	<li class="list-group-item">
+									<div align="right">
+										<p class="pull-left">Valor XYZ</p>
+								  		<a class="btn btn-danger" href="#" role="button">
+								  			<i class="fa fa-trash"></i> 
+								  		</a>
+							  		</div>
+							  	</li>
+							  	<li class="list-group-item">
+									<div align="right">
+										<p class="pull-left">Valor XYZ</p>
+								  		<a class="btn btn-danger" href="#" role="button">
+								  			<i class="fa fa-trash"></i> 
+								  		</a>
+							  		</div>
+							  	</li>
+
+							</ul>
+						</div>
+					</div>
+					<br>
+					<div class="row">
+						<div class="col-xs-6">
+							<a href="#" class="btn btn-danger col-xs-12">Volver</a>
+						</div>
+						<div class="col-xs-6">
+							<input type="submit" class="btn btn-primary col-xs-12" value="Guardar">
+						</div>
+					</div>
 				</form>
 			</div>
-
-
-
 		</div>
 	</div> <!-- / .panel-dashboard-gray -->
 
 </div>
+
+<div class="modal fade" id="modal_pregunta" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title text-success" id="myModalLabel">Crear Pregunta</h3>
+			</div>
+			<form id="pregunta_form">
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12">
+						<label>Pregunta:</label>
+						<input id="id_nueva_pregunta" name="nueva_pregunta" type="text" class="form-control">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-primary">Guardar</button>
+			</div>
+			</form>
+  		</div>
+  	</div>
+</div>
+
 {% endblock %}
 
 {% block javascripts %}
 	{{ block.super }}
 	<script type="application/javascript">
 
+		$(document).ready(function(){
+			//Inicialización de chosen para los selects múltiples
+			$('.select-mul').chosen({
+	  			no_results_text: 'No se encontraron resultados para'
+			});
+
+
+		});
 
 	</script>
 {% endblock %}

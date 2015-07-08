@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.auth import authenticate
-from sgt.models import Estado, Municipio, TipoInspeccion, CentroInspeccion, Perito, TipoRespuesta, ValorPosible
+from sgt.models import Estado, Municipio, TipoInspeccion, CentroInspeccion, Perito, Pregunta, TipoRespuesta, ValorPosible
 from datetime import datetime
 
 class SolicitudInspeccionForm(forms.Form):
@@ -117,7 +117,7 @@ class CentroInspeccionForm(forms.ModelForm):
 			return field
 
 
-class CrearEncuestaForm(forms.ModelForm):
+class CrearEncuestaForm(forms.Form):
 	nombre = forms.CharField(
 		label = u'Nombre',
 		widget = forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
@@ -128,9 +128,10 @@ class CrearEncuestaForm(forms.ModelForm):
 		widget = forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
 	)
 
-	enunciado = forms.CharField(
+	enunciado = forms.ModelMultipleChoiceField(
 		label = u'Pregunta',
-		widget = forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
+		queryset = Pregunta.objects.all(),
+		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
 	)
 
 	tipo_respuesta = forms.ModelChoiceField(
@@ -139,13 +140,8 @@ class CrearEncuestaForm(forms.ModelForm):
 		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
 	)
 
-	respuesta_indefinida = forms.CharField(
-		label = u'Respuesta',
-		widget = forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
-	)
-
 	valores_posiples = forms.ModelMultipleChoiceField(
 		label = u'Valor',
 		queryset = ValorPosible.objects.all(),
-		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
+		widget = forms.Select(attrs={'class':'form-control'})
 	)
