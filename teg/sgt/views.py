@@ -293,18 +293,21 @@ class AdminBandejaCentros(View):
 	def get(self, request, *args, **kwargs):
 		""" Vista que lista los centros de inspección al administrador """
 		usuario = request.user
-
-		try:
-			page = request.GET.get('page', 1)
-		except PageNotAnInteger:
-			page = 1
-
+		print "ARGS", args
+		print "KWARGS", kwargs
 		centros = CentroInspeccion.objects.all()
 
 		# Provide Paginator with the request object for complete querystring generation
 		paginator = Paginator(centros, 10, request=request)
-		centros = paginator.page(page)
-		print centros.object_list
+		try:
+			page = request.GET.get('page', 1)
+			centros = paginator.page(page)
+		except PageNotAnInteger:
+			centros = paginator.page(1)
+			page = 0
+		except EmptyPage:
+			centros = paginator.page(paginator.num_pages)
+		
 		context = {
 			'admin': True,
 			'centros': centros,
@@ -418,15 +421,23 @@ class AdminEditarCentro(View):
 
 		estados = Estado.objects.all()
 		peritos = Perito.objects.all()
-		form = CentroInspeccionForm(request.POST)
+		centro = CentroInspeccion.objects.filter(id=kwargs['centro_id']).first()
+		form = CentroInspeccionForm(request.POST, instance = centro)
 
 		if form.is_valid():
+			print form.cleaned_data['municipio']
 			form.save()
 			return redirect(reverse('admin_centros'))
 
 		else:
 			print "MALLLL", form.errors
-
+			c_estado_id = request.POST.get('estado', None)
+			c_municipios = Municipio.objects.filter(estado__id = c_estado_id)
+			c_municipio_id = request.POST.get('municipio', None)
+			if c_estado_id:
+				c_estado_id = int(c_estado_id)
+			if c_municipio_id:
+				c_municipio_id = int(c_municipio_id)
 			context = {
 				'admin': True,
 				'form': form,
@@ -442,6 +453,27 @@ class AdminEditarCentro(View):
 			}
 
 			return render(request, 'admin/crear_centro.html', context)
+
+
+class AdminEliminarCentro(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEliminarCentro, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Vista que elimina un Centro de Inspección"""
+		page = request.POST.get('page', None)
+		centro_id = request.POST.get('centro_id', None)
+		centro = CentroInspeccion.objects.filter(id=centro_id)
+		if centro:
+			centro.delete()
+			redirect_url = reverse('admin_centros')
+			if int(page) > 1:
+				extra_params = '?page=%s' % page
+				redirect_url = '%s%s' % (redirect_url, extra_params)
+
+			return redirect(redirect_url, kwargs={'location': page})
+		else:
+			return redirect(redirect_url, kwargs={'location': page})
 
 
 class AdminBandejaUsuarios(View):

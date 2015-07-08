@@ -79,6 +79,7 @@ class CentroInspeccionForm(forms.ModelForm):
 
 	def save(self):
 		instance = forms.ModelForm.save(self)
+		print "HEYY",instance.municipio
 		peritos = self.cleaned_data.get('peritos', None)
 		for perito in peritos:
 			instance.peritos.add(perito)
@@ -90,6 +91,31 @@ class CentroInspeccionForm(forms.ModelForm):
 			field = datetime.strptime(field,'%I:%M %p').time()
 
 			return field
+
+	def clean_hora_cierre_manana(self):
+		field = self.cleaned_data.get('hora_cierre_manana', None)
+		if field:
+			print field
+			field = datetime.strptime(field,'%I:%M %p').time()
+
+			return field
+
+	def clean_hora_apertura_tarde(self):
+		field = self.cleaned_data.get('hora_apertura_tarde', None)
+		if field:
+			print field
+			field = datetime.strptime(field,'%I:%M %p').time()
+
+			return field
+
+	def clean_hora_cierre_tarde(self):
+		field = self.cleaned_data.get('hora_cierre_tarde', None)
+		if field:
+			print field
+			field = datetime.strptime(field,'%I:%M %p').time()
+
+			return field
+
 
 class CrearEncuestaForm(forms.ModelForm):
 	nombre = forms.CharField(

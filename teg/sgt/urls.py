@@ -55,6 +55,12 @@ urlpatterns = \
         ),
 
         url(
+            r'^admin/eliminar-centro$',
+            views.AdminEliminarCentro.as_view(),
+            name='admin_eliminar_centro'
+        ),
+
+        url(
             r'^admin/usuarios$',
             views.AdminBandejaUsuarios.as_view(),
             name='admin_usuarios'
