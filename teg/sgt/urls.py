@@ -92,7 +92,7 @@ urlpatterns = \
 
         url(
             r'^admin/agregar-perito$',
-            views.AdminBandejaPeritos.as_view(),
+            views.AdminAgregarPerito.as_view(),
             name='admin_crear_perito'
         ),
 

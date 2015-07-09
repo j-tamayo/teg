@@ -763,20 +763,10 @@ class AdminAgregarPerito(View):
 
 		else:
 			print "MALLLL", form.errors
-			p_estado_id = request.POST.get('estado', None)
-			p_municipios = Municipio.objects.filter(estado__id = p_estado_id)
-			p_municipio_id = request.POST.get('municipio', None)
-			if p_estado_id:
-				p_estado_id = int(p_estado_id)
-			if p_municipio_id:
-				p_municipio_id = int(p_municipio_id)
 
 			context = {
 				'admin': True,
 				'form': form,
-				'p_estado_id': p_estado_id,
-				'p_municipios': p_municipios,
-				'p_municipio_id': p_municipio_id,
 				'seccion_centros': True,
 				'usuario': usuario,
 			}

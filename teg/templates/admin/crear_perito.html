@@ -19,12 +19,12 @@
 					<div class="col-xs-6">
 						<label >Nombres</label>
 						{{form.nombres}}
-						<span class="help-block with-errors"></span>
+						<span class="help-block with-errors">{{form.nombres.errors}}</span>
 					</div>
 					<div class="col-xs-6">
-						<label >Apellidos:</label>
+						<label >Apellidos</label>
 						{{form.apellidos}}
-						<span class="help-block with-errors"></span>
+						<span class="help-block with-errors">{{form.apellidos.errors}}</span>
 					</div>
 				</div>
 				<br>
@@ -32,27 +32,39 @@
 					<div class="col-xs-6">
 						<label>C&eacute;dula</label>
 						{{form.cedula}}
+						<span class="help-block with-errors">{{form.cedula.errors}}</span>
 					</div>
 					<div class="col-xs-6">
-						<label>Sexo</label>
-						
+						<label>Sexo</label><br>
+						<label for="id_sexo_0" class="radio-inline">
+							<input {%ifequal form.sexo.value 0%}checked{%endifequal%} type="radio" id="id_sexo_0" name="sexo" value="0" data-error="Este campo es obligatorio" required=""> Masculino
+						</label>
+						<label for="id_sexo_1" class="radio-inline">
+							<input {%ifequal form.sexo.value 1%}checked{%endifequal%} type="radio" id="id_sexo_1" name="sexo" value="1" data-error="Este campo es obligatorio"> Femenino
+						</label>
+						<span class="help-block with-errors">{{form.sexo.errors}}</span>
 					</div>
 				</div>	
 				<br>
 				<div class="row">
 					<div class="col-xs-6">
 						<label>Fecha de ingreso</label>
-						{{form.fecha_ingreso}}
+						<div class="input-append date" data-date-format="dd/mm/yyyy">
+							{{form.fecha_ingreso}}
+							<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
+						</div>
+						<span class="help-block with-errors">{{form.fecha_ingreso.errors}}</span>
 					</div>
 					<div class="col-xs-6">
 						<label>Tiempo en la empresa</label>
 						{{form.tiempo_empresa}}
+						<span class="help-block with-errors">{{form.tiempo_empresa.errors}}</span>
 					</div>
 				</div>
 				<br>
 				<div class="row">
 					<div class="col-xs-6">
-						<a href="#" class="btn btn-danger col-xs-12">Volver</a>
+						<a href="{% url 'admin_peritos' %}" class="btn btn-danger col-xs-12">Volver</a>
 					</div>
 					<div class="col-xs-6">
 						<input type="submit" class="btn btn-primary col-xs-12" value="Guardar">
@@ -68,40 +80,7 @@
 	{{ block.super }}
 	<script type="application/javascript">
 	$(function(){
-		//Inicialización del timepicker
-		$('.timepicker').timepicker({
-			minuteStep: 10
-		});
-		//INcialización de chosen para los selects múltiples
-		$('.select-mul').chosen({
-  			no_results_text: 'No se encontraron resultados para'
-		});
 
-		/********** PARA CARGAR LOS MUNICIPIOS POR ESTADO *************/
-		$('#id_estado').change(function(){
-			value = $(this).val();
-			if(value.length > 0){
-				// LLamada AJAX para obtener los municipios
-				$.ajax({
-					method: 'GET',
-					url: '/sgt/obtener-municipios/'+value,
-					dataType: "json"
-				})
-				.done(function(data){
-					if(!data.hasOwnProperty('error_msg')){
-						// Se reinicia el Select de municipios
-						$('#id_municipio').html('<option value="">--Seleccionar--</option>');
-						$.each(data, function(key, value){
-							$('#id_municipio').append('<option value="'+value.pk+'">'+value.fields.nombre+'</option>');
-						});
-					}
-					else{
-						console.lg('Error');
-					}
-				});
-			}
-		});
-		/********** FIN  *************/
 
 	});
 	</script>
