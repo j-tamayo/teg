@@ -73,6 +73,36 @@ urlpatterns = \
         ),
 
         url(
+            r'^admin/editar-usuario/(?P<user_id>\d+)$',
+            views.AdminEditarUsuario.as_view(),
+            name='admin_editar_usuario'
+        ),
+
+        url(
+            r'^admin/deshabilitar-usuario$',
+            views.AdminDeshabilitarUsuario.as_view(),
+            name='admin_deshabilitar_usuario'
+        ),
+
+        url(
+            r'^admin/peritos$',
+            views.AdminBandejaPeritos.as_view(),
+            name='admin_peritos'
+        ),
+
+        url(
+            r'^admin/agregar-perito$',
+            views.AdminBandejaPeritos.as_view(),
+            name='admin_crear_perito'
+        ),
+
+        url(
+            r'^admin/editar-perito/(?P<perito_id>\d+)$',
+            views.AdminBandejaPeritos.as_view(),
+            name='admin_editar_perito'
+        ),
+
+        url(
             r'^admin/encuestas$',
             views.AdminBandejaEncuestas.as_view(),
             name='admin_encuestas'

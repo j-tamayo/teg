@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<div class="container-fluid">
+	<!-- <div class="row">
+		<div class="col-xs-10">
+			<h4>Agregar Centro de Inspecci&oacute;n</h4>
+		</div>
+	</div> -->
+	<div class="row">
+		<div class="panel panel-dashboard-gray">
+			<div class="panel-heading">
+				<h4>Agregar Perito</h4>
+			</div>
+			<div class="panel-body">
+				<form {%if editar%}action="{% url 'admin_editar_perito' perito_id %}"{%else%}action="{% url 'admin_crear_perito' %}"{%endif%} method="POST" novalidate role="form">
+				{% csrf_token %}
+				<div class="row">
+					<div class="col-xs-6">
+						<label >Nombres</label>
+						{{form.nombres}}
+						<span class="help-block with-errors"></span>
+					</div>
+					<div class="col-xs-6">
+						<label >Apellidos:</label>
+						{{form.apellidos}}
+						<span class="help-block with-errors"></span>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-6">
+						<label>C&eacute;dula</label>
+						{{form.cedula}}
+					</div>
+					<div class="col-xs-6">
+						<label>Sexo</label>
+						
+					</div>
+				</div>	
+				<br>
+				<div class="row">
+					<div class="col-xs-6">
+						<label>Fecha de ingreso</label>
+						{{form.fecha_ingreso}}
+					</div>
+					<div class="col-xs-6">
+						<label>Tiempo en la empresa</label>
+						{{form.tiempo_empresa}}
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-6">
+						<a href="#" class="btn btn-danger col-xs-12">Volver</a>
+					</div>
+					<div class="col-xs-6">
+						<input type="submit" class="btn btn-primary col-xs-12" value="Guardar">
+					</div>
+				</div>
+				</form>
+			</div>
+		</div> <!-- / .panel-dashboard-gray -->
+	</div>
+</div> <!-- / .container-fluid -->
+{% endblock %}
+{% block javascripts %}
+	{{ block.super }}
+	<script type="application/javascript">
+	$(function(){
+		//Inicialización del timepicker
+		$('.timepicker').timepicker({
+			minuteStep: 10
+		});
+		//INcialización de chosen para los selects múltiples
+		$('.select-mul').chosen({
+  			no_results_text: 'No se encontraron resultados para'
+		});
+
+		/********** PARA CARGAR LOS MUNICIPIOS POR ESTADO *************/
+		$('#id_estado').change(function(){
+			value = $(this).val();
+			if(value.length > 0){
+				// LLamada AJAX para obtener los municipios
+				$.ajax({
+					method: 'GET',
+					url: '/sgt/obtener-municipios/'+value,
+					dataType: "json"
+				})
+				.done(function(data){
+					if(!data.hasOwnProperty('error_msg')){
+						// Se reinicia el Select de municipios
+						$('#id_municipio').html('<option value="">--Seleccionar--</option>');
+						$.each(data, function(key, value){
+							$('#id_municipio').append('<option value="'+value.pk+'">'+value.fields.nombre+'</option>');
+						});
+					}
+					else{
+						console.lg('Error');
+					}
+				});
+			}
+		});
+		/********** FIN  *************/
+
+	});
+	</script>
+{% endblock %}

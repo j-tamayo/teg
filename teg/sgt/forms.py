@@ -117,6 +117,29 @@ class CentroInspeccionForm(forms.ModelForm):
 			return field
 
 
+class PeritoForm(forms.ModelForm):
+	class Meta:
+		model = Perito
+		fields = ['nombres','apellidos','cedula','fecha_ingreso','sexo','tiempo_empresa']
+		widgets = {
+			'nombres':forms.TextInput(
+				attrs = {'class':'form-control'}
+			),
+			'apellidos':forms.TextInput(
+				attrs = {'class':'form-control'}
+			),
+			'cedula':forms.TextInput(
+				attrs = {'class':'form-control'}
+			),
+			'fecha_ingreso':forms.TextInput(
+				attrs = {'class':'form-control'}
+			),
+			'tiempo_empresa':forms.TextInput(
+				attrs = {'class':'form-control'}
+			)
+		}
+
+
 class CrearEncuestaForm(forms.Form):
 	nombre = forms.CharField(
 		label = u'Nombre',
