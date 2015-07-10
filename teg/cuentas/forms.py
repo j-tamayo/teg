@@ -120,7 +120,10 @@ class RegistroForm(forms.Form):
 
 	fecha_nacimiento = forms.DateField(
 		label = u'Fecha de nacimiento',
-		widget = forms.TextInput(attrs={'class':'col-xs-10','required':'','readonly':'','data-error':'Este campo es obligatorio'})
+		widget = forms.DateInput(
+			format = '%d/%m/%Y',
+			attrs={'class':'col-xs-10','required':'','readonly':'','data-error':'Este campo es obligatorio'},
+		)
 	)
 
 	def clean_password_confirm(self):

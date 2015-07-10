@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="panel panel-dashboard-gray">
+			<div class="panel-heading">
+				<h4>Agregar Usuario</h4>
+			</div>
+			<div class="panel-body">
+				<form {%if editar%}action="{% url 'admin_editar_usuario' user_id %}"{%else%}action="{% url 'admin_crear_usuario' %}"{%endif%} method="POST" novalidate role="form">
+				{% csrf_token %}
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="text-muted">Nombres:</label>
+							{{form.nombres}}
+							<div class="help-block with-errors">{{form.nombres.errors}}</div>
+						</div>
+						<div class="form-group">
+							<label class="text-muted">Apellidos:</label>
+							{{form.apellidos}}
+							<div class="help-block with-errors">{{form.apellidos.errors}}</div>
+						</div>
+						<div class="form-group">
+							<label class="text-muted">C&eacute;dula:</label>
+							{{form.cedula}}
+							<div class="help-block with-errors">{{form.cedula.errors}}</div>
+						</div>
+						<div class="form-group">
+							<label class="text-muted">Estado:{{u.estado_id}}</label>
+							<select id="id_estado" class="form-control" name="estado">
+								<option value="">--Seleccionar--</option>
+								{% for e in estados %}
+								<option {% ifequal e.pk u_estado_id %}selected{%endifequal%} value="{{e.pk}}">{{e.nombre}}</option>
+								{% endfor %}
+							</select>
+							<div class="help-block with-errors">{{form.estado.errors}}</div>
+						</div>
+						<div class="form-group">
+							<label class="text-muted">Municipio:</label>
+							<select id="id_municipio" name="municipio" class="form-control">
+								<option value="">---------</option>
+								{% for m in u_municipios %}
+								<option value="{{m.pk}}" {% ifequal m.pk u_municipio_id %}selected{% endifequal %}>{{m.nombre}}</option>
+								{% endfor %}
+							</select> 
+							<div class="help-block with-errors">{{form.municipio.errors}}</div>
+						</div>
+						<div class="form-group">
+							<label class="text-muted">Direcci&oacute;n:</label>
+							{{form.direccion}}
+							<div class="help-block with-errors">{{form.direccion.errors}}</div>
+						</div>
+					</div> <!-- /.col-xs-6 -->
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="text-muted">C&oacute;digo Postal:</label>
+							{{form.codigo_postal}}
+							<div class="help-block with-errors">{{form.codigo_postal.errors}}</div>
+						</div>
+						<div class="form-group">
+							<label for="id_telefono_local" class="text-muted">Tel&eacute;fono local:</label>
+							{{form.telefono_local}}
+							<div class="help-block with-errors">{{form.telefono_local.errors}}</div>
+						</div>
+						<div class="form-group">
+							<label for="id_telefono_local" class="text-muted">Tel&eacute;fono m&oacute;vil:</label>
+							{{form.telefono_movil}}
+							<div class="help-block with-errors">{{form.telefono_movil.errors}}</div>
+						</div>
+						<div class="form-group">
+							<label for="exampleInputEmail1" class="text-muted">Correo:</label>
+							{{form.correo}}
+							<div class="help-block with-errors">{{form.correo.errors}}</div>
+						</div>
+						<div class="form-group">
+							<div class="form-group">
+								<label class="text-muted">Sexo:</label>
+							</div>
+							<label for="id_sexo_0" class="text-muted radio-inline">
+								<input {%ifequal form.sexo.value 0%}checked{%endifequal%} type="radio" id="id_sexo_0" name="sexo" value="0" data-error="Este campo es obligatorio" required=""> Masculino
+							</label>
+							<label for="id_sexo_1" class="text-muted radio-inline">
+								<input {%ifequal form.sexo.value 1%}checked{%endifequal%} type="radio" id="id_sexo_1" name="sexo" value="1" data-error="Este campo es obligatorio"> Femenino
+							</label>
+							<div class="help-block with-errors">{{form.sexo.errors}}</div>
+						</div>
+						<div class="form-group">
+							<label for="id_fecha_nacimiento" class="text-muted">Fecha de nacimiento:</label>
+							<div class="input-append date" data-date-format="dd/mm/yyyy">
+								{{form.fecha_nacimiento}}
+								<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
+							</div>
+							<div class="help-block with-errors">{{form.fecha_nacimiento.errors}}</div>
+						</div>
+						<div class="form-group">
+							<label for="exampleInputPassword1" class="text-muted">Contrase&ntilde;a:</label>
+							{{form.password}}
+							<div class="help-block with-errors"></div>
+						</div>
+						<div class="form-group">
+							<label for="exampleInputPassword1" class="text-muted">Repetir Contrase&ntilde;a:</label>
+							{{form.password_confirm}}
+							<div class="help-block with-errors">{{form.password_confirm.errors}}</div>
+						</div>
+					</div> <!-- / .col-xs-6 -->
+				</div> <!-- / .row -->
+				<div class="row">
+					<div class="col-xs-6">
+						<a href="{% url 'admin_usuarios' %}" class="btn btn-danger col-xs-12">Cancelar</a>
+					</div>
+					<div class="col-xs-6">
+						<button type="submit" class="btn btn-primary col-xs-12">Guardar</button>
+					</div>
+				</div>
+				</form>
+			</div> <!-- / .panel-body -->
+		</div> <!-- / .panel-dashboard-gray -->
+	</div>
+</div> <!-- / .container-fluid -->
+{% endblock %}
+{% block javascripts %}
+	{{ block.super }}
+	<script type="application/javascript">
+	$(function(){
+
+		/********** PARA CARGAR LOS MUNICIPIOS POR ESTADO *************/
+		$('#id_estado').change(function(){
+			value = $(this).val();
+			if(value.length > 0){
+				// LLamada AJAX para obtener los municipios
+				$.ajax({
+					method: 'GET',
+					url: '/sgt/obtener-municipios/'+value,
+					dataType: "json"
+				})
+				.done(function(data){
+					if(!data.hasOwnProperty('error_msg')){
+						// Se reinicia el Select de municipios
+						$('#id_municipio').html('<option value="">--Seleccionar--</option>');
+						$.each(data, function(key, value){
+							$('#id_municipio').append('<option value="'+value.pk+'">'+value.fields.nombre+'</option>');
+						});
+					}
+					else{
+						console.lg('Error');
+					}
+				});
+			}
+		});
+		/********** FIN  *************/
+
+	});
+	</script>
+{% endblock %}

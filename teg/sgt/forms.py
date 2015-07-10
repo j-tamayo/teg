@@ -117,6 +117,35 @@ class CentroInspeccionForm(forms.ModelForm):
 			return field
 
 
+class PeritoForm(forms.ModelForm):
+	fecha_ingreso = forms.CharField(widget=forms.TextInput(attrs={'class':'col-xs-11','readonly':True}))
+
+	class Meta:
+		model = Perito
+		fields = ['nombres','apellidos','cedula','fecha_ingreso','sexo','tiempo_empresa']
+		widgets = {
+			'nombres':forms.TextInput(
+				attrs = {'class':'form-control'}
+			),
+			'apellidos':forms.TextInput(
+				attrs = {'class':'form-control'}
+			),
+			'cedula':forms.TextInput(
+				attrs = {'class':'form-control'}
+			),
+			'tiempo_empresa':forms.TextInput(
+				attrs = {'class':'form-control'}
+			)
+		}
+
+	def clean_fecha_ingreso(self):
+		field = self.cleaned_data.get('fecha_ingreso', None)
+		if field:
+			field = datetime.strptime(field, '%d/%m/%Y').date()
+
+			return field
+
+
 class CrearEncuestaForm(forms.Form):
 	tipo_encuesta = forms.ModelChoiceField(
 		label = u'Tipo de respuesta',

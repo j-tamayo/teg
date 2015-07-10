@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<div class="container-fluid">
+	<!-- <div class="row">
+		<div class="col-xs-10">
+			<h4>Agregar Centro de Inspecci&oacute;n</h4>
+		</div>
+	</div> -->
+	<div class="row">
+		<div class="panel panel-dashboard-gray">
+			<div class="panel-heading">
+				<h4>Agregar Perito</h4>
+			</div>
+			<div class="panel-body">
+				<form {%if editar%}action="{% url 'admin_editar_perito' perito_id %}"{%else%}action="{% url 'admin_crear_perito' %}"{%endif%} method="POST" novalidate role="form">
+				{% csrf_token %}
+				<div class="row">
+					<div class="col-xs-6">
+						<label >Nombres</label>
+						{{form.nombres}}
+						<span class="help-block with-errors">{{form.nombres.errors}}</span>
+					</div>
+					<div class="col-xs-6">
+						<label >Apellidos</label>
+						{{form.apellidos}}
+						<span class="help-block with-errors">{{form.apellidos.errors}}</span>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-6">
+						<label>C&eacute;dula</label>
+						{{form.cedula}}
+						<span class="help-block with-errors">{{form.cedula.errors}}</span>
+					</div>
+					<div class="col-xs-6">
+						<label>Sexo</label><br>
+						<label for="id_sexo_0" class="radio-inline">
+							<input {%ifequal form.sexo.value 0%}checked{%endifequal%} type="radio" id="id_sexo_0" name="sexo" value="0" data-error="Este campo es obligatorio" required=""> Masculino
+						</label>
+						<label for="id_sexo_1" class="radio-inline">
+							<input {%ifequal form.sexo.value 1%}checked{%endifequal%} type="radio" id="id_sexo_1" name="sexo" value="1" data-error="Este campo es obligatorio"> Femenino
+						</label>
+						<span class="help-block with-errors">{{form.sexo.errors}}</span>
+					</div>
+				</div>	
+				<br>
+				<div class="row">
+					<div class="col-xs-6">
+						<label>Fecha de ingreso</label>
+						<div class="input-append date" data-date-format="dd/mm/yyyy">
+							{{form.fecha_ingreso}}
+							<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
+						</div>
+						<span class="help-block with-errors">{{form.fecha_ingreso.errors}}</span>
+					</div>
+					<div class="col-xs-6">
+						<label>Tiempo en la empresa</label>
+						{{form.tiempo_empresa}}
+						<span class="help-block with-errors">{{form.tiempo_empresa.errors}}</span>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-6">
+						<a href="{% url 'admin_peritos' %}" class="btn btn-danger col-xs-12">Volver</a>
+					</div>
+					<div class="col-xs-6">
+						<input type="submit" class="btn btn-primary col-xs-12" value="Guardar">
+					</div>
+				</div>
+				</form>
+			</div>
+		</div> <!-- / .panel-dashboard-gray -->
+	</div>
+</div> <!-- / .container-fluid -->
+{% endblock %}
+{% block javascripts %}
+	{{ block.super }}
+	<script type="application/javascript">
+	$(function(){
+
+
+	});
+	</script>
+{% endblock %}

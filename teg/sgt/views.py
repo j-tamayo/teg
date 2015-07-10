@@ -8,6 +8,8 @@ from sgt.models import *
 from sgt.forms import *
 from sgt.helpers import solicitudes,dates
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
+from cuentas import forms as CuentasForm
+from cuentas.models import *
 
 import json
 
@@ -508,6 +510,279 @@ class AdminBandejaUsuarios(View):
 		}
 
 		return render(request, 'admin/bandeja_usuarios.html', context)
+
+
+class AdminCrearUsuario(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminCrearUsuario, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Vista que despliega el formulario para la creación de usuarios Taquilla """
+		usuario = request. user
+		estados = Estado.objects.all()
+
+		form = CuentasForm.RegistroForm()
+
+		context = {
+			'admin': True,
+			'form': form,
+			'estados': estados,
+			'seccion_usuarios': True,
+			'usuario': usuario,
+		}
+
+		return render(request, 'admin/crear_usuario.html', context)
+
+	def post(self, request, *args, **kwargs):
+		usuario = request.user
+
+		estados = Estado.objects.all()
+		form = CuentasForm.RegistroForm(request.POST)
+
+		if form.is_valid():
+			registro = form.cleaned_data
+			rol_cliente = RolSgt.objects.get(codigo="taquilla")
+
+			usuario = SgtUsuario(
+                nombres = registro['nombres'],
+                apellidos = registro['apellidos'],
+                cedula = registro['cedula'],
+                municipio = registro['municipio'],
+                direccion = registro['direccion'],
+                codigo_postal = registro['codigo_postal'],
+                correo = registro['correo'],
+                fecha_nacimiento = registro['fecha_nacimiento'],
+                telefono_local = registro['telefono_local'],
+                telefono_movil = registro['telefono_movil'],
+                sexo = registro['sexo'],
+                rol = rol_cliente)
+            
+			usuario.set_password(registro['password'])
+			usuario.save()
+
+			return redirect(reverse('admin_usuarios'))
+
+		else:
+			u_estado_id = request.POST.get('estado', None)
+			u_municipios = []
+			u_municipio_id = request.POST.get('municipio', None)
+			if u_estado_id:
+				u_municipios = Municipio.objects.filter(estado__id = u_estado_id)
+				u_estado_id = int(u_estado_id)
+			if u_municipio_id:
+				u_municipio_id = int(u_municipio_id)
+
+			context = {
+				'admin': True,
+				'form': form,
+				'u_estado_id': u_estado_id,
+				'u_municipios': u_municipios,
+				'u_municipio_id': u_municipio_id,
+				'estados': estados,
+				'seccion_usuarios': True,
+				'usuario': usuario,
+			}
+
+			return render(request, 'admin/crear_usuario.html', context)
+
+
+class AdminEditarUsuario(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEditarUsuario, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Despliega el formulario para editar un usuario"""
+		usuario = request.user
+
+		user = SgtUsuario.objects.filter(id=kwargs['user_id']).first()
+
+		if user:
+			u_estado_id = user.municipio.estado.pk
+			u_municipios = Municipio.objects.filter(estado__id = u_estado_id)
+			u_municipio_id = user.municipio.pk
+			initial_data = {
+				'nombres': user.nombres,
+				'apellidos': user.apellidos,
+				'cedula': user.cedula,
+				'estado': user.municipio.estado.pk,
+				'municipio': user.municipio.pk,
+				'codigo_postal': user.codigo_postal,
+				'direccion': user.direccion,
+				'correo': user.correo,
+				'sexo': user.sexo,
+				'telefono_local': user.telefono_local,
+				'telefono_movil': user.telefono_movil,
+				'fecha_nacimiento': user.fecha_nacimiento
+			}
+			form = CuentasForm.RegistroForm(initial = initial_data)
+			estados = Estado.objects.all()
+
+			context = {
+				'admin': True,
+				'form': form,
+				'u_estado_id': u_estado_id,
+				'u_municipios': u_municipios,
+				'u_municipio_id': u_municipio_id,
+				'user_id': kwargs['user_id'],
+				'editar': True,
+				'estados': estados,
+				'seccion_usuarios': True,
+				'usuario': usuario,
+			}
+
+			return render(request, 'admin/crear_usuario.html', context)
+
+		else:
+			return redirect(reverse('admin_usuarios'))
+
+	def post(self, request, *args, **kwargs):
+		"""Edita el Usuario"""
+		usuario = request.user
+
+		estados = Estado.objects.all()
+		user = SgtUsuario.objects.filter(id=kwargs['user_id']).first()
+		form = CuentasForm.RegistroForm(request.POST)
+
+		if form.is_valid():
+			registro = form.cleaned_data
+			user.nombres = registro['nombres']
+			user.apellidos = registro['apellidos']
+			user.cedula = registro['cedula']
+			user.municipio_id = registro['municipio']
+			user.direccion = registro['direccion']
+			user.codigo_postal = registro['codigo_postal']
+			user.correo = registro['correo']
+			user.fecha_nacimiento = registro['fecha_nacimiento']
+			user.telefono_local = registro['telefono_local']
+			user.telefono_movil = registro['telefono_movil']
+			user.sexo = registro['sexo']
+
+			user.save()
+
+			return redirect(reverse('admin_centros'))
+
+		else:
+			print "MALLLL", form.errors
+			u_estado_id = request.POST.get('estado', None)
+			u_municipio_id = request.POST.get('municipio', None)
+			if u_estado_id:
+				u_municipios = Municipio.objects.filter(estado__id = u_estado_id)
+				u_estado_id = int(u_estado_id)
+			if u_municipio_id:
+				u_municipio_id = int(u_municipio_id)
+			context = {
+				'admin': True,
+				'form': form,
+				'u_estado_id': u_estado_id,
+				'u_municipios': u_municipios,
+				'u_municipio_id': u_municipio_id,
+				'user_id': kwargs['user_id'],
+				'editar': True,
+				'estados': estados,
+				'seccion_usuarios': True,
+				'usuario': usuario,
+			}
+
+			return render(request, 'admin/crear_usuario.html', context)
+
+
+class AdminDeshabilitarUsuario(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminDeshabilitarUsuario, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Vista que deshabilita un usuario"""
+		page = request.POST.get('page', None)
+		user_id = request.POST.get('user_id', None)
+		user = SgtUsuario.objects.filter(id=user_id).first()
+		redirect_url = reverse('admin_usuarios')
+		if user:
+			user.is_active = False
+			user.save()
+			if int(page) > 1:
+				extra_params = '?page=%s' % page
+				redirect_url = '%s%s' % (redirect_url, extra_params)
+
+			return redirect(redirect_url, kwargs={'location': page})
+		else:
+			return redirect(redirect_url, kwargs={'location': page})
+
+
+class AdminBandejaPeritos(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminBandejaPeritos, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		""" Vista que lista los Peritos """
+		usuario = request.user
+
+		peritos = Perito.objects.all()
+
+		paginator = Paginator(peritos, 10, request=request)
+		try:
+			page = request.GET.get('page', 1)
+			peritos = paginator.page(page)
+		except PageNotAnInteger:
+			peritos = paginator.page(1)
+			page = 0
+		except EmptyPage:
+			peritos = paginator.page(paginator.num_pages)
+		
+		context = {
+			'admin': True,
+			'peritos': peritos,
+			'seccion_peritos': True,
+			'usuario': usuario,
+		}
+
+		return render(request, 'admin/bandeja_peritos.html', context)
+
+
+class AdminAgregarPerito(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminAgregarPerito, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Vista que despliega el formulario para la creación de un Perito"""
+		usuario = request.user
+
+		form = PeritoForm()
+
+		context = {
+			'admin': True,
+			'form': form,
+			'seccion_peritos': True,
+			'usuario': usuario,
+		}
+
+		return render(request, 'admin/crear_perito.html', context)
+
+	def post(self, request, *args, **kwargs):
+		"""Crea el Perito"""
+		usuario = request.user
+
+		form = PeritoForm(request.POST)
+
+		if form.is_valid():
+			form.save()
+			return redirect(reverse('admin_peritos'))
+
+		else:
+			print "MALLLL", form.errors
+
+			context = {
+				'admin': True,
+				'form': form,
+				'seccion_centros': True,
+				'usuario': usuario,
+			}
+
+			return render(request, 'admin/crear_perito.html', context)
+
+
+class AdminEditarPerito(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEditarPerito, self).dispatch(*args, **kwargs)
 
 
 class AdminBandejaEncuestas(View):

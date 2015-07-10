@@ -46,6 +46,7 @@ class Perito(models.Model):
 	nombres = models.CharField(max_length=200)
 	sexo = models.IntegerField()
 	tiempo_empresa = models.IntegerField()
+	activo = models.BooleanField(default=True)
 
 	def __unicode__(self):
 		return u'%s %s' % (self.nombres, self.apellidos)
