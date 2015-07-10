@@ -337,6 +337,7 @@ class AdminAgregarCentro(View):
 			'peritos': peritos,
 			'seccion_centros': True,
 			'usuario': usuario,
+			'peritos_asignados': [],
 		}
 
 		return render(request, 'admin/crear_centro.html', context)
@@ -373,6 +374,7 @@ class AdminAgregarCentro(View):
 				'peritos': peritos,
 				'seccion_centros': True,
 				'usuario': usuario,
+				'peritos_asignados': [],
 			}
 
 			return render(request, 'admin/crear_centro.html', context)
@@ -395,6 +397,7 @@ class AdminEditarCentro(View):
 			form = CentroInspeccionForm(instance = centro)
 			estados = Estado.objects.all()
 			peritos = Perito.objects.all()
+			peritos_asignados = centro.peritos.all()
 
 			context = {
 				'admin': True,
@@ -408,6 +411,7 @@ class AdminEditarCentro(View):
 				'peritos': peritos,
 				'seccion_centros': True,
 				'usuario': usuario,
+				'peritos_asignados': peritos_asignados,
 			}
 
 			return render(request, 'admin/crear_centro.html', context)
@@ -422,6 +426,7 @@ class AdminEditarCentro(View):
 		estados = Estado.objects.all()
 		peritos = Perito.objects.all()
 		centro = CentroInspeccion.objects.filter(id=kwargs['centro_id']).first()
+		peritos_asignados = centro.peritos.all()
 		form = CentroInspeccionForm(request.POST, instance = centro)
 
 		if form.is_valid():
@@ -450,6 +455,7 @@ class AdminEditarCentro(View):
 				'peritos': peritos,
 				'seccion_centros': True,
 				'usuario': usuario,
+				'peritos_asignados': peritos_asignados,
 			}
 
 			return render(request, 'admin/crear_centro.html', context)
@@ -539,18 +545,22 @@ class AdminAgregarEncuesta(View):
 		"""Despliega el formulario para crear encuestas"""
 		usuario = request.user
 		form = CrearEncuestaForm()
+		form_preg = CrearPreguntaForm()
 
 		preguntas = Pregunta.objects.all()
 		tipos_respuesta = TipoRespuesta.objects.all()
+		tipos_encuesta = TipoEncuesta.objects.all()
 		valores = ValorPosible.objects.all()
 
 		context = {
 			'admin': True,
 			'form': form,
+			'form_preg': form_preg,
 			'preguntas': preguntas,
 			'valores': valores,
 			'editar': False,
 			'tipos_respuesta': tipos_respuesta,
+			'tipos_encuesta': tipos_encuesta,
 			'usuario': usuario,
 		}
 
@@ -559,7 +569,8 @@ class AdminAgregarEncuesta(View):
 	def post(self, request, *args, **kwargs):
 		"""Crea el centro de inspección"""
 		usuario = request.user
-		form = RegistroForm(request.POST)
+		form = CrearEncuestaForm(request.POST)
+		form_preg = CrearPreguntaForm()
 
 		if form.is_valid():
 
@@ -570,50 +581,70 @@ class AdminAgregarEncuesta(View):
 		else:
 			preguntas = Pregunta.objects.all()
 			tipos_respuesta = TipoRespuesta.objects.all()
+			tipos_encuesta = TipoEncuesta.objects.all()
 			valores = ValorPosible.objects.all()
 
 			context = {
 				'admin': True,
 				'form': form,
+				'form_preg': form_preg,
 				'preguntas': preguntas,
 				'valores': valores,
 				'editar': False,
 				'tipos_respuesta': tipos_respuesta,
+				'tipos_encuesta': tipos_encuesta,
 				'usuario': usuario,
 			}
 
 			return render(request, 'admin/crear_encuesta.html', context)
 
 
+class AdminAgregarPregunta(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminAgregarPregunta, self).dispatch(*args, **kwargs)
 
-		# estados = Estado.objects.all()
-		# peritos = Perito.objects.all()
-		# form = CentroInspeccionForm(request.POST)
+	def post(self, request, *args, **kwargs):
+		"""Crea el centro de inspección"""
+		usuario = request.user
+		form = CrearPreguntaForm(request.POST)
+		data = request.POST
 
-		# if form.is_valid():
-		# 	form.save()
-		# 	return redirect(reverse('admin_centros'))
+		respuesta = {}
+		if form.is_valid():
+			tipo_respuesta = TipoRespuesta.objects.get(id=data['tipo_respuesta'])
+			pregunta = Pregunta(enunciado=data['enunciado'], tipo_respuesta=tipo_respuesta)
+			pregunta.save();
+			respuesta = {
+				'id': pregunta.id, 
+				'enunciado': pregunta.enunciado,
+				'tipo_respuesta': data['tipo_respuesta']
+			}
+			
+		else:
+			respuesta = {'mensaje': form.errors}
 
-		# else:
-		# 	print "MALLLL", form.errors
-		# 	c_estado_id = request.POST.get('estado', None)
-		# 	c_municipios = Municipio.objects.filter(estado__id = c_estado_id)
-		# 	c_municipio_id = request.POST.get('municipio', None)
-		# 	if c_estado_id:
-		# 		c_estado_id = int(c_estado_id)
-		# 	if c_municipio_id:
-		# 		c_municipio_id = int(c_municipio_id)
+		return HttpResponse(
+			    json.dumps(respuesta),
+			    content_type="application/json"
+			)
 
-		# 	context = {
-		# 		'admin': True,
-		# 		'form': form,
-		# 		'c_estado_id': c_estado_id,
-		# 		'c_municipios': c_municipios,
-		# 		'c_municipio_id': c_municipio_id,
-		# 		'estados': estados,
-		# 		'peritos': peritos,
-		# 		'seccion_centros': True,
-		# 		'usuario': usuario,
-		# 	}
+class AdminEliminarPregunta(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEliminarPregunta, self).dispatch(*args, **kwargs)
 
-		# 	return render(request, 'admin/crear_centro.html', context)
+	def get(self, request, *args, **kwargs):
+		"""Crea el centro de inspección"""
+		usuario = request.user
+		pregunta_id = kwargs['pregunta_id']
+		
+		pregunta = Pregunta.objects.get(id=pregunta_id)
+		pregunta.delete()
+		
+		respuesta = {
+			'id_pregunta': pregunta_id
+		}
+
+		return HttpResponse(
+			    json.dumps(respuesta),
+			    content_type="application/json"
+			)

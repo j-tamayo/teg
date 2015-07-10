@@ -77,4 +77,16 @@ urlpatterns = \
             views.AdminAgregarEncuesta.as_view(),
             name='admin_crear_encuesta'
         ),
+
+        url(
+            r'^admin/crear-pregunta$',
+            views.AdminAgregarPregunta.as_view(),
+            name='admin_crear_pregunta'
+        ),
+
+        url(
+            r'^admin/eliminar-pregunta/(?P<pregunta_id>\d+)$',
+            views.AdminEliminarPregunta.as_view(),
+            name='admin_eliminar_pregunta'
+        ),
 )
