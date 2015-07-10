@@ -821,9 +821,10 @@ class AdminAgregarEncuesta(View):
 		usuario = request.user
 		form = CrearEncuestaForm()
 		form_preg = CrearPreguntaForm()
+		form_val = CrearValorForm()
 
-		preguntas = Pregunta.objects.all()
 		tipos_respuesta = TipoRespuesta.objects.all()
+		preguntas = Pregunta.objects.filter(tipo_respuesta=tipos_respuesta[0])
 		tipos_encuesta = TipoEncuesta.objects.all()
 		valores = ValorPosible.objects.all()
 
@@ -831,6 +832,7 @@ class AdminAgregarEncuesta(View):
 			'admin': True,
 			'form': form,
 			'form_preg': form_preg,
+			'form_val': form_val,
 			'preguntas': preguntas,
 			'valores': valores,
 			'editar': False,
@@ -842,10 +844,11 @@ class AdminAgregarEncuesta(View):
 		return render(request, 'admin/crear_encuesta.html', context)
 
 	def post(self, request, *args, **kwargs):
-		"""Crea el centro de inspección"""
+		"""Crea la encuesta"""
 		usuario = request.user
 		form = CrearEncuestaForm(request.POST)
 		form_preg = CrearPreguntaForm()
+		form_val = CrearValorForm()
 
 		if form.is_valid():
 
@@ -854,8 +857,8 @@ class AdminAgregarEncuesta(View):
 			return redirect(reverse('admin_encuestas'))
 
 		else:
-			preguntas = Pregunta.objects.all()
 			tipos_respuesta = TipoRespuesta.objects.all()
+			preguntas = Pregunta.objects.filter(tipo_respuesta=tipos_respuesta[0])
 			tipos_encuesta = TipoEncuesta.objects.all()
 			valores = ValorPosible.objects.all()
 
@@ -863,6 +866,7 @@ class AdminAgregarEncuesta(View):
 				'admin': True,
 				'form': form,
 				'form_preg': form_preg,
+				'form_val': form_val,
 				'preguntas': preguntas,
 				'valores': valores,
 				'editar': False,
@@ -878,8 +882,31 @@ class AdminAgregarPregunta(View):
 	def dispatch(self, *args, **kwargs):
 		return super(AdminAgregarPregunta, self).dispatch(*args, **kwargs)
 
+
+	def get(self, request, *args, **kwargs):
+		"""Buscando preguntas existentes"""
+		usuario = request.user
+		tipo_respuesta_id = kwargs['tipo_respuesta_id']
+
+		respuesta = {}
+		if tipo_respuesta_id:
+			preguntas = Pregunta.objects.filter(tipo_respuesta__id = tipo_respuesta_id)
+			respuesta = serializers.serialize('json', preguntas)
+
+		else:
+			respuesta = {
+				'mensaje': 'No se suministró el id del tipo de respuesta'
+			}
+			resuesta = json.dumps(respuesta)
+
+		return HttpResponse(
+		    respuesta,
+		    content_type="application/json"
+		)
+
+
 	def post(self, request, *args, **kwargs):
-		"""Crea el centro de inspección"""
+		"""Crea nueva pregunta"""
 		usuario = request.user
 		form = CrearPreguntaForm(request.POST)
 		data = request.POST
@@ -890,7 +917,7 @@ class AdminAgregarPregunta(View):
 			pregunta = Pregunta(enunciado=data['enunciado'], tipo_respuesta=tipo_respuesta)
 			pregunta.save();
 			respuesta = {
-				'id': pregunta.id, 
+				'id_pregunta': pregunta.id, 
 				'enunciado': pregunta.enunciado,
 				'tipo_respuesta': data['tipo_respuesta']
 			}
@@ -899,27 +926,68 @@ class AdminAgregarPregunta(View):
 			respuesta = {'mensaje': form.errors}
 
 		return HttpResponse(
-			    json.dumps(respuesta),
-			    content_type="application/json"
-			)
+		    json.dumps(respuesta),
+		    content_type="application/json"
+		)
 
 class AdminEliminarPregunta(View):
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEliminarPregunta, self).dispatch(*args, **kwargs)
 
 	def get(self, request, *args, **kwargs):
-		"""Crea el centro de inspección"""
+		"""Eliminar pregunta"""
 		usuario = request.user
 		pregunta_id = kwargs['pregunta_id']
 		
-		pregunta = Pregunta.objects.get(id=pregunta_id)
-		pregunta.delete()
-		
-		respuesta = {
-			'id_pregunta': pregunta_id
-		}
+		respuesta = {}
+		if pregunta_id:
+			pregunta = Pregunta.objects.get(id=pregunta_id)
+			pregunta.delete()
+			
+			respuesta = {
+				'id_pregunta': pregunta_id
+			}
+
+		else:
+			respuesta = {
+				'mensaje': 'No se suministró el id de la pregunta'
+			}
 
 		return HttpResponse(
-			    json.dumps(respuesta),
-			    content_type="application/json"
-			)
+		    json.dumps(respuesta),
+		    content_type="application/json"
+		)
+
+class AdminAgregarRespuesta(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminAgregarRespuesta, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Crea nueva respuesta"""
+		usuario = request.user
+		form = CrearValorForm(request.POST)
+		data = request.POST
+		print data['pregunta_id']
+		print data['valor']
+
+		respuesta = {}
+		if form.is_valid():
+			pregunta = Pregunta.objects.get(id=data['pregunta_id'])
+			valor_posible = ValorPosible(valor=data['valor'])
+			valor_posible.save();
+			valor_posible.valor_pregunta.add(pregunta)
+			
+			respuesta = {
+				'id_respuesta': valor_posible.id, 
+				'valor': valor_posible.valor,
+				'pregunta': data['pregunta_id']
+			}
+			
+		else:
+			respuesta = {'mensaje': form.errors}
+
+		return HttpResponse(
+		    json.dumps(respuesta),
+		    content_type="application/json"
+		)
+

@@ -38,7 +38,7 @@
 							<label>Tipo respuesta:</label>
 							<select id="id_tipo_respuesta" name="tipo_respuesta" class="form-control">
 								{% for tipo_respuesta in tipos_respuesta %}
-									<option value="{{tipo_respuesta.id}}">{{tipo_respuesta.descripcion}}</option>
+									<option id="{{tipo_respuesta.codigo}}" value="{{tipo_respuesta.id}}">{{tipo_respuesta.descripcion}}</option>
 								{% endfor %}
 							</select>
 						</div>
@@ -68,23 +68,23 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-xs-6">
+						<div id="id_respuestas_definidas" class="col-xs-6">
 							<div class="row">
 								<div class="col-xs-10">
 									<label>Respuesta:</label>
 									<select data-placeholder="Seleccione la respuesta..." multiple id="id_valor" name="valor" class="form-control select-mul">
 										{% for valor in valores %}
-											<option value="{{valor.id}}">{{valor.enunciado}}</option>
+											<option value="{{valor.id}}" {% if valor.valor_pregunta in preguntas %} selected {% endif %}>{{valor.valor}}</option>
 										{% endfor %}
 									</select>
 								</div>
 								<div class="col-xs-1" align="right" style="width:20%; margin-left:-4%">
 									<br>
 									<div class="btn-group" role="group">
-										<a class="btn btn-danger" href="#" role="button" title="Eliminar respuesta">
+										<a id="eliminar_respuestas" class="btn btn-danger" href="#" role="button" title="Eliminar respuesta">
 								  			<i class="fa fa-trash"></i> 
 								  		</a>
-										<a class="btn btn-info" href="#" role="button" data-toggle="modal" title="Crear respuesta" data-target="#">
+										<a id="crear_respuesta" class="btn btn-info" href="#" role="button" data-toggle="modal" title="Crear respuesta" data-target="#">
 								  			<i class="fa fa-plus"></i> 
 								  		</a>
 									</div>
@@ -145,37 +145,57 @@
   	</div>
 </div>
 
-<!-- <div class="col-xs-6">
-	<label>Respuestas asociadas:</label>
-	<ul id="lista_valores" class="list-group">
+<div class="modal fade" id="modal_respuesta" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title text-success" id="myModalLabel">Crear Respuesta</h3>
+			</div>
+			<form id="respuesta_form">
+			{% csrf_token %}
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12">
+						<label>Respuesta:</label>
+						{{form_val.valor}}
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" type="submit" data-dismiss="modal">Cancelar</button>
+				<button class="btn btn-primary">Guardar</button>
+			</div>
+			</form>
+  		</div>
+  	</div>
+</div>
 
-		<li class="list-group-item">
-			<div align="right">
-				<p class="pull-left">Valor XYZ</p>
-		  		<a class="btn btn-danger" href="#" role="button">
-		  			<i class="fa fa-trash"></i> 
-		  		</a>
-	  		</div>
-	  	</li>
-	  	<li class="list-group-item">
-			<div align="right">
-				<p class="pull-left">Valor XYZ</p>
-		  		<a class="btn btn-danger" href="#" role="button">
-		  			<i class="fa fa-trash"></i> 
-		  		</a>
-	  		</div>
-	  	</li>
-	  	<li class="list-group-item">
-			<div align="right">
-				<p class="pull-left">Valor XYZ</p>
-		  		<a class="btn btn-danger" href="#" role="button">
-		  			<i class="fa fa-trash"></i> 
-		  		</a>
-	  		</div>
-	  	</li>
-
-	</ul>
-</div> -->
+<div class="modal fade" id="modal_lista_respuestas" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title text-success" id="myModalLabel">Lista de Respuestas</h3>
+			</div>
+			<form id="eliminar_respuesta_form">
+			{% csrf_token %}
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12">
+						<input id="valores_elim" type="hidden">
+						<ul id="lista_valores" class="list-group"></ul>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" type="submit" data-dismiss="modal" onclick="$('#lista_valores').empty()">Cancelar</button>
+				<button class="btn btn-primary">Guardar</button>
+			</div>
+			</form>
+  		</div>
+  	</div>
+</div>
 
 {% endblock %}
 
@@ -191,8 +211,35 @@
 
 			$('.chosen-select').chosen();
 
-			$('#id_tipo_respuesta').change(function(){
+			if($('#id_tipo_respuesta :selected').attr('id') != 'RESP_DEF')
+				$('#id_respuestas_definidas').hide('fade');
 
+			$('#id_tipo_respuesta').change(function(){
+				if($('#id_tipo_respuesta :selected').attr('id') != 'RESP_DEF')
+					$('#id_respuestas_definidas').hide('fade');
+				else
+					$('#id_respuestas_definidas').show('fade');
+
+				value = $(this).val();
+				if(value.length > 0){
+					// LLamada AJAX para obtener las preguntas
+					$.ajax({
+					    type: 'GET',
+					    url: '/sgt/admin/crear-pregunta/' + value,
+					    dataType: "json",
+					    success: function(data){
+					        console.log(data);
+					        $('#id_pregunta').empty();
+							$.each(data, function(key, value){
+								$('#id_pregunta').append('<option value="'+value.pk+'">'+value.fields.enunciado+'</option>');
+							});
+							$('#id_pregunta').trigger("chosen:updated");
+					    },
+					    error: function(data){
+					    	console.log(data);
+					    }
+				    });
+				}
 			});
 
 			$('#pregunta_form').submit(function(event){
@@ -245,10 +292,6 @@
 				$('#modal_generic').modal('show');
 			});
 
-			// $("#id_tipo_respuesta").chosen({
-			// 	disable_search_threshold: {{ tipos_respuesta.count }} 
-			// });
-
 			$(document).on("click", "#guardar_nueva_pregunta", function(){
 				$.ajax({
 				    type: 'POST',
@@ -261,11 +304,12 @@
 				    },
 				    success:function(data){
 				        console.log(data);
-
 				        $('#title_modal_generic').html('');
 				        $('#body_modal_generic').html('');
 				        $('#footer_modal_generic').html('');
 				        $('#modal_generic').modal('hide');
+				        $('#id_pregunta').append('<option value="'+data.id_pregunta+'">'+data.enunciado+'</option>');
+				        $('#id_pregunta').trigger("chosen:updated");
 				    },
 				    error: function(){
 				    	console.log("Error...");
@@ -286,12 +330,118 @@
 					        $('#body_modal_generic').html('');
 					        $('#footer_modal_generic').html('');
 					        $('#modal_generic').modal('hide');
+					        $('#id_pregunta option[value='+data.id_pregunta+']').remove();
+					        $('#id_pregunta').trigger("chosen:updated");
 					    },
 					    error: function(){
 					    	console.log("Error...");
 					    }
 				    });
 				}
+			});
+
+			$('#crear_respuesta').on("click", function(){
+				if($('#id_pregunta').val() && $('#id_tipo_respuesta :selected').attr('id') == 'RESP_DEF')
+					$('#modal_respuesta').modal('show');
+			});
+
+			$('#respuesta_form').submit(function(event){
+				event.preventDefault();
+				$('#modal_respuesta').modal('hide');
+				$('#title_modal_generic').html('&iquest;Est&aacute; seguro que desea registrar esta respuesta?');
+
+				$('#body_modal_generic').html('<div class="row">\
+													<div class="col-xs-6">\
+														<laberl>Respuesta:</label>\
+														<p>&emsp;'+$('#nuevo_valor').val()+'</p>\
+													</div>\
+												</div>');
+
+				$('#footer_modal_generic').html('<div class="row">\
+													<div class="col-xs-6">\
+														<button type="button" class="btn btn-danger col-xs-12" data-dismiss="modal">Cancelar</button>\
+													</div>\
+													<div class="col-xs-6">\
+														<button id="guardar_nueva_respuesta" class="btn btn-primary col-xs-12">Guardar</button>\
+													</div>\
+												</div>');
+				
+				$('#modal_generic').modal('show');
+			});
+
+			$(document).on("click", "#guardar_nueva_respuesta", function(){
+				$.ajax({
+				    type: 'POST',
+				    url: '{% url "admin_crear_respuesta" %}',
+				    dataType: "json",
+				    data:{
+				        'valor': $('#nuevo_valor').val(),
+				        'pregunta_id': $('#id_pregunta').val(),
+				        'csrfmiddlewaretoken': '{{ csrf_token }}'
+				    },
+				    success:function(data){
+				        console.log(data);
+				        $('#title_modal_generic').html('');
+				        $('#body_modal_generic').html('');
+				        $('#footer_modal_generic').html('');
+				        $('#modal_generic').modal('hide');
+				        $('#id_valor').append('<option value="'+data.id_respuesta+'">'+data.valor+'</option>');
+				        $('#id_valor').trigger("chosen:updated");
+				    },
+				    error: function(){
+				    	console.log("Error...");
+				    }
+			    });
+			});
+
+			
+			$('#eliminar_respuestas').on("click", function(){
+				if($('#id_valor').val()){
+					values = $('#id_valor').val();
+
+        			texts = []; 
+					$("#id_valor :selected").each(function(i, selected){ 
+						texts[i] = $(selected).text(); 
+					});
+
+					for(i = 0; i < values.length; i++){
+						$('#lista_valores').append('<li id="valor_'+values[i]+'" class="list-group-item">\
+													<div align="right">\
+														<p class="pull-left">'+texts[i]+'</p>\
+														<a class="btn btn-danger elim_val" target="valor_'+values[i]+'" href="#" role="button">\
+															<i class="fa fa-trash"></i>\
+														</a>\
+													</div>\
+												</li>');
+					}
+
+					$('#modal_lista_respuestas').modal('show');
+				}
+
+			});
+
+			$('#eliminar_respuesta_form').submit(function(event){
+				event.preventDefault();
+				// $('#modal_lista_respuestas').modal('hide');
+				// $('#title_modal_generic').html('&iquest;Est&aacute; seguro que desea eliminar estas respuestas?');
+
+				// // $('#body_modal_generic').html('<div class="row">\
+				// // 									<div class="col-xs-6">\
+				// // 										<laberl>Pregunta:</label>\
+				// // 										<p>&emsp;'+$('#nueva_pregunta').val()+'</p>\
+				// // 									</div>\
+				// // 								</div>');
+
+				// $('#footer_modal_generic').html('<div class="row">\
+				// 									<div class="col-xs-6">\
+				// 										<button type="button" class="btn btn-danger col-xs-12" data-dismiss="modal">Cancelar</button>\
+				// 									</div>\
+				// 									<div class="col-xs-6">\
+				// 										<button id="eliminar_viejas_respuestas" class="btn btn-primary col-xs-12">Guardar</button>\
+				// 									</div>\
+				// 								</div>');
+				
+				// $('#modal_generic').modal('show');
 			});
 
 		});

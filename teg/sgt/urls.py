@@ -115,6 +115,12 @@ urlpatterns = \
         ),
 
         url(
+            r'^admin/crear-pregunta/(?P<tipo_respuesta_id>\d+)$',
+            views.AdminAgregarPregunta.as_view(),
+            name='admin_crear_pregunta'
+        ),
+
+        url(
             r'^admin/crear-pregunta$',
             views.AdminAgregarPregunta.as_view(),
             name='admin_crear_pregunta'
@@ -124,5 +130,11 @@ urlpatterns = \
             r'^admin/eliminar-pregunta/(?P<pregunta_id>\d+)$',
             views.AdminEliminarPregunta.as_view(),
             name='admin_eliminar_pregunta'
+        ),
+
+        url(
+            r'^admin/crear-respuesta$',
+            views.AdminAgregarRespuesta.as_view(),
+            name='admin_crear_respuesta'
         ),
 )

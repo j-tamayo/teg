@@ -193,3 +193,9 @@ class CrearPreguntaForm(forms.Form):
 		queryset = TipoRespuesta.objects.all(),
 		widget = forms.Select(attrs={'class':'form-control', 'required': '', 'data-error':'Este campo es obligatorio'})
 	)
+
+class CrearValorForm(forms.Form):
+	valor = forms.CharField(
+		label = u'Respuesta',
+		widget = forms.TextInput(attrs={'id':'nuevo_valor', 'class':'form-control', 'required':'', 'data-error':'Este campo es obligatorio'})
+	)
