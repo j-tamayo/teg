@@ -43,9 +43,15 @@
 					<a href="{% url 'admin_editar_usuario' u.pk %}" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Editar">
 						<i class="fa fa-pencil"></i>
 					</a>
-					<a href="#" class="btn btn-danger btn-sm eliminar" target="{{u.pk}}" data-toggle="tooltip" data-original-title="Deshabilitar" {% if not u.is_active %}disabled{% endif %} >
+					{% if u.is_active %}
+					<a href="#" accion="deshabilitar" class="btn btn-danger btn-sm eliminar" target="{{u.pk}}" data-toggle="tooltip" data-original-title="Deshabilitar">
 						<i class="fa fa-trash"></i>
 					</a>
+					{% else %}
+					<a href="#" accion="habilitar" class="btn btn-success btn-sm eliminar" target="{{u.pk}}" data-toggle="tooltip" data-original-title="Habilitar">
+						<i class="fa fa-undo"></i>
+					</a>
+					{% endif %}
 				</td>
 			</tr>
 			{% endfor %}
@@ -102,17 +108,22 @@
 		$(document).on('click', '.eliminar', function(event){
 			event.preventDefault();
 			target = $(this).attr('target');
+			accion = $(this).attr('accion');
+			if(accion==='habilitar')
+				texto_accion = 'habilitar';
+			else
+				texto_accion = 'deshabilitar';
 
 			$('#deshabilitar_usuario').append('<input type="hidden" name="user_id" value="'+target+'">');
 			$('#title_modal_generic').html('Confirmación');
 			$('#body_modal_generic').html(
 				'<div class="row">\
-					<div class="col-xs-12"><h4>¿Está seguro que desea deshabilitar este usuario?</h4></div>\
+					<div class="col-xs-12"><h4>¿Está seguro que desea '+ texto_accion +' este usuario?</h4></div>\
 				</div><br>'
 			);
 			$('#footer_modal_generic').html(
 				'<div class="col-xs-6">\
-					<a id="cancelar" href="#" class="btn btn-danger col-xs-12">Cancelar</a>\
+					<a id="cancelar" href="#" class="btn btn-danger col-xs-12" data-dismiss="modal">Cancelar</a>\
 				</div>\
 				<div class="col-xs-6">\
 					<a id="confirmar" href="#" class="btn btn-primary col-xs-12">Aceptar</a>\

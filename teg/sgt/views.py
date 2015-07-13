@@ -691,13 +691,13 @@ class AdminDeshabilitarUsuario(View):
 		return super(AdminDeshabilitarUsuario, self).dispatch(*args, **kwargs)
 
 	def post(self, request, *args, **kwargs):
-		"""Vista que deshabilita un usuario"""
+		"""Vista que deshabilita o habilita a un usuario"""
 		page = request.POST.get('page', None)
 		user_id = request.POST.get('user_id', None)
 		user = SgtUsuario.objects.filter(id=user_id).first()
 		redirect_url = reverse('admin_usuarios')
 		if user:
-			user.is_active = False
+			user.is_active = not user.is_active
 			user.save()
 			if int(page) > 1:
 				extra_params = '?page=%s' % page
@@ -773,7 +773,7 @@ class AdminAgregarPerito(View):
 			context = {
 				'admin': True,
 				'form': form,
-				'seccion_centros': True,
+				'seccion_peritos': True,
 				'usuario': usuario,
 			}
 
