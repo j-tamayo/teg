@@ -163,7 +163,7 @@ class CrearEncuestaForm(forms.Form):
 		widget = forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
 	)
 
-	enunciado = forms.ModelMultipleChoiceField(
+	pregunta = forms.ModelChoiceField(
 		label = u'Pregunta',
 		queryset = Pregunta.objects.all(),
 		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
@@ -175,10 +175,9 @@ class CrearEncuestaForm(forms.Form):
 		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
 	)
 
-	valores_posiples = forms.ModelMultipleChoiceField(
-		label = u'Valor',
+	valores_posibles = forms.ModelMultipleChoiceField(
+		label = u'Respuesta',
 		queryset = ValorPosible.objects.all(),
-		widget = forms.Select(attrs={'class':'form-control'})
 	)
 
 

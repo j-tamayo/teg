@@ -58,7 +58,7 @@
 								<div class="col-xs-1" align="right" style="width:20%; margin-left:-4%">
 									<br>
 									<div class="btn-group" role="group">
-										<a id="eliminar_pregunta" class="btn btn-danger" href="#" role="button">
+										<a id="eliminar_preguntas" class="btn btn-danger" href="#" role="button">
 								  			<i class="fa fa-trash"></i> 
 								  		</a>
 										<a class="btn btn-info" href="#" role="button" data-toggle="modal" title="Crear pregunta" data-target="#modal_pregunta">
@@ -72,7 +72,7 @@
 							<div class="row">
 								<div class="col-xs-10">
 									<label>Respuesta:</label>
-									<select data-placeholder="Seleccione la respuesta..." multiple id="id_valor" name="valor" class="form-control select-mul">
+									<select multiple data-placeholder="Seleccione la respuesta..." id="id_valor" name="valores_posibles" class="form-control select-mul">
 										{% for valor in valores %}
 											<option value="{{valor.id}}" {% if valor.valor_pregunta in preguntas %} selected {% endif %}>{{valor.valor}}</option>
 										{% endfor %}
@@ -84,7 +84,7 @@
 										<a id="eliminar_respuestas" class="btn btn-danger" href="#" role="button" title="Eliminar respuesta">
 								  			<i class="fa fa-trash"></i> 
 								  		</a>
-										<a id="crear_respuesta" class="btn btn-info" href="#" role="button" data-toggle="modal" title="Crear respuesta" data-target="#">
+										<a id="crear_respuesta" class="btn btn-info" href="#" role="button" data-toggle="modal" title="Crear respuesta" data-target="#modal_respuesta">
 								  			<i class="fa fa-plus"></i> 
 								  		</a>
 									</div>
@@ -104,7 +104,7 @@
 				</form>
 			</div>
 		</div>
-	</div> <!-- / .panel-dashboard-gray -->
+	</div>
 
 </div>
 
@@ -171,6 +171,32 @@
   	</div>
 </div>
 
+<div class="modal fade" id="modal_lista_preguntas" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title text-success" id="myModalLabel">Lista de Preguntas</h3>
+			</div>
+			<form id="eliminar_pregunta_form">
+			{% csrf_token %}
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xs-12">
+						<input id="preguntas_elim" type="hidden">
+						<ul id="lista_preguntas" class="list-group"></ul>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" type="submit" data-dismiss="modal">Cancelar</button>
+				<button class="btn btn-primary">Guardar</button>
+			</div>
+			</form>
+  		</div>
+  	</div>
+</div>
+
 <div class="modal fade" id="modal_lista_respuestas" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -189,7 +215,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-danger" type="submit" data-dismiss="modal" onclick="$('#lista_valores').empty()">Cancelar</button>
+				<button type="button" class="btn btn-danger" type="submit" data-dismiss="modal">Cancelar</button>
 				<button class="btn btn-primary">Guardar</button>
 			</div>
 			</form>
@@ -245,51 +271,22 @@
 			$('#pregunta_form').submit(function(event){
 				event.preventDefault();
 				$('#modal_pregunta').modal('hide');
-				$('#title_modal_generic').html('&iquest;Est&aacute; seguro que desea registrar esta pregunta?');
-
-				$('#body_modal_generic').html('<div class="row">\
-													<div class="col-xs-6">\
-														<laberl>Pregunta:</label>\
-														<p>&emsp;'+$('#nueva_pregunta').val()+'</p>\
-													</div>\
-													<div class="col-xs-6">\
-														<laberl>Tipo respuesta:</label>\
-														<p>&emsp;'+$('#id_tipo_respuesta_nueva :selected').text()+'</p>\
-													</div>\
-												</div>');
-
-				$('#footer_modal_generic').html('<div class="row">\
-													<div class="col-xs-6">\
-														<button type="button" class="btn btn-danger col-xs-12" data-dismiss="modal">Cancelar</button>\
-													</div>\
-													<div class="col-xs-6">\
-														<button id="guardar_nueva_pregunta" class="btn btn-primary col-xs-12">Guardar</button>\
-													</div>\
-												</div>');
+				generic_modal_title = '&iquest;Est&aacute; seguro que desea registrar esta pregunta?';
 				
-				$('#modal_generic').modal('show');
-			});
+				generic_modal_content = '<div class="row">\
+											<div class="col-xs-6">\
+												<laberl>Pregunta:</label>\
+												<p>&emsp;'+$('#nueva_pregunta').val()+'</p>\
+											</div>\
+											<div class="col-xs-6">\
+												<laberl>Tipo respuesta:</label>\
+												<p>&emsp;'+$('#id_tipo_respuesta_nueva :selected').text()+'</p>\
+											</div>\
+										</div>';
 
-			$('#eliminar_pregunta').on("click", function(){
-				$('#title_modal_generic').html('&iquest;Est&aacute; seguro que desea eliminar esta pregunta?');
+				next_modal_ref = 'guardar_nueva_pregunta';
 
-				$('#body_modal_generic').html('<div class="row">\
-													<div class="col-xs-12">\
-														<laberl>Pregunta:</label>\
-														<p>&emsp;'+$('#id_pregunta :selected').text()+'</p>\
-													</div>\
-												</div>');
-
-				$('#footer_modal_generic').html('<div class="row">\
-													<div class="col-xs-6">\
-														<button type="button" class="btn btn-danger col-xs-12" data-dismiss="modal">Cancelar</button>\
-													</div>\
-													<div class="col-xs-6">\
-														<button id="eliminar_vieja_pregunta" class="btn btn-primary col-xs-12">Guardar</button>\
-													</div>\
-												</div>');
-				
-				$('#modal_generic').modal('show');
+				fill_generic_modal(generic_modal_title, generic_modal_content, next_modal_ref);
 			});
 
 			$(document).on("click", "#guardar_nueva_pregunta", function(){
@@ -304,10 +301,8 @@
 				    },
 				    success:function(data){
 				        console.log(data);
-				        $('#title_modal_generic').html('');
-				        $('#body_modal_generic').html('');
-				        $('#footer_modal_generic').html('');
-				        $('#modal_generic').modal('hide');
+				        reset_generic_modal();
+
 				        $('#id_pregunta').append('<option value="'+data.id_pregunta+'">'+data.enunciado+'</option>');
 				        $('#id_pregunta').trigger("chosen:updated");
 				    },
@@ -317,21 +312,48 @@
 			    });
 			});
 
-			$(document).on("click", "#eliminar_vieja_pregunta", function(){
-				value = $('#id_pregunta').val();
-				if(value.length > 0){
+			$('#eliminar_preguntas').on("click", function(){
+				fill_list_elim('modal_lista_preguntas', 'id_pregunta', 'preguntas_elim', 'lista_preguntas', 'pregunta_') 
+			});
+
+			$('#eliminar_pregunta_form').submit(function(event){
+				event.preventDefault();
+				$('#modal_lista_preguntas').modal('hide');
+				generic_modal_title = '&iquest;Est&aacute; seguro que desea eliminar estas preguntas?';
+
+				generic_modal_content = '<div class="row"><div class="col-xs-6">';
+				
+				preg_elim = $('#preguntas_elim').val().split('|');
+				for(i = 0; i < values.length; i++)
+					generic_modal_content += '<p>&emsp;'+$('#id_pregunta option[value='+preg_elim[i]+']').text()+'</p>';
+				
+				generic_modal_content += '<div></div>';
+
+				next_modal_ref = 'eliminar_viejas_preguntas';
+
+				fill_generic_modal(generic_modal_title, generic_modal_content, next_modal_ref);
+			});
+
+			$(document).on("click", "#eliminar_viejas_preguntas", function(){
+				value = $('#preguntas_elim').val();
+				if(value){
 					$.ajax({
-					    type: 'GET',
-					    url: '/sgt/admin/eliminar-pregunta/' + value,
+					    type: 'POST',
+					    url: '{% url "admin_eliminar_pregunta" %}',
 					    dataType: "json",
+					    data:{
+					        'preguntas_id': value,
+					        'csrfmiddlewaretoken': '{{ csrf_token }}'
+					    },
 					    success:function(data){
 					        console.log(data);
-					        $('#title_modal_generic').html('');
-					        $('#body_modal_generic').html('');
-					        $('#footer_modal_generic').html('');
-					        $('#modal_generic').modal('hide');
-					        $('#id_pregunta option[value='+data.id_pregunta+']').remove();
-					        $('#id_pregunta').trigger("chosen:updated");
+					        reset_generic_modal();
+
+					        preg_elim = value.split('|');
+							for(i = 0; i < preg_elim.length; i++)
+								$('#id_pregunta option[value='+preg_elim[i]+']').remove();
+
+							$('#id_pregunta').trigger("chosen:updated");
 					    },
 					    error: function(){
 					    	console.log("Error...");
@@ -340,33 +362,21 @@
 				}
 			});
 
-			$('#crear_respuesta').on("click", function(){
-				if($('#id_pregunta').val() && $('#id_tipo_respuesta :selected').attr('id') == 'RESP_DEF')
-					$('#modal_respuesta').modal('show');
-			});
-
 			$('#respuesta_form').submit(function(event){
 				event.preventDefault();
 				$('#modal_respuesta').modal('hide');
-				$('#title_modal_generic').html('&iquest;Est&aacute; seguro que desea registrar esta respuesta?');
+				generic_modal_title = '&iquest;Est&aacute; seguro que desea registrar esta respuesta?';
 
-				$('#body_modal_generic').html('<div class="row">\
-													<div class="col-xs-6">\
-														<laberl>Respuesta:</label>\
-														<p>&emsp;'+$('#nuevo_valor').val()+'</p>\
-													</div>\
-												</div>');
+				generic_modal_content = '<div class="row">\
+											<div class="col-xs-6">\
+												<laberl>Respuesta:</label>\
+												<p>&emsp;'+$('#nuevo_valor').val()+'</p>\
+											</div>\
+										</div>';
 
-				$('#footer_modal_generic').html('<div class="row">\
-													<div class="col-xs-6">\
-														<button type="button" class="btn btn-danger col-xs-12" data-dismiss="modal">Cancelar</button>\
-													</div>\
-													<div class="col-xs-6">\
-														<button id="guardar_nueva_respuesta" class="btn btn-primary col-xs-12">Guardar</button>\
-													</div>\
-												</div>');
-				
-				$('#modal_generic').modal('show');
+				next_modal_ref = 'guardar_nueva_respuesta';
+
+				fill_generic_modal(generic_modal_title, generic_modal_content, next_modal_ref);
 			});
 
 			$(document).on("click", "#guardar_nueva_respuesta", function(){
@@ -381,10 +391,7 @@
 				    },
 				    success:function(data){
 				        console.log(data);
-				        $('#title_modal_generic').html('');
-				        $('#body_modal_generic').html('');
-				        $('#footer_modal_generic').html('');
-				        $('#modal_generic').modal('hide');
+				        reset_generic_modal();
 				        $('#id_valor').append('<option value="'+data.id_respuesta+'">'+data.valor+'</option>');
 				        $('#id_valor').trigger("chosen:updated");
 				    },
@@ -393,58 +400,117 @@
 				    }
 			    });
 			});
-
 			
 			$('#eliminar_respuestas').on("click", function(){
-				if($('#id_valor').val()){
-					values = $('#id_valor').val();
-
-        			texts = []; 
-					$("#id_valor :selected").each(function(i, selected){ 
-						texts[i] = $(selected).text(); 
-					});
-
-					for(i = 0; i < values.length; i++){
-						$('#lista_valores').append('<li id="valor_'+values[i]+'" class="list-group-item">\
-													<div align="right">\
-														<p class="pull-left">'+texts[i]+'</p>\
-														<a class="btn btn-danger elim_val" target="valor_'+values[i]+'" href="#" role="button">\
-															<i class="fa fa-trash"></i>\
-														</a>\
-													</div>\
-												</li>');
-					}
-
-					$('#modal_lista_respuestas').modal('show');
-				}
-
+				fill_list_elim('modal_lista_respuestas' ,'id_valor', 'valores_elim', 'lista_valores', 'valor_')
 			});
 
 			$('#eliminar_respuesta_form').submit(function(event){
 				event.preventDefault();
-				// $('#modal_lista_respuestas').modal('hide');
-				// $('#title_modal_generic').html('&iquest;Est&aacute; seguro que desea eliminar estas respuestas?');
+				$('#modal_lista_respuestas').modal('hide');
+				generic_modal_title = '&iquest;Est&aacute; seguro que desea eliminar estas respuestas?';
 
-				// // $('#body_modal_generic').html('<div class="row">\
-				// // 									<div class="col-xs-6">\
-				// // 										<laberl>Pregunta:</label>\
-				// // 										<p>&emsp;'+$('#nueva_pregunta').val()+'</p>\
-				// // 									</div>\
-				// // 								</div>');
+				generic_modal_content = '<div class="row"><div class="col-xs-6">';
+				val_elim = $('#valores_elim').val().split('|');
+				for(i = 0; i < values.length; i++)
+					generic_modal_content += '<p>&emsp;'+$('#id_valor option[value='+val_elim[i]+']').text()+'</p>';
 
-				// $('#footer_modal_generic').html('<div class="row">\
-				// 									<div class="col-xs-6">\
-				// 										<button type="button" class="btn btn-danger col-xs-12" data-dismiss="modal">Cancelar</button>\
-				// 									</div>\
-				// 									<div class="col-xs-6">\
-				// 										<button id="eliminar_viejas_respuestas" class="btn btn-primary col-xs-12">Guardar</button>\
-				// 									</div>\
-				// 								</div>');
-				
-				// $('#modal_generic').modal('show');
+				generic_modal_content += '<div></div>';
+
+				next_modal_ref = 'eliminar_viejas_respuestas';
+
+				fill_generic_modal(generic_modal_title, generic_modal_content, next_modal_ref);
 			});
 
+			$(document).on("click", "#eliminar_viejas_respuestas", function(){
+				value = $('#valores_elim').val();
+				if(value){
+					$.ajax({
+					    type: 'POST',
+					    url: '{% url "admin_eliminar_respuesta" %}',
+					    dataType: "json",
+					    data:{
+					        'valores_id': value,
+					        'csrfmiddlewaretoken': '{{ csrf_token }}'
+					    },
+					    success:function(data){
+					        console.log(data);
+					        reset_generic_modal();
+
+					        val_elim = value.split('|');
+							for(i = 0; i < val_elim.length; i++)
+								$('#id_valor option[value='+val_elim[i]+']').remove();
+
+							$('#id_valor').trigger("chosen:updated");
+					    },
+					    error: function(){
+					    	console.log("Error...");
+					    }
+				    });
+				}
+			});
+
+			$(document).on("click", ".item_elim", function(){
+				id_targets = $(this).attr('target');
+				id_targets = id_targets.split(' ');
+				id_element = id_targets[0].split('_');
+
+				if($('#' + id_targets[1]).val())
+					new_val_elim = $('#' + id_targets[1]).val() + '|' + id_element[1];
+				else
+					new_val_elim = id_element[1];
+
+				$('#' + id_targets[1]).val(new_val_elim);
+				$('#' + id_targets[0]).remove();
+			});
 		});
+
+		function fill_generic_modal(title, content, ref_next_modal){
+			$('#title_modal_generic').html(title);
+			$('#body_modal_generic').html(content);
+			$('#footer_modal_generic').html('<div class="row">\
+												<div class="col-xs-6">\
+													<button type="button" class="btn btn-danger col-xs-12" data-dismiss="modal">Cancelar</button>\
+												</div>\
+												<div class="col-xs-6">\
+													<button id="'+ref_next_modal+'" class="btn btn-primary col-xs-12">Guardar</button>\
+												</div>\
+											</div>');
+
+			$('#modal_generic').modal('show');
+		}
+
+		function reset_generic_modal(){
+			$('#title_modal_generic').empty();
+			$('#body_modal_generic').empty();
+			$('#footer_modal_generic').empty();
+			$('#modal_generic').modal('hide');
+		}
+
+		function fill_list_elim(modal_list, id_select, id_input, id_list, str_token){
+			texts = [];
+			values = [];
+			$('#' + id_input).val('');
+
+			$('#' + id_select).children().each(function(i, option){
+				texts.push($(option).text()); 
+				values.push($(option).attr('value')); 
+			});
+
+			$('#' + id_list).empty();
+			for(i = 0; i < values.length; i++){
+				$('#' + id_list).append('<li id="'+str_token+values[i]+'" class="list-group-item">\
+												<div align="right">\
+													<p class="pull-left">'+texts[i]+'</p>\
+													<a class="btn btn-danger item_elim" target="'+str_token+values[i]+' '+id_input+'" role="button">\
+														<i class="fa fa-trash"></i>\
+													</a>\
+												</div>\
+											</li>');
+			}
+
+			$('#' + modal_list).modal('show');
+		}
 
 	</script>
 {% endblock %}

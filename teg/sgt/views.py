@@ -812,6 +812,7 @@ class AdminBandejaEncuestas(View):
 
 		return render(request, 'admin/bandeja_encuestas.html', context)
 
+
 class AdminAgregarEncuesta(View):
 	def dispatch(self, *args, **kwargs):
 		return super(AdminAgregarEncuesta, self).dispatch(*args, **kwargs)
@@ -850,13 +851,20 @@ class AdminAgregarEncuesta(View):
 		form_preg = CrearPreguntaForm()
 		form_val = CrearValorForm()
 
+		data = request.POST
+		print data
+
 		if form.is_valid():
 
 			print "guardando data..."
+			encuesta = form.cleaned_data
+			print encuesta
 
 			return redirect(reverse('admin_encuestas'))
 
 		else:
+			print form.errors
+
 			tipos_respuesta = TipoRespuesta.objects.all()
 			preguntas = Pregunta.objects.filter(tipo_respuesta=tipos_respuesta[0])
 			tipos_encuesta = TipoEncuesta.objects.all()
@@ -930,22 +938,26 @@ class AdminAgregarPregunta(View):
 		    content_type="application/json"
 		)
 
+
 class AdminEliminarPregunta(View):
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEliminarPregunta, self).dispatch(*args, **kwargs)
 
-	def get(self, request, *args, **kwargs):
-		"""Eliminar pregunta"""
+	def post(self, request, *args, **kwargs):
+		"""Eliminar preguntas"""
 		usuario = request.user
-		pregunta_id = kwargs['pregunta_id']
+		data = request.POST
+		preguntas_id = data['preguntas_id']
 		
 		respuesta = {}
-		if pregunta_id:
-			pregunta = Pregunta.objects.get(id=pregunta_id)
-			pregunta.delete()
+		if preguntas_id:
+			preguntas_id = preguntas_id.split('|');
+			for p in preguntas_id:
+				preguntas = Pregunta.objects.get(id=p)
+				preguntas.delete()
 			
 			respuesta = {
-				'id_pregunta': pregunta_id
+				'mensaje': 'Preguntas eliminadas satisfactoriamente'
 			}
 
 		else:
@@ -958,6 +970,7 @@ class AdminEliminarPregunta(View):
 		    content_type="application/json"
 		)
 
+
 class AdminAgregarRespuesta(View):
 	def dispatch(self, *args, **kwargs):
 		return super(AdminAgregarRespuesta, self).dispatch(*args, **kwargs)
@@ -967,8 +980,6 @@ class AdminAgregarRespuesta(View):
 		usuario = request.user
 		form = CrearValorForm(request.POST)
 		data = request.POST
-		print data['pregunta_id']
-		print data['valor']
 
 		respuesta = {}
 		if form.is_valid():
@@ -991,3 +1002,34 @@ class AdminAgregarRespuesta(View):
 		    content_type="application/json"
 		)
 
+
+class AdminEliminarRespuesta(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEliminarRespuesta, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Eliminar respuestas"""
+		usuario = request.user
+		data = request.POST
+		valores_id = data['valores_id']
+		
+		respuesta = {}
+		if valores_id:
+			valores_id = valores_id.split('|');
+			for v in valores_id:
+				valor_posible = ValorPosible.objects.get(id=v)
+				valor_posible.delete()
+			
+			respuesta = {
+				'mensaje': 'Respuestas eliminadas satisfactoriamente'
+			}
+
+		else:
+			respuesta = {
+				'mensaje': 'No se suministró el id de la pregunta'
+			}
+
+		return HttpResponse(
+		    json.dumps(respuesta),
+		    content_type="application/json"
+		)
