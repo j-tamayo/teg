@@ -847,7 +847,7 @@ class AdminAgregarEncuesta(View):
 	def post(self, request, *args, **kwargs):
 		"""Crea la encuesta"""
 		usuario = request.user
-		form = CrearEncuestaForm(request.POST)
+		form = CrearEncuestaForm(request.POST, extra=request.POST.get('extra_field_count'))
 		form_preg = CrearPreguntaForm()
 		form_val = CrearValorForm()
 

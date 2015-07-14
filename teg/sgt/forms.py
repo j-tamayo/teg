@@ -163,22 +163,35 @@ class CrearEncuestaForm(forms.Form):
 		widget = forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
 	)
 
-	pregunta = forms.ModelChoiceField(
-		label = u'Pregunta',
-		queryset = Pregunta.objects.all(),
-		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
-	)
+	# pregunta = forms.ModelChoiceField(
+	# 	label = u'Pregunta',
+	# 	queryset = Pregunta.objects.all(),
+	# 	widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
+	# )
 
-	tipo_respuesta = forms.ModelChoiceField(
-		label = u'Tipo de respuesta',
-		queryset = TipoRespuesta.objects.all(),
-		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
-	)
+	# tipo_respuesta = forms.ModelChoiceField(
+	# 	label = u'Tipo de respuesta',
+	# 	queryset = TipoRespuesta.objects.all(),
+	# 	widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
+	# )
 
-	valores_posibles = forms.ModelMultipleChoiceField(
-		label = u'Respuesta',
-		queryset = ValorPosible.objects.all(),
-	)
+	# valores_posibles = forms.ModelMultipleChoiceField(
+	# 	label = u'Respuesta',
+	# 	queryset = ValorPosible.objects.all(),
+	# )
+	
+	extra_field_count = forms.CharField(widget=forms.HiddenInput(), required=True)
+	
+	def __init__(self, *args, **kwargs):
+		extra_fields = kwargs.pop('extra', 0)
+
+		super(CrearEncuestaForm, self).__init__(*args, **kwargs)
+		self.fields['extra_field_count'].initial = extra_fields
+
+		for index in range(int(extra_fields)):
+			self.fields['pregunta_{index}'.format(index=index+1)] = forms.ModelChoiceField(queryset=Pregunta.objects.all(), required=True)
+			self.fields['tipo_respuesta_{index}'.format(index=index+1)] = forms.ModelChoiceField(queryset=TipoRespuesta.objects.all(), required=True)
+			self.fields['valores_posibles_{index}'.format(index=index+1)] = forms.ModelMultipleChoiceField(queryset=ValorPosible.objects.all(), required=False)
 
 
 class CrearPreguntaForm(forms.Form):

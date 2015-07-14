@@ -12,21 +12,19 @@
 			<div class="panel-body">
 				<form {%if editar%}action="{% url 'admin_editar_encuesta' centro_id %}"{%else%}action="{% url 'admin_crear_encuesta' %}"{%endif%} method="POST" novalidate role="form">
 					{% csrf_token %}
+					{{form.extra_field_count}}
 					<div class="row">
-						<div class="col-xs-6">
+						<div class="col-xs-4">
 							<label >Nombre:</label>
 							{{form.nombre}}
 							<span class="help-block with-errors"></span>
 						</div>
-						<div class="col-xs-6">
+						<div class="col-xs-4">
 							<label >Descripci&oacute;n:</label>
 							{{form.descripcion}}
 							<span class="help-block with-errors"></span>
 						</div>
-					</div>
-					<br>
-					<div class="row">
-						<div class="col-xs-6">
+						<div class="col-xs-4">
 							<label>Tipo Encuesta:</label>
 							<select id="id_tipo_encuesta" name="tipo_encuesta" class="form-control">
 								{% for tipo_encuesta in tipos_encuesta %}
@@ -34,64 +32,21 @@
 								{% endfor %}
 							</select>
 						</div>
-						<div class="col-xs-6">
-							<label>Tipo respuesta:</label>
-							<select id="id_tipo_respuesta" name="tipo_respuesta" class="form-control">
-								{% for tipo_respuesta in tipos_respuesta %}
-									<option id="{{tipo_respuesta.codigo}}" value="{{tipo_respuesta.id}}">{{tipo_respuesta.descripcion}}</option>
-								{% endfor %}
-							</select>
-						</div>
 					</div>
-					<br><br>
+					<br>
 					<div class="row">
 						<div class="col-xs-6">
-							<div class="row">
-								<div class="col-xs-10">
-									<label>Pregunta:</label>
-									<select data-placeholder="Seleccione una pregunta..." id="id_pregunta" name="pregunta" class="form-control chosen-select">
-										{% for pregunta in preguntas %}
-											<option value="{{pregunta.id}}">{{pregunta.enunciado}}</option>
-										{% endfor %}
-									</select>
-								</div>
-								<div class="col-xs-1" align="right" style="width:20%; margin-left:-4%">
-									<br>
-									<div class="btn-group" role="group">
-										<a id="eliminar_preguntas" class="btn btn-danger" href="#" role="button">
-								  			<i class="fa fa-trash"></i> 
-								  		</a>
-										<a class="btn btn-info" href="#" role="button" data-toggle="modal" title="Crear pregunta" data-target="#modal_pregunta">
-								  			<i class="fa fa-plus"></i> 
-								  		</a>
-									</div>
-								</div>
-							</div>
+							<h4><strong>Contenido:</strong></h4>
 						</div>
-						<div id="id_respuestas_definidas" class="col-xs-6">
-							<div class="row">
-								<div class="col-xs-10">
-									<label>Respuesta:</label>
-									<select multiple data-placeholder="Seleccione la respuesta..." id="id_valor" name="valores_posibles" class="form-control select-mul">
-										{% for valor in valores %}
-											<option value="{{valor.id}}" {% if valor.valor_pregunta in preguntas %} selected {% endif %}>{{valor.valor}}</option>
-										{% endfor %}
-									</select>
-								</div>
-								<div class="col-xs-1" align="right" style="width:20%; margin-left:-4%">
-									<br>
-									<div class="btn-group" role="group">
-										<a id="eliminar_respuestas" class="btn btn-danger" href="#" role="button" title="Eliminar respuesta">
-								  			<i class="fa fa-trash"></i> 
-								  		</a>
-										<a id="crear_respuesta" class="btn btn-info" href="#" role="button" data-toggle="modal" title="Crear respuesta" data-target="#modal_respuesta">
-								  			<i class="fa fa-plus"></i> 
-								  		</a>
-									</div>
-								</div>
-							</div>
+						<div class="col-xs-6">
+							<a href="#" id="crear_section" class="btn btn-primary pull-right" role="button" title="Agregar Pregunta">
+					  			Agregar Pregunta
+					  		</a>
 						</div>
 					</div>
+
+					<div id="contenido"></div>
+
 					<br><br>
 					<div class="row">
 						<div class="col-xs-6">
@@ -228,6 +183,28 @@
 {% block javascripts %}
 	{{ block.super }}
 	<script type="application/javascript">
+		var total_preguntas = 0;
+		
+		var preg_list = [ 
+			{% for pregunta in preguntas %} 
+				{% if not forloop.first %},{% endif %}
+				{ 'id': {{pregunta.id}}, 'enunciado': '{{pregunta.enunciado}}' }
+			{% endfor %}
+		];
+
+		var tip_resp_list = [ 
+			{% for tipo_respuesta in tipos_respuesta %}
+				{% if not forloop.first %},{% endif %}
+				{ 'id': {{tipo_respuesta.id}}, 'codigo': '{{tipo_respuesta.codigo}}', 'descripcion': '{{tipo_respuesta.descripcion}}' }
+			{% endfor %}
+		];
+
+		var val_list = [ 
+			{% for valor in valores %} 
+				{% if not forloop.first %},{% endif %}
+				{ 'id': {{valor.id}}, 'valor': '{{valor.valor}}' }
+			{% endfor %}
+		];
 
 		$(document).ready(function(){
 			//Inicialización de chosen para los selects múltiples
@@ -237,35 +214,31 @@
 
 			$('.chosen-select').chosen();
 
-			if($('#id_tipo_respuesta :selected').attr('id') != 'RESP_DEF')
-				$('#id_respuestas_definidas').hide('fade');
+			$('.tipo_respuesta').each(function(key, value){
+				id_sel = '#' + $(value).attr('id');
+				target_vals = $(value).attr('target');
+				target_vals = target_vals.split(' ');
+				init_tipo_resp_sel(id_sel, '#' +  target_vals[0], '#' + target_vals[1]);
+			});
 
-			$('#id_tipo_respuesta').change(function(){
-				if($('#id_tipo_respuesta :selected').attr('id') != 'RESP_DEF')
-					$('#id_respuestas_definidas').hide('fade');
-				else
-					$('#id_respuestas_definidas').show('fade');
+			var target_pregunta = '';
+			var target_respuesta = '';
 
-				value = $(this).val();
-				if(value.length > 0){
-					// LLamada AJAX para obtener las preguntas
-					$.ajax({
-					    type: 'GET',
-					    url: '/sgt/admin/crear-pregunta/' + value,
-					    dataType: "json",
-					    success: function(data){
-					        console.log(data);
-					        $('#id_pregunta').empty();
-							$.each(data, function(key, value){
-								$('#id_pregunta').append('<option value="'+value.pk+'">'+value.fields.enunciado+'</option>');
-							});
-							$('#id_pregunta').trigger("chosen:updated");
-					    },
-					    error: function(data){
-					    	console.log(data);
-					    }
-				    });
-				}
+			$(document).on("click", ".crear_pregunta, .eliminar_preguntas", function(){
+				target_pregunta = '#' + $(this).attr('target');
+				if($(this).hasClass('eliminar_preguntas'))
+					fill_list_elim('modal_lista_preguntas', target_pregunta, 'preguntas_elim', 'lista_preguntas', 'pregunta_');
+			});
+
+			$(document).on("click", ".crear_respuesta, .eliminar_respuestas", function(){
+				target_respuesta = '#' + $(this).attr('target');
+				if($(this).hasClass('eliminar_respuestas'))
+					fill_list_elim('modal_lista_respuestas' , target_respuesta, 'valores_elim', 'lista_valores', 'valor_');
+			});
+
+			$(document).on("click", ".section_elim", function(){
+				target_section = '#' + $(this).attr('target');
+				$(target_section).remove();
 			});
 
 			$('#pregunta_form').submit(function(event){
@@ -303,17 +276,13 @@
 				        console.log(data);
 				        reset_generic_modal();
 
-				        $('#id_pregunta').append('<option value="'+data.id_pregunta+'">'+data.enunciado+'</option>');
-				        $('#id_pregunta').trigger("chosen:updated");
+				        $('.pregunta_select').append('<option value="'+data.id_pregunta+'">'+data.enunciado+'</option>');
+				        $('.pregunta_select').trigger("chosen:updated");
 				    },
 				    error: function(){
 				    	console.log("Error...");
 				    }
 			    });
-			});
-
-			$('#eliminar_preguntas').on("click", function(){
-				fill_list_elim('modal_lista_preguntas', 'id_pregunta', 'preguntas_elim', 'lista_preguntas', 'pregunta_') 
 			});
 
 			$('#eliminar_pregunta_form').submit(function(event){
@@ -325,7 +294,7 @@
 				
 				preg_elim = $('#preguntas_elim').val().split('|');
 				for(i = 0; i < values.length; i++)
-					generic_modal_content += '<p>&emsp;'+$('#id_pregunta option[value='+preg_elim[i]+']').text()+'</p>';
+					generic_modal_content += '<p>&emsp;'+$(target_pregunta+' option[value='+preg_elim[i]+']').text()+'</p>';
 				
 				generic_modal_content += '<div></div>';
 
@@ -351,9 +320,9 @@
 
 					        preg_elim = value.split('|');
 							for(i = 0; i < preg_elim.length; i++)
-								$('#id_pregunta option[value='+preg_elim[i]+']').remove();
+								$('.pregunta_select option[value='+preg_elim[i]+']').remove();
 
-							$('#id_pregunta').trigger("chosen:updated");
+							$('.pregunta_select').trigger("chosen:updated");
 					    },
 					    error: function(){
 					    	console.log("Error...");
@@ -380,29 +349,26 @@
 			});
 
 			$(document).on("click", "#guardar_nueva_respuesta", function(){
+				pregunta_id = '#' + $(target_respuesta).attr('target');
 				$.ajax({
 				    type: 'POST',
 				    url: '{% url "admin_crear_respuesta" %}',
 				    dataType: "json",
 				    data:{
 				        'valor': $('#nuevo_valor').val(),
-				        'pregunta_id': $('#id_pregunta').val(),
+				        'pregunta_id': $(pregunta_id).val(),
 				        'csrfmiddlewaretoken': '{{ csrf_token }}'
 				    },
 				    success:function(data){
 				        console.log(data);
 				        reset_generic_modal();
-				        $('#id_valor').append('<option value="'+data.id_respuesta+'">'+data.valor+'</option>');
-				        $('#id_valor').trigger("chosen:updated");
+				        $('.respuesta_select').append('<option value="'+data.id_respuesta+'">'+data.valor+'</option>');
+				        $('.respuesta_select').trigger("chosen:updated");
 				    },
 				    error: function(){
 				    	console.log("Error...");
 				    }
 			    });
-			});
-			
-			$('#eliminar_respuestas').on("click", function(){
-				fill_list_elim('modal_lista_respuestas' ,'id_valor', 'valores_elim', 'lista_valores', 'valor_')
 			});
 
 			$('#eliminar_respuesta_form').submit(function(event){
@@ -413,7 +379,7 @@
 				generic_modal_content = '<div class="row"><div class="col-xs-6">';
 				val_elim = $('#valores_elim').val().split('|');
 				for(i = 0; i < values.length; i++)
-					generic_modal_content += '<p>&emsp;'+$('#id_valor option[value='+val_elim[i]+']').text()+'</p>';
+					generic_modal_content += '<p>&emsp;'+$(target_respuesta+' option[value='+val_elim[i]+']').text()+'</p>';
 
 				generic_modal_content += '<div></div>';
 
@@ -439,9 +405,9 @@
 
 					        val_elim = value.split('|');
 							for(i = 0; i < val_elim.length; i++)
-								$('#id_valor option[value='+val_elim[i]+']').remove();
+								$('.respuesta_select option[value='+val_elim[i]+']').remove();
 
-							$('#id_valor').trigger("chosen:updated");
+							$('.respuesta_select').trigger("chosen:updated");
 					    },
 					    error: function(){
 					    	console.log("Error...");
@@ -463,6 +429,83 @@
 				$('#' + id_targets[1]).val(new_val_elim);
 				$('#' + id_targets[0]).remove();
 			});
+
+			$(document).on("click", "#crear_section", function(){
+				total_preguntas++;
+				$("[name=extra_field_count]").val(total_preguntas);
+
+				$('#contenido').append('<div id="section_'+total_preguntas+'">\
+											<hr>\
+											<div class="row">\
+												<div class="col-xs-8">\
+													<h4><strong>Pregunta '+total_preguntas+'</strong></h4>\
+												</div>\
+												<div class="col-xs-4">\
+													<a class="btn btn-danger pull-right section_elim" target="section_'+total_preguntas+'" role="button" title="Borrar Pregunta">Borrar Pregunta</a>\
+												</div>\
+											</div>\
+											<br>\
+											<div class="row">\
+												<div class="col-xs-4">\
+													<label>Tipo respuesta:</label>\
+													<select id="id_tipo_respuesta_'+total_preguntas+'" target="id_pregunta_'+total_preguntas+' id_respuestas_definidas_'+total_preguntas+'" name="tipo_respuesta_'+total_preguntas+'" class="form-control tipo_respuesta">\
+													</select>\
+												</div>\
+											</div>\
+											<br>\
+											<div class="row">\
+												<div class="col-xs-6">\
+													<div class="row">\
+														<div class="col-xs-10">\
+															<label>Pregunta:</label>\
+															<select data-placeholder="Seleccione una pregunta..." id="id_pregunta_'+total_preguntas+'" name="pregunta_'+total_preguntas+'" class="form-control chosen-select pregunta_select">\
+															</select>\
+														</div>\
+														<div class="col-xs-1" align="right" style="width:20%; margin-left:-4%">\
+															<br>\
+															<div class="btn-group" role="group">\
+																<a class="btn btn-danger eliminar_preguntas" target="id_pregunta_'+total_preguntas+'" title="Eliminar Preguntas" role="button"><i class="fa fa-trash"></i></a>\
+																<a class="btn btn-info crear_pregunta" target="id_pregunta_'+total_preguntas+'" role="button" data-toggle="modal" title="Crear Pregunta" data-target="#modal_pregunta"><i class="fa fa-plus"></i></a>\
+															</div>\
+														</div>\
+													</div>\
+												</div>\
+												<div id="id_respuestas_definidas_'+total_preguntas+'" class="col-xs-6">\
+													<div class="row">\
+														<div class="col-xs-10">\
+															<label>Respuesta:</label>\
+															<select multiple data-placeholder="Seleccione la respuesta..." id="id_valor_'+total_preguntas+'" target="id_pregunta_'+total_preguntas+'" name="valores_posibles_'+total_preguntas+'" class="form-control select-mul respuesta_select">\
+															</select>\
+														</div>\
+														<div class="col-xs-1" align="right" style="width:20%; margin-left:-4%">\
+															<br>\
+															<div class="btn-group" role="group">\
+																<a class="btn btn-danger eliminar_respuestas" target="id_valor_'+total_preguntas+'" role="button" title="Eliminar respuestas"><i class="fa fa-trash"></i></a>\
+																<a class="btn btn-info crear_respuesta" target="id_valor_'+total_preguntas+'" role="button" data-toggle="modal" title="Crear Respuesta" data-target="#modal_respuesta"><i class="fa fa-plus"></i></a>\
+															</div>\
+														</div>\
+													</div>\
+												</div>\
+											</div>\
+											<br>\
+										</div>');
+
+				for(i = 0; i < tip_resp_list.length; i++)
+					$('#id_tipo_respuesta_'+total_preguntas).append('<option id="'+tip_resp_list[i].codigo+'" value="'+tip_resp_list[i].id+'">'+tip_resp_list[i].descripcion+'</option>');
+
+				for(i = 0; i < preg_list.length; i++)
+					$('#id_pregunta_'+total_preguntas).append('<option value="'+preg_list[i].id+'">'+preg_list[i].enunciado+'</option>');
+
+				$('#id_pregunta_'+total_preguntas).chosen();
+
+				for(i = 0; i < val_list.length; i++)
+					$('#id_valor_'+total_preguntas).append('<option value="'+val_list[i].id+'">'+val_list[i].valor+'</option>');
+
+				$('#id_valor_'+total_preguntas).chosen({
+		  			no_results_text: 'No se encontraron resultados para'
+				});
+			});
+
 		});
 
 		function fill_generic_modal(title, content, ref_next_modal){
@@ -492,7 +535,9 @@
 			values = [];
 			$('#' + id_input).val('');
 
-			$('#' + id_select).children().each(function(i, option){
+			console.log(modal_list +','+ id_select +','+ id_input +','+ id_list +','+ str_token);
+
+			$(id_select).children().each(function(i, option){
 				texts.push($(option).text()); 
 				values.push($(option).attr('value')); 
 			});
@@ -510,6 +555,39 @@
 			}
 
 			$('#' + modal_list).modal('show');
+		}
+
+		function init_tipo_resp_sel(id_sel, target_preg_sel, target_resp_content){
+			if($(id_sel+' :selected').attr('id') != 'RESP_DEF')
+				$(target_resp_content).hide('fade');
+
+			$(id_sel).change(function(){
+				if($(id_sel+' :selected').attr('id') != 'RESP_DEF')
+					$(target_resp_content).hide('fade');
+				else
+					$(target_resp_content).show('fade');
+
+				value = $(this).val();
+				if(value.length > 0){
+					// LLamada AJAX para obtener las preguntas
+					$.ajax({
+					    type: 'GET',
+					    url: '/sgt/admin/crear-pregunta/' + value,
+					    dataType: "json",
+					    success: function(data){
+					        console.log(data);
+					        $(target_preg_sel).empty();
+							$.each(data, function(key, value){
+								$(target_preg_sel).append('<option value="'+value.pk+'">'+value.fields.enunciado+'</option>');
+							});
+							$(target_preg_sel).trigger("chosen:updated");
+					    },
+					    error: function(data){
+					    	console.log(data);
+					    }
+				    });
+				}
+			});
 		}
 
 	</script>
