@@ -207,20 +207,6 @@
 		];
 
 		$(document).ready(function(){
-			//Inicialización de chosen para los selects múltiples
-			$('.select-mul').chosen({
-	  			no_results_text: 'No se encontraron resultados para'
-			});
-
-			$('.chosen-select').chosen();
-
-			$('.tipo_respuesta').each(function(key, value){
-				id_sel = '#' + $(value).attr('id');
-				target_vals = $(value).attr('target');
-				target_vals = target_vals.split(' ');
-				init_tipo_resp_sel(id_sel, '#' +  target_vals[0], '#' + target_vals[1]);
-			});
-
 			var target_pregunta = '';
 			var target_respuesta = '';
 
@@ -234,11 +220,6 @@
 				target_respuesta = '#' + $(this).attr('target');
 				if($(this).hasClass('eliminar_respuestas'))
 					fill_list_elim('modal_lista_respuestas' , target_respuesta, 'valores_elim', 'lista_valores', 'valor_');
-			});
-
-			$(document).on("click", ".section_elim", function(){
-				target_section = '#' + $(this).attr('target');
-				$(target_section).remove();
 			});
 
 			$('#pregunta_form').submit(function(event){
@@ -275,7 +256,8 @@
 				    success:function(data){
 				        console.log(data);
 				        reset_generic_modal();
-
+				        $('#nueva_pregunta').val('');
+				        preg_list.push({'id': data.id_pregunta, 'enunciado': data.enunciado});
 				        $('.pregunta_select').append('<option value="'+data.id_pregunta+'">'+data.enunciado+'</option>');
 				        $('.pregunta_select').trigger("chosen:updated");
 				    },
@@ -317,11 +299,14 @@
 					    success:function(data){
 					        console.log(data);
 					        reset_generic_modal();
-
 					        preg_elim = value.split('|');
-							for(i = 0; i < preg_elim.length; i++)
+							for(i = 0; i < preg_elim.length; i++){
 								$('.pregunta_select option[value='+preg_elim[i]+']').remove();
-
+								for(j = 0; j < preg_list.length; j++){
+									if(preg_list[j].id == preg_elim[i])
+										preg_list.splice(j, 1);
+								}
+							}
 							$('.pregunta_select').trigger("chosen:updated");
 					    },
 					    error: function(){
@@ -349,19 +334,19 @@
 			});
 
 			$(document).on("click", "#guardar_nueva_respuesta", function(){
-				pregunta_id = '#' + $(target_respuesta).attr('target');
 				$.ajax({
 				    type: 'POST',
 				    url: '{% url "admin_crear_respuesta" %}',
 				    dataType: "json",
 				    data:{
 				        'valor': $('#nuevo_valor').val(),
-				        'pregunta_id': $(pregunta_id).val(),
 				        'csrfmiddlewaretoken': '{{ csrf_token }}'
 				    },
 				    success:function(data){
 				        console.log(data);
 				        reset_generic_modal();
+				        $('#nuevo_valor').val('');
+				        val_list.push({'id': data.id_respuesta, 'valor': data.valor});
 				        $('.respuesta_select').append('<option value="'+data.id_respuesta+'">'+data.valor+'</option>');
 				        $('.respuesta_select').trigger("chosen:updated");
 				    },
@@ -402,11 +387,14 @@
 					    success:function(data){
 					        console.log(data);
 					        reset_generic_modal();
-
 					        val_elim = value.split('|');
-							for(i = 0; i < val_elim.length; i++)
+							for(i = 0; i < val_elim.length; i++){
 								$('.respuesta_select option[value='+val_elim[i]+']').remove();
-
+								for(j = 0; j < val_list.length; j++){
+									if(val_list[j].id == val_elim[i])
+										val_list.splice(j, 1);
+								}
+							}
 							$('.respuesta_select').trigger("chosen:updated");
 					    },
 					    error: function(){
@@ -438,7 +426,7 @@
 											<hr>\
 											<div class="row">\
 												<div class="col-xs-8">\
-													<h4><strong>Pregunta '+total_preguntas+'</strong></h4>\
+													<h4 id="title_preg_'+total_preguntas+'"><strong>Pregunta '+total_preguntas+'</strong></h4>\
 												</div>\
 												<div class="col-xs-4">\
 													<a class="btn btn-danger pull-right section_elim" target="section_'+total_preguntas+'" role="button" title="Borrar Pregunta">Borrar Pregunta</a>\
@@ -448,7 +436,7 @@
 											<div class="row">\
 												<div class="col-xs-4">\
 													<label>Tipo respuesta:</label>\
-													<select id="id_tipo_respuesta_'+total_preguntas+'" target="id_pregunta_'+total_preguntas+' id_respuestas_definidas_'+total_preguntas+'" name="tipo_respuesta_'+total_preguntas+'" class="form-control tipo_respuesta">\
+													<select id="id_tipo_respuesta_'+total_preguntas+'" target="id_pregunta_'+total_preguntas+' id_respuestas_definidas_'+total_preguntas+'" name="tipo_respuesta_'+total_preguntas+'" class="form-control">\
 													</select>\
 												</div>\
 											</div>\
@@ -474,7 +462,7 @@
 													<div class="row">\
 														<div class="col-xs-10">\
 															<label>Respuesta:</label>\
-															<select multiple data-placeholder="Seleccione la respuesta..." id="id_valor_'+total_preguntas+'" target="id_pregunta_'+total_preguntas+'" name="valores_posibles_'+total_preguntas+'" class="form-control select-mul respuesta_select">\
+															<select multiple data-placeholder="Seleccione la respuesta..." id="id_valor_'+total_preguntas+'" name="valores_posibles_'+total_preguntas+'" class="form-control select-mul respuesta_select">\
 															</select>\
 														</div>\
 														<div class="col-xs-1" align="right" style="width:20%; margin-left:-4%">\
@@ -493,10 +481,14 @@
 				for(i = 0; i < tip_resp_list.length; i++)
 					$('#id_tipo_respuesta_'+total_preguntas).append('<option id="'+tip_resp_list[i].codigo+'" value="'+tip_resp_list[i].id+'">'+tip_resp_list[i].descripcion+'</option>');
 
+				init_tipo_resp_sel($('#id_tipo_respuesta_'+total_preguntas));
+
 				for(i = 0; i < preg_list.length; i++)
 					$('#id_pregunta_'+total_preguntas).append('<option value="'+preg_list[i].id+'">'+preg_list[i].enunciado+'</option>');
 
-				$('#id_pregunta_'+total_preguntas).chosen();
+				$('#id_pregunta_'+total_preguntas).chosen({
+					no_results_text: 'No se encontraron resultados para'
+				});
 
 				for(i = 0; i < val_list.length; i++)
 					$('#id_valor_'+total_preguntas).append('<option value="'+val_list[i].id+'">'+val_list[i].valor+'</option>');
@@ -506,6 +498,39 @@
 				});
 			});
 
+			$(document).on("click", ".section_elim", function(){
+				del_section = '#' + $(this).attr('target');
+				index = parseInt(del_section[del_section.length - 1]) + 1;
+				console.log(index);
+				for(i = index; i <= total_preguntas; i++){
+					j = i - 1;
+					console.log(i + ',' + j);
+					$('#title_preg_' + i).html('<strong>Pregunta '+j+'</strong>');
+					$('#title_preg_' + i).attr('id', '#title_preg_' + j);
+					
+					$('#section_' + i).attr('id', 'section_' + j);
+					$('.section_elim a[target="section_' + i+'"]').attr('target', 'section_' + j);
+
+					$('#id_tipo_respuesta_' + i).attr('name', 'tipo_respuesta_' + j);
+					$('#id_tipo_respuesta_' + i).attr('target', 'id_pregunta_' + j + ' ' + 'id_respuestas_definidas_' + j);
+					$('#id_tipo_respuesta_' + i).attr('id', 'id_tipo_respuesta_' + j);
+					init_tipo_resp_sel($('#id_tipo_respuesta_' + j));
+					
+					$('.crear_pregunta a[target="id_pregunta_' + i+'"]').attr('target', 'id_pregunta_' + j);
+					$('.eliminar_preguntas a[target="id_pregunta_' + i+'"]').attr('target', 'id_pregunta_' + j);
+					$('#id_pregunta_' + i).attr('name', 'pregunta_' + j);
+					$('#id_pregunta_' + i).attr('id', 'id_pregunta_' + j);
+
+					$('#id_respuestas_definidas_' + i).attr('id', 'id_respuestas_definidas_' + j);
+					$('.crear_respuesta a[target="id_valor_' + i+'"]').attr('target', 'id_valor_' + j);
+					$('.eliminar_respuestas a[target="id_valor_' + i+'"]').attr('target', 'id_valor_' + j);
+					$('#id_valor_' + i).attr('name', 'valores_posibles_' + j);
+					$('#id_valor_' + i).attr('id', 'id_valor_' + j);
+				}
+
+				total_preguntas--;
+				$(del_section).remove();
+			});
 		});
 
 		function fill_generic_modal(title, content, ref_next_modal){
@@ -557,11 +582,19 @@
 			$('#' + modal_list).modal('show');
 		}
 
-		function init_tipo_resp_sel(id_sel, target_preg_sel, target_resp_content){
-			if($(id_sel+' :selected').attr('id') != 'RESP_DEF')
-				$(target_resp_content).hide('fade');
+		function init_tipo_resp_sel(sel_select){
+			target_vals = sel_select.attr('target').split(' ');
+			id_sel = '#' + sel_select.attr('id');
 
-			$(id_sel).change(function(){
+			if($(id_sel+' :selected').attr('id') != 'RESP_DEF')
+				$('#' + target_vals[1]).hide('fade');
+
+			sel_select.bind('change', function(){
+				id_sel = '#' + $(this).attr('id');
+				target_vals = $(id_sel).attr('target').split(' ');
+				target_preg_sel = '#' + target_vals[0];
+				target_resp_content = '#' + target_vals[1];
+
 				if($(id_sel+' :selected').attr('id') != 'RESP_DEF')
 					$(target_resp_content).hide('fade');
 				else

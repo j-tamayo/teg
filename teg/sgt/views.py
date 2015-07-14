@@ -1052,15 +1052,14 @@ class AdminAgregarRespuesta(View):
 
 		respuesta = {}
 		if form.is_valid():
-			pregunta = Pregunta.objects.get(id=data['pregunta_id'])
 			valor_posible = ValorPosible(valor=data['valor'])
 			valor_posible.save();
-			valor_posible.valor_pregunta.add(pregunta)
+			# pregunta = Pregunta.objects.get(id=data['pregunta_id'])
+			# valor_posible.valor_pregunta.add(pregunta)
 			
 			respuesta = {
 				'id_respuesta': valor_posible.id, 
-				'valor': valor_posible.valor,
-				'pregunta': data['pregunta_id']
+				'valor': valor_posible.valor
 			}
 			
 		else:
