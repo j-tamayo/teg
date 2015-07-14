@@ -45,7 +45,6 @@ class Perito(models.Model):
 	fecha_ingreso = models.DateField()
 	nombres = models.CharField(max_length=200)
 	sexo = models.IntegerField()
-	tiempo_empresa = models.IntegerField()
 	activo = models.BooleanField(default=True)
 
 	def __unicode__(self):

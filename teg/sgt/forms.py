@@ -79,16 +79,26 @@ class CentroInspeccionForm(forms.ModelForm):
 
 	def save(self):
 		instance = forms.ModelForm.save(self)
-		print "HEYY",instance.municipio
-		peritos = self.cleaned_data.get('peritos', None)
-		for perito in peritos:
+		peritos = self.cleaned_data.get('peritos', [])
+		peritos_viejos = instance.peritos.all()
+		peritos_to_del = set(peritos_viejos).difference(set(peritos))
+		peritos_to_add = set(peritos).difference(set(peritos_viejos))
+		#Eliminamos los peritos removidos en el formulario
+		for p in peritos_to_del:
+			# print "perito elim",p.pk,p
+			instance.peritos.remove(p)
+
+		# print peritos
+		#Agregamos los peritos nuevos
+		for perito in peritos_to_add:
 			instance.peritos.add(perito)
+			# print perito.pk,perito.nombres
 
 	def clean_hora_apertura_manana(self):
 		field = self.cleaned_data.get('hora_apertura_manana', None)
 		if field:
 			print field
-			field = datetime.strptime(field,'%I:%M %p').time()
+			field = datetime.strptime(field,'%H:%M').time()
 
 			return field
 
@@ -96,7 +106,7 @@ class CentroInspeccionForm(forms.ModelForm):
 		field = self.cleaned_data.get('hora_cierre_manana', None)
 		if field:
 			print field
-			field = datetime.strptime(field,'%I:%M %p').time()
+			field = datetime.strptime(field,'%H:%M').time()
 
 			return field
 
@@ -104,7 +114,7 @@ class CentroInspeccionForm(forms.ModelForm):
 		field = self.cleaned_data.get('hora_apertura_tarde', None)
 		if field:
 			print field
-			field = datetime.strptime(field,'%I:%M %p').time()
+			field = datetime.strptime(field,'%H:%M').time()
 
 			return field
 
@@ -112,17 +122,22 @@ class CentroInspeccionForm(forms.ModelForm):
 		field = self.cleaned_data.get('hora_cierre_tarde', None)
 		if field:
 			print field
-			field = datetime.strptime(field,'%I:%M %p').time()
+			field = datetime.strptime(field,'%H:%M').time()
 
 			return field
 
 
 class PeritoForm(forms.ModelForm):
-	fecha_ingreso = forms.CharField(widget=forms.TextInput(attrs={'class':'col-xs-11','readonly':True}))
+	fecha_ingreso = forms.DateField(
+		widget=forms.DateInput(
+			format = '%d/%m/%Y',
+			attrs={'class':'col-xs-11','readonly':True}
+		)
+	)
 
 	class Meta:
 		model = Perito
-		fields = ['nombres','apellidos','cedula','fecha_ingreso','sexo','tiempo_empresa']
+		fields = ['nombres','apellidos','cedula','fecha_ingreso','sexo']
 		widgets = {
 			'nombres':forms.TextInput(
 				attrs = {'class':'form-control'}
@@ -132,18 +147,15 @@ class PeritoForm(forms.ModelForm):
 			),
 			'cedula':forms.TextInput(
 				attrs = {'class':'form-control'}
-			),
-			'tiempo_empresa':forms.TextInput(
-				attrs = {'class':'form-control'}
 			)
 		}
 
-	def clean_fecha_ingreso(self):
-		field = self.cleaned_data.get('fecha_ingreso', None)
-		if field:
-			field = datetime.strptime(field, '%d/%m/%Y').date()
+	# def clean_fecha_ingreso(self):
+	# 	field = self.cleaned_data.get('fecha_ingreso', None)
+	# 	if field:
+	# 		field = datetime.strptime(field, '%d/%m/%Y').date()
 
-			return field
+	# 		return field
 
 
 class CrearEncuestaForm(forms.Form):

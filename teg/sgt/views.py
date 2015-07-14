@@ -297,7 +297,7 @@ class AdminBandejaCentros(View):
 		usuario = request.user
 		print "ARGS", args
 		print "KWARGS", kwargs
-		centros = CentroInspeccion.objects.all()
+		centros = CentroInspeccion.objects.all().order_by('-id')
 
 		# Provide Paginator with the request object for complete querystring generation
 		paginator = Paginator(centros, 10, request=request)
@@ -716,7 +716,7 @@ class AdminBandejaPeritos(View):
 		""" Vista que lista los Peritos """
 		usuario = request.user
 
-		peritos = Perito.objects.all()
+		peritos = Perito.objects.all().order_by('-id')
 
 		paginator = Paginator(peritos, 10, request=request)
 		try:
@@ -783,6 +783,75 @@ class AdminAgregarPerito(View):
 class AdminEditarPerito(View):
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEditarPerito, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Vista que despliega el formulario para editar un perito"""
+		usuario = request.user
+
+		perito = Perito.objects.filter(id=kwargs['perito_id']).first()
+
+		if perito:
+			form = PeritoForm(instance = perito)
+
+			context = {
+				'admin': True,
+				'perito_id': kwargs['perito_id'],
+				'editar': True,
+				'form': form,
+				'seccion_peritos': True,
+				'usuario': usuario,
+			}
+
+			return render(request, 'admin/crear_perito.html', context)
+
+		else:
+			return redirect(reverse('admin_peritos'))
+
+	def post(self, request, *args, **kwargs):
+		"""Edita el centro de inspección"""
+		usuario = request.user
+
+		perito = Perito.objects.filter(id=kwargs['perito_id']).first()
+		form = PeritoForm(request.POST, instance = perito)
+
+		if form.is_valid():
+			form.save()
+			return redirect(reverse('admin_peritos'))
+
+		else:
+			print "MALLLL", form.errors
+			context = {
+				'admin': True,
+				'form': form,
+				'perito_id': kwargs['perito_id'],
+				'editar': True,
+				'seccion_peritos': True,
+				'usuario': usuario,
+			}
+
+			return render(request, 'admin/crear_centro.html', context)
+
+
+class AdminDeshabilitarPerito(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminDeshabilitarPerito, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Vista que deshabilita los Peritos"""
+		page = request.POST.get('page', None)
+		perito_id = request.POST.get('perito_id', None)
+		perito = Perito.objects.filter(id=perito_id).first()
+		redirect_url = reverse('admin_peritos')
+		if perito:
+			perito.activo = not perito.activo
+			perito.save()
+			if int(page) > 1:
+				extra_params = '?page=%s' % page
+				redirect_url = '%s%s' % (redirect_url, extra_params)
+
+			return redirect(redirect_url)
+		else:
+			return redirect(redirect_url)
 
 
 class AdminBandejaEncuestas(View):
@@ -1033,3 +1102,12 @@ class AdminEliminarRespuesta(View):
 		    json.dumps(respuesta),
 		    content_type="application/json"
 		)
+
+
+class AdminReportes(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminReportes, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Vista que muestra el reporte de las solicitudes"""
+		

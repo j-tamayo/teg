@@ -25,7 +25,7 @@ def generar_horarios(centro, fecha_asistencia):
 		proxima_hora = (datetime_aux + datetime.timedelta(minutes = centro.tiempo_atencion)).time()
 		bloque = Bloque(contador_horas, proxima_hora)
 		cantidad_citas = NumeroOrden.objects.filter(hora_atencion = contador_horas, fecha_atencion = fecha_asistencia).count()
-		bloque.capacidad = centro.peritos.all().count() - cantidad_citas
+		bloque.capacidad = centro.peritos.filter(activo=True).count() - cantidad_citas
 		lista_bloques.append(bloque)
 		contador_horas = proxima_hora
 
@@ -35,7 +35,7 @@ def generar_horarios(centro, fecha_asistencia):
 		proxima_hora = (datetime_aux + datetime.timedelta(minutes = centro.tiempo_atencion)).time()
 		bloque = Bloque(contador_horas, proxima_hora)
 		cantidad_citas = NumeroOrden.objects.filter(hora_atencion = contador_horas, fecha_atencion = fecha_asistencia).count()
-		bloque.capacidad = centro.peritos.all().count() - cantidad_citas
+		bloque.capacidad = centro.peritos.filter(activo=True).count() - cantidad_citas
 		lista_bloques.append(bloque)
 		contador_horas = proxima_hora
 

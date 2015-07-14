@@ -103,7 +103,7 @@
 				<br>
 				<div class="row">
 					<div class="col-xs-6">
-						<a href="#" class="btn btn-danger col-xs-12">Volver</a>
+						<a href="{% url 'admin_centros' %}" class="btn btn-danger col-xs-12">Volver</a>
 					</div>
 					<div class="col-xs-6">
 						<input type="submit" class="btn btn-primary col-xs-12" value="Guardar">
@@ -121,7 +121,8 @@
 	$(function(){
 		//Inicialización del timepicker
 		$('.timepicker').timepicker({
-			minuteStep: 10
+			minuteStep: 10,
+			showMeridian:false,
 		});
 		//INcialización de chosen para los selects múltiples
 		$('.select-mul').chosen({

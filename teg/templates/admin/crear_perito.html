@@ -19,12 +19,12 @@
 					<div class="col-xs-6">
 						<label >Nombres</label>
 						{{form.nombres}}
-						<span class="help-block with-errors">{{form.nombres.errors}}</span>
+						<span class="text-danger">{{form.nombres.errors.as_text}}</span>
 					</div>
 					<div class="col-xs-6">
 						<label >Apellidos</label>
 						{{form.apellidos}}
-						<span class="help-block with-errors">{{form.apellidos.errors}}</span>
+						<span class="text-danger">{{form.apellidos.errors.as_text}}</span>
 					</div>
 				</div>
 				<br>
@@ -32,17 +32,17 @@
 					<div class="col-xs-6">
 						<label>C&eacute;dula</label>
 						{{form.cedula}}
-						<span class="help-block with-errors">{{form.cedula.errors}}</span>
+						<span class="text-danger">{{form.cedula.errors.as_text}}</span>
 					</div>
 					<div class="col-xs-6">
 						<label>Sexo</label><br>
 						<label for="id_sexo_0" class="radio-inline">
-							<input {%ifequal form.sexo.value 0%}checked{%endifequal%} type="radio" id="id_sexo_0" name="sexo" value="0" data-error="Este campo es obligatorio" required=""> Masculino
+							<input {%if form.sexo.value == 0 or form.sexo.value == "0" %}checked{%endif%} type="radio" id="id_sexo_0" name="sexo" value="0" data-error="Este campo es obligatorio" required=""> Masculino
 						</label>
 						<label for="id_sexo_1" class="radio-inline">
-							<input {%ifequal form.sexo.value 1%}checked{%endifequal%} type="radio" id="id_sexo_1" name="sexo" value="1" data-error="Este campo es obligatorio"> Femenino
-						</label>
-						<span class="help-block with-errors">{{form.sexo.errors}}</span>
+							<input {%if form.sexo.value == 1 or form.sexo.value == "1"%}checked{%endif%} type="radio" id="id_sexo_1" name="sexo" value="1" data-error="Este campo es obligatorio"> Femenino
+						</label><br>
+						<span class="text-danger">{{form.sexo.errors.as_text}}</span>
 					</div>
 				</div>	
 				<br>
@@ -53,12 +53,9 @@
 							{{form.fecha_ingreso}}
 							<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
 						</div>
-						<span class="help-block with-errors">{{form.fecha_ingreso.errors}}</span>
+						<span class="text-danger">{{form.fecha_ingreso.errors.as_text}}</span>
 					</div>
 					<div class="col-xs-6">
-						<label>Tiempo en la empresa</label>
-						{{form.tiempo_empresa}}
-						<span class="help-block with-errors">{{form.tiempo_empresa.errors}}</span>
 					</div>
 				</div>
 				<br>

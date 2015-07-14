@@ -98,8 +98,14 @@ urlpatterns = \
 
         url(
             r'^admin/editar-perito/(?P<perito_id>\d+)$',
-            views.AdminBandejaPeritos.as_view(),
+            views.AdminEditarPerito.as_view(),
             name='admin_editar_perito'
+        ),
+
+        url(
+            r'^admin/deshabilitar-perito$',
+            views.AdminDeshabilitarPerito.as_view(),
+            name='admin_deshabilitar_perito'
         ),
 
         url(
