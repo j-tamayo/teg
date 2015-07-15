@@ -183,12 +183,15 @@
 {% block javascripts %}
 	{{ block.super }}
 	<script type="application/javascript">
+
 		var total_preguntas = 0;
+		$("[name=extra_field_count]").val(total_preguntas);
+		var prev_preg_list = [];
 		
 		var preg_list = [ 
 			{% for pregunta in preguntas %} 
 				{% if not forloop.first %},{% endif %}
-				{ 'id': {{pregunta.id}}, 'enunciado': '{{pregunta.enunciado}}' }
+				{ 'id': {{pregunta.id}}, 'enunciado': '{{pregunta.enunciado}}', 'tipo_respuesta': '{{pregunta.tipo_respuesta.codigo}}', 'disabled': '' }
 			{% endfor %}
 		];
 
@@ -220,6 +223,12 @@
 				target_respuesta = '#' + $(this).attr('target');
 				if($(this).hasClass('eliminar_respuestas'))
 					fill_list_elim('modal_lista_respuestas' , target_respuesta, 'valores_elim', 'lista_valores', 'valor_');
+			});
+			
+			$(document).on("change", ".pregunta_select", function(){
+				id_select = $(this).attr('id');
+				index = parseInt(id_select[id_select.length - 1]);
+				update_select_preguntas(index, $(this).val());		
 			});
 
 			$('#pregunta_form').submit(function(event){
@@ -257,9 +266,14 @@
 				        console.log(data);
 				        reset_generic_modal();
 				        $('#nueva_pregunta').val('');
-				        preg_list.push({'id': data.id_pregunta, 'enunciado': data.enunciado});
-				        $('.pregunta_select').append('<option value="'+data.id_pregunta+'">'+data.enunciado+'</option>');
-				        $('.pregunta_select').trigger("chosen:updated");
+				        preg_list.push({'id': data.id_pregunta, 'enunciado': data.enunciado, 'tipo_respuesta': data.tipo_respuesta, 'disabled': ''});
+				        index = parseInt(target_pregunta[target_pregunta.length - 1]);
+				        if(data.tipo_respuesta == $('#id_tipo_respuesta_'+index+' option[value='+value+']').attr('id')){
+					        $('.pregunta_select').append('<option value="'+data.id_pregunta+'">'+data.enunciado+'</option>');
+					        $(target_pregunta).find('option:selected').removeAttr('selected');
+					        $(target_pregunta + ' option[value='+data.id_pregunta+']').attr('selected', '');
+							update_select_preguntas(index, data.id_pregunta);
+						}
 				    },
 				    error: function(){
 				    	console.log("Error...");
@@ -273,9 +287,9 @@
 				generic_modal_title = '&iquest;Est&aacute; seguro que desea eliminar estas preguntas?';
 
 				generic_modal_content = '<div class="row"><div class="col-xs-6">';
-				
+
 				preg_elim = $('#preguntas_elim').val().split('|');
-				for(i = 0; i < values.length; i++)
+				for(i = 0; i < preg_elim.length; i++)
 					generic_modal_content += '<p>&emsp;'+$(target_pregunta+' option[value='+preg_elim[i]+']').text()+'</p>';
 				
 				generic_modal_content += '<div></div>';
@@ -347,7 +361,8 @@
 				        reset_generic_modal();
 				        $('#nuevo_valor').val('');
 				        val_list.push({'id': data.id_respuesta, 'valor': data.valor});
-				        $('.respuesta_select').append('<option value="'+data.id_respuesta+'">'+data.valor+'</option>');
+				        $('.respuesta_select').append('<option value="'+data.id_respuesta+'" selected>'+data.valor+'</option>');
+				        $(target_respuesta + ' option[value='+data.id_respuesta+']').attr('selected', '');
 				        $('.respuesta_select').trigger("chosen:updated");
 				    },
 				    error: function(){
@@ -362,8 +377,9 @@
 				generic_modal_title = '&iquest;Est&aacute; seguro que desea eliminar estas respuestas?';
 
 				generic_modal_content = '<div class="row"><div class="col-xs-6">';
+				
 				val_elim = $('#valores_elim').val().split('|');
-				for(i = 0; i < values.length; i++)
+				for(i = 0; i < val_elim.length; i++)
 					generic_modal_content += '<p>&emsp;'+$(target_respuesta+' option[value='+val_elim[i]+']').text()+'</p>';
 
 				generic_modal_content += '<div></div>';
@@ -447,6 +463,7 @@
 														<div class="col-xs-10">\
 															<label>Pregunta:</label>\
 															<select data-placeholder="Seleccione una pregunta..." id="id_pregunta_'+total_preguntas+'" name="pregunta_'+total_preguntas+'" class="form-control chosen-select pregunta_select">\
+																<option value="-1" selected></option>\
 															</select>\
 														</div>\
 														<div class="col-xs-1" align="right" style="width:20%; margin-left:-4%">\
@@ -483,12 +500,17 @@
 
 				init_tipo_resp_sel($('#id_tipo_respuesta_'+total_preguntas));
 
-				for(i = 0; i < preg_list.length; i++)
-					$('#id_pregunta_'+total_preguntas).append('<option value="'+preg_list[i].id+'">'+preg_list[i].enunciado+'</option>');
+				for(i = 0; i < preg_list.length; i++){
+					if(preg_list[i].tipo_respuesta == $('#id_tipo_respuesta_'+total_preguntas+' option[value='+$('#id_tipo_respuesta_'+total_preguntas).val()+']').attr('id')){
+						$('#id_pregunta_'+total_preguntas).append('<option value="'+preg_list[i].id+'" '+preg_list[i].disabled+'>'+preg_list[i].enunciado+'</option>');
+					}
+				}
 
 				$('#id_pregunta_'+total_preguntas).chosen({
 					no_results_text: 'No se encontraron resultados para'
 				});
+
+				prev_preg_list.push(-1);
 
 				for(i = 0; i < val_list.length; i++)
 					$('#id_valor_'+total_preguntas).append('<option value="'+val_list[i].id+'">'+val_list[i].valor+'</option>');
@@ -500,36 +522,48 @@
 
 			$(document).on("click", ".section_elim", function(){
 				del_section = '#' + $(this).attr('target');
-				index = parseInt(del_section[del_section.length - 1]) + 1;
-				console.log(index);
+				index = parseInt(del_section[del_section.length - 1]);
+				update_select_preguntas(index, -1);
+				prev_preg_list.splice(index, 1);
+				index++;
+				$(del_section).remove();
+
 				for(i = index; i <= total_preguntas; i++){
 					j = i - 1;
-					console.log(i + ',' + j);
+
 					$('#title_preg_' + i).html('<strong>Pregunta '+j+'</strong>');
-					$('#title_preg_' + i).attr('id', '#title_preg_' + j);
+					$('#title_preg_' + i).attr('id', 'title_preg_' + j);
 					
+					$('.section_elim[target="section_' + i+'"]').attr('target', 'section_' + j);
 					$('#section_' + i).attr('id', 'section_' + j);
-					$('.section_elim a[target="section_' + i+'"]').attr('target', 'section_' + j);
 
 					$('#id_tipo_respuesta_' + i).attr('name', 'tipo_respuesta_' + j);
 					$('#id_tipo_respuesta_' + i).attr('target', 'id_pregunta_' + j + ' ' + 'id_respuestas_definidas_' + j);
 					$('#id_tipo_respuesta_' + i).attr('id', 'id_tipo_respuesta_' + j);
+					$('#id_respuestas_definidas_' + i).attr('id', 'id_respuestas_definidas_' + j);
 					init_tipo_resp_sel($('#id_tipo_respuesta_' + j));
 					
-					$('.crear_pregunta a[target="id_pregunta_' + i+'"]').attr('target', 'id_pregunta_' + j);
-					$('.eliminar_preguntas a[target="id_pregunta_' + i+'"]').attr('target', 'id_pregunta_' + j);
+					$('.crear_pregunta[target="id_pregunta_' + i+'"]').attr('target', 'id_pregunta_' + j);
+					$('.eliminar_preguntas[target="id_pregunta_' + i+'"]').attr('target', 'id_pregunta_' + j);
 					$('#id_pregunta_' + i).attr('name', 'pregunta_' + j);
 					$('#id_pregunta_' + i).attr('id', 'id_pregunta_' + j);
+					$('#id_pregunta_' + j).chosen('destroy');
+					$('#id_pregunta_' + j).chosen({
+						no_results_text: 'No se encontraron resultados para'
+					});
 
-					$('#id_respuestas_definidas_' + i).attr('id', 'id_respuestas_definidas_' + j);
-					$('.crear_respuesta a[target="id_valor_' + i+'"]').attr('target', 'id_valor_' + j);
-					$('.eliminar_respuestas a[target="id_valor_' + i+'"]').attr('target', 'id_valor_' + j);
+					$('.crear_respuesta[target="id_valor_' + i+'"]').attr('target', 'id_valor_' + j);
+					$('.eliminar_respuestas[target="id_valor_' + i+'"]').attr('target', 'id_valor_' + j);
 					$('#id_valor_' + i).attr('name', 'valores_posibles_' + j);
 					$('#id_valor_' + i).attr('id', 'id_valor_' + j);
+					$('#id_valor_' + j).chosen('destroy');
+					$('#id_valor_' + j).chosen({
+						no_results_text: 'No se encontraron resultados para'
+					});
 				}
 
 				total_preguntas--;
-				$(del_section).remove();
+				$("[name=extra_field_count]").val(total_preguntas);
 			});
 		});
 
@@ -541,7 +575,7 @@
 													<button type="button" class="btn btn-danger col-xs-12" data-dismiss="modal">Cancelar</button>\
 												</div>\
 												<div class="col-xs-6">\
-													<button id="'+ref_next_modal+'" class="btn btn-primary col-xs-12">Guardar</button>\
+													<button id="'+ref_next_modal+'" class="btn btn-primary col-xs-12">Aceptar</button>\
 												</div>\
 											</div>');
 
@@ -560,12 +594,10 @@
 			values = [];
 			$('#' + id_input).val('');
 
-			console.log(modal_list +','+ id_select +','+ id_input +','+ id_list +','+ str_token);
-
-			$(id_select).children().each(function(i, option){
-				texts.push($(option).text()); 
-				values.push($(option).attr('value')); 
-			});
+			for(i = 0; i < preg_list.length; i++){
+				values.push(preg_list[i].id);
+				texts.push(preg_list[i].enunciado);
+			}
 
 			$('#' + id_list).empty();
 			for(i = 0; i < values.length; i++){
@@ -585,11 +617,12 @@
 		function init_tipo_resp_sel(sel_select){
 			target_vals = sel_select.attr('target').split(' ');
 			id_sel = '#' + sel_select.attr('id');
+			target_resp_content = '#' + target_vals[1]; 
 
 			if($(id_sel+' :selected').attr('id') != 'RESP_DEF')
-				$('#' + target_vals[1]).hide('fade');
+				$(target_resp_content).hide('fade');
 
-			sel_select.bind('change', function(){
+			sel_select.change(function(){
 				id_sel = '#' + $(this).attr('id');
 				target_vals = $(id_sel).attr('target').split(' ');
 				target_preg_sel = '#' + target_vals[0];
@@ -601,26 +634,42 @@
 					$(target_resp_content).show('fade');
 
 				value = $(this).val();
-				if(value.length > 0){
-					// LLamada AJAX para obtener las preguntas
-					$.ajax({
-					    type: 'GET',
-					    url: '/sgt/admin/crear-pregunta/' + value,
-					    dataType: "json",
-					    success: function(data){
-					        console.log(data);
-					        $(target_preg_sel).empty();
-							$.each(data, function(key, value){
-								$(target_preg_sel).append('<option value="'+value.pk+'">'+value.fields.enunciado+'</option>');
-							});
-							$(target_preg_sel).trigger("chosen:updated");
-					    },
-					    error: function(data){
-					    	console.log(data);
-					    }
-				    });
+				index = parseInt(target_preg_sel[target_preg_sel.length - 1]);
+				update_select_preguntas(index, -1);
+				$(target_preg_sel).empty();
+				$(target_preg_sel).append('<option value="-1" selected></option>');
+
+				for(i = 0; i < preg_list.length; i++){
+					if(preg_list[i].tipo_respuesta == $(id_sel+' option[value='+value+']').attr('id')){
+						$(target_preg_sel).append('<option value="'+preg_list[i].id+'" '+preg_list[i].disabled+'>'+preg_list[i].enunciado+'</option>');
+					}
 				}
+
+				$(target_preg_sel).trigger("chosen:updated");
 			});
+		}
+
+		function update_select_preguntas(index, val_select){
+			if(val_select != -1){
+				$('.pregunta_select option[value='+val_select+']').attr('disabled', '');
+
+				for(i = 0; i < preg_list.length; i++){
+					if(preg_list[i].id == val_select){
+						console.log(preg_list[i].id +'->'+ 'disabled');
+						preg_list[i].disabled = 'disabled';
+					}
+				}
+			}
+			if(prev_preg_list[index] != -1){
+				console.log("holaaaaaaaaaa");
+				$('.pregunta_select option[value='+prev_preg_list[index]+']').removeAttr('disabled', '');
+				for(i = 0; i < preg_list.length; i++){
+					if(preg_list[i].id == prev_preg_list[index])
+						preg_list[i].disabled = '';
+				}
+			}
+			prev_preg_list[index] = val_select;
+			$('.pregunta_select').trigger("chosen:updated");
 		}
 
 	</script>

@@ -894,7 +894,7 @@ class AdminAgregarEncuesta(View):
 		form_val = CrearValorForm()
 
 		tipos_respuesta = TipoRespuesta.objects.all()
-		preguntas = Pregunta.objects.filter(tipo_respuesta=tipos_respuesta[0])
+		preguntas = Pregunta.objects.all()
 		tipos_encuesta = TipoEncuesta.objects.all()
 		valores = ValorPosible.objects.all()
 
@@ -935,7 +935,7 @@ class AdminAgregarEncuesta(View):
 			print form.errors
 
 			tipos_respuesta = TipoRespuesta.objects.all()
-			preguntas = Pregunta.objects.filter(tipo_respuesta=tipos_respuesta[0])
+			preguntas = Pregunta.objects.all()
 			tipos_encuesta = TipoEncuesta.objects.all()
 			valores = ValorPosible.objects.all()
 
@@ -996,7 +996,7 @@ class AdminAgregarPregunta(View):
 			respuesta = {
 				'id_pregunta': pregunta.id, 
 				'enunciado': pregunta.enunciado,
-				'tipo_respuesta': data['tipo_respuesta']
+				'tipo_respuesta': tipo_respuesta.codigo
 			}
 			
 		else:
