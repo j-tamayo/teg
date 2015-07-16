@@ -84,6 +84,10 @@ class NumeroOrden(models.Model):
 	def __unicode__(self):
 		return u'%s' % self.codigo
 
+	@staticmethod
+	def reporte():
+		print "REporte"
+
 # MANEJO DE ENCUESTAS...
 
 class TipoEncuesta(models.Model):

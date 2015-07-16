@@ -149,4 +149,10 @@ urlpatterns = \
             views.AdminEliminarRespuesta.as_view(),
             name='admin_eliminar_respuesta'
         ),
+
+        url(
+            r'^admin/consultas$',
+            views.AdminReportes.as_view(),
+            name='admin_reportes'
+        ),
 )

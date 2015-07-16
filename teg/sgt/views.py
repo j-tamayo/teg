@@ -1123,4 +1123,4 @@ class AdminReportes(View):
 
 	def get(self, request, *args, **kwargs):
 		"""Vista que muestra el reporte de las solicitudes"""
-		
+		print request.session.get('aux',None)
