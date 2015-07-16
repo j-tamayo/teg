@@ -920,14 +920,32 @@ class AdminAgregarEncuesta(View):
 		form_preg = CrearPreguntaForm()
 		form_val = CrearValorForm()
 
-		data = request.POST
-		print data
-
 		if form.is_valid():
+			encuesta_data = form.cleaned_data
+			extra_fields = encuesta_data['extra_field_count']
+			
+			encuesta = Encuesta(
+				nombre=encuesta_data['nombre'], 
+				descripcion=encuesta_data['descripcion'], 
+				tipo_encuesta=encuesta_data['tipo_encuesta'])
 
-			print "guardando data..."
-			encuesta = form.cleaned_data
-			print encuesta
+			encuesta.save()
+
+			for index in range(int(extra_fields)):
+				aux = 'tipo_respuesta_' + str(index + 1)
+				tipo_respuesta = encuesta_data[aux]
+
+				aux = 'pregunta_' + str(index + 1)
+				pregunta = encuesta_data[aux]
+
+				if tipo_respuesta.codigo == 'RESP_DEF':
+					aux = 'valores_posibles_' + str(index + 1)
+					valores_posibles = encuesta_data[aux]
+
+					for v in valores_posibles:
+						v.valor_pregunta.add(pregunta)
+
+				encuesta.preguntas.add(pregunta)
 
 			return redirect(reverse('admin_encuestas'))
 
@@ -959,7 +977,6 @@ class AdminAgregarPregunta(View):
 	def dispatch(self, *args, **kwargs):
 		return super(AdminAgregarPregunta, self).dispatch(*args, **kwargs)
 
-
 	def get(self, request, *args, **kwargs):
 		"""Buscando preguntas existentes"""
 		usuario = request.user
@@ -980,7 +997,6 @@ class AdminAgregarPregunta(View):
 		    respuesta,
 		    content_type="application/json"
 		)
-
 
 	def post(self, request, *args, **kwargs):
 		"""Crea nueva pregunta"""
@@ -1054,8 +1070,6 @@ class AdminAgregarRespuesta(View):
 		if form.is_valid():
 			valor_posible = ValorPosible(valor=data['valor'])
 			valor_posible.save();
-			# pregunta = Pregunta.objects.get(id=data['pregunta_id'])
-			# valor_posible.valor_pregunta.add(pregunta)
 			
 			respuesta = {
 				'id_respuesta': valor_posible.id, 

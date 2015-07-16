@@ -10,7 +10,7 @@
 				<h4>Agregar Encuesta</h4>
 			</div>
 			<div class="panel-body">
-				<form {%if editar%}action="{% url 'admin_editar_encuesta' centro_id %}"{%else%}action="{% url 'admin_crear_encuesta' %}"{%endif%} method="POST" novalidate role="form">
+				<form id="encuesta_form" {%if editar%}action="{% url 'admin_editar_encuesta' centro_id %}"{%else%}action="{% url 'admin_crear_encuesta' %}"{%endif%} method="POST" novalidate role="form">
 					{% csrf_token %}
 					{{form.extra_field_count}}
 					<div class="row">
@@ -186,7 +186,7 @@
 
 		var total_preguntas = 0;
 		$("[name=extra_field_count]").val(total_preguntas);
-		
+
 		var prev_preg_list = [];
 		
 		var preg_list = [ 
@@ -268,13 +268,23 @@
 				        reset_generic_modal();
 				        $('#nueva_pregunta').val('');
 				        preg_list.push({'id': data.id_pregunta, 'enunciado': data.enunciado, 'tipo_respuesta': data.tipo_respuesta, 'disabled': ''});
+
+				        $('.pregunta_select').each(function(key, value){
+				        	id_sel_preg = '#' + $(this).attr('id')
+				        	index = parseInt(id_sel_preg[id_sel_preg.length - 1]);
+				        	id_sel_tip_resp = $('#id_tipo_respuesta_'+index+' option[value='+$('#id_tipo_respuesta_'+index).val()+']').attr('id');
+
+				        	if(data.tipo_respuesta == id_sel_tip_resp){
+						        $(id_sel_preg).append('<option value="'+data.id_pregunta+'">'+data.enunciado+'</option>');
+						        if(id_sel_preg = target_pregunta){
+							        $(id_sel_preg).find('option:selected').removeAttr('selected');
+							        $(id_sel_preg + ' option[value='+data.id_pregunta+']').attr('selected', '');
+							    }
+							}
+				        });
+
 				        index = parseInt(target_pregunta[target_pregunta.length - 1]);
-				        if(data.tipo_respuesta == $('#id_tipo_respuesta_'+index+' option[value='+value+']').attr('id')){
-					        $('.pregunta_select').append('<option value="'+data.id_pregunta+'">'+data.enunciado+'</option>');
-					        $(target_pregunta).find('option:selected').removeAttr('selected');
-					        $(target_pregunta + ' option[value='+data.id_pregunta+']').attr('selected', '');
-							update_select_preguntas(index, data.id_pregunta);
-						}
+				        update_select_preguntas(index, data.id_pregunta);
 				    },
 				    error: function(){
 				    	console.log("Error...");
@@ -285,23 +295,31 @@
 			$('#eliminar_pregunta_form').submit(function(event){
 				event.preventDefault();
 				$('#modal_lista_preguntas').modal('hide');
-				generic_modal_title = '&iquest;Est&aacute; seguro que desea eliminar estas preguntas?';
+				preg_elim = $('#preguntas_elim').val();
+				if(preg_elim.trim()){
+					generic_modal_title = '&iquest;Est&aacute; seguro que desea eliminar estas preguntas?';
 
-				generic_modal_content = '<div class="row"><div class="col-xs-6">';
+					generic_modal_content = '<div class="row"><div class="col-xs-6">';
 
-				preg_elim = $('#preguntas_elim').val().split('|');
-				for(i = 0; i < preg_elim.length; i++)
-					generic_modal_content += '<p>&emsp;'+$(target_pregunta+' option[value='+preg_elim[i]+']').text()+'</p>';
-				
-				generic_modal_content += '<div></div>';
+					preg_elim = preg_elim.split('|');
+					for(i = 0; i < preg_elim.length; i++){
+						for(j = 0; j < preg_list.length; j++){
+							if(preg_list[j].id == preg_elim[i])
+								generic_modal_content += '<p>&emsp;'+preg_list[j].enunciado+'</p>';
+						}
+					}
+					
+					generic_modal_content += '<div></div>';
 
-				next_modal_ref = 'eliminar_viejas_preguntas';
+					next_modal_ref = 'eliminar_viejas_preguntas';
 
-				fill_generic_modal(generic_modal_title, generic_modal_content, next_modal_ref);
+					fill_generic_modal(generic_modal_title, generic_modal_content, next_modal_ref);
+				}
 			});
 
 			$(document).on("click", "#eliminar_viejas_preguntas", function(){
 				value = $('#preguntas_elim').val();
+				$('#preguntas_elim').val('');
 				if(value){
 					$.ajax({
 					    type: 'POST',
@@ -375,23 +393,26 @@
 			$('#eliminar_respuesta_form').submit(function(event){
 				event.preventDefault();
 				$('#modal_lista_respuestas').modal('hide');
-				generic_modal_title = '&iquest;Est&aacute; seguro que desea eliminar estas respuestas?';
-
-				generic_modal_content = '<div class="row"><div class="col-xs-6">';
-				
 				val_elim = $('#valores_elim').val().split('|');
-				for(i = 0; i < val_elim.length; i++)
-					generic_modal_content += '<p>&emsp;'+$(target_respuesta+' option[value='+val_elim[i]+']').text()+'</p>';
+				if(val_elim.length){
+					generic_modal_title = '&iquest;Est&aacute; seguro que desea eliminar estas respuestas?';
 
-				generic_modal_content += '<div></div>';
+					generic_modal_content = '<div class="row"><div class="col-xs-6">';
+					
+					for(i = 0; i < val_elim.length; i++)
+						generic_modal_content += '<p>&emsp;'+$(target_respuesta+' option[value='+val_elim[i]+']').text()+'</p>';
 
-				next_modal_ref = 'eliminar_viejas_respuestas';
+					generic_modal_content += '<div></div>';
 
-				fill_generic_modal(generic_modal_title, generic_modal_content, next_modal_ref);
+					next_modal_ref = 'eliminar_viejas_respuestas';
+
+					fill_generic_modal(generic_modal_title, generic_modal_content, next_modal_ref);
+				}
 			});
 
 			$(document).on("click", "#eliminar_viejas_respuestas", function(){
 				value = $('#valores_elim').val();
+				value = $('#valores_elim').val('');
 				if(value){
 					$.ajax({
 					    type: 'POST',
@@ -566,6 +587,14 @@
 				total_preguntas--;
 				$("[name=extra_field_count]").val(total_preguntas);
 			});
+
+
+			$('#encuesta_form').submit(function(event){
+				event.preventDefault();
+				$('.pregunta_select').find('option:disabled').removeAttr('disabled');
+				$('.pregunta_select').trigger("chosen:updated");
+				$(this).unbind("submit").submit();
+			});
 		});
 
 		function fill_generic_modal(title, content, ref_next_modal){
@@ -655,14 +684,11 @@
 				$('.pregunta_select option[value='+val_select+']').attr('disabled', '');
 
 				for(i = 0; i < preg_list.length; i++){
-					if(preg_list[i].id == val_select){
-						console.log(preg_list[i].id +'->'+ 'disabled');
+					if(preg_list[i].id == val_select)
 						preg_list[i].disabled = 'disabled';
-					}
 				}
 			}
 			if(prev_preg_list[index] != -1){
-				console.log("holaaaaaaaaaa");
 				$('.pregunta_select option[value='+prev_preg_list[index]+']').removeAttr('disabled', '');
 				for(i = 0; i < preg_list.length; i++){
 					if(preg_list[i].id == prev_preg_list[index])

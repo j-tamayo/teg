@@ -3,6 +3,9 @@ from django import forms
 from django.contrib.auth import authenticate
 from sgt.models import Estado, Municipio, TipoInspeccion, CentroInspeccion, Perito, TipoEncuesta, Pregunta, TipoRespuesta, ValorPosible
 from datetime import datetime
+from django.core.exceptions import ValidationError
+
+import string
 
 class SolicitudInspeccionForm(forms.Form):
 	""" Formulario para la solicitud de inspecciones """
@@ -158,13 +161,12 @@ class PeritoForm(forms.ModelForm):
 	# 		return field
 
 
-class CrearEncuestaForm(forms.Form):
-	tipo_encuesta = forms.ModelChoiceField(
-		label = u'Tipo de respuesta',
-		queryset = TipoEncuesta.objects.all(),
-		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
-	)
+def validate_extra_field(value):
 
+	if string.atoi(value) <= 0:
+		raise ValidationError('Debe agregar al menos 1 pregunta')
+
+class CrearEncuestaForm(forms.Form):
 	nombre = forms.CharField(
 		label = u'Nombre',
 		widget = forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
@@ -175,24 +177,13 @@ class CrearEncuestaForm(forms.Form):
 		widget = forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
 	)
 
-	# pregunta = forms.ModelChoiceField(
-	# 	label = u'Pregunta',
-	# 	queryset = Pregunta.objects.all(),
-	# 	widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
-	# )
-
-	# tipo_respuesta = forms.ModelChoiceField(
-	# 	label = u'Tipo de respuesta',
-	# 	queryset = TipoRespuesta.objects.all(),
-	# 	widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
-	# )
-
-	# valores_posibles = forms.ModelMultipleChoiceField(
-	# 	label = u'Respuesta',
-	# 	queryset = ValorPosible.objects.all(),
-	# )
+	tipo_encuesta = forms.ModelChoiceField(
+		label = u'Tipo de respuesta',
+		queryset = TipoEncuesta.objects.all(),
+		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
+	)
 	
-	extra_field_count = forms.CharField(widget=forms.HiddenInput(), required=True)
+	extra_field_count = forms.CharField(widget=forms.HiddenInput(), required=True, validators=[validate_extra_field])
 	
 	def __init__(self, *args, **kwargs):
 		extra_fields = kwargs.pop('extra', 0)
@@ -204,6 +195,22 @@ class CrearEncuestaForm(forms.Form):
 			self.fields['pregunta_{index}'.format(index=index+1)] = forms.ModelChoiceField(queryset=Pregunta.objects.all(), required=True)
 			self.fields['tipo_respuesta_{index}'.format(index=index+1)] = forms.ModelChoiceField(queryset=TipoRespuesta.objects.all(), required=True)
 			self.fields['valores_posibles_{index}'.format(index=index+1)] = forms.ModelMultipleChoiceField(queryset=ValorPosible.objects.all(), required=False)
+
+	def clean(self):
+		extra_fields = self.cleaned_data.get('extra_field_count')
+
+		for index in range(int(extra_fields)):
+			aux = 'tipo_respuesta_' + str(index + 1)
+			tipo_respuesta = self.cleaned_data.get(aux)
+
+			aux = 'valores_posibles_' + str(index + 1)
+			valores_posibles = self.cleaned_data.get(aux)
+
+			if tipo_respuesta.codigo == 'RESP_DEF' and not valores_posibles:
+				msg = u'Las preguntas con respuestas definidas deben tener al menos una respuesta asignada'
+				raise forms.ValidationError(msg)
+
+		return self.cleaned_data
 
 
 class CrearPreguntaForm(forms.Form):
