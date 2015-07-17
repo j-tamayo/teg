@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+{% include 'cuentas/modales_usuario.html' %}
+{% load i18n %}
+{% load l10n %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+			<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+			  <div class="panel panel-default">
+			    <div class="panel-heading" role="tab" id="headingOne">
+			      <!-- <h4 class="panel-title"> -->
+			    	<div class="row">
+			        <a class="btn btn-primary col-xs-2 col-xs-offset-10" data-toggle="collapse" data-parent="#accordion" href="#filtros_cont" aria-expanded="true" aria-controls="collapseOne">
+			          Filtros
+			        </a>
+			        </div>
+			     <!--  </h4> -->
+			    </div>
+			    <div id="filtros_cont" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+			      <div class="panel-body">
+			        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		</div> <!-- / .panel-group -->
+	</div><br>
+
+	<div class="row">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Fecha solicitud</th>
+					<th>Fecha de atenci&oacute;n</th>
+					<th>Usuario</th>
+					<th>Estatus</th>
+					<th>Centro</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for orden in numeros_orden.object_list %}
+				<tr>
+					<td>{{orden.solicitud_inspeccion.fecha_creacion|date:"d/m/Y"}}</td>
+					<td>{{orden.fecha_atencion}}</td>
+					<td>{{orden.solicitud_inspeccion.usuario.nombres}} {{orden.solicitud_inspeccion.usuario.apellidos}}</td>
+					<td>{{orden.solicitud_inspeccion.estatus}}</td>
+					<td>{{orden.solicitud_inspeccion.centro_inspeccion}}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div class="pagination center-block text-center">
+		<div class="row">
+			<ul class="pagination">
+			{% if numeros_orden.has_previous %}
+		        <li>
+		        	<a href="?{{ numeros_orden.previous_page_number.querystring }}" class="prev">&lsaquo;&lsaquo; {% trans "anterior" %}</a>
+		        </li>
+		    {% else %}
+		    	<li class="disabled">
+					<span class="disabled prev">&lsaquo;&lsaquo; {% trans "anterior" %}</span>
+				</li>
+			{% endif %}
+			{% for page in numeros_orden.pages %}
+		        {% if page %}
+		            {% ifequal page numeros_orden.number %}
+		                <li><span class="current page">{{ page }}</span></li>
+		            {% else %}
+		                <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
+		            {% endifequal %}
+		        {% else %}
+		            <li class="disabled"><a>...</a></li>
+		        {% endif %}
+		    {% endfor %}
+		    {% if numeros_orden.has_next %}
+		        <li>
+		        	<a href="?{{ numeros_orden.next_page_number.querystring }}" class="next">{% trans "siguiente" %} &rsaquo;&rsaquo;</a>
+		        </li>
+		    {% else %}
+		    	<li class="disabled">
+		        	<span class="disabled next">{% trans "next" %} &rsaquo;&rsaquo;</span>
+		        </li>
+		    {% endif %}
+		    </ul>
+		</div>
+	</div>
+</div> <!-- / .container-fluid -->
+{% endblock %}
+
+{% block javascripts %}
+	{{ block.super }}
+
+	<script type="application/javascript">
+	$(function(){
+
+	})
+	</script>
+{% endblock %}

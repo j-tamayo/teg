@@ -106,8 +106,8 @@ DATABASES = {
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
-
-LANGUAGE_CODE = 'es-ve'
+# Orginalmente viene con es-ve pero se tuvo que poner solo es por falta de traducción
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'America/Caracas'
 

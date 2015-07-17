@@ -1,6 +1,8 @@
 from django.db import models
 from cuentas.models import SgtUsuario,RolSgt
 from datetime import datetime
+from django.db.models import Q
+import operator
 
 USER_MODEL = SgtUsuario
 
@@ -85,8 +87,22 @@ class NumeroOrden(models.Model):
 		return u'%s' % self.codigo
 
 	@staticmethod
-	def reporte():
-		print "REporte"
+	def reporte(filtros):
+		condiciones = []
+		fechaInicio = filtros.get('fecha_inicio', None)
+		fechaFin = filtros.get('fecha_fin', None)
+
+		numeros_orden = NumeroOrden.objects.all()
+		if filtros:
+			if fechaInicio and fechaFin:
+				fechainicio = datetime.datetime.strptime(fechaInicio, '%d-%m-%Y')
+				fechafin = datetime.datetime.strptime(fechaFin, '%d-%m-%Y')
+				if fechainicio <= fechafin:
+					condiciones.append(Q(solicitud_inspeccion__fecha_creacion__range=(fechainicio,fechafin)))
+
+			numeros_orden = numeros_orden.filter(reduce(operator.and_, condiciones)).order_by('fecha')
+
+		return numeros_orden
 
 # MANEJO DE ENCUESTAS...
 

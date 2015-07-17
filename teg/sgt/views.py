@@ -1282,4 +1282,30 @@ class AdminReportes(View):
 
 	def get(self, request, *args, **kwargs):
 		"""Vista que muestra el reporte de las solicitudes"""
-		print request.session.get('aux',None)
+		usuario = request.user
+		filtros = {}
+
+		if request.session.has_key('filtros_reporte'):
+			filtros = request.session['filtros_reporte']
+
+		numeros_orden = NumeroOrden.reporte(filtros)
+		print numeros_orden
+
+		paginator = Paginator(numeros_orden, 10, request=request)
+		try:
+			page = request.GET.get('page', 1)
+			numeros_orden = paginator.page(page)
+		except PageNotAnInteger:
+			numeros_orden = paginator.page(1)
+			page = 0
+		except EmptyPage:
+			numeros_orden = paginator.page(paginator.num_pages)
+
+		context = {
+			'admin': True,
+			'numeros_orden': numeros_orden,
+			'seccion_reportes': True,
+			'usuario': usuario,
+		}
+
+		return render(request, 'admin/reportes.html', context)
