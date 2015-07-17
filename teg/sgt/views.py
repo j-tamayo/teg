@@ -295,8 +295,8 @@ class AdminBandejaCentros(View):
 	def get(self, request, *args, **kwargs):
 		""" Vista que lista los centros de inspección al administrador """
 		usuario = request.user
-		print "ARGS", args
-		print "KWARGS", kwargs
+		#print "ARGS", args
+		#print "KWARGS", kwargs
 		centros = CentroInspeccion.objects.all().order_by('-id')
 
 		# Provide Paginator with the request object for complete querystring generation
@@ -889,7 +889,12 @@ class AdminAgregarEncuesta(View):
 	def get(self, request, *args, **kwargs):
 		"""Despliega el formulario para crear encuestas"""
 		usuario = request.user
-		form = CrearEncuestaForm()
+		
+		data_initial = {
+			'extra_field_count': 0
+		}
+		
+		form = CrearEncuestaForm(initial=data_initial)
 		form_preg = CrearPreguntaForm()
 		form_val = CrearValorForm()
 
@@ -900,12 +905,12 @@ class AdminAgregarEncuesta(View):
 
 		context = {
 			'admin': True,
+			'editar': False,
 			'form': form,
 			'form_preg': form_preg,
 			'form_val': form_val,
 			'preguntas': preguntas,
 			'valores': valores,
-			'editar': False,
 			'tipos_respuesta': tipos_respuesta,
 			'tipos_encuesta': tipos_encuesta,
 			'usuario': usuario,
@@ -959,18 +964,172 @@ class AdminAgregarEncuesta(View):
 
 			context = {
 				'admin': True,
+				'editar': False,
 				'form': form,
 				'form_preg': form_preg,
 				'form_val': form_val,
 				'preguntas': preguntas,
 				'valores': valores,
-				'editar': False,
 				'tipos_respuesta': tipos_respuesta,
 				'tipos_encuesta': tipos_encuesta,
 				'usuario': usuario,
 			}
 
 			return render(request, 'admin/crear_encuesta.html', context)
+
+
+class AdminEditarEncuesta(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEditarEncuesta, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Cargando formulario de encuesta"""
+		usuario = request.user
+		encuesta_id = kwargs['encuesta_id']
+		encuesta = Encuesta.objects.filter(id=kwargs['encuesta_id']).first()
+
+		if encuesta:
+			form_preg = CrearPreguntaForm()
+			form_val = CrearValorForm()
+
+			tipos_respuesta = TipoRespuesta.objects.all()
+			preguntas = Pregunta.objects.all()
+			tipos_encuesta = TipoEncuesta.objects.all()
+			valores = ValorPosible.objects.all()
+
+			extra_fields = len(encuesta.preguntas.all())
+			encuesta_preguntas = encuesta.preguntas.all().order_by('id')
+			encuesta_valores = ValorPosible.objects.filter(valor_pregunta__pregunta=encuesta_preguntas)
+
+			initial_data = {
+				'nombre': encuesta.nombre,
+				'descripcion': encuesta.descripcion,
+				'tipo_encuesta': encuesta.tipo_encuesta,
+				'extra_field_count': str(extra_fields)
+			}
+
+			for index in range(int(extra_fields)):
+				aux = 'tipo_respuesta_' + str(index + 1)
+				initial_data[aux] = encuesta_preguntas[index].tipo_respuesta
+				codigo_tipo_respuesta = encuesta_preguntas[index].tipo_respuesta.codigo
+				
+				aux = 'pregunta_' + str(index + 1)
+				initial_data[aux] = encuesta_preguntas[index]
+
+				if codigo_tipo_respuesta == 'RESP_DEF':
+					aux = 'valores_posibles_' + str(index + 1)
+					
+					valores_pregunta = [] 
+					for v in encuesta_valores:
+						preguntas_valores = v.valor_pregunta.all()
+						if encuesta_preguntas[index] in preguntas_valores:
+							valores_pregunta.append(v)
+
+					initial_data[aux] = valores_pregunta
+
+			form = CrearEncuestaForm(initial=initial_data, extra=str(extra_fields))
+
+			context = {
+				'admin': True,
+				'editar': True,
+				'form': form,
+				'form_preg': form_preg,
+				'form_val': form_val,
+				'preguntas': preguntas,
+				'valores': valores,
+				'tipos_respuesta': tipos_respuesta,
+				'tipos_encuesta': tipos_encuesta,
+				'encuesta': encuesta,
+				'encuesta_preguntas': encuesta_preguntas,
+				'encuesta_valores': encuesta_valores,
+				'usuario': usuario,
+			}
+
+			return render(request, 'admin/crear_encuesta.html', context)
+
+		else:
+			return redirect(reverse('admin_encuestas'))
+
+	def post(self, request, *args, **kwargs):
+		"""Edita la encuesta"""
+		usuario = request.user
+		print "Editando la encuesta..."
+
+		return redirect(reverse('admin_encuestas'))
+
+# 	def post(self, request, *args, **kwargs):
+# 		"""Edita el centro de inspección"""
+# 		usuario = request.user
+
+# 		estados = Estado.objects.all()
+# 		peritos = Perito.objects.all()
+# 		centro = CentroInspeccion.objects.filter(id=kwargs['centro_id']).first()
+# 		peritos_asignados = centro.peritos.all()
+# 		form = CentroInspeccionForm(request.POST, instance = centro)
+
+# 		if form.is_valid():
+# 			print form.cleaned_data['municipio']
+# 			form.save()
+# 			return redirect(reverse('admin_centros'))
+
+# 		else:
+# 			print "MALLLL", form.errors
+# 			c_estado_id = request.POST.get('estado', None)
+# 			c_municipios = Municipio.objects.filter(estado__id = c_estado_id)
+# 			c_municipio_id = request.POST.get('municipio', None)
+# 			if c_estado_id:
+# 				c_estado_id = int(c_estado_id)
+# 			if c_municipio_id:
+# 				c_municipio_id = int(c_municipio_id)
+# 			context = {
+# 				'admin': True,
+# 				'form': form,
+# 				'c_estado_id': c_estado_id,
+# 				'c_municipios': c_municipios,
+# 				'c_municipio_id': c_municipio_id,
+# 				'centro_id': kwargs['centro_id'],
+# 				'editar': True,
+# 				'estados': estados,
+# 				'peritos': peritos,
+# 				'seccion_centros': True,
+# 				'usuario': usuario,
+# 				'peritos_asignados': peritos_asignados,
+# 			}
+
+# 			return render(request, 'admin/crear_centro.html', context)
+
+class AdminEliminarEncuesta(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEliminarEncuesta, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Vista que elimina un Centro de Inspección"""
+		page = request.POST.get('page', None)
+		print "eliminando encuesta"
+		encuesta_id = request.POST.get('encuesta_id', None)
+		encuesta = Encuesta.objects.filter(id=encuesta_id).first()
+		if encuesta:
+			encuesta_preguntas = encuesta.preguntas.all()
+			encuesta_valores = ValorPosible.objects.filter(valor_pregunta__pregunta=encuesta_preguntas)
+
+			for v in encuesta_valores:
+				preguntas_valores = v.valor_pregunta.all()
+				for p in encuesta_preguntas:
+					if p in preguntas_valores:
+						v.valor_pregunta.remove(p)
+
+			encuesta.preguntas.clear()
+
+			encuesta.delete()
+
+			redirect_url = reverse('admin_encuestas')
+			if int(page) > 1:
+				extra_params = '?page=%s' % page
+				redirect_url = '%s%s' % (redirect_url, extra_params)
+
+			return redirect(redirect_url, kwargs={'location': page})
+		else:
+			return redirect(redirect_url, kwargs={'location': page})
 
 
 class AdminAgregarPregunta(View):

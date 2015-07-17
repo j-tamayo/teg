@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block main_content %}
+{% include 'cuentas/modales_usuario.html' %}
+
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-2 col-xs-offset-10">
@@ -25,7 +27,17 @@
 				<td>{{encuesta.nombre}}</td>
 				<td>{{encuesta.tipo_encuesta}}</td>
 				<td>{{encuesta.descripcion}}</td>
-				<td>...</td>
+				<td>
+					<a href="{% url 'admin_editar_encuesta' encuesta.id %}" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Editar">
+						<i class="fa fa-pencil"></i>
+					</a>
+					<a href="#" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Asignar">
+						<i class="fa fa-tag"></i>
+					</a>
+					<a href="#" class="btn btn-danger btn-sm eliminar" target="{{encuesta.id}}" data-toggle="tooltip" data-original-title="Eliminar" >
+						<i class="fa fa-trash"></i>
+					</a>
+				</td>
 			</tr>
 			{% endfor %}
 		</tbody>
@@ -66,4 +78,52 @@
 		</div>
 	</div>
 </div> <!-- / .container-fluid -->
+
+<form id="eliminar_encuesta" method="POST" action="{% url 'admin_eliminar_encuesta' %}">
+	{% csrf_token %}
+	<input type="hidden" name="page" value="{{encuestas.number}}">
+</form>
+
+{% endblock %}
+
+{% block javascripts %}
+	{{ block.super }}
+
+	<script type="application/javascript">
+	$(function(){
+		$('#eliminar_encuesta').hide();
+		/******** MODAL PARA CONFIRMAR LA ELIMINACIÓN DE UNA ENCUESTA ********/
+		$(document).on('click', '.eliminar', function(event){
+			event.preventDefault();
+			target = $(this).attr('target');
+
+			$('#eliminar_encuesta').append('<input type="hidden" name="encuesta_id" value="'+target+'">');
+			$('#title_modal_generic').html('Confirmación');
+			$('#body_modal_generic').html(
+				'<div class="row">\
+					<div class="col-xs-12"><h4>¿Está seguro que desea eliminar esta encuesta?</h4></div>\
+				</div><br>'
+			);
+			$('#footer_modal_generic').html(
+				'<div class="col-xs-6">\
+					<a id="cancelar" href="#" class="btn btn-danger col-xs-12">Cancelar</a>\
+				</div>\
+				<div class="col-xs-6">\
+					<a id="confirmar" href="#" class="btn btn-primary col-xs-12">Aceptar</a>\
+				</div>'
+			);
+			$('#modal_generic').modal({
+				backdrop: 'static',
+				keyboard: false
+			});
+		});
+		/******** FIN ********/
+
+		/******* ELIMINAR UNA ENCUESTA *********/
+		$(document).on('click', '#confirmar', function(){
+			$('#eliminar_encuesta').submit();
+		});
+		/******* FIN *******/
+	})
+	</script>
 {% endblock %}
