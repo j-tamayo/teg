@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% load sgt_tags %}
+
+
 
 {% block main_content %}
 <div class="container-fluid">
@@ -10,27 +13,29 @@
 				<h4>Agregar Encuesta</h4>
 			</div>
 			<div class="panel-body">
-				<form id="encuesta_form" {%if editar%}action="{% url 'admin_editar_encuesta' centro_id %}"{%else%}action="{% url 'admin_crear_encuesta' %}"{%endif%} method="POST" novalidate role="form">
+				<form id="encuesta_form" {%if editar%}action="{% url 'admin_editar_encuesta' encuesta.id %}"{%else%}action="{% url 'admin_crear_encuesta' %}"{%endif%} method="POST" novalidate role="form">
 					{% csrf_token %}
 					{{form.extra_field_count}}
 					<div class="row">
 						<div class="col-xs-4">
-							<label >Nombre:</label>
+							<label>Nombre:</label>
 							{{form.nombre}}
 							<span class="help-block with-errors"></span>
 						</div>
 						<div class="col-xs-4">
-							<label >Descripci&oacute;n:</label>
+							<label>Descripci&oacute;n:</label>
 							{{form.descripcion}}
 							<span class="help-block with-errors"></span>
 						</div>
 						<div class="col-xs-4">
-							<label>Tipo Encuesta:</label>
+							<label>{{form.tipo_encuesta.label}}</label>
+							{{form.tipo_encuesta}}
+							<!-- <label>Tipo Encuesta:</label>
 							<select id="id_tipo_encuesta" name="tipo_encuesta" class="form-control">
 								{% for tipo_encuesta in tipos_encuesta %}
 									<option value="{{tipo_encuesta.id}}">{{tipo_encuesta.descripcion}}</option>
 								{% endfor %}
-							</select>
+							</select> -->
 						</div>
 					</div>
 					<br>
@@ -45,7 +50,70 @@
 						</div>
 					</div>
 
-					<div id="contenido"></div>
+					<div id="contenido">
+						{% if editar %}
+							{% for p in encuesta_preguntas %}
+								{% with i=forloop.counter %}
+								<div id="section_{{ i }}">
+									<hr>
+									<div class="row">
+										<div class="col-xs-8">
+											<h4 id="title_preg_{{ i }}"><strong>Pregunta {{ i }}</strong></h4>
+										</div>
+										<div class="col-xs-4">
+											<a class="btn btn-danger pull-right section_elim" target="section_{{ i }}" role="button" title="Borrar Pregunta">Borrar Pregunta</a>
+										</div>
+									</div>
+									<br>
+									<div class="row">
+										<div class="col-xs-4">
+											{% get_form_input form 'tipo_respuesta' i as input %}
+											<label>{{ input.label }}</label>
+											{{ input }}
+										</div>
+									</div>
+									<br>
+									<div class="row">
+										<div class="col-xs-6">
+											<div class="row">
+												<div class="col-xs-10">
+													{% get_form_input form 'pregunta' i as input %}
+													<label>{{ input.label }}</label>
+													{{ input }}
+												</div>
+												<div class="col-xs-1" align="right" style="width:20%; margin-left:-4%">
+													<br>
+													<div class="btn-group" role="group">
+														<a class="btn btn-danger eliminar_preguntas" target="id_pregunta_{{ i }}" title="Eliminar Preguntas" role="button"><i class="fa fa-trash"></i></a>
+														<a class="btn btn-info crear_pregunta" target="id_pregunta_{{ i }}" role="button" data-toggle="modal" title="Crear Pregunta" data-target="#modal_pregunta"><i class="fa fa-plus"></i></a>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div id="id_respuestas_definidas_{{ i }}" class="col-xs-6">
+											<div class="row">
+												<div class="col-xs-10">
+													{% get_form_input form 'valores_posibles' i as input %}
+													<label>{{ input.label }}</label>
+													{{ input }}
+												</div>
+												<div class="col-xs-1" align="right" style="width:20%; margin-left:-4%">
+													<br>
+													<div class="btn-group" role="group">
+														<a class="btn btn-danger eliminar_respuestas" target="id_valor_{{ i }}" role="button" title="Eliminar respuestas"><i class="fa fa-trash"></i></a>
+														<a class="btn btn-info crear_respuesta" target="id_valor_{{ i }}" role="button" data-toggle="modal" title="Crear Respuesta" data-target="#modal_respuesta"><i class="fa fa-plus"></i></a>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<br>
+								</div>
+								{% endwith %}
+							{% endfor %}
+						{% endif %}
+
+					</div>
 
 					<br><br>
 					<div class="row">
@@ -184,8 +252,7 @@
 	{{ block.super }}
 	<script type="application/javascript">
 
-		var total_preguntas = 0;
-		$("[name=extra_field_count]").val(total_preguntas);
+		var total_preguntas = $("[name=extra_field_count]").val();
 
 		var prev_preg_list = [];
 		
@@ -213,6 +280,16 @@
 		$(document).ready(function(){
 			var target_pregunta = '';
 			var target_respuesta = '';
+
+			{% if editar %}
+				$('.select-mul').chosen({
+		  			no_results_text: 'No se encontraron resultados para'
+				});
+
+				$('.chosen-select').chosen({
+		  			no_results_text: 'No se encontraron resultados para'
+				});
+			{% endif %}
 
 			$(document).on("click", ".crear_pregunta, .eliminar_preguntas", function(){
 				target_pregunta = '#' + $(this).attr('target');

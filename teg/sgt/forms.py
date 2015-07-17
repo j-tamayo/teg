@@ -178,8 +178,9 @@ class CrearEncuestaForm(forms.Form):
 	)
 
 	tipo_encuesta = forms.ModelChoiceField(
-		label = u'Tipo de respuesta',
+		label = u'Tipo de encuesta',
 		queryset = TipoEncuesta.objects.all(),
+		empty_label = None,
 		widget = forms.Select(attrs={'class':'form-control','required': '','data-error':'Este campo es obligatorio'})
 	)
 	
@@ -187,18 +188,55 @@ class CrearEncuestaForm(forms.Form):
 	
 	def __init__(self, *args, **kwargs):
 		extra_fields = kwargs.pop('extra', 0)
+		print extra_fields
 
 		super(CrearEncuestaForm, self).__init__(*args, **kwargs)
 		self.fields['extra_field_count'].initial = extra_fields
 
 		for index in range(int(extra_fields)):
-			self.fields['pregunta_{index}'.format(index=index+1)] = forms.ModelChoiceField(queryset=Pregunta.objects.all(), required=True)
-			self.fields['tipo_respuesta_{index}'.format(index=index+1)] = forms.ModelChoiceField(queryset=TipoRespuesta.objects.all(), required=True)
-			self.fields['valores_posibles_{index}'.format(index=index+1)] = forms.ModelMultipleChoiceField(queryset=ValorPosible.objects.all(), required=False)
+			self.fields['pregunta_{index}'.format(index=index+1)] = forms.ModelChoiceField(
+				label = u'Pregunta:',
+				queryset = Pregunta.objects.all(), 
+				required = True,
+				empty_label = None,
+				widget = forms.Select({
+					'id': 'id_pregunta_{index}'.format(index=index+1), 
+					'class': 'form-control chosen-select pregunta_select',
+					'required': '',
+					'data-error': 'Este campo es obligatorio',
+					'data-placeholder': 'Seleccione una pregunta...'
+				})
+			)
+
+			self.fields['tipo_respuesta_{index}'.format(index=index+1)] = forms.ModelChoiceField(
+				label = u'Tipo de respuesta:',
+				queryset = TipoRespuesta.objects.all(), 
+				required = True,
+				empty_label = None, 
+				widget = forms.Select({
+					'id': 'id_tipo_respuesta_{index}'.format(index=index+1), 
+					'class': 'form-control',
+					'required': '',
+					'data-error': 'Este campo es obligatorio',
+					'target': 'id_pregunta_{index} id_respuestas_definidas_{index}'.format(index=index+1)
+				})
+			)
+
+			self.fields['valores_posibles_{index}'.format(index=index+1)] = forms.ModelMultipleChoiceField(
+				label = u'Respuesta:',
+				queryset = ValorPosible.objects.all(), 
+				required = False,
+				widget=forms.SelectMultiple({
+					'id': 'id_valor_{index}'.format(index=index+1), 
+					'class': 'form-control select-mul respuesta_select',
+					'data-error': 'Este campo es obligatorio',
+					'data-placeholder': 'Seleccione la respuesta...' 
+				})
+			)
 
 	def clean(self):
-		extra_fields = self.cleaned_data.get('extra_field_count')
-
+		extra_fields = self.cleaned_data.get('extra_field_count', 0)
+		
 		for index in range(int(extra_fields)):
 			aux = 'tipo_respuesta_' + str(index + 1)
 			tipo_respuesta = self.cleaned_data.get(aux)
