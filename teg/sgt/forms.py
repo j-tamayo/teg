@@ -199,7 +199,7 @@ class CrearEncuestaForm(forms.Form):
 				queryset = Pregunta.objects.all(), 
 				required = True,
 				empty_label = None,
-				widget = forms.Select({
+				widget = forms.Select(attrs={
 					'id': 'id_pregunta_{index}'.format(index=index+1), 
 					'class': 'form-control chosen-select pregunta_select',
 					'required': '',
@@ -213,9 +213,9 @@ class CrearEncuestaForm(forms.Form):
 				queryset = TipoRespuesta.objects.all(), 
 				required = True,
 				empty_label = None, 
-				widget = forms.Select({
+				widget = forms.Select(attrs={
 					'id': 'id_tipo_respuesta_{index}'.format(index=index+1), 
-					'class': 'form-control',
+					'class': 'form-control tipo_respuesta_select',
 					'required': '',
 					'data-error': 'Este campo es obligatorio',
 					'target': 'id_pregunta_{index} id_respuestas_definidas_{index}'.format(index=index+1)
@@ -226,7 +226,7 @@ class CrearEncuestaForm(forms.Form):
 				label = u'Respuesta:',
 				queryset = ValorPosible.objects.all(), 
 				required = False,
-				widget=forms.SelectMultiple({
+				widget=forms.SelectMultiple(attrs={
 					'id': 'id_valor_{index}'.format(index=index+1), 
 					'class': 'form-control select-mul respuesta_select',
 					'data-error': 'Este campo es obligatorio',

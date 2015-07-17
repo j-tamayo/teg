@@ -282,6 +282,24 @@
 			var target_respuesta = '';
 
 			{% if editar %}
+				$('.tipo_respuesta_select').each(function(key1, value1){
+					$(value1).children().each(function(key2, value2){
+						select_id =  $(value2).attr('id');
+						if(!select_id){
+							select_value = $(value2).attr('value');
+							for(i = 0; i < tip_resp_list.length; i++){
+								console.log(tip_resp_list[i].id +'=='+ select_value);
+								if(tip_resp_list[i].id == select_value){
+									$(value2).attr('id', tip_resp_list[i].codigo);
+									break;
+								}
+							}
+						}
+					});
+					init_tipo_resp_sel($(value1));
+				});
+
+
 				$('.select-mul').chosen({
 		  			no_results_text: 'No se encontraron resultados para'
 				});
@@ -551,7 +569,7 @@
 											<div class="row">\
 												<div class="col-xs-4">\
 													<label>Tipo respuesta:</label>\
-													<select id="id_tipo_respuesta_'+total_preguntas+'" target="id_pregunta_'+total_preguntas+' id_respuestas_definidas_'+total_preguntas+'" name="tipo_respuesta_'+total_preguntas+'" class="form-control">\
+													<select id="id_tipo_respuesta_'+total_preguntas+'" target="id_pregunta_'+total_preguntas+' id_respuestas_definidas_'+total_preguntas+'" name="tipo_respuesta_'+total_preguntas+'" class="form-control tipo_respuesta_select">\
 													</select>\
 												</div>\
 											</div>\
