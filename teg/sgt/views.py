@@ -1084,7 +1084,8 @@ class AdminEditarEncuesta(View):
 					#encuesta.remove(preguntas)
 				else:
 					print pregunta
-					#valores_pregunta = ValorPosible.objects.filter(valor_pregunta__pregunta=pregunta)
+					valores_pregunta = ValorPosible.objects.filter(valor_pregunta=pregunta)
+					print valores_pregunta
 
 					#encuesta.preguntas.add(pregunta_id)
 
@@ -1287,6 +1288,8 @@ class AdminReportes(View):
 		"""Vista que muestra el reporte de las solicitudes"""
 		usuario = request.user
 		filtros = {}
+		centros = CentroInspeccion.objects.filter()
+		estados = Estado.objects.filter(municipio__centroinspeccion=centros).distinct('id')
 
 		if request.session.has_key('filtros_reporte'):
 			filtros = request.session['filtros_reporte']
@@ -1306,6 +1309,7 @@ class AdminReportes(View):
 
 		context = {
 			'admin': True,
+			'estados': estados,
 			'numeros_orden': numeros_orden,
 			'seccion_reportes': True,
 			'usuario': usuario,

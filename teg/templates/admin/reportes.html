@@ -7,26 +7,102 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-			<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-			  <div class="panel panel-default">
-			    <div class="panel-heading" role="tab" id="headingOne">
-			      <!-- <h4 class="panel-title"> -->
-			    	<div class="row">
-			        <a class="btn btn-primary col-xs-2 col-xs-offset-10" data-toggle="collapse" data-parent="#accordion" href="#filtros_cont" aria-expanded="true" aria-controls="collapseOne">
-			          Filtros
-			        </a>
-			        </div>
-			     <!--  </h4> -->
-			    </div>
-			    <div id="filtros_cont" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-			      <div class="panel-body">
-			        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-			      </div>
-			    </div>
-			  </div>
-			</div>
+		  <div class="panel panel-default">
+		    <div class="panel-heading" role="tab" id="headingOne">
+		      <!-- <h4 class="panel-title"> -->
+		    	<div class="row">
+		        <a class="btn btn-primary col-xs-2 col-xs-offset-10" data-toggle="collapse" data-parent="#accordion" href="#filtros_cont" aria-expanded="true" aria-controls="collapseOne">
+		          Filtros
+		        </a>
+		        </div>
+		     <!--  </h4> -->
+		    </div> <!-- / .panel-heading -->
+		    <div id="filtros_cont" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+		      <div class="panel-body">
+		      	<div class="row">
+		      		<div class="col-xs-6">
+		      			<label>Fecha de solicitud</label>
+		      		</div>
+		      		<div class="col-xs-6">
+		      			<label>Fecha de atenci&oacute;n</label>
+		      		</div>
+		      	</div>
+		        <div class="row">
+		        	<div class="col-xs-3">
+		        		<label>Desde</label>
+		        		<div class="input-append date" data-date-format="dd/mm/yyyy">
+							<input type="text" class="col-xs-9" id="fecha_inicio_sol" name="fecha_inicio_sol" readonly>
+							<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
+		        		</div>
+		        	</div>
+		        	<div class="col-xs-3">
+		        		<label>Hasta</label>
+		        		<div class="input-append date" data-date-format="dd/mm/yyyy">
+							<input type="text" class="col-xs-9" id="fecha_fin_sol" name="fecha_fin_sol" readonly>
+							<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
+		        		</div>
+		        	</div>
+		        	<div class="col-xs-3">
+		        		<label>Desde</label>
+		        		<div class="input-append date" data-date-format="dd/mm/yyyy">
+							<input type="text" class="col-xs-9" id="fecha_inicio_aten" name="fecha_inicio_aten" readonly>
+							<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
+		        		</div>
+		        	</div>
+		        	<div class="col-xs-3">
+		        		<label>Hasta</label>
+		        		<div class="input-append date" data-date-format="dd/mm/yyyy">
+							<input type="text" class="col-xs-9" id="fecha_fin_aten" name="fecha_fin_aten" readonly>
+							<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
+		        		</div>
+		        	</div>
+		        </div> <!-- / .row -->
+		        <br>
+		        <div class="row">
+					<div class="col-xs-3">
+						<label>Estatus</label>
+					</div>
+					<div class="col-xs-3">
+						<label>Estado</label>
+					</div>
+					<div class="col-xs-3">
+						<label>Municipio</label>
+					</div>
+					<div class="col-xs-3">
+						<label>Centro</label>
+					</div>
+		        </div> <!-- / .row -->
+		        <div class="row">
+		        	<div class="col-xs-3">
+		        		<select id="id_estatus" name="estatus" class="form-control">
+							<option value="">--Seleccionar--</option>
+							{% for e in estados %}
+							<option value="{{e.pk}}">{{e.nombre}}</option>
+							{% endfor %}
+		        		</select>
+		        	</div>
+		        	<div class="col-xs-3">
+		        		<select id="id_estado" name="estado" class="form-control">
+							<option value="">--Seleccionar--</option>
+		        		</select>
+		        	</div>
+		        	<div class="col-xs-3">
+		        		<select id="id_municipio" name="municipio" class="form-control">
+							<option value="">--Seleccionar--</option>
+		        		</select>
+		        	</div>
+		        	<div class="col-xs-3">
+		        		<select id="id_centro" name="centro" class="form-control">
+							<option value="">--Seleccionar--</option>
+		        		</select>
+		        	</div>
+		        </div> <!-- / .row -->
+		      </div> <!-- / .panel-body -->
+		    </div> <!-- / .panel-collapse -->
+		  </div> <!-- / .panel -->
 		</div> <!-- / .panel-group -->
-	</div><br>
+	</div> <!-- / .row -->
+	<br>
 
 	<div class="row">
 		<table class="table">
@@ -95,6 +171,15 @@
 
 	<script type="application/javascript">
 	$(function(){
+		/********* INICIALIZACION DE LAS FECHAS DE LOS DATEPICKERS *********/
+		var fecha = new Date();
+		var fi = new Date(fecha.getFullYear(), fecha.getMonth(), 1);
+		var ff = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0);
+		$('#fecha_inicio_sol').datepicker('setDate', fi);
+		$('#fecha_fin_sol').datepicker('setDate', ff);
+		$('#fecha_inicio_aten').datepicker('setDate', fi);
+		$('#fecha_fin_aten').datepicker('setDate', ff);
+		/********* FIN ***********/
 
 	})
 	</script>
