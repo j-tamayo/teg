@@ -19,6 +19,8 @@
 		    </div> <!-- / .panel-heading -->
 		    <div id="filtros_cont" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
 		      <div class="panel-body">
+		      <form action="{% url 'admin_reportes' %}" method="POST">
+		      {% csrf_token %}
 		      	<div class="row">
 		      		<div class="col-xs-6">
 		      			<label>Fecha de solicitud</label>
@@ -30,29 +32,29 @@
 		        <div class="row">
 		        	<div class="col-xs-3">
 		        		<label>Desde</label>
-		        		<div class="input-append date" data-date-format="dd/mm/yyyy">
-							<input type="text" class="col-xs-9" id="fecha_inicio_sol" name="fecha_inicio_sol" readonly>
+		        		<div id="fecha_inicio_sol" class="input-append date" data-date-format="dd/mm/yyyy">
+							<input type="text" class="col-xs-9" name="fecha_inicio_sol" readonly>
 							<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
 		        		</div>
 		        	</div>
 		        	<div class="col-xs-3">
 		        		<label>Hasta</label>
-		        		<div class="input-append date" data-date-format="dd/mm/yyyy">
-							<input type="text" class="col-xs-9" id="fecha_fin_sol" name="fecha_fin_sol" readonly>
+		        		<div id="fecha_fin_sol" class="input-append date" data-date-format="dd/mm/yyyy">
+							<input type="text" class="col-xs-9" name="fecha_fin_sol" readonly>
 							<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
 		        		</div>
 		        	</div>
 		        	<div class="col-xs-3">
 		        		<label>Desde</label>
-		        		<div class="input-append date" data-date-format="dd/mm/yyyy">
-							<input type="text" class="col-xs-9" id="fecha_inicio_aten" name="fecha_inicio_aten" readonly>
+		        		<div id="fecha_inicio_aten" class="input-append date" data-date-format="dd/mm/yyyy">
+							<input type="text" class="col-xs-9" name="fecha_inicio_aten" readonly>
 							<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
 		        		</div>
 		        	</div>
 		        	<div class="col-xs-3">
 		        		<label>Hasta</label>
-		        		<div class="input-append date" data-date-format="dd/mm/yyyy">
-							<input type="text" class="col-xs-9" id="fecha_fin_aten" name="fecha_fin_aten" readonly>
+		        		<div id="fecha_fin_aten" class="input-append date" data-date-format="dd/mm/yyyy">
+							<input type="text" class="col-xs-9" name="fecha_fin_aten" readonly>
 							<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
 		        		</div>
 		        	</div>
@@ -76,14 +78,14 @@
 		        	<div class="col-xs-3">
 		        		<select id="id_estatus" name="estatus" class="form-control">
 							<option value="">--Seleccionar--</option>
-							{% for e in estados %}
-							<option value="{{e.pk}}">{{e.nombre}}</option>
-							{% endfor %}
 		        		</select>
 		        	</div>
 		        	<div class="col-xs-3">
 		        		<select id="id_estado" name="estado" class="form-control">
 							<option value="">--Seleccionar--</option>
+							{% for e in estados %}
+							<option value="{{e.pk}}">{{e.nombre}}</option>
+							{% endfor %}
 		        		</select>
 		        	</div>
 		        	<div class="col-xs-3">
@@ -97,6 +99,13 @@
 		        		</select>
 		        	</div>
 		        </div> <!-- / .row -->
+		        <br>
+		        <div class="row">
+		        	<div class="col-xs-2 col-xs-offset-10">
+		        		<button type="submit" class="btn btn-primary col-xs-12">Buscar</button>
+		        	</div>
+		        </div> <!-- / .row -->
+		        </form>
 		      </div> <!-- / .panel-body -->
 		    </div> <!-- / .panel-collapse -->
 		  </div> <!-- / .panel -->
@@ -175,11 +184,80 @@
 		var fecha = new Date();
 		var fi = new Date(fecha.getFullYear(), fecha.getMonth(), 1);
 		var ff = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0);
+
 		$('#fecha_inicio_sol').datepicker('setDate', fi);
 		$('#fecha_fin_sol').datepicker('setDate', ff);
 		$('#fecha_inicio_aten').datepicker('setDate', fi);
 		$('#fecha_fin_aten').datepicker('setDate', ff);
 		/********* FIN ***********/
+
+		/********** CARGA DE MUNICIPIOS POR ESTADO CON CENTROS *************/
+		$(document).on('change', '#id_estado', function(){
+			value = $(this).val();
+			
+			if(value.length > 0){
+				// LLamada AJAX para obtener los municipios
+				$.ajax({
+					method: 'GET',
+					url: '/sgt/obtener-municipios/'+value,
+					data:{
+						'con_centro': true
+					},
+					dataType: "json"
+				})
+				.done(function(data){
+					if(!data.hasOwnProperty('error_msg')){
+						// Se reinicia el Select de municipios
+						$('#id_municipio').html('<option value="">--Seleccionar--</option>');
+						
+						$.each(data, function(key, value){
+							$('#id_municipio').append('<option value="'+value.pk+'">'+value.fields.nombre+'</option>');
+						});
+					}
+					else{
+						console.lg('Error');
+					}
+				});
+			}
+			else{
+				$('#id_municipio').html('<option value="">--Seleccionar--</option>');
+			}
+		});
+		/********** FIN *************/
+
+		/********** CARGA DE MUNICIPIOS POR ESTADO CON CENTROS *************/
+		$(document).on('change', '#id_municipio', function(){
+			data_object = {}
+
+			data_object['municipio_id'] = $('#id_municipio').val();
+
+			if(data_object['municipio_id'].length){
+				// Llamada AJAX para obtener los centros de inspección
+				$.ajax({
+					method: 'GET',
+					url: '/sgt/obtener-centros',
+					data: data_object,
+					dataType: "json"
+				})
+				.done(function(data){
+					if(!data.hasOwnProperty('error_msg')){
+						// Se reinicia los centros de inspeccion
+						$('#id_centro').html('<option value="">--Seleccionar--</option>');
+						
+						$.each(data, function(key, value){
+							$('#id_centro').append('<option value="'+value.pk+'">'+value.nombre+'</option>');
+						});
+					}
+					else{
+						console.lg('Error');
+					}
+				});
+			}
+			else{
+				$('#id_centro').html('<option value="">--Seleccionar--</option>');
+			}
+		});
+		/********** FIN *************/
 
 	})
 	</script>

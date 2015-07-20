@@ -1290,9 +1290,46 @@ class AdminReportes(View):
 		filtros = {}
 		centros = CentroInspeccion.objects.filter()
 		estados = Estado.objects.filter(municipio__centroinspeccion=centros).distinct('id')
-
+		
 		if request.session.has_key('filtros_reporte'):
 			filtros = request.session['filtros_reporte']
+
+		numeros_orden = NumeroOrden.reporte(filtros)
+		print numeros_orden
+
+		paginator = Paginator(numeros_orden, 10, request=request)
+		try:
+			page = request.GET.get('page', 1)
+			numeros_orden = paginator.page(page)
+		except PageNotAnInteger:
+			numeros_orden = paginator.page(1)
+			page = 0
+		except EmptyPage:
+			numeros_orden = paginator.page(paginator.num_pages)
+
+		context = {
+			'admin': True,
+			'estados': estados,
+			'numeros_orden': numeros_orden,
+			'seccion_reportes': True,
+			'usuario': usuario,
+		}
+
+		return render(request, 'admin/reportes.html', context)
+
+	def post(self, request, *args, **kwargs):
+		"""Metodo que aplica los filtros"""
+		usuario = request.user
+		centros = CentroInspeccion.objects.filter()
+		estados = Estado.objects.filter(municipio__centroinspeccion=centros).distinct('id')
+		#Se guardan en la sesión los filtros seleccionados
+		filtros = {}
+		for key in request.POST:
+			filtros[key] = request.POST.getlist(key)
+			if len(filtros[key]) == 1:
+				filtros[key] = request.POST.get(key)
+
+		request.session['filtros_reporte'] = filtros
 
 		numeros_orden = NumeroOrden.reporte(filtros)
 		print numeros_orden

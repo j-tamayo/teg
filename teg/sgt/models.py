@@ -89,19 +89,43 @@ class NumeroOrden(models.Model):
 	@staticmethod
 	def reporte(filtros):
 		condiciones = []
-		fechaInicio = filtros.get('fecha_inicio', None)
-		fechaFin = filtros.get('fecha_fin', None)
+		fechaInicioSol = filtros.get('fecha_inicio_sol', None)
+		fechaFinSol = filtros.get('fecha_fin_sol', None)
+		fechaInicioAten = filtros.get('fecha_inicio_aten', None)
+		fechaFinAten = filtros.get('fecha_fin_aten', None)
+		estatus = filtros.get('estatus', None)
+		estado = filtros.get('estado', None)
+		municipio = filtros.get('municipio', None)
+		centro = filtros.get('centro', None)
 
 		numeros_orden = NumeroOrden.objects.all()
 		if filtros:
-			if fechaInicio and fechaFin:
-				fechainicio = datetime.datetime.strptime(fechaInicio, '%d-%m-%Y')
-				fechafin = datetime.datetime.strptime(fechaFin, '%d-%m-%Y')
-				if fechainicio <= fechafin:
-					condiciones.append(Q(solicitud_inspeccion__fecha_creacion__range=(fechainicio,fechafin)))
+			if fechaInicioSol and fechaFinSol:
+				fechaInicioSol = datetime.strptime(fechaInicioSol, '%d/%m/%Y')
+				fechaFinSol = datetime.strptime(fechaFinSol, '%d/%m/%Y')
+				if fechaInicioSol <= fechaFinSol:
+					condiciones.append(Q(solicitud_inspeccion__fecha_creacion__range=(fechaInicioSol,fechaFinSol)))
 
-			numeros_orden = numeros_orden.filter(reduce(operator.and_, condiciones)).order_by('fecha')
+			if fechaInicioAten and fechaFinAten:
+				fechaInicioAten = datetime.strptime(fechaInicioAten, '%d/%m/%Y')
+				fechaFinAten = datetime.strptime(fechaFinAten, '%d/%m/%Y')
+				if fechaInicioAten <= fechaFinAten:
+					condiciones.append(Q(fecha_atencion__range=(fechaInicioAten,fechaFinAten)))
 
+			if estatus:
+				condiciones.append(Q(solicitud_inspeccion__estatus__id = estatus))
+
+			if estado:
+				condiciones.append(Q(solicitud_inspeccion__centro_inspeccion__municipio__estado__id = estado))
+
+			if municipio:
+				condiciones.append(Q(solicitud_inspeccion__centro_inspeccion__municipio__id = municipio))
+
+			if centro:
+				condiciones.append(Q(solicitud_inspeccion__centro_inspeccion__id = centro))
+
+			numeros_orden = numeros_orden.filter(reduce(operator.and_, condiciones)).order_by('fecha_atencion')
+			
 		return numeros_orden
 
 # MANEJO DE ENCUESTAS...
