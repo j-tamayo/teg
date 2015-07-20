@@ -30,12 +30,6 @@
 						<div class="col-xs-4">
 							<label>{{form.tipo_encuesta.label}}</label>
 							{{form.tipo_encuesta}}
-							<!-- <label>Tipo Encuesta:</label>
-							<select id="id_tipo_encuesta" name="tipo_encuesta" class="form-control">
-								{% for tipo_encuesta in tipos_encuesta %}
-									<option value="{{tipo_encuesta.id}}">{{tipo_encuesta.descripcion}}</option>
-								{% endfor %}
-							</select> -->
 						</div>
 					</div>
 					<br>
@@ -49,7 +43,6 @@
 					  		</a>
 						</div>
 					</div>
-
 					<div id="contenido">
 						{% if editar %}
 							{% for p in encuesta_preguntas %}
@@ -67,9 +60,12 @@
 									<br>
 									<div class="row">
 										<div class="col-xs-4">
-											{% get_form_input form 'tipo_respuesta' i as input %}
-											<label>{{ input.label }}</label>
-											{{ input }}
+											<label>Tipo de respuesta:</label>
+											<select id="id_tipo_respuesta_{{ i }}" name="tipo_respuesta_{{ i }}" class="form-control tipo_respuesta_select" target="id_pregunta_{{ i }} id_respuestas_definidas_{{ i }}">
+												{% for tipo_respuesta in tipos_respuesta %}
+													<option id="{{tipo_respuesta.codigo}}" value="{{tipo_respuesta.id}}" {% if p.tipo_respuesta.codigo == tipo_respuesta.codigo %} selected {% endif %}>{{tipo_respuesta.descripcion}}</option>
+												{% endfor %}
+											</select>
 										</div>
 									</div>
 									<br>
@@ -77,9 +73,15 @@
 										<div class="col-xs-6">
 											<div class="row">
 												<div class="col-xs-10">
-													{% get_form_input form 'pregunta' i as input %}
-													<label>{{ input.label }}</label>
-													{{ input }}
+													<label>Pregunta:</label>
+													<select id="id_pregunta_{{ i }}" name="pregunta_{{ i }}" class="form-control chosen-select pregunta_select" data-placeholder="Seleccione una pregunta...">
+														<option value="-1"></option>
+														{% for pregunta in preguntas %}
+															{% if pregunta.tipo_respuesta.codigo == p.tipo_respuesta.codigo %}
+																<option value="{{pregunta.id}}" {% if pregunta.id == p.id %} selected {% endif %} {% if pregunta in encuesta_preguntas %} disabled {% endif %}>{{pregunta.enunciado}}</option>
+															{% endif %}
+														{% endfor %}
+													</select>
 												</div>
 												<div class="col-xs-1" align="right" style="width:20%; margin-left:-4%">
 													<br>
@@ -93,9 +95,12 @@
 										<div id="id_respuestas_definidas_{{ i }}" class="col-xs-6">
 											<div class="row">
 												<div class="col-xs-10">
-													{% get_form_input form 'valores_posibles' i as input %}
-													<label>{{ input.label }}</label>
-													{{ input }}
+													<label>Respuesta:</label>
+													<select multiple id="id_respuesta_{{ i }}" name="valores_posibles_{{ i }}" class="form-control select-mul respuesta_select" data-placeholder="Seleccione la respuesta...">
+														{% for valor in valores %}
+															<option value="{{valor.id}}" {% if p in valor.valor_pregunta.all %} selected {% endif %}>{{valor.valor}}</option>
+														{% endfor %}
+													</select>
 												</div>
 												<div class="col-xs-1" align="right" style="width:20%; margin-left:-4%">
 													<br>
@@ -112,9 +117,7 @@
 								{% endwith %}
 							{% endfor %}
 						{% endif %}
-
 					</div>
-
 					<br><br>
 					<div class="row">
 						<div class="col-xs-6">
@@ -254,12 +257,19 @@
 
 		var total_preguntas = $("[name=extra_field_count]").val();
 
-		var prev_preg_list = [];
+		var prev_preg_list = [
+			{% if editar %}
+				{% for pregunta in encuesta_preguntas %} 
+					{% if not forloop.first %},{% endif %}
+					{{ pregunta.id }}
+				{% endfor %}
+			{% endif %}
+		];
 		
 		var preg_list = [ 
 			{% for pregunta in preguntas %} 
 				{% if not forloop.first %},{% endif %}
-				{ 'id': {{pregunta.id}}, 'enunciado': '{{pregunta.enunciado}}', 'tipo_respuesta': '{{pregunta.tipo_respuesta.codigo}}', 'disabled': '' }
+				{ 'id': {{pregunta.id}}, 'enunciado': '{{pregunta.enunciado}}', 'tipo_respuesta': '{{pregunta.tipo_respuesta.codigo}}', 'disabled': {% if pregunta in encuesta_preguntas %} 'disabled' {% else %} '' {% endif %} }
 			{% endfor %}
 		];
 
@@ -270,7 +280,7 @@
 			{% endfor %}
 		];
 
-		var val_list = [ 
+		var val_list = [
 			{% for valor in valores %} 
 				{% if not forloop.first %},{% endif %}
 				{ 'id': {{valor.id}}, 'valor': '{{valor.valor}}' }
@@ -282,23 +292,9 @@
 			var target_respuesta = '';
 
 			{% if editar %}
-				$('.tipo_respuesta_select').each(function(key1, value1){
-					$(value1).children().each(function(key2, value2){
-						select_id =  $(value2).attr('id');
-						if(!select_id){
-							select_value = $(value2).attr('value');
-							for(i = 0; i < tip_resp_list.length; i++){
-								console.log(tip_resp_list[i].id +'=='+ select_value);
-								if(tip_resp_list[i].id == select_value){
-									$(value2).attr('id', tip_resp_list[i].codigo);
-									break;
-								}
-							}
-						}
-					});
-					init_tipo_resp_sel($(value1));
+				$('.tipo_respuesta_select').each(function(key, value){
+					init_tipo_resp_sel($(value));
 				});
-
 
 				$('.select-mul').chosen({
 		  			no_results_text: 'No se encontraron resultados para'
@@ -323,7 +319,7 @@
 			
 			$(document).on("change", ".pregunta_select", function(){
 				id_select = $(this).attr('id');
-				index = parseInt(id_select[id_select.length - 1]);
+				index = parseInt(id_select[id_select.length - 1]) - 1;
 				update_select_preguntas(index, $(this).val());		
 			});
 
@@ -378,7 +374,7 @@
 							}
 				        });
 
-				        index = parseInt(target_pregunta[target_pregunta.length - 1]);
+				        index = parseInt(target_pregunta[target_pregunta.length - 1]) - 1;
 				        update_select_preguntas(index, data.id_pregunta);
 				    },
 				    error: function(){
@@ -639,7 +635,7 @@
 
 			$(document).on("click", ".section_elim", function(){
 				del_section = '#' + $(this).attr('target');
-				index = parseInt(del_section[del_section.length - 1]);
+				index = parseInt(del_section[del_section.length - 1]) - 1;
 				update_select_preguntas(index, -1);
 				prev_preg_list.splice(index, 1);
 				index++;
@@ -759,7 +755,7 @@
 					$(target_resp_content).show('fade');
 
 				value = $(this).val();
-				index = parseInt(target_preg_sel[target_preg_sel.length - 1]);
+				index = parseInt(target_preg_sel[target_preg_sel.length - 1]) - 1;
 				update_select_preguntas(index, -1);
 				$(target_preg_sel).empty();
 				$(target_preg_sel).append('<option value="-1" selected></option>');
@@ -784,7 +780,8 @@
 				}
 			}
 			if(prev_preg_list[index] != -1){
-				$('.pregunta_select option[value='+prev_preg_list[index]+']').removeAttr('disabled', '');
+				console.log($('.pregunta_select option[value='+prev_preg_list[index]+']'));
+				$('.pregunta_select option[value='+prev_preg_list[index]+']').removeAttr('disabled');
 				for(i = 0; i < preg_list.length; i++){
 					if(preg_list[i].id == prev_preg_list[index])
 						preg_list[i].disabled = '';

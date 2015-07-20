@@ -188,7 +188,6 @@ class CrearEncuestaForm(forms.Form):
 	
 	def __init__(self, *args, **kwargs):
 		extra_fields = kwargs.pop('extra', 0)
-		print extra_fields
 
 		super(CrearEncuestaForm, self).__init__(*args, **kwargs)
 		self.fields['extra_field_count'].initial = extra_fields
@@ -227,6 +226,7 @@ class CrearEncuestaForm(forms.Form):
 				queryset = ValorPosible.objects.all(), 
 				required = False,
 				widget=forms.SelectMultiple(attrs={
+					'multiple': '',
 					'id': 'id_valor_{index}'.format(index=index+1), 
 					'class': 'form-control select-mul respuesta_select',
 					'data-error': 'Este campo es obligatorio',
@@ -243,7 +243,7 @@ class CrearEncuestaForm(forms.Form):
 
 			aux = 'valores_posibles_' + str(index + 1)
 			valores_posibles = self.cleaned_data.get(aux)
-
+			
 			if tipo_respuesta.codigo == 'RESP_DEF' and not valores_posibles:
 				msg = u'Las preguntas con respuestas definidas deben tener al menos una respuesta asignada'
 				raise forms.ValidationError(msg)

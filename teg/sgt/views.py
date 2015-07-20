@@ -982,25 +982,20 @@ class AdminEditarEncuesta(View):
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEditarEncuesta, self).dispatch(*args, **kwargs)
 
-	def get(self, request, *args, **kwargs):
-		"""Cargando formulario de encuesta"""
-		usuario = request.user
-		encuesta_id = kwargs['encuesta_id']
-		encuesta = Encuesta.objects.filter(id=kwargs['encuesta_id']).first()
+	def get_context(self, encuesta, usuario, form=None):
+		form_preg = CrearPreguntaForm()
+		form_val = CrearValorForm()
 
-		if encuesta:
-			form_preg = CrearPreguntaForm()
-			form_val = CrearValorForm()
+		tipos_respuesta = TipoRespuesta.objects.all()
+		preguntas = Pregunta.objects.all()
+		tipos_encuesta = TipoEncuesta.objects.all()
+		valores = ValorPosible.objects.all()
 
-			tipos_respuesta = TipoRespuesta.objects.all()
-			preguntas = Pregunta.objects.all()
-			tipos_encuesta = TipoEncuesta.objects.all()
-			valores = ValorPosible.objects.all()
+		extra_fields = len(encuesta.preguntas.all())
+		encuesta_preguntas = encuesta.preguntas.all().order_by('id')
+		encuesta_valores = ValorPosible.objects.filter(valor_pregunta__pregunta=encuesta_preguntas)
 
-			extra_fields = len(encuesta.preguntas.all())
-			encuesta_preguntas = encuesta.preguntas.all().order_by('id')
-			encuesta_valores = ValorPosible.objects.filter(valor_pregunta__pregunta=encuesta_preguntas)
-
+		if not form:
 			initial_data = {
 				'nombre': encuesta.nombre,
 				'descripcion': encuesta.descripcion,
@@ -1008,6 +1003,7 @@ class AdminEditarEncuesta(View):
 				'extra_field_count': str(extra_fields)
 			}
 
+			#Probablemente esto sea innecesario... xD
 			for index in range(int(extra_fields)):
 				aux = 'tipo_respuesta_' + str(index + 1)
 				initial_data[aux] = encuesta_preguntas[index].tipo_respuesta
@@ -1029,74 +1025,81 @@ class AdminEditarEncuesta(View):
 
 			form = CrearEncuestaForm(initial=initial_data, extra=str(extra_fields))
 
-			context = {
-				'admin': True,
-				'editar': True,
-				'form': form,
-				'form_preg': form_preg,
-				'form_val': form_val,
-				'preguntas': preguntas,
-				'valores': valores,
-				'tipos_respuesta': tipos_respuesta,
-				'tipos_encuesta': tipos_encuesta,
-				'encuesta': encuesta,
-				'encuesta_preguntas': encuesta_preguntas,
-				'encuesta_valores': encuesta_valores,
-				'usuario': usuario,
-			}
+		context = {
+			'admin': True,
+			'editar': True,
+			'form': form,
+			'form_preg': form_preg,
+			'form_val': form_val,
+			'preguntas': preguntas,
+			'valores': valores,
+			'tipos_respuesta': tipos_respuesta,
+			'tipos_encuesta': tipos_encuesta,
+			'encuesta': encuesta,
+			'encuesta_preguntas': encuesta_preguntas,
+			'encuesta_valores': encuesta_valores,
+			'usuario': usuario,
+		}
 
-			return render(request, 'admin/crear_encuesta.html', context)
+		return context
 
+	def get(self, request, *args, **kwargs):
+		"""Cargando formulario de encuesta"""
+		usuario = request.user
+		encuesta_id = kwargs['encuesta_id']
+		encuesta = Encuesta.objects.filter(id=kwargs['encuesta_id']).first()
+
+		if encuesta:
+			return render(request, 'admin/crear_encuesta.html', self.get_context(encuesta, usuario))
 		else:
 			return redirect(reverse('admin_encuestas'))
 
 	def post(self, request, *args, **kwargs):
 		"""Edita la encuesta"""
 		usuario = request.user
-		print "Editando la encuesta..."
+		encuesta_id = kwargs['encuesta_id']
+		encuesta = Encuesta.objects.filter(id=kwargs['encuesta_id']).first()
+		form = CrearEncuestaForm(request.POST, extra=request.POST.get('extra_field_count'))
 
-		return redirect(reverse('admin_encuestas'))
+		if form.is_valid():
+			print "Editando la encuesta..."
+			encuesta_data = form.cleaned_data
+			extra_fields = encuesta_data['extra_field_count']
+			
+			encuesta_preguntas = encuesta.preguntas.all()
+			encuesta.nombre = encuesta_data['nombre']
+			encuesta.descripcion = encuesta_data['descripcion']
+			encuesta.tipo_encuesta = encuesta_data['tipo_encuesta']
+			#encuesta.save()
 
-# 	def post(self, request, *args, **kwargs):
-# 		"""Edita el centro de inspección"""
-# 		usuario = request.user
+			for index in range(int(extra_fields)):
+				aux = 'tipo_respuesta_' + str(index + 1)
+				tipo_respuesta = encuesta_data[aux]
 
-# 		estados = Estado.objects.all()
-# 		peritos = Perito.objects.all()
-# 		centro = CentroInspeccion.objects.filter(id=kwargs['centro_id']).first()
-# 		peritos_asignados = centro.peritos.all()
-# 		form = CentroInspeccionForm(request.POST, instance = centro)
+				aux = 'pregunta_' + str(index + 1)
+				pregunta = encuesta_data[aux]
 
-# 		if form.is_valid():
-# 			print form.cleaned_data['municipio']
-# 			form.save()
-# 			return redirect(reverse('admin_centros'))
+				if pregunta not in encuesta_preguntas:
+					print "hola"
+					#encuesta.remove(preguntas)
+				else:
+					print pregunta
+					#valores_pregunta = ValorPosible.objects.filter(valor_pregunta__pregunta=pregunta)
 
-# 		else:
-# 			print "MALLLL", form.errors
-# 			c_estado_id = request.POST.get('estado', None)
-# 			c_municipios = Municipio.objects.filter(estado__id = c_estado_id)
-# 			c_municipio_id = request.POST.get('municipio', None)
-# 			if c_estado_id:
-# 				c_estado_id = int(c_estado_id)
-# 			if c_municipio_id:
-# 				c_municipio_id = int(c_municipio_id)
-# 			context = {
-# 				'admin': True,
-# 				'form': form,
-# 				'c_estado_id': c_estado_id,
-# 				'c_municipios': c_municipios,
-# 				'c_municipio_id': c_municipio_id,
-# 				'centro_id': kwargs['centro_id'],
-# 				'editar': True,
-# 				'estados': estados,
-# 				'peritos': peritos,
-# 				'seccion_centros': True,
-# 				'usuario': usuario,
-# 				'peritos_asignados': peritos_asignados,
-# 			}
+					#encuesta.preguntas.add(pregunta_id)
 
-# 			return render(request, 'admin/crear_centro.html', context)
+				# if tipo_respuesta.codigo == 'RESP_DEF':
+				# 	aux = 'valores_posibles_' + str(index + 1)
+				# 	valores_posibles = encuesta_data[aux]
+
+				# 	for v in valores_posibles:
+				# 		v.valor_pregunta.add(pregunta)
+
+				# encuesta.preguntas.add(pregunta)
+
+			return redirect(reverse('admin_encuestas'))
+		else:
+			return render(request, 'admin/crear_encuesta.html', self.get_context(encuesta, usuario, form))
 
 class AdminEliminarEncuesta(View):
 	def dispatch(self, *args, **kwargs):
