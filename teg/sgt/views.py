@@ -948,7 +948,13 @@ class AdminAgregarEncuesta(View):
 					valores_posibles = encuesta_data[aux]
 
 					for v in valores_posibles:
-						v.valor_pregunta.add(pregunta)
+						#v.valor_pregunta.add(pregunta)
+						valor_pregunta_encuesta = ValorPreguntaEncuesta(
+							valor = v, 
+							pregunta = pregunta,
+							encuesta = encuesta)
+
+						valor_pregunta_encuesta.save()
 
 				encuesta.preguntas.add(pregunta)
 
@@ -994,6 +1000,7 @@ class AdminEditarEncuesta(View):
 		extra_fields = len(encuesta.preguntas.all())
 		encuesta_preguntas = encuesta.preguntas.all().order_by('id')
 		encuesta_valores = ValorPosible.objects.filter(valor_pregunta__pregunta=encuesta_preguntas)
+		print encuesta_valores 
 
 		if not form:
 			initial_data = {
@@ -1070,7 +1077,7 @@ class AdminEditarEncuesta(View):
 			encuesta.nombre = encuesta_data['nombre']
 			encuesta.descripcion = encuesta_data['descripcion']
 			encuesta.tipo_encuesta = encuesta_data['tipo_encuesta']
-			#encuesta.save()
+			encuesta.save()
 
 			for index in range(int(extra_fields)):
 				aux = 'tipo_respuesta_' + str(index + 1)
@@ -1079,24 +1086,50 @@ class AdminEditarEncuesta(View):
 				aux = 'pregunta_' + str(index + 1)
 				pregunta = encuesta_data[aux]
 
+				#si no existe previamente, entonces se agrega
 				if pregunta not in encuesta_preguntas:
-					print "hola"
-					#encuesta.remove(preguntas)
+					if tipo_respuesta.codigo == 'RESP_DEF':
+						aux = 'valores_posibles_' + str(index + 1)
+						valores_posibles = encuesta_data[aux]
+
+						for valor in valores_posibles:
+							print "agregando valor:", valor, "para pregunta:", pregunta
+							vpe = ValorPreguntaEncuesta(
+								valor = valor, 
+								pregunta = pregunta, 
+								encuesta = encuesta)
+							vpe.save()
+
+					print "guardando pregunta", pregunta
+					encuesta.preguntas.add(pregunta)
 				else:
-					print pregunta
-					valores_pregunta = ValorPosible.objects.filter(valor_pregunta=pregunta)
-					print valores_pregunta
+					encuesta_preguntas.exclude(id=pregunta.id)
+				
+					if tipo_respuesta.codigo == 'RESP_DEF':
+						valores_pregunta = ValorPosible.objects.filter(valor_pregunta_encuesta=pregunta)
+						aux = 'valores_posibles_' + str(index + 1)
+						valores_posibles = encuesta_data[aux]
 
-					#encuesta.preguntas.add(pregunta_id)
+						for valor in valores_pregunta:
+							if valor not in valores_posibles:
+								print "agregando valor:", valor, "para pregunta:", pregunta
+								vpe = ValorPreguntaEncuesta(
+									valor = valor, 
+									pregunta = pregunta, 
+									encuesta = encuesta)
+								vpe.save()
+							else:
+								print valores_pregunta
+								valores_pregunta.exclude(id=valor.id)
+								print valores_pregunta
 
-				# if tipo_respuesta.codigo == 'RESP_DEF':
-				# 	aux = 'valores_posibles_' + str(index + 1)
-				# 	valores_posibles = encuesta_data[aux]
+						for valor in valores_pregunta:
+							vpe = ValorPreguntaEncuesta.objects.get(valor=valor, pregunta=pregunta, encuesta=encuesta)
+							vpe.delete()
 
-				# 	for v in valores_posibles:
-				# 		v.valor_pregunta.add(pregunta)
-
-				# encuesta.preguntas.add(pregunta)
+			#Nota: hay que excluir para despues eliminar lo que sobra...
+			for pregunta in encuesta_preguntas:
+				encuesta.preguntas.remove(pregunta)
 
 			return redirect(reverse('admin_encuestas'))
 		else:
@@ -1120,7 +1153,9 @@ class AdminEliminarEncuesta(View):
 				preguntas_valores = v.valor_pregunta.all()
 				for p in encuesta_preguntas:
 					if p in preguntas_valores:
-						v.valor_pregunta.remove(p)
+						vpe = ValorPreguntaEncuesta.objects.get(valor=v, pregunta=p, encuesta=encuesta)
+						vpe.delete()
+						#v.valor_pregunta.remove(p)
 
 			encuesta.preguntas.clear()
 

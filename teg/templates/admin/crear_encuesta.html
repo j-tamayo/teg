@@ -98,7 +98,7 @@
 													<label>Respuesta:</label>
 													<select multiple id="id_respuesta_{{ i }}" name="valores_posibles_{{ i }}" class="form-control select-mul respuesta_select" data-placeholder="Seleccione la respuesta...">
 														{% for valor in valores %}
-															<option value="{{valor.id}}" {% if p in valor.valor_pregunta.all %} selected {% endif %}>{{valor.valor}}</option>
+															<option value="{{valor.id}}" {% if p in valor.valor_pregunta_encuesta.all %} selected {% endif %}>{{valor.valor}}</option>
 														{% endfor %}
 													</select>
 												</div>
