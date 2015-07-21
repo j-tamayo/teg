@@ -947,8 +947,11 @@ class AdminAgregarEncuesta(View):
 					aux = 'valores_posibles_' + str(index + 1)
 					valores_posibles = encuesta_data[aux]
 
+					print "almacenando valores para pregunta", pregunta
 					for v in valores_posibles:
 						#v.valor_pregunta.add(pregunta)
+						print encuesta.id, "<-", pregunta.id, "<-", v.id
+
 						valor_pregunta_encuesta = ValorPreguntaEncuesta(
 							valor = v, 
 							pregunta = pregunta,
@@ -1069,7 +1072,6 @@ class AdminEditarEncuesta(View):
 		form = CrearEncuestaForm(request.POST, extra=request.POST.get('extra_field_count'))
 
 		if form.is_valid():
-			print "Editando la encuesta..."
 			encuesta_data = form.cleaned_data
 			extra_fields = encuesta_data['extra_field_count']
 			
@@ -1079,6 +1081,7 @@ class AdminEditarEncuesta(View):
 			encuesta.tipo_encuesta = encuesta_data['tipo_encuesta']
 			encuesta.save()
 
+			encuesta_preguntas_exclude = []
 			for index in range(int(extra_fields)):
 				aux = 'tipo_respuesta_' + str(index + 1)
 				tipo_respuesta = encuesta_data[aux]
@@ -1093,46 +1096,51 @@ class AdminEditarEncuesta(View):
 						valores_posibles = encuesta_data[aux]
 
 						for valor in valores_posibles:
-							print "agregando valor:", valor, "para pregunta:", pregunta
 							vpe = ValorPreguntaEncuesta(
 								valor = valor, 
 								pregunta = pregunta, 
 								encuesta = encuesta)
 							vpe.save()
 
-					print "guardando pregunta", pregunta
 					encuesta.preguntas.add(pregunta)
 				else:
-					encuesta_preguntas.exclude(id=pregunta.id)
-				
 					if tipo_respuesta.codigo == 'RESP_DEF':
 						valores_pregunta = ValorPosible.objects.filter(valor_pregunta_encuesta=pregunta)
 						aux = 'valores_posibles_' + str(index + 1)
 						valores_posibles = encuesta_data[aux]
 
-						for valor in valores_pregunta:
-							if valor not in valores_posibles:
-								print "agregando valor:", valor, "para pregunta:", pregunta
+						valores_pregunta_exclude = []
+						for valor in valores_posibles:
+							if valor not in valores_pregunta:
 								vpe = ValorPreguntaEncuesta(
 									valor = valor, 
 									pregunta = pregunta, 
 									encuesta = encuesta)
 								vpe.save()
-							else:
-								print valores_pregunta
-								valores_pregunta.exclude(id=valor.id)
-								print valores_pregunta
 
+							valores_pregunta_exclude.append(valor.id)
+
+						#Nota: hay que excluir para despues eliminar lo que sobra...
+						valores_pregunta = valores_pregunta.exclude(id__in=valores_pregunta_exclude)
 						for valor in valores_pregunta:
 							vpe = ValorPreguntaEncuesta.objects.get(valor=valor, pregunta=pregunta, encuesta=encuesta)
 							vpe.delete()
 
+				encuesta_preguntas_exclude.append(pregunta.id)
+			
 			#Nota: hay que excluir para despues eliminar lo que sobra...
+			encuesta_preguntas = encuesta_preguntas.exclude(id__in=encuesta_preguntas_exclude)
 			for pregunta in encuesta_preguntas:
+				valores_pregunta = ValorPosible.objects.filter(valor_pregunta_encuesta=pregunta)
+				for valor in valores_pregunta:
+					vpe = ValorPreguntaEncuesta.objects.get(valor=valor, pregunta=pregunta, encuesta=encuesta)
+					vpe.delete()
+
 				encuesta.preguntas.remove(pregunta)
 
 			return redirect(reverse('admin_encuestas'))
 		else:
+			print form.errors
 			return render(request, 'admin/crear_encuesta.html', self.get_context(encuesta, usuario, form))
 
 class AdminEliminarEncuesta(View):
