@@ -171,10 +171,20 @@ class Pregunta(models.Model):
 
 class ValorPosible(models.Model):
 	valor = models.CharField(max_length=255)
-	valor_pregunta = models.ManyToManyField('Pregunta')
+	valor_pregunta_encuesta = models.ManyToManyField('Pregunta', through='ValorPreguntaEncuesta', related_name='valores_pregunta_encuesta')
+	#valor_pregunta = models.ManyToManyField('Pregunta')
 
 	def __unicode__(self):
 		return u'%s' % self.valor
+
+
+class ValorPreguntaEncuesta(models.Model):
+    valor = models.ForeignKey(ValorPosible, related_name='valor_pregunta')
+    pregunta = models.ForeignKey(Pregunta, related_name='pregunta_encuesta')
+    encuesta = models.ForeignKey(Encuesta, related_name='encuesta')
+
+    def __unicode__(self):
+        return "%s : %s ->  %s" % (self.valor, self.pregunta, self.encuesta)
 
 
 class Respuesta(models.Model):
