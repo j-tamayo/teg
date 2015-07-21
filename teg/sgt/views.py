@@ -1290,6 +1290,7 @@ class AdminReportes(View):
 		filtros = {}
 		centros = CentroInspeccion.objects.filter()
 		estados = Estado.objects.filter(municipio__centroinspeccion=centros).distinct('id')
+		estatus = Estatus.objects.filter(codigo__in = ['solicitud_en_proceso','solicitud_procesada','solicitud_no_procesada'])
 		
 		if request.session.has_key('filtros_reporte'):
 			filtros = request.session['filtros_reporte']
@@ -1310,6 +1311,7 @@ class AdminReportes(View):
 		context = {
 			'admin': True,
 			'estados': estados,
+			'estatus': estatus,
 			'numeros_orden': numeros_orden,
 			'seccion_reportes': True,
 			'usuario': usuario,
@@ -1322,6 +1324,7 @@ class AdminReportes(View):
 		usuario = request.user
 		centros = CentroInspeccion.objects.filter()
 		estados = Estado.objects.filter(municipio__centroinspeccion=centros).distinct('id')
+		estatus = Estatus.objects.filter(codigo__in = ['solicitud_en_proceso','solicitud_procesada','solicitud_no_procesada'])
 		#Se guardan en la sesión los filtros seleccionados
 		filtros = {}
 		for key in request.POST:
@@ -1347,6 +1350,7 @@ class AdminReportes(View):
 		context = {
 			'admin': True,
 			'estados': estados,
+			'estatus': estatus,
 			'numeros_orden': numeros_orden,
 			'seccion_reportes': True,
 			'usuario': usuario,
