@@ -128,7 +128,6 @@ class NumeroOrden(models.Model):
 			
 		return numeros_orden
 
-# MANEJO DE ENCUESTAS...
 
 class TipoEncuesta(models.Model):
 	codigo = models.CharField(max_length=50)
@@ -139,7 +138,6 @@ class TipoEncuesta(models.Model):
 
 
 class Encuesta(models.Model):
-	#codigo = models.CharField(max_length=50)
 	nombre = models.CharField(max_length=255)
 	preguntas = models.ManyToManyField('Pregunta')
 	usuarios = models.ManyToManyField(USER_MODEL)
@@ -159,11 +157,9 @@ class TipoRespuesta(models.Model):
 
 
 class Pregunta(models.Model):
-	#codigo = models.CharField(max_length=50)
 	enunciado = models.CharField(max_length=255)
 	requerida = models.BooleanField(default=False)
 	tipo_respuesta = models.ForeignKey(TipoRespuesta, null=True)
-	#respuesta = models.CharField(max_length=255)
 
 	def __unicode__(self):
 		return u'%s' % self.enunciado
@@ -172,7 +168,6 @@ class Pregunta(models.Model):
 class ValorPosible(models.Model):
 	valor = models.CharField(max_length=255)
 	valor_pregunta_encuesta = models.ManyToManyField('Pregunta', through='ValorPreguntaEncuesta', related_name='valores_pregunta_encuesta')
-	#valor_pregunta = models.ManyToManyField('Pregunta')
 
 	def __unicode__(self):
 		return u'%s' % self.valor
@@ -184,7 +179,7 @@ class ValorPreguntaEncuesta(models.Model):
     encuesta = models.ForeignKey(Encuesta, related_name='encuesta')
 
     def __unicode__(self):
-        return "%s : %s ->  %s" % (self.valor, self.pregunta, self.encuesta)
+        return u'%s : %s ->  %s' % (self.valor, self.pregunta, self.encuesta)
 
 
 class Respuesta(models.Model):
@@ -210,7 +205,6 @@ class RespuestaDefinida(models.Model):
 	def __unicode__(self):
 		return u'%s' % self.valor_definido
 
-#FIN MANEJO DE ENCUESTAS...
 
 class SistemaOperativo(models.Model):
 	nombre = models.CharField(max_length=255)
@@ -254,19 +248,27 @@ class Estatus(models.Model):
 
 
 class Notificacion(models.Model):
-	fecha_creacion = models.DateTimeField(auto_now_add=True)
-	leida = models.BooleanField(default=False)
-	texto = models.TextField()
+	mensaje = models.TextField()
 	tipo_notificacion = models.ForeignKey('TipoNotificacion')
-	usuario = models.ForeignKey(USER_MODEL)
+	notificacion_usuario = models.ManyToManyField(USER_MODEL, through='NotificacionUsuario', related_name='notificacion_usuario')
 
 	def __unicode__(self):
-		return u'%s - %s' % (self.fecha_creacion,self.texto)
+		return u'%s - %s' % (self.fecha_creacion,self.mensaje)
+
+
+class NotificacionUsuario(models.Model):
+	notificacion = models.ForeignKey(Notificacion, related_name='notificacion')
+	usuario = models.ForeignKey(USER_MODEL, related_name='usuario')
+	fecha_creacion = models.DateTimeField(auto_now_add=True)
+	leida = models.BooleanField(default=False)
+
+	def __unicode__(self):
+		return u'%s <- %s' % (self.usuario, self.notificacion)
 
 
 class TipoNotificacion(models.Model):
 	codigo = models.CharField(max_length=100)
-	nombre = models.CharField(max_length=255)
+	descripcion = models.CharField(max_length=255)
 
 	def __unicode__(self):
-		return u'%s' % self.nombre
+		return u'%s' % self.descripcion

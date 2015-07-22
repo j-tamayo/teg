@@ -1137,6 +1137,7 @@ class AdminEditarEncuesta(View):
 			print form.errors
 			return render(request, 'admin/crear_encuesta.html', self.get_context(encuesta, usuario, form))
 
+
 class AdminEliminarEncuesta(View):
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEliminarEncuesta, self).dispatch(*args, **kwargs)
@@ -1315,6 +1316,148 @@ class AdminEliminarRespuesta(View):
 		    json.dumps(respuesta),
 		    content_type="application/json"
 		)
+
+
+class AdminBandejaNotificaciones(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminBandejaNotificaciones, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		""" Vista que lista las encuestas al administrador"""
+		usuario = request.user
+
+		notificaciones = Notificacion.objects.all()
+
+		try:
+			page = request.GET.get('page', 1)
+		except PageNotAnInteger:
+			page = 1
+
+		paginator = Paginator(notificaciones, 10, request=request)
+		notificaciones = paginator.page(page)
+
+		context = {
+			'admin': True,
+			'seccion_notificaciones':True,
+			'notificaciones': notificaciones,
+			'usuario': usuario,
+		}
+
+		return render(request, 'admin/bandeja_notificaciones.html', context)
+
+
+class AdminAgregarNotificacion(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminAgregarNotificacion, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Despliega el formulario para crear notificaciones"""
+		usuario = request.user
+		form = NotificacionForm()
+
+		context = {
+			'admin': True,
+			'usuario': usuario,
+			'form': form
+		}
+
+		return render(request, 'admin/crear_notificacion.html', context) #self.get_context(usuario)
+
+	def post(self, request, *args, **kwargs):
+		"""Crea el Perito"""
+		usuario = request.user
+
+		form = NotificacionForm(request.POST)
+
+		if form.is_valid():
+			form.save()
+			return redirect(reverse('admin_notificaciones'))
+
+		else:
+			print form.errors
+
+			context = {
+				'admin': True,
+				'usuario': usuario,
+				'form': form,
+				'seccion_notificaciones': True
+			}
+
+			return render(request, 'admin/crear_notificacion.html', context)
+
+
+class AdminEditarNotificacion(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEditarNotificacion, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Vista que despliega el formulario para editar notificaciones"""
+		usuario = request.user
+
+		notificacion = Notificacion.objects.filter(id=kwargs['notificacion_id']).first()
+
+		if notificacion:
+			form = NotificacionForm(instance = notificacion)
+
+			context = {
+				'admin': True,
+				'editar': True,
+				'form': form,
+				'notificacion_id': kwargs['notificacion_id'],
+				'seccion_notificaciones': True,
+				'usuario': usuario,
+			}
+
+			return render(request, 'admin/crear_notificacion.html', context)
+
+		else:
+			return redirect(reverse('admin_notificaciones'))
+
+	def post(self, request, *args, **kwargs):
+		"""Edita el centro de inspección"""
+		usuario = request.user
+
+		notificacion = Notificacion.objects.filter(id=kwargs['notificacion_id']).first()
+		form = NotificacionForm(request.POST, instance = notificacion)
+
+		if form.is_valid():
+			form.save()
+			return redirect(reverse('admin_notificaciones'))
+
+		else:
+			print form.errors
+			context = {
+				'admin': True,
+				'editar': True,
+				'form': form,
+				'perito_id': kwargs['notificaciones_id'],
+				'seccion_notificaciones': True,
+				'usuario': usuario
+			}
+
+			return render(request, 'admin/crear_notificacion.html', context)
+
+
+class AdminEliminarNotificacion(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEliminarNotificacion, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Vista que elimina un Centro de Inspección"""
+		page = request.POST.get('page', None)
+		print page
+		notificacion_id = request.POST.get('notificacion_id', None)
+		notificacion = Notificacion.objects.filter(id=notificacion_id)
+		if notificacion:
+			notificacion.delete()
+			redirect_url = reverse('admin_notificaciones')
+			if int(page) > 1:
+				extra_params = '?page=%s' % page
+				redirect_url = '%s%s' % (redirect_url, extra_params)
+
+			return redirect(redirect_url, kwargs={'location': page})
+		else:
+			return redirect(redirect_url, kwargs={'location': page})
 
 
 class AdminReportes(View):
