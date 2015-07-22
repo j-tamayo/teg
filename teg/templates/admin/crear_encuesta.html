@@ -28,8 +28,13 @@
 							<span class="help-block with-errors"></span>
 						</div>
 						<div class="col-xs-4">
-							<label>{{form.tipo_encuesta.label}}</label>
-							{{form.tipo_encuesta}}
+							<label>Tipo de encuesta:</label>
+							<select name="tipo_encuesta" class="form-control">
+								{% for tipo_encuesta in tipos_encuesta %}
+									<option value="{{tipo_encuesta.id}}" {% if editar %} {% if encuesta.tipo_encuesta.codigo == tipo_encuesta.codigo %} selected {% endif %} {% endif %}>{{tipo_encuesta.descripcion}}</option>
+								{% endfor %}
+							</select>
+
 						</div>
 					</div>
 					<br>

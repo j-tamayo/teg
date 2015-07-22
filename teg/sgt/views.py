@@ -886,22 +886,29 @@ class AdminAgregarEncuesta(View):
 	def dispatch(self, *args, **kwargs):
 		return super(AdminAgregarEncuesta, self).dispatch(*args, **kwargs)
 
-	def get(self, request, *args, **kwargs):
-		"""Despliega el formulario para crear encuestas"""
-		usuario = request.user
-		
-		data_initial = {
-			'extra_field_count': 0
-		}
-		
-		form = CrearEncuestaForm(initial=data_initial)
+	def get_context(self, usuario, form=None):
 		form_preg = CrearPreguntaForm()
 		form_val = CrearValorForm()
 
+		if not form:
+			data_initial = {
+				'extra_field_count': 0
+			}
+
+			form = CrearEncuestaForm(initial=data_initial)
+
 		tipos_respuesta = TipoRespuesta.objects.all()
 		preguntas = Pregunta.objects.all()
-		tipos_encuesta = TipoEncuesta.objects.all()
 		valores = ValorPosible.objects.all()
+		tipos_encuesta = TipoEncuesta.objects.all()
+		
+		aux = Encuesta.objects.filter(tipo_encuesta__codigo="ENC_CONF")
+		if aux:
+			tipos_encuesta = tipos_encuesta.exclude(codigo="ENC_CONF")
+
+		aux = Encuesta.objects.filter(tipo_encuesta__codigo="ENC_JUST")
+		if aux:
+			tipos_encuesta = tipos_encuesta.exclude(codigo="ENC_JUST")
 
 		context = {
 			'admin': True,
@@ -913,17 +920,20 @@ class AdminAgregarEncuesta(View):
 			'valores': valores,
 			'tipos_respuesta': tipos_respuesta,
 			'tipos_encuesta': tipos_encuesta,
-			'usuario': usuario,
+			'usuario': usuario
 		}
 
-		return render(request, 'admin/crear_encuesta.html', context)
+		return context
+
+	def get(self, request, *args, **kwargs):
+		"""Despliega el formulario para crear encuestas"""
+		usuario = request.user
+		return render(request, 'admin/crear_encuesta.html', self.get_context(usuario))
 
 	def post(self, request, *args, **kwargs):
 		"""Crea la encuesta"""
 		usuario = request.user
 		form = CrearEncuestaForm(request.POST, extra=request.POST.get('extra_field_count'))
-		form_preg = CrearPreguntaForm()
-		form_val = CrearValorForm()
 
 		if form.is_valid():
 			encuesta_data = form.cleaned_data
@@ -947,11 +957,7 @@ class AdminAgregarEncuesta(View):
 					aux = 'valores_posibles_' + str(index + 1)
 					valores_posibles = encuesta_data[aux]
 
-					print "almacenando valores para pregunta", pregunta
 					for v in valores_posibles:
-						#v.valor_pregunta.add(pregunta)
-						print encuesta.id, "<-", pregunta.id, "<-", v.id
-
 						valor_pregunta_encuesta = ValorPreguntaEncuesta(
 							valor = v, 
 							pregunta = pregunta,
@@ -965,26 +971,7 @@ class AdminAgregarEncuesta(View):
 
 		else:
 			print form.errors
-
-			tipos_respuesta = TipoRespuesta.objects.all()
-			preguntas = Pregunta.objects.all()
-			tipos_encuesta = TipoEncuesta.objects.all()
-			valores = ValorPosible.objects.all()
-
-			context = {
-				'admin': True,
-				'editar': False,
-				'form': form,
-				'form_preg': form_preg,
-				'form_val': form_val,
-				'preguntas': preguntas,
-				'valores': valores,
-				'tipos_respuesta': tipos_respuesta,
-				'tipos_encuesta': tipos_encuesta,
-				'usuario': usuario,
-			}
-
-			return render(request, 'admin/crear_encuesta.html', context)
+			return render(request, 'admin/crear_encuesta.html', self.get_context(usuario, form))
 
 
 class AdminEditarEncuesta(View):
@@ -997,13 +984,20 @@ class AdminEditarEncuesta(View):
 
 		tipos_respuesta = TipoRespuesta.objects.all()
 		preguntas = Pregunta.objects.all()
-		tipos_encuesta = TipoEncuesta.objects.all()
 		valores = ValorPosible.objects.all()
+		tipos_encuesta = TipoEncuesta.objects.all()
+		
+		aux = Encuesta.objects.filter(tipo_encuesta__codigo="ENC_CONF")
+		if aux:
+			tipos_encuesta = tipos_encuesta.exclude(codigo="ENC_CONF")
+
+		aux = Encuesta.objects.filter(tipo_encuesta__codigo="ENC_JUST")
+		if aux:
+			tipos_encuesta = tipos_encuesta.exclude(codigo="ENC_JUST")
 
 		extra_fields = len(encuesta.preguntas.all())
 		encuesta_preguntas = encuesta.preguntas.all().order_by('id')
 		encuesta_valores = ValorPosible.objects.filter(valor_pregunta__pregunta=encuesta_preguntas)
-		print encuesta_valores 
 
 		if not form:
 			initial_data = {
@@ -1048,7 +1042,7 @@ class AdminEditarEncuesta(View):
 			'encuesta': encuesta,
 			'encuesta_preguntas': encuesta_preguntas,
 			'encuesta_valores': encuesta_valores,
-			'usuario': usuario,
+			'usuario': usuario
 		}
 
 		return context
