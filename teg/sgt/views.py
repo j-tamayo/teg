@@ -10,6 +10,7 @@ from sgt.helpers import solicitudes,dates
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from cuentas import forms as CuentasForm
 from cuentas.models import *
+from datetime import datetime
 
 import json
 
@@ -521,7 +522,7 @@ class AdminCrearUsuario(View):
 		usuario = request. user
 		estados = Estado.objects.all()
 
-		form = CuentasForm.RegistroForm()
+		form = CuentasForm.RegistroForm(taquilla=1)
 
 		context = {
 			'admin': True,
@@ -537,7 +538,7 @@ class AdminCrearUsuario(View):
 		usuario = request.user
 
 		estados = Estado.objects.all()
-		form = CuentasForm.RegistroForm(request.POST)
+		form = CuentasForm.RegistroForm(request.POST, taquilla=1)
 
 		if form.is_valid():
 			registro = form.cleaned_data
@@ -555,7 +556,9 @@ class AdminCrearUsuario(View):
                 telefono_local = registro['telefono_local'],
                 telefono_movil = registro['telefono_movil'],
                 sexo = registro['sexo'],
-                rol = rol_cliente)
+                rol = rol_cliente,
+                centro_inspeccion = registro['centro_inspeccion'],
+            )
             
 			usuario.set_password(registro['password'])
 			usuario.save()
@@ -563,18 +566,26 @@ class AdminCrearUsuario(View):
 			return redirect(reverse('admin_usuarios'))
 
 		else:
+			print "ERRORES",form.errors
 			u_estado_id = request.POST.get('estado', None)
 			u_municipios = []
+			u_centros = []
 			u_municipio_id = request.POST.get('municipio', None)
+			u_centro_id = request.POST.get('centro_inspeccion', None)
 			if u_estado_id:
 				u_municipios = Municipio.objects.filter(estado__id = u_estado_id)
 				u_estado_id = int(u_estado_id)
 			if u_municipio_id:
+				u_centros = CentroInspeccion.objects.filter(municipio__id = u_municipio_id)
 				u_municipio_id = int(u_municipio_id)
+			if u_centro_id:
+				u_centro_id = int(u_centro_id)
 
 			context = {
 				'admin': True,
 				'form': form,
+				'u_centros': u_centros,
+				'u_centro_id': u_centro_id,
 				'u_estado_id': u_estado_id,
 				'u_municipios': u_municipios,
 				'u_municipio_id': u_municipio_id,
@@ -600,6 +611,8 @@ class AdminEditarUsuario(View):
 			u_estado_id = user.municipio.estado.pk
 			u_municipios = Municipio.objects.filter(estado__id = u_estado_id)
 			u_municipio_id = user.municipio.pk
+			u_centros = CentroInspeccion.objects.filter(municipio__id = u_municipio_id)
+			u_centro_id = user.centro_inspeccion.pk
 			initial_data = {
 				'nombres': user.nombres,
 				'apellidos': user.apellidos,
@@ -612,14 +625,17 @@ class AdminEditarUsuario(View):
 				'sexo': user.sexo,
 				'telefono_local': user.telefono_local,
 				'telefono_movil': user.telefono_movil,
-				'fecha_nacimiento': user.fecha_nacimiento
+				'fecha_nacimiento': user.fecha_nacimiento,
+				'centro_inspeccion': user.centro_inspeccion,
 			}
-			form = CuentasForm.RegistroForm(initial = initial_data)
+			form = CuentasForm.RegistroForm(initial = initial_data, taquilla=1)
 			estados = Estado.objects.all()
 
 			context = {
 				'admin': True,
 				'form': form,
+				'u_centros': u_centros,
+				'u_centro_id': u_centro_id,
 				'u_estado_id': u_estado_id,
 				'u_municipios': u_municipios,
 				'u_municipio_id': u_municipio_id,
@@ -664,15 +680,23 @@ class AdminEditarUsuario(View):
 		else:
 			print "MALLLL", form.errors
 			u_estado_id = request.POST.get('estado', None)
+			u_municipios = []
+			u_centros = []
 			u_municipio_id = request.POST.get('municipio', None)
+			u_centro_id = request.POST.get('centro_inspeccion', None)
 			if u_estado_id:
 				u_municipios = Municipio.objects.filter(estado__id = u_estado_id)
 				u_estado_id = int(u_estado_id)
 			if u_municipio_id:
+				u_centros = CentroInspeccion.objects.filter(municipio__id = u_municipio_id)
 				u_municipio_id = int(u_municipio_id)
+			if u_centro_id:
+				u_centro_id = int(u_centro_id)
 			context = {
 				'admin': True,
 				'form': form,
+				'u_centro_id': u_centro_id,
+				'u_centros': u_centros,
 				'u_estado_id': u_estado_id,
 				'u_municipios': u_municipios,
 				'u_municipio_id': u_municipio_id,
@@ -1537,3 +1561,22 @@ class AdminReportes(View):
 		}
 
 		return render(request, 'admin/reportes.html', context)
+
+
+class BandejaTaquilla(View):
+	def dispatch(self, *args, **kwargs):
+		return super(BandejaTaquilla, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Bandeja con las solicitudes para el dia corriente"""
+		usuario = request.user
+		today = datetime.today().date()
+		print usuario,today
+		numeros_orden = NumeroOrden.objects.filter(fecha_atencion = today, solicitud_inspeccion__centro_inspeccion = usuario.centro_inspeccion)
+
+		context = {
+			'numeros_orden': numeros_orden,
+			'usuario': usuario
+		}
+
+		return render(request, 'taquilla/bandeja.html', context)

@@ -191,4 +191,10 @@ urlpatterns = \
             views.AdminReportes.as_view(),
             name='admin_reportes'
         ),
+
+        url(
+            r'^taquilla$',
+            views.BandejaTaquilla.as_view(),
+            name='bandeja_taquilla'
+        ),
 )

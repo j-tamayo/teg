@@ -1,1 +1,18 @@
-[{"fields": {"nombre": "No asistencia a la cita", "codigo": "no_asistencia"}, "model": "sgt.tiponotificacion", "pk": 1}, {"fields": {"nombre": "Asistencia a la cita", "codigo": "asistencia"}, "model": "sgt.tiponotificacion", "pk": 2}]
+[
+  {
+    "fields": {
+      "descripcion": "Notificación general",
+      "codigo": "NOTI_GEN"
+    },
+    "model": "sgt.tiponotificacion",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "descripcion": "Notificación de encuesta",
+      "codigo": "NOTI_ENC"
+    },
+    "model": "sgt.tiponotificacion",
+    "pk": 2
+  }
+]

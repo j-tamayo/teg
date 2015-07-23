@@ -80,6 +80,7 @@ class SgtUsuario(AbstractBaseUser):
 	sexo = models.IntegerField()
 	telefono_local = models.CharField(max_length=100, blank=True, null=True)
 	telefono_movil = models.CharField(max_length=100, blank=True, null=True)
+	centro_inspeccion = models.ForeignKey('sgt.CentroInspeccion', blank=True, null=True)
 
 	objects = SgtUsuarioManager()
 
@@ -112,6 +113,10 @@ class SgtUsuario(AbstractBaseUser):
 	def es_admin(self):
 		rol_admin = RolSgt.objects.filter(codigo = 'admin').first()
 		return self.rol == rol_admin
+
+	def es_taquilla(self):
+		rol_taquilla = RolSgt.objects.filter(codigo = 'taquilla').first()
+		return self.rol == rol_taquilla
 
 	def __unicode__(self):
 		return u'%s - %s' % (self.correo, self.cedula)

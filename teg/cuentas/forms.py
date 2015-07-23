@@ -49,6 +49,7 @@ class AutenticacionUsuarioForm(forms.Form):
 class RegistroForm(forms.Form):
 	""" Formulario para el registro de usuarios """
 	sex_choices = [('0','Masculino'),('1','Femenino')]
+	taquilla = forms.DecimalField(widget=forms.HiddenInput(), required = False)
 
 	nombres = forms.CharField(
 		label = u'Nombre',
@@ -126,6 +127,17 @@ class RegistroForm(forms.Form):
 		)
 	)
 
+	centro_inspeccion = forms.ModelChoiceField(
+		label = u'Centro de inspección',
+		queryset = CentroInspeccion.objects.all().order_by('nombre'),
+		widget = forms.Select(attrs={'class':'form-control'}),
+		required = False
+	)
+
+	def __init__(self, *args, **kwargs):
+		self.taquilla = kwargs.pop('taquilla', 0)
+		super(RegistroForm, self).__init__(*args, **kwargs)
+
 	def clean_password_confirm(self):
 		password1 = self.cleaned_data.get('password')
 		password2 = self.cleaned_data.get('password_confirm')
@@ -137,6 +149,12 @@ class RegistroForm(forms.Form):
 			raise forms.ValidationError(u'Las contraseñas deben conincidir')
 
 		return password2
+
+	def clean(self):
+		cleaned_data = super(RegistroForm, self).clean()
+		centro_inspeccion = cleaned_data.get('centro_inspeccion', None)
+		if self.taquilla > 0 and not centro_inspeccion:
+			self.add_error('centro_inspeccion', 'Este campo es obligatorio')
 
 
 class SolicitudInspeccionForm(forms.Form):

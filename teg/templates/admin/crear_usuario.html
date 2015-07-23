@@ -40,12 +40,22 @@
 						<div class="form-group">
 							<label class="text-muted">Municipio:</label>
 							<select id="id_municipio" name="municipio" class="form-control">
-								<option value="">---------</option>
+								<option value="">--Seleccionar--</option>
 								{% for m in u_municipios %}
 								<option value="{{m.pk}}" {% ifequal m.pk u_municipio_id %}selected{% endifequal %}>{{m.nombre}}</option>
 								{% endfor %}
 							</select> 
 							<div class="text-danger">{{form.municipio.errors.as_text}}</div>
+						</div>
+						<div class="form-group">
+							<label class="text-muted">Centro de Inspecci&oacute;n:</label>
+							<select id="id_centro_inspeccion" name="centro_inspeccion" class="form-control">
+								<option value="">--Seleccionar--</option>
+								{% for c in u_centros %}
+								<option value="{{c.pk}}" {% ifequal c.pk u_centro_id %}selected{% endifequal %}>{{c.nombre}}</option>
+								{% endfor %}
+							</select> 
+							<div class="text-danger">{{form.centro_inspeccion.errors.as_text}}</div>
 						</div>
 						<div class="form-group">
 							<label class="text-muted">Direcci&oacute;n:</label>
@@ -150,6 +160,40 @@
 			}
 		});
 		/********** FIN  *************/
+
+		/********** CARGA DE CENTROS POR MUNICIPIO *************/
+		$(document).on('change', '#id_municipio', function(){
+			data_object = {}
+
+			data_object['municipio_id'] = $('#id_municipio').val();
+
+			if(data_object['municipio_id'].length){
+				// Llamada AJAX para obtener los centros de inspección
+				$.ajax({
+					method: 'GET',
+					url: '/sgt/obtener-centros',
+					data: data_object,
+					dataType: "json"
+				})
+				.done(function(data){
+					if(!data.hasOwnProperty('error_msg')){
+						// Se reinicia los centros de inspeccion
+						$('#id_centro_inspeccion').html('<option value="">--Seleccionar--</option>');
+						
+						$.each(data, function(key, value){
+							$('#id_centro_inspeccion').append('<option value="'+value.pk+'">'+value.nombre+'</option>');
+						});
+					}
+					else{
+						console.lg('Error');
+					}
+				});
+			}
+			else{
+				$('#id_centro_inspeccion').html('<option value="">--Seleccionar--</option>');
+			}
+		});
+		/********** FIN *************/
 
 	});
 	</script>
