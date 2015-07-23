@@ -1,12 +1,9 @@
 {% extends "base.html" %}
-{% load sgt_tags %}
-
-
 
 {% block main_content %}
-<div class="container-fluid">
-	{% include 'admin/modales_admin.html' %}
+{% include 'admin/modales_admin.html' %}
 
+<div class="container-fluid">
 	<div class="row">
 		<div class="panel panel-dashboard-gray">
 			<div class="panel-heading">
@@ -28,8 +25,13 @@
 							<span class="help-block with-errors"></span>
 						</div>
 						<div class="col-xs-4">
-							<label>{{form.tipo_encuesta.label}}</label>
-							{{form.tipo_encuesta}}
+							<label>Tipo de encuesta:</label>
+							<select name="tipo_encuesta" class="form-control">
+								{% for tipo_encuesta in tipos_encuesta %}
+									<option value="{{tipo_encuesta.id}}" {% if editar %} {% if encuesta.tipo_encuesta.codigo == tipo_encuesta.codigo %} selected {% endif %} {% endif %}>{{tipo_encuesta.descripcion}}</option>
+								{% endfor %}
+							</select>
+
 						</div>
 					</div>
 					<br>
@@ -635,9 +637,9 @@
 
 			$(document).on("click", ".section_elim", function(){
 				del_section = '#' + $(this).attr('target');
-				index = parseInt(del_section[del_section.length - 1]) - 1;
-				update_select_preguntas(index, -1);
-				prev_preg_list.splice(index, 1);
+				index = parseInt(del_section[del_section.length - 1]);
+				update_select_preguntas(index - 1, -1);
+				prev_preg_list.splice(index - 1, 1);
 				index++;
 				$(del_section).remove();
 
@@ -654,6 +656,7 @@
 					$('#id_tipo_respuesta_' + i).attr('target', 'id_pregunta_' + j + ' ' + 'id_respuestas_definidas_' + j);
 					$('#id_tipo_respuesta_' + i).attr('id', 'id_tipo_respuesta_' + j);
 					$('#id_respuestas_definidas_' + i).attr('id', 'id_respuestas_definidas_' + j);
+					console.log('#id_tipo_respuesta_' + j);
 					init_tipo_resp_sel($('#id_tipo_respuesta_' + j));
 					
 					$('.crear_pregunta[target="id_pregunta_' + i+'"]').attr('target', 'id_pregunta_' + j);
@@ -772,6 +775,7 @@
 
 		function update_select_preguntas(index, val_select){
 			if(val_select != -1){
+				console.log($('.pregunta_select option[value='+prev_preg_list[index]+']'));
 				$('.pregunta_select option[value='+val_select+']').attr('disabled', '');
 
 				for(i = 0; i < preg_list.length; i++){

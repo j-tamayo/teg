@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+{% include 'cuentas/modales_usuario.html' %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-2 col-xs-offset-10">
+			<a href="{% url 'admin_crear_notificacion' %}" class="btn btn-info pull-right">
+				<i class="fa fa-plus"></i> Agregar
+			</a>
+		</div>
+	</div>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Tipo</th>
+				<th>Mensaje</th>
+				<th>Opciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for notificacion in notificaciones.object_list %}
+			<tr>
+				<td>{{notificacion.tipo_notificacion.descripcion}}</td>
+				<td>{{notificacion.mensaje}}</td>
+				<td>
+					<a href="{% url 'admin_editar_notificacion' notificacion.id %}" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Editar">
+						<i class="fa fa-pencil"></i>
+					</a>
+					<a href="#" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Enviar">
+						<i class="fa fa-paper-plane"></i>
+					</a>
+					<a href="#" class="btn btn-danger btn-sm eliminar" target="{{notificacion.id}}" data-toggle="tooltip" data-original-title="Eliminar" >
+						<i class="fa fa-trash"></i>
+					</a>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<div class="pagination center-block text-center">
+		<div class="row">
+			<ul class="pagination">
+			{% if notificacion.has_previous %}
+		        <li>
+		        	<a href="?{{ notificacion.previous_page_number.querystring }}" class="prev">&lsaquo;&lsaquo; anterior</a>
+		        </li>
+		    {% else %}
+		    	<li class="disabled">
+					<span class="disabled prev">&lsaquo;&lsaquo; anterior</span>
+				</li>
+			{% endif %}
+			{% for page in notificacion.pages %}
+		        {% if page %}
+		            {% ifequal page notificacion.number %}
+		                <li><span class="current page">{{ page }}</span></li>
+		            {% else %}
+		                <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
+		            {% endifequal %}
+		        {% else %}
+		            <li class="disabled"><a>...</a></li>
+		        {% endif %}
+		    {% endfor %}
+		    {% if notificacion.has_next %}
+		        <li>
+		        	<a href="?{{ notificacion.next_page_number.querystring }}" class="next">siguiente &rsaquo;&rsaquo;</a>
+		        </li>
+		    {% else %}
+		    	<li class="disabled">
+		        	<span class="disabled next">siguiente &rsaquo;&rsaquo;</span>
+		        </li>
+		    {% endif %}
+		    </ul>
+		</div>
+	</div>
+</div> <!-- / .container-fluid -->
+
+<form id="eliminar_notificacion" method="POST" action="{% url 'admin_eliminar_notificacion' %}">
+	{% csrf_token %}
+	<input type="hidden" name="page" value="{{notificaciones.number}}">
+</form>
+
+{% endblock %}
+
+{% block javascripts %}
+	{{ block.super }}
+
+	<script type="application/javascript">
+	$(function(){
+		$('#eliminar_notificacion').hide();
+		/******** MODAL PARA CONFIRMAR LA ELIMINACIÓN DE UNA NOTIFICACION ********/
+		$(document).on('click', '.eliminar', function(event){
+			event.preventDefault();
+			target = $(this).attr('target');
+
+			$('#eliminar_notificacion').append('<input type="hidden" name="notificacion_id" value="'+target+'">');
+			$('#title_modal_generic').html('Confirmación');
+			$('#body_modal_generic').html(
+				'<div class="row">\
+					<div class="col-xs-12"><h4>¿Está seguro que desea eliminar esta notificaci&oacute;n?</h4></div>\
+				</div><br>'
+			);
+			$('#footer_modal_generic').html(
+				'<div class="col-xs-6">\
+					<a id="cancelar" href="#" class="btn btn-danger col-xs-12">Cancelar</a>\
+				</div>\
+				<div class="col-xs-6">\
+					<a id="confirmar" href="#" class="btn btn-primary col-xs-12">Aceptar</a>\
+				</div>'
+			);
+			$('#modal_generic').modal({
+				backdrop: 'static',
+				keyboard: false
+			});
+		});
+		/******** FIN ********/
+
+		/******* ELIMINAR UNA NOTIFICACION *********/
+		$(document).on('click', '#confirmar', function(){
+			$('#eliminar_notificacion').submit();
+		});
+		/******* FIN *******/
+	})
+	</script>
+{% endblock %}

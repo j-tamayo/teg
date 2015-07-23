@@ -1,0 +1,1 @@
+[{"fields": {"descripcion": "Notificaci\u00f3n general", "codigo": "NOT_GEN"}, "model": "sgt.tiponotificacion", "pk": 1}, {"fields": {"descripcion": "Notificaci\u00f3n de encuesta", "codigo": "NOT_ENC"}, "model": "sgt.tiponotificacion", "pk": 2}]

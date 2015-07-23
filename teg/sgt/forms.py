@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.auth import authenticate
-from sgt.models import Estado, Municipio, TipoInspeccion, CentroInspeccion, Perito, TipoEncuesta, Pregunta, TipoRespuesta, ValorPosible
+from sgt.models import Estado, Municipio, TipoInspeccion, CentroInspeccion, Perito, TipoEncuesta, Pregunta, TipoRespuesta, ValorPosible, Notificacion, TipoNotificacion
 from datetime import datetime
 from django.core.exceptions import ValidationError
 
@@ -268,3 +268,20 @@ class CrearValorForm(forms.Form):
 		label = u'Respuesta',
 		widget = forms.TextInput(attrs={'id':'nuevo_valor', 'class':'form-control', 'required':'', 'data-error':'Este campo es obligatorio'})
 	)
+
+class NotificacionForm(forms.ModelForm):
+	mensaje = forms.CharField(
+		label = u'Mensaje',
+		widget = forms.Textarea(attrs={'class':'form-control', 'required':'', 'data-error':'Este campo es obligatorio'})
+	)
+
+	tipo_notificacion = forms.ModelChoiceField(
+		label = u'Tipo de notificación',
+		empty_label = None,
+		queryset = TipoNotificacion.objects.all(),
+		widget = forms.Select(attrs={'class':'form-control', 'required': '', 'data-error':'Este campo es obligatorio'})
+	)
+
+	class Meta:
+		model = Notificacion
+		fields = ['mensaje', 'tipo_notificacion']

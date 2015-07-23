@@ -886,22 +886,29 @@ class AdminAgregarEncuesta(View):
 	def dispatch(self, *args, **kwargs):
 		return super(AdminAgregarEncuesta, self).dispatch(*args, **kwargs)
 
-	def get(self, request, *args, **kwargs):
-		"""Despliega el formulario para crear encuestas"""
-		usuario = request.user
-		
-		data_initial = {
-			'extra_field_count': 0
-		}
-		
-		form = CrearEncuestaForm(initial=data_initial)
+	def get_context(self, usuario, form=None):
 		form_preg = CrearPreguntaForm()
 		form_val = CrearValorForm()
 
+		if not form:
+			data_initial = {
+				'extra_field_count': 0
+			}
+
+			form = CrearEncuestaForm(initial=data_initial)
+
 		tipos_respuesta = TipoRespuesta.objects.all()
 		preguntas = Pregunta.objects.all()
-		tipos_encuesta = TipoEncuesta.objects.all()
 		valores = ValorPosible.objects.all()
+		tipos_encuesta = TipoEncuesta.objects.all()
+		
+		aux = Encuesta.objects.filter(tipo_encuesta__codigo="ENC_CONF")
+		if aux:
+			tipos_encuesta = tipos_encuesta.exclude(codigo="ENC_CONF")
+
+		aux = Encuesta.objects.filter(tipo_encuesta__codigo="ENC_JUST")
+		if aux:
+			tipos_encuesta = tipos_encuesta.exclude(codigo="ENC_JUST")
 
 		context = {
 			'admin': True,
@@ -913,17 +920,20 @@ class AdminAgregarEncuesta(View):
 			'valores': valores,
 			'tipos_respuesta': tipos_respuesta,
 			'tipos_encuesta': tipos_encuesta,
-			'usuario': usuario,
+			'usuario': usuario
 		}
 
-		return render(request, 'admin/crear_encuesta.html', context)
+		return context
+
+	def get(self, request, *args, **kwargs):
+		"""Despliega el formulario para crear encuestas"""
+		usuario = request.user
+		return render(request, 'admin/crear_encuesta.html', self.get_context(usuario))
 
 	def post(self, request, *args, **kwargs):
 		"""Crea la encuesta"""
 		usuario = request.user
 		form = CrearEncuestaForm(request.POST, extra=request.POST.get('extra_field_count'))
-		form_preg = CrearPreguntaForm()
-		form_val = CrearValorForm()
 
 		if form.is_valid():
 			encuesta_data = form.cleaned_data
@@ -948,7 +958,6 @@ class AdminAgregarEncuesta(View):
 					valores_posibles = encuesta_data[aux]
 
 					for v in valores_posibles:
-						#v.valor_pregunta.add(pregunta)
 						valor_pregunta_encuesta = ValorPreguntaEncuesta(
 							valor = v, 
 							pregunta = pregunta,
@@ -962,26 +971,7 @@ class AdminAgregarEncuesta(View):
 
 		else:
 			print form.errors
-
-			tipos_respuesta = TipoRespuesta.objects.all()
-			preguntas = Pregunta.objects.all()
-			tipos_encuesta = TipoEncuesta.objects.all()
-			valores = ValorPosible.objects.all()
-
-			context = {
-				'admin': True,
-				'editar': False,
-				'form': form,
-				'form_preg': form_preg,
-				'form_val': form_val,
-				'preguntas': preguntas,
-				'valores': valores,
-				'tipos_respuesta': tipos_respuesta,
-				'tipos_encuesta': tipos_encuesta,
-				'usuario': usuario,
-			}
-
-			return render(request, 'admin/crear_encuesta.html', context)
+			return render(request, 'admin/crear_encuesta.html', self.get_context(usuario, form))
 
 
 class AdminEditarEncuesta(View):
@@ -994,13 +984,20 @@ class AdminEditarEncuesta(View):
 
 		tipos_respuesta = TipoRespuesta.objects.all()
 		preguntas = Pregunta.objects.all()
-		tipos_encuesta = TipoEncuesta.objects.all()
 		valores = ValorPosible.objects.all()
+		tipos_encuesta = TipoEncuesta.objects.all()
+		
+		aux = Encuesta.objects.filter(tipo_encuesta__codigo="ENC_CONF")
+		if aux:
+			tipos_encuesta = tipos_encuesta.exclude(codigo="ENC_CONF")
+
+		aux = Encuesta.objects.filter(tipo_encuesta__codigo="ENC_JUST")
+		if aux:
+			tipos_encuesta = tipos_encuesta.exclude(codigo="ENC_JUST")
 
 		extra_fields = len(encuesta.preguntas.all())
 		encuesta_preguntas = encuesta.preguntas.all().order_by('id')
 		encuesta_valores = ValorPosible.objects.filter(valor_pregunta__pregunta=encuesta_preguntas)
-		print encuesta_valores 
 
 		if not form:
 			initial_data = {
@@ -1045,7 +1042,7 @@ class AdminEditarEncuesta(View):
 			'encuesta': encuesta,
 			'encuesta_preguntas': encuesta_preguntas,
 			'encuesta_valores': encuesta_valores,
-			'usuario': usuario,
+			'usuario': usuario
 		}
 
 		return context
@@ -1069,7 +1066,6 @@ class AdminEditarEncuesta(View):
 		form = CrearEncuestaForm(request.POST, extra=request.POST.get('extra_field_count'))
 
 		if form.is_valid():
-			print "Editando la encuesta..."
 			encuesta_data = form.cleaned_data
 			extra_fields = encuesta_data['extra_field_count']
 			
@@ -1079,6 +1075,7 @@ class AdminEditarEncuesta(View):
 			encuesta.tipo_encuesta = encuesta_data['tipo_encuesta']
 			encuesta.save()
 
+			encuesta_preguntas_exclude = []
 			for index in range(int(extra_fields)):
 				aux = 'tipo_respuesta_' + str(index + 1)
 				tipo_respuesta = encuesta_data[aux]
@@ -1093,47 +1090,53 @@ class AdminEditarEncuesta(View):
 						valores_posibles = encuesta_data[aux]
 
 						for valor in valores_posibles:
-							print "agregando valor:", valor, "para pregunta:", pregunta
 							vpe = ValorPreguntaEncuesta(
 								valor = valor, 
 								pregunta = pregunta, 
 								encuesta = encuesta)
 							vpe.save()
 
-					print "guardando pregunta", pregunta
 					encuesta.preguntas.add(pregunta)
 				else:
-					encuesta_preguntas.exclude(id=pregunta.id)
-				
 					if tipo_respuesta.codigo == 'RESP_DEF':
 						valores_pregunta = ValorPosible.objects.filter(valor_pregunta_encuesta=pregunta)
 						aux = 'valores_posibles_' + str(index + 1)
 						valores_posibles = encuesta_data[aux]
 
-						for valor in valores_pregunta:
-							if valor not in valores_posibles:
-								print "agregando valor:", valor, "para pregunta:", pregunta
+						valores_pregunta_exclude = []
+						for valor in valores_posibles:
+							if valor not in valores_pregunta:
 								vpe = ValorPreguntaEncuesta(
 									valor = valor, 
 									pregunta = pregunta, 
 									encuesta = encuesta)
 								vpe.save()
-							else:
-								print valores_pregunta
-								valores_pregunta.exclude(id=valor.id)
-								print valores_pregunta
 
+							valores_pregunta_exclude.append(valor.id)
+
+						#Nota: hay que excluir para despues eliminar lo que sobra...
+						valores_pregunta = valores_pregunta.exclude(id__in=valores_pregunta_exclude)
 						for valor in valores_pregunta:
 							vpe = ValorPreguntaEncuesta.objects.get(valor=valor, pregunta=pregunta, encuesta=encuesta)
 							vpe.delete()
 
+				encuesta_preguntas_exclude.append(pregunta.id)
+			
 			#Nota: hay que excluir para despues eliminar lo que sobra...
+			encuesta_preguntas = encuesta_preguntas.exclude(id__in=encuesta_preguntas_exclude)
 			for pregunta in encuesta_preguntas:
+				valores_pregunta = ValorPosible.objects.filter(valor_pregunta_encuesta=pregunta)
+				for valor in valores_pregunta:
+					vpe = ValorPreguntaEncuesta.objects.get(valor=valor, pregunta=pregunta, encuesta=encuesta)
+					vpe.delete()
+
 				encuesta.preguntas.remove(pregunta)
 
 			return redirect(reverse('admin_encuestas'))
 		else:
+			print form.errors
 			return render(request, 'admin/crear_encuesta.html', self.get_context(encuesta, usuario, form))
+
 
 class AdminEliminarEncuesta(View):
 	def dispatch(self, *args, **kwargs):
@@ -1313,6 +1316,148 @@ class AdminEliminarRespuesta(View):
 		    json.dumps(respuesta),
 		    content_type="application/json"
 		)
+
+
+class AdminBandejaNotificaciones(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminBandejaNotificaciones, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		""" Vista que lista las encuestas al administrador"""
+		usuario = request.user
+
+		notificaciones = Notificacion.objects.all()
+
+		try:
+			page = request.GET.get('page', 1)
+		except PageNotAnInteger:
+			page = 1
+
+		paginator = Paginator(notificaciones, 10, request=request)
+		notificaciones = paginator.page(page)
+
+		context = {
+			'admin': True,
+			'seccion_notificaciones':True,
+			'notificaciones': notificaciones,
+			'usuario': usuario,
+		}
+
+		return render(request, 'admin/bandeja_notificaciones.html', context)
+
+
+class AdminAgregarNotificacion(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminAgregarNotificacion, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Despliega el formulario para crear notificaciones"""
+		usuario = request.user
+		form = NotificacionForm()
+
+		context = {
+			'admin': True,
+			'usuario': usuario,
+			'form': form
+		}
+
+		return render(request, 'admin/crear_notificacion.html', context) #self.get_context(usuario)
+
+	def post(self, request, *args, **kwargs):
+		"""Crea el Perito"""
+		usuario = request.user
+
+		form = NotificacionForm(request.POST)
+
+		if form.is_valid():
+			form.save()
+			return redirect(reverse('admin_notificaciones'))
+
+		else:
+			print form.errors
+
+			context = {
+				'admin': True,
+				'usuario': usuario,
+				'form': form,
+				'seccion_notificaciones': True
+			}
+
+			return render(request, 'admin/crear_notificacion.html', context)
+
+
+class AdminEditarNotificacion(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEditarNotificacion, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Vista que despliega el formulario para editar notificaciones"""
+		usuario = request.user
+
+		notificacion = Notificacion.objects.filter(id=kwargs['notificacion_id']).first()
+
+		if notificacion:
+			form = NotificacionForm(instance = notificacion)
+
+			context = {
+				'admin': True,
+				'editar': True,
+				'form': form,
+				'notificacion_id': kwargs['notificacion_id'],
+				'seccion_notificaciones': True,
+				'usuario': usuario,
+			}
+
+			return render(request, 'admin/crear_notificacion.html', context)
+
+		else:
+			return redirect(reverse('admin_notificaciones'))
+
+	def post(self, request, *args, **kwargs):
+		"""Edita el centro de inspección"""
+		usuario = request.user
+
+		notificacion = Notificacion.objects.filter(id=kwargs['notificacion_id']).first()
+		form = NotificacionForm(request.POST, instance = notificacion)
+
+		if form.is_valid():
+			form.save()
+			return redirect(reverse('admin_notificaciones'))
+
+		else:
+			print form.errors
+			context = {
+				'admin': True,
+				'editar': True,
+				'form': form,
+				'perito_id': kwargs['notificaciones_id'],
+				'seccion_notificaciones': True,
+				'usuario': usuario
+			}
+
+			return render(request, 'admin/crear_notificacion.html', context)
+
+
+class AdminEliminarNotificacion(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEliminarNotificacion, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Vista que elimina un Centro de Inspección"""
+		page = request.POST.get('page', None)
+		print page
+		notificacion_id = request.POST.get('notificacion_id', None)
+		notificacion = Notificacion.objects.filter(id=notificacion_id)
+		if notificacion:
+			notificacion.delete()
+			redirect_url = reverse('admin_notificaciones')
+			if int(page) > 1:
+				extra_params = '?page=%s' % page
+				redirect_url = '%s%s' % (redirect_url, extra_params)
+
+			return redirect(redirect_url, kwargs={'location': page})
+		else:
+			return redirect(redirect_url, kwargs={'location': page})
 
 
 class AdminReportes(View):

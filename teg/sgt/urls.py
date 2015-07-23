@@ -163,6 +163,30 @@ urlpatterns = \
         ),
 
         url(
+            r'^admin/notificaciones$',
+            views.AdminBandejaNotificaciones.as_view(),
+            name='admin_notificaciones'
+        ),
+
+        url(
+            r'^admin/crear-notificacion$',
+            views.AdminAgregarNotificacion.as_view(),
+            name='admin_crear_notificacion'
+        ),
+
+        url(
+            r'^admin/editar-notificacion/(?P<notificacion_id>\d+)$',
+            views.AdminEditarNotificacion.as_view(),
+            name='admin_editar_notificacion'
+        ),
+
+        url(
+            r'^admin/eliminar-notificacion$',
+            views.AdminEliminarNotificacion.as_view(),
+            name='admin_eliminar_notificacion'
+        ),
+
+        url(
             r'^admin/consultas$',
             views.AdminReportes.as_view(),
             name='admin_reportes'
