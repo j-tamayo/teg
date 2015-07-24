@@ -58,10 +58,16 @@
 			if($('#id_tipo_notificacion :selected').attr('id') != 'NOTI_ENC')
 				$('#id_encuesta_content').hide('fade');
 
+			if($('#id_encuesta').val())
+				$('#id_encuesta').children()[0].remove();
+
 			$('#id_tipo_notificacion').change(function(){
-				if($('#id_tipo_notificacion :selected').attr('id') == 'NOTI_ENC')
+				if($('#id_tipo_notificacion :selected').attr('id') == 'NOTI_ENC'){
+					$('#id_encuesta').children()[0].remove();
 					$('#id_encuesta_content').show('fade');
+				}
 				else{
+					$('#id_encuesta').prepend('<option value="" selected="selected">---------</option>')
 					$('#id_encuesta_content').hide('fade');
 				}
 			});

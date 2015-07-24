@@ -263,11 +263,13 @@ class CrearPreguntaForm(forms.Form):
 		widget = forms.Select(attrs={'class':'form-control', 'required': '', 'data-error':'Este campo es obligatorio'})
 	)
 
+
 class CrearValorForm(forms.Form):
 	valor = forms.CharField(
 		label = u'Respuesta',
 		widget = forms.TextInput(attrs={'id':'nuevo_valor', 'class':'form-control', 'required':'', 'data-error':'Este campo es obligatorio'})
 	)
+
 
 class NotificacionForm(forms.ModelForm):
 	tipo_notificacion = forms.ModelChoiceField(
@@ -282,7 +284,7 @@ class NotificacionForm(forms.ModelForm):
 		label = u'Encuesta',
 		required = False,
 		queryset = Encuesta.objects.all(),
-		widget = forms.Select(attrs={'class':'form-control'})
+		widget = forms.Select(attrs={'id': 'id_encuesta', 'class':'form-control'})
 	)
 
 	mensaje = forms.CharField(
