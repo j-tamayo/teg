@@ -109,7 +109,10 @@ class DetectarUsuario(LoginRequiredMixin, View):
                 return redirect(reverse_lazy('bandeja_cliente'))
 
             elif usuario.es_admin():
-                return redirect(reverse_lazy('admin_centros'))		
+                return redirect(reverse_lazy('admin_centros'))
+
+            elif usuario.es_taquilla():
+                return redirect(reverse_lazy('bandeja_taquilla'))		
             #pass
 
         elif usuario.is_authenticated() and not usuario.is_active:
