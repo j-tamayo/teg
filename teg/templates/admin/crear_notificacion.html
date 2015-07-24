@@ -11,9 +11,18 @@
 				<form id="notificacion_form" {%if editar%}action=""{%else%}action="{% url 'admin_crear_notificacion' %}"{%endif%}  method="POST" novalidate role="form">
 					{% csrf_token %}
 					<div class="row">
-						<div class="col-xs-4">
+						<div class="col-xs-6">
 							<label>Tipo de notificaci&oacute;n:</label>
-							{{form.tipo_notificacion}}
+							<select id="id_tipo_notificacion" name="tipo_notificacion" class="form-control">
+								{% for tipo_notificacion in tipos_notificaciones %}
+									<option id="{{tipo_notificacion.codigo}}" value="{{tipo_notificacion.id}}" {% if tipo_notificacion.id == form.tipo_notificacion.value %} selected {% endif %}>{{tipo_notificacion.descripcion}}</option>
+								{% endfor %}
+							</select>
+							<span class="help-block with-errors"></span>
+						</div>
+						<div id="id_encuesta_content" class="col-xs-6">
+							<label>Encuesta:</label>
+							{{form.encuesta}}
 							<span class="help-block with-errors"></span>
 						</div>
 					</div>
@@ -39,4 +48,24 @@
 		</div>
 	</div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ block.super }}
+	<script type="application/javascript">
+		$(document).ready(function(){
+
+			if($('#id_tipo_notificacion :selected').attr('id') != 'NOTI_ENC')
+				$('#id_encuesta_content').hide('fade');
+
+			$('#id_tipo_notificacion').change(function(){
+				if($('#id_tipo_notificacion :selected').attr('id') == 'NOTI_ENC')
+					$('#id_encuesta_content').show('fade');
+				else{
+					$('#id_encuesta_content').hide('fade');
+				}
+			});
+
+		});
+	</script>
 {% endblock %}

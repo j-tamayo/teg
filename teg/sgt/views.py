@@ -1380,11 +1380,13 @@ class AdminAgregarNotificacion(View):
 		"""Despliega el formulario para crear notificaciones"""
 		usuario = request.user
 		form = NotificacionForm()
+		tipos_notificaciones = TipoNotificacion.objects.all()
 
 		context = {
 			'admin': True,
 			'usuario': usuario,
-			'form': form
+			'form': form,
+			'tipos_notificaciones': tipos_notificaciones
 		}
 
 		return render(request, 'admin/crear_notificacion.html', context) #self.get_context(usuario)
@@ -1419,19 +1421,20 @@ class AdminEditarNotificacion(View):
 	def get(self, request, *args, **kwargs):
 		"""Vista que despliega el formulario para editar notificaciones"""
 		usuario = request.user
-
 		notificacion = Notificacion.objects.filter(id=kwargs['notificacion_id']).first()
-
+		tipos_notificaciones = TipoNotificacion.objects.all()
+		
 		if notificacion:
 			form = NotificacionForm(instance = notificacion)
 
 			context = {
 				'admin': True,
+				'usuario': usuario,
 				'editar': True,
 				'form': form,
 				'notificacion_id': kwargs['notificacion_id'],
 				'seccion_notificaciones': True,
-				'usuario': usuario,
+				'tipos_notificaciones': tipos_notificaciones
 			}
 
 			return render(request, 'admin/crear_notificacion.html', context)
@@ -1440,10 +1443,11 @@ class AdminEditarNotificacion(View):
 			return redirect(reverse('admin_notificaciones'))
 
 	def post(self, request, *args, **kwargs):
-		"""Edita el centro de inspección"""
+		"""Edita la notificación"""
 		usuario = request.user
-
 		notificacion = Notificacion.objects.filter(id=kwargs['notificacion_id']).first()
+		tipos_notificaciones = TipoNotificacion.objects.all()
+
 		form = NotificacionForm(request.POST, instance = notificacion)
 
 		if form.is_valid():
@@ -1454,11 +1458,12 @@ class AdminEditarNotificacion(View):
 			print form.errors
 			context = {
 				'admin': True,
+				'usuario': usuario,
 				'editar': True,
 				'form': form,
 				'perito_id': kwargs['notificaciones_id'],
 				'seccion_notificaciones': True,
-				'usuario': usuario
+				'tipos_notificaciones': tipos_notificaciones
 			}
 
 			return render(request, 'admin/crear_notificacion.html', context)

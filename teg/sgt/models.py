@@ -251,6 +251,7 @@ class Notificacion(models.Model):
 	mensaje = models.TextField()
 	tipo_notificacion = models.ForeignKey('TipoNotificacion')
 	notificacion_usuario = models.ManyToManyField(USER_MODEL, through='NotificacionUsuario', related_name='notificacion_usuario')
+	encuesta = models.ForeignKey(Encuesta, blank=True, null=True)
 
 	def __unicode__(self):
 		return u'%s - %s' % (self.fecha_creacion,self.mensaje)
