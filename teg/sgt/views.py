@@ -920,6 +920,7 @@ class AdminAgregarEncuesta(View):
 			'valores': valores,
 			'tipos_respuesta': tipos_respuesta,
 			'tipos_encuesta': tipos_encuesta,
+			'seccion_encuestas': True,
 			'usuario': usuario
 		}
 
@@ -1042,6 +1043,7 @@ class AdminEditarEncuesta(View):
 			'encuesta': encuesta,
 			'encuesta_preguntas': encuesta_preguntas,
 			'encuesta_valores': encuesta_valores,
+			'seccion_encuestas': True,
 			'usuario': usuario
 		}
 
