@@ -1580,10 +1580,21 @@ class BandejaTaquilla(View):
 		today = datetime.today().date()
 		print usuario,today
 		numeros_orden = NumeroOrden.objects.filter(fecha_atencion = today, solicitud_inspeccion__centro_inspeccion = usuario.centro_inspeccion)
-
+		peritos = Perito.objects.filter(centroinspeccion = usuario.centro_inspeccion)
+		print peritos
 		context = {
 			'numeros_orden': numeros_orden,
+			'peritos': peritos,
 			'usuario': usuario
 		}
 
 		return render(request, 'taquilla/bandeja.html', context)
+
+
+class TaquillaAccionSolicitud(View):
+	def dispatch(self, *args, **kwargs):
+		return super(TaquillaAccionSolicitud, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Vista que cambia el estatus de las solicitudes por la Taquilla"""
+		

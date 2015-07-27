@@ -53,11 +53,103 @@
 				<td>{{n.hora_atencion|time:"h:i A"}}</td>
 				<td>{{n.solicitud_inspeccion.usuario.nombres}} {{n.solicitud_inspeccion.usuario.apellidos}}</td>
 				<td>{{n.solicitud_inspeccion.estatus}}</td>
-				<td>{{n.solicitud_inspeccion.perito}}</td>
-				<td>...</td>
+				<td>{{n.solicitud_inspeccion.perito|default:"No posee"}}</td>
+				<td>
+					<!-- <a href="#" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Asignar Perito" {%if not n.solicitud_inspeccion.estatus.codigo == "solicitud_procesada"%}disabled{%endif%}>
+						<i class="fa fa-user-plus"></i>
+					</a> -->
+					<a href="#" class="btn btn-success btn-sm confirmar_asistencia" data-toggle="tooltip" data-original-title="Confirmar asistencia" numero_orden="{{n.pk}}">
+						<i class="fa fa-check-square-o"></i>
+					</a>
+					<a href="#" class="btn btn-danger btn-sm" data-toggle="tooltip" data-original-title="Confirmar no asistencia" numero_orden="{{n.pk}}">
+						<i class="fa fa-times-circle"></i>
+					</a>
+				</td>
 			</tr>
 			{% endfor %}
 		</tbody>
 	</table>
 </div>
+
+<input type="hidden" name="id_numero_orden" id="id_numero_orden" value="0">
+
+<div class="modal fade" id="confirmar_asistencia_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title text-success" id="myModalLabel">Confirmar asistencia</h3>
+      </div> <!-- / .modal-header -->
+      <div class="modal-body">
+      	<div class="row">
+      		<div class="col-xs-12">
+      			<label>Inspector</label>
+      		</div>
+      	</div>
+      	<div class="row">
+      		<div class="col-xs-12">
+	      		<select id="id_perito" name="perito" class="form-control">
+	      			<option value="">--Seleccionar--</option>
+	      			{% for p in peritos %}
+					<option value="{{p.pk}}">{{p.nombres}} {{p.apellidos}}</option>
+	      			{% endfor %}
+	      		</select>
+      		</div>
+      	</div>
+      </div> <!-- / .modal-body -->
+      <div class="modal-footer">
+      	<div class="col-xs-6">
+      		<a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>
+      	</div>
+      	<div class="col-xs-6">
+      		<a id="enviar_confirmar_asistencia" href="#" class="btn btn-primary btn-block" numero_orden="0">Aceptar</a>
+      	</div>
+      </div> <!-- / .modal-footer -->
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ block.super }}
+	<script type="application/javascript">
+	$(function(){
+		/************** DESPLEGAR MODAL DE CONFIRMAR ASISTENCIA *************/
+		$(document).on('click','.confirmar_asistencia',function(){
+			numero_orden = $(this).attr('numero_orden');
+			$('#enviar_confirmar_asistencia').attr('numero_orden', numero_orden);
+			$('#confirmar_asistencia_modal').modal();
+		});
+		/************** FIN ****************/
+
+		/************** ENVIAR CONFIRMACIÓN DE ASISTENCIA *************/
+		$(document).on('click','#enviar_confirmar_asistencia',function(){
+			numero_orden = $(this).attr('numero_orden');
+			perito = $('#id_perito').val();
+			if(perito.length > 0){
+				$.ajax({
+					method: 'POST',
+					url: '{% url "crear_solicitud" %}',
+					data:{
+						'id_numero_orden': numero_orden,
+						'id_perito': perito,
+						'tipo_operacion':'confirmar_asistencia'
+					},
+					dataType: 'json',
+					/*complete: function(){
+					  $('#spinner_form').hide();
+					  $('#crear_solicitud').html('Ver Solicitudes');
+					  $('#crear_solicitud').attr('id','ver_solicitudes');
+					}*/
+				})
+				.done(function(data){
+					if(!data.hasOwnProperty('error_msg')){
+
+					}
+				})
+			}
+		});
+		/************** FIN ****************/
+	});
+	</script>
 {% endblock %}
