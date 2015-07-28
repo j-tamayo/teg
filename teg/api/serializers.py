@@ -43,12 +43,6 @@ class TipoInspeccionSerializer(serializers.ModelSerializer):
 		feilds = ('id','codigo','descripcion','nombre')
 
 
-class EncuestaSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Encuesta
-		fields = ('id','codigo','descripcion','nombre','preguntas')
-
-
 class PolizaSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Poliza
@@ -90,7 +84,54 @@ class NumeroOrdenSerializer(serializers.ModelSerializer):
 		model = NumeroOrden
 		fields = ('id','asistencia','solicitud_inspeccion','codigo','fecha_atencion','hora_atencion','estatus')
 
+
 class EstatusSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Estatus
 		fields = ('id', 'nombre', 'codigo')
+
+
+class TipoEncuestaSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = TipoEncuesta
+		fields = ('id', 'codigo', 'descripcion')
+
+
+class TipoRespuestaSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = TipoRespuesta
+		fields = ('id', 'codigo', 'descripcion')
+
+
+class TipoNotificacionSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = TipoNotificacion
+		fields = ('id', 'codigo', 'descripcion')
+
+
+class NotificacionSerializer(serializers.ModelSerializer):
+	tipo_notificacion = serializers.ReadOnlyField(source='tipo_notificacion.id')
+	encuesta = serializers.ReadOnlyField(source='encuesta.id')
+
+	class Meta:
+		model = Notificacion
+		fields = ('id', 'mensaje', 'tipo_notificacion', 'encuesta')
+
+
+class NotificacionUsuarioSerializer(serializers.ModelSerializer):
+	notificacion = serializers.ReadOnlyField(source='notificacion.id')
+	usuario = serializers.ReadOnlyField(source='usuario.id')
+	fecha_creacion = serializers.DateTimeField(format='%d-%m-%Y')
+
+	class Meta:
+		model = NotificacionUsuario
+		fields = ('id', 'notificacion', 'usuario', 'fecha_creacion', 'leida')
+
+
+class EncuestaSerializer(serializers.ModelSerializer):
+	tipo_encuesta = serializers.ReadOnlyField(source='tipo_encuesta.id')
+
+	class Meta:
+		model = Encuesta
+		fields = ('id','descripcion','nombre','tipo_encuesta')
+

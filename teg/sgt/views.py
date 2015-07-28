@@ -1335,7 +1335,7 @@ class AdminEliminarRespuesta(View):
 
 		else:
 			respuesta = {
-				'mensaje': 'No se suministró el id de la pregunta'
+				'mensaje': 'No se suministró el id de la respuesta'
 			}
 
 		return HttpResponse(
@@ -1489,6 +1489,37 @@ class AdminEliminarNotificacion(View):
 			return redirect(redirect_url, kwargs={'location': page})
 		else:
 			return redirect(redirect_url, kwargs={'location': page})
+
+
+class AdminEnviarNotificacion(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEnviarNotificacion, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Eliminar respuestas"""
+		usuario = request.user
+		notificacion_id = request.GET.get('notificacion_id', None)
+
+		respuesta = {}
+		if notificacion_id:
+			notificacion = Notificacion.objects.get(id=notificacion_id)
+			usuarios_clientes = SgtUsuario.objects.filter(rol__codigo = 'cliente')
+			for usuario in usuarios_clientes:
+				notificacion_usuario = NotificacionUsuario(notificacion=notificacion, usuario=usuario)
+				notificacion_usuario.save()
+			
+			respuesta = {
+				'mensaje': 'Notificación enviada exitosamente'
+			}
+		else:
+			respuesta = {
+				'mensaje': 'No se suministró el id de la notificación'
+			}
+
+		return HttpResponse(
+		    json.dumps(respuesta),
+		    content_type="application/json"
+		)
 
 
 class AdminReportes(View):

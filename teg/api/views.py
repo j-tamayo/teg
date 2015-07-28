@@ -154,6 +154,21 @@ class InitialData(APIView):
 		if estatus_serializer:
 			respuesta['sgt_estatus'] = estatus_serializer.data
 
+		tipo_encuesta = TipoEncuesta.objects.all()
+		tipo_encuesta_serializer = TipoEncuestaSerializer(tipo_encuesta, many=True)
+		if tipo_encuesta_serializer:
+			respuesta['sgt_tipoencuesta'] = tipo_encuesta_serializer.data
+
+		tipo_respuesta = TipoRespuesta.objects.all()
+		tipo_respuesta_serializer = TipoRespuestaSerializer(tipo_respuesta, many=True)
+		if tipo_respuesta_serializer:
+			respuesta['sgt_tiporespuesta'] = tipo_respuesta_serializer.data
+
+		tipo_notificacion = TipoNotificacion.objects.all()
+		tipo_notificacion_serializer = TipoNotificacionSerializer(tipo_notificacion, many=True)
+		if tipo_notificacion_serializer:
+			respuesta['sgt_tiponotificacion'] = tipo_notificacion_serializer.data
+
 		#print respuesta
 
 		if respuesta:
@@ -178,10 +193,11 @@ class UserInfo(APIView):
 
 		if serializer:
 			usuario = SgtUsuario.objects.filter(id=serializer['id'])
+			notificacion_usuario = NotificacionUsuario.objects.filter(usuario__id=serializer['id'])
 			if usuario:
-				encuestas = Encuesta.objects.filter(usuarios = usuario)
-				encuestas_serializer = EncuestaSerializer(encuestas, many=True)
-				respuesta['sgt_encuesta'] = encuestas_serializer.data
+				#encuestas = Encuesta.objects.filter(usuarios = usuario)
+				#encuestas_serializer = EncuestaSerializer(encuestas, many=True)
+				#respuesta['sgt_encuesta'] = encuestas_serializer.data
 				poliza = Poliza.objects.filter(usuario = usuario)
 				poliza_serializer = PolizaSerializer(poliza, many=True)
 				respuesta['sgt_poliza'] = poliza_serializer.data
@@ -191,6 +207,11 @@ class UserInfo(APIView):
 				numero_orden = NumeroOrden.objects.filter(solicitud_inspeccion__in = solicitudes)
 				numero_orden_serializer = NumeroOrdenSerializer(numero_orden, many=True)
 				respuesta['sgt_numeroorden'] = numero_orden_serializer.data
+				notificacion = Notificacion.objects.filter(id__in=notificacion_usuario.values_list('notificacion_id', flat=True))
+				notificacion_serializer = NotificacionSerializer(notificacion, many=True)
+				respuesta['sgt_notificacion'] = notificacion_serializer.data
+				notificacion_usuario_serializer = NotificacionUsuarioSerializer(notificacion_usuario, many=True)
+				respuesta['sgt_notificacionusuario'] = notificacion_usuario_serializer.data
 				
 				return Response(respuesta, status=status.HTTP_200_OK)
 

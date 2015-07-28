@@ -187,6 +187,12 @@ urlpatterns = \
         ),
 
         url(
+            r'^admin/enviar-notificacion$',
+            views.AdminEnviarNotificacion.as_view(),
+            name='admin_enviar_notificacion'
+        ),
+
+        url(
             r'^admin/consultas$',
             views.AdminReportes.as_view(),
             name='admin_reportes'

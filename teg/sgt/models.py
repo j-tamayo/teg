@@ -1,5 +1,5 @@
 from django.db import models
-from cuentas.models import SgtUsuario,RolSgt
+from cuentas.models import SgtUsuario, RolSgt
 from datetime import datetime
 from django.db.models import Q
 import operator
@@ -254,7 +254,7 @@ class Notificacion(models.Model):
 	encuesta = models.ForeignKey(Encuesta, blank=True, null=True)
 
 	def __unicode__(self):
-		return u'%s - %s' % (self.fecha_creacion,self.mensaje)
+		return u'%s' % self.mensaje
 
 
 class NotificacionUsuario(models.Model):

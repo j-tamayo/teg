@@ -29,7 +29,7 @@
 					<a href="{% url 'admin_editar_notificacion' notificacion.id %}" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Editar">
 						<i class="fa fa-pencil"></i>
 					</a>
-					<a href="#" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Enviar">
+					<a href="#" class="btn btn-info btn-sm enviar" data-toggle="tooltip" target="{{notificacion.id}}" data-original-title="Enviar">
 						<i class="fa fa-paper-plane"></i>
 					</a>
 					<a href="#" class="btn btn-danger btn-sm eliminar" target="{{notificacion.id}}" data-toggle="tooltip" data-original-title="Eliminar" >
@@ -104,7 +104,7 @@
 			);
 			$('#footer_modal_generic').html(
 				'<div class="col-xs-6">\
-					<a id="cancelar" href="#" class="btn btn-danger col-xs-12">Cancelar</a>\
+					<a id="cancelar" href="#" class="btn btn-danger col-xs-12" data-dismiss="modal">Cancelar</a>\
 				</div>\
 				<div class="col-xs-6">\
 					<a id="confirmar" href="#" class="btn btn-primary col-xs-12">Aceptar</a>\
@@ -122,6 +122,50 @@
 			$('#eliminar_notificacion').submit();
 		});
 		/******* FIN *******/
+
+		target_envio = '';
+		$(document).on('click', '.enviar', function(event){
+			event.preventDefault();
+			target_envio = $(this).attr('target');
+
+			$('#title_modal_generic').html('Confirmación');
+			$('#body_modal_generic').html(
+				'<div class="row">\
+					<div class="col-xs-12"><h4>¿Está seguro que desea enviar esta notificaci&oacute;n a todos los clientes?</h4></div>\
+				</div><br>'
+			);
+			$('#footer_modal_generic').html(
+				'<div class="col-xs-6">\
+					<a id="cancelar" href="#" class="btn btn-danger col-xs-12" data-dismiss="modal">Cancelar</a>\
+				</div>\
+				<div class="col-xs-6">\
+					<a id="confirmar_envio" href="#" class="btn btn-primary col-xs-12">Aceptar</a>\
+				</div>'
+			);
+			$('#modal_generic').modal({
+				backdrop: 'static',
+				keyboard: false
+			});
+		});
+
+		$(document).on('click', '#confirmar_envio', function(event){
+			$('#modal_generic').modal('hide');
+			$.ajax({
+			    type: 'GET',
+			    url: '{% url "admin_enviar_notificacion" %}',
+			    data: {
+			    	'notificacion_id': target_envio
+			    },
+			    dataType: 'json',
+			    success: function(data){
+			    	console.log(data.mensaje);
+			    },
+			    error: function(data){
+			    	console.log(data.mensaje);
+			    }
+			});
+		});
+
 	})
 	</script>
 {% endblock %}
