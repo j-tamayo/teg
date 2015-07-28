@@ -74,6 +74,16 @@ class SolicitudInspeccion(models.Model):
 	def __unicode__(self):
 		return u'%s' % self.tipo_inspeccion.nombre
 
+	def toDict(self):
+		return {
+			'centro_inspeccion': self.centro_inspeccion.pk,
+			'fecha_creacion': datetime.strftime(self.fecha_creacion, '%d-%m-%Y'),
+			'perito': (self.perito.nombres + ' ' + self.perito.apellidos) if self.perito is not None else None,
+			'tipo_inspeccion': self.tipo_inspeccion.nombre,
+			'estatus': self.estatus.nombre,
+			'usuario': self.usuario.nombres + ' ' + self.usuario.apellidos,
+		}
+
 
 class NumeroOrden(models.Model):
 	asistencia = models.IntegerField(default=0)
@@ -85,6 +95,24 @@ class NumeroOrden(models.Model):
 
 	def __unicode__(self):
 		return u'%s' % self.codigo
+
+	def toDict(self,recursive = False):
+		if recursive:
+			return {
+				'pk': self.pk,
+				'solicitud_inspeccion': self.solicitud_inspeccion.toDict(),
+				'codigo': self.codigo,
+				'fecha_atencion': datetime.strftime(self.fecha_atencion, '%d-%m-%Y'),
+				'hora_atencion': self.hora_atencion.strftime('%I:%M %p'),
+			}
+		else:
+			return {
+				'pk': self.pk,
+				'solicitud_inspeccion': self.solicitud_inspeccion.pk,
+				'codigo': self.codigo,
+				'fecha_atencion': datetime.strftime(self.fecha_atencion, '%d-%m-%Y'),
+				'hora_atencion': self.hora_atencion.strftime('%I:%M %p'),
+			}
 
 	@staticmethod
 	def reporte(filtros):

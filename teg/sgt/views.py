@@ -1628,4 +1628,44 @@ class TaquillaAccionSolicitud(View):
 
 	def post(self, request, *args, **kwargs):
 		"""Vista que cambia el estatus de las solicitudes por la Taquilla"""
-		
+		valido = False
+		error_msg = None
+		tipo_operacion = request.POST.get('tipo_operacion', None)
+		id_numero_orden = request.POST.get('id_numero_orden', None)
+		id_perito = request.POST.get('id_perito', None)
+		numero_orden = NumeroOrden.objects.filter(id=id_numero_orden).first()
+
+		if tipo_operacion == 'confirmar_asistencia':
+			perito = Perito.objects.filter(id=id_perito).first()
+			if numero_orden and perito:
+				valido = True
+				numero_orden.asistencia = 1
+				numero_orden.solicitud_inspeccion.perito = perito
+				numero_orden.solicitud_inspeccion.estatus = Estatus.objects.get(codigo = 'solicitud_procesada')
+				numero_orden.solicitud_inspeccion.save()
+				numero_orden.save()
+
+				numero_orden = numero_orden.toDict(True)
+
+			else:
+				error_msg = 'Falta algún parámetro'
+
+		else:
+			if numero_orden:
+				valido = True
+				numero_orden.solicitud_inspeccion.estatus = Estatus.objects.get(codigo = 'solicitud_procesada')
+				numero_orden.solicitud_inspeccion.save()
+
+				numero_orden = numero_orden.toDict(True)
+
+			else:
+				error_msg = 'Falta algún parámetro'
+
+		return HttpResponse(
+		    json.dumps({
+		    	'valido': valido,
+		    	'error_msg': error_msg,
+		    	'numero_orden': numero_orden
+		    }),
+		    content_type="application/json"
+		)

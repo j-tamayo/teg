@@ -2,6 +2,7 @@
 
 {% block main_content %}
 {% load staticfiles %}
+{% csrf_token %}
 <nav class="navbar navbar-default navbar-fixed-top">
 	<div class="navbar-header">
 		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -58,10 +59,10 @@
 					<!-- <a href="#" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Asignar Perito" {%if not n.solicitud_inspeccion.estatus.codigo == "solicitud_procesada"%}disabled{%endif%}>
 						<i class="fa fa-user-plus"></i>
 					</a> -->
-					<a href="#" class="btn btn-success btn-sm confirmar_asistencia" data-toggle="tooltip" data-original-title="Confirmar asistencia" numero_orden="{{n.pk}}">
+					<a href="#" class="btn btn-success btn-sm confirmar_asistencia" data-toggle="tooltip" data-original-title="Confirmar asistencia" numero_orden="{{n.pk}}" {%if not n.solicitud_inspeccion.estatus.codigo == "solicitud_procesada"%}disabled{%endif%}>
 						<i class="fa fa-check-square-o"></i>
 					</a>
-					<a href="#" class="btn btn-danger btn-sm" data-toggle="tooltip" data-original-title="Confirmar no asistencia" numero_orden="{{n.pk}}">
+					<a href="#" class="btn btn-danger btn-sm" data-toggle="tooltip" data-original-title="Confirmar no asistencia" numero_orden="{{n.pk}}" {%if not n.solicitud_inspeccion.estatus.codigo == "solicitud_procesada"%}disabled{%endif%}>
 						<i class="fa fa-times-circle"></i>
 					</a>
 				</td>
@@ -129,11 +130,12 @@
 			if(perito.length > 0){
 				$.ajax({
 					method: 'POST',
-					url: '{% url "crear_solicitud" %}',
+					url: '{% url "taquilla_accion_solicitud" %}',
 					data:{
 						'id_numero_orden': numero_orden,
 						'id_perito': perito,
-						'tipo_operacion':'confirmar_asistencia'
+						'tipo_operacion':'confirmar_asistencia',
+						csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
 					},
 					dataType: 'json',
 					/*complete: function(){
@@ -143,9 +145,7 @@
 					}*/
 				})
 				.done(function(data){
-					if(!data.hasOwnProperty('error_msg')){
-
-					}
+					console.log(data)
 				})
 			}
 		});

@@ -203,4 +203,10 @@ urlpatterns = \
             views.BandejaTaquilla.as_view(),
             name='bandeja_taquilla'
         ),
+
+        url(
+            r'^taquilla-accion$',
+            views.TaquillaAccionSolicitud.as_view(),
+            name='taquilla_accion_solicitud'
+        ),
 )
