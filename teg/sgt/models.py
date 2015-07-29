@@ -168,7 +168,7 @@ class TipoEncuesta(models.Model):
 class Encuesta(models.Model):
 	nombre = models.CharField(max_length=255)
 	preguntas = models.ManyToManyField('Pregunta')
-	usuarios = models.ManyToManyField(USER_MODEL)
+	#usuarios = models.ManyToManyField(USER_MODEL)
 	descripcion = models.TextField(blank=True, null=True)
 	tipo_encuesta = models.ForeignKey(TipoEncuesta, null=True)
 
@@ -290,6 +290,7 @@ class NotificacionUsuario(models.Model):
 	usuario = models.ForeignKey(USER_MODEL, related_name='usuario')
 	fecha_creacion = models.DateTimeField(auto_now_add=True)
 	leida = models.BooleanField(default=False)
+	borrada = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return u'%s <- %s' % (self.usuario, self.notificacion)
