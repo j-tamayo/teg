@@ -1610,7 +1610,7 @@ class BandejaTaquilla(View):
 		usuario = request.user
 		today = datetime.today().date()
 		print usuario,today
-		numeros_orden = NumeroOrden.objects.filter(fecha_atencion = today, solicitud_inspeccion__centro_inspeccion = usuario.centro_inspeccion)
+		numeros_orden = NumeroOrden.objects.filter(fecha_atencion = today, solicitud_inspeccion__centro_inspeccion = usuario.centro_inspeccion).order_by('hora_atencion')
 		peritos = Perito.objects.filter(centroinspeccion = usuario.centro_inspeccion)
 		print peritos
 		context = {
@@ -1637,7 +1637,10 @@ class TaquillaAccionSolicitud(View):
 
 		if tipo_operacion == 'confirmar_asistencia':
 			perito = Perito.objects.filter(id=id_perito).first()
-			if numero_orden and perito:
+			if not numero_orden.solicitud_inspeccion.estatus.codigo=='solicitud_en_proceso':
+				error_msg = 'Esta solicitud ya fue procesada'
+			
+			elif numero_orden and perito:
 				valido = True
 				numero_orden.asistencia = 1
 				numero_orden.solicitud_inspeccion.perito = perito
@@ -1645,18 +1648,17 @@ class TaquillaAccionSolicitud(View):
 				numero_orden.solicitud_inspeccion.save()
 				numero_orden.save()
 
-				numero_orden = numero_orden.toDict(True)
-
 			else:
 				error_msg = 'Falta algún parámetro'
 
 		else:
-			if numero_orden:
-				valido = True
-				numero_orden.solicitud_inspeccion.estatus = Estatus.objects.get(codigo = 'solicitud_procesada')
-				numero_orden.solicitud_inspeccion.save()
+			if not numero_orden.solicitud_inspeccion.estatus.codigo=='solicitud_en_proceso':
+				error_msg = 'Esta solicitud ya fue procesada'
 
-				numero_orden = numero_orden.toDict(True)
+			elif numero_orden:
+				valido = True
+				numero_orden.solicitud_inspeccion.estatus = Estatus.objects.get(codigo = 'solicitud_no_procesada')
+				numero_orden.solicitud_inspeccion.save()
 
 			else:
 				error_msg = 'Falta algún parámetro'
@@ -1665,7 +1667,27 @@ class TaquillaAccionSolicitud(View):
 		    json.dumps({
 		    	'valido': valido,
 		    	'error_msg': error_msg,
-		    	'numero_orden': numero_orden
+		    	'numero_orden': numero_orden.toDict(True) if numero_orden else None
 		    }),
 		    content_type="application/json"
 		)
+
+
+class ReporteXls(View):
+	def dispatch(self, *args, **kwargs):
+		return super(ReporteXls, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Vista que genera el XLS de los reportes"""
+		filtros = {}
+		if request.session.has_key('filtros_reporte'):
+			filtros = request.session['filtros_reporte']
+
+		numeros_orden = NumeroOrden.reporte(filtros)
+
+		response = HttpResponse(content_type='application/vnd.ms-excel')
+		response['Content-Disposition'] = 'attachment; filename=Consultas_solicitudes.xls'
+
+		xls = NumeroOrden.generarReporteXls(numeros_orden)
+		xls.save(response)
+		return response

@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from cuentas.models import SgtUsuario, RolSgt
 from datetime import datetime
 from django.db.models import Q
 import operator
+from openpyxl import Workbook
+from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font, Color, colors
 
 USER_MODEL = SgtUsuario
 
@@ -155,6 +158,34 @@ class NumeroOrden(models.Model):
 			numeros_orden = numeros_orden.filter(reduce(operator.and_, condiciones)).order_by('fecha_atencion')
 			
 		return numeros_orden
+
+	@staticmethod
+	def generarReporteXls(numeros_orden):
+		"""Método que construye el Excel para la exportación"""
+		wb = Workbook()
+		ws = wb.active
+		ws.title = "Numeros de Orden"
+		ws['A1'] = 'Fecha de solicitud'
+		#ws['A1'].style.alignment.warp_text = True
+		ws['B1'] = 'Fecha de atención'
+		ws['C1'] = 'Usuario'
+		ws['D1'] = 'Estatus'
+		ws['E1'] = 'Centro'
+		ws['F1'] = 'Estado'
+		ws['G1'] = 'Municipio'
+
+		for index, item in enumerate(numeros_orden):
+			ws['A'+str(index+2)] = item.solicitud_inspeccion.fecha_creacion.strftime('%d-%m-%Y')
+			ws['B'+str(index+2)] = item.fecha_atencion.strftime('%d-%m-%Y')
+			ws['C'+str(index+2)] = item.solicitud_inspeccion.usuario.nombres + ' ' + item.solicitud_inspeccion.usuario.apellidos
+			ws['D'+str(index+2)] = item.solicitud_inspeccion.estatus.nombre
+			ws['E'+str(index+2)] = item.solicitud_inspeccion.centro_inspeccion.nombre
+			ws['F'+str(index+2)] = item.solicitud_inspeccion.centro_inspeccion.municipio.estado.nombre
+			ws['G'+str(index+2)] = item.solicitud_inspeccion.centro_inspeccion.municipio.nombre
+
+		ws['A1'].wrap_text = True
+
+		return wb
 
 
 class TipoEncuesta(models.Model):

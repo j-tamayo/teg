@@ -209,4 +209,10 @@ urlpatterns = \
             views.TaquillaAccionSolicitud.as_view(),
             name='taquilla_accion_solicitud'
         ),
+
+        url(
+            r'^exportar-consulta-xls$',
+            views.ReporteXls.as_view(),
+            name='exportar_reporte_xls'
+        ),
 )

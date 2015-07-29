@@ -48,7 +48,7 @@
 		</thead>
 		<tbody>
 			{% for n in numeros_orden %}
-			<tr>
+			<tr id="fila_{{n.pk}}">
 				<td>{{n.solicitud_inspeccion.tipo_inspeccion}}</td>
 				<td>{{n.codigo}}</td>
 				<td>{{n.hora_atencion|time:"h:i A"}}</td>
@@ -59,10 +59,10 @@
 					<!-- <a href="#" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Asignar Perito" {%if not n.solicitud_inspeccion.estatus.codigo == "solicitud_procesada"%}disabled{%endif%}>
 						<i class="fa fa-user-plus"></i>
 					</a> -->
-					<a href="#" class="btn btn-success btn-sm confirmar_asistencia" data-toggle="tooltip" data-original-title="Confirmar asistencia" numero_orden="{{n.pk}}" {%if not n.solicitud_inspeccion.estatus.codigo == "solicitud_procesada"%}disabled{%endif%}>
+					<a href="#" class="btn btn-success btn-sm confirmar-asistencia" data-toggle="tooltip" data-original-title="Confirmar asistencia" numero_orden="{{n.pk}}" {%if not n.solicitud_inspeccion.estatus.codigo == "solicitud_en_proceso"%}disabled{%endif%}>
 						<i class="fa fa-check-square-o"></i>
 					</a>
-					<a href="#" class="btn btn-danger btn-sm" data-toggle="tooltip" data-original-title="Confirmar no asistencia" numero_orden="{{n.pk}}" {%if not n.solicitud_inspeccion.estatus.codigo == "solicitud_procesada"%}disabled{%endif%}>
+					<a href="#" class="btn btn-danger btn-sm confirmar-no-asistencia" data-toggle="tooltip" data-original-title="Confirmar no asistencia" numero_orden="{{n.pk}}" {%if not n.solicitud_inspeccion.estatus.codigo == "solicitud_en_proceso"%}disabled{%endif%}>
 						<i class="fa fa-times-circle"></i>
 					</a>
 				</td>
@@ -109,6 +109,7 @@
     </div>
   </div>
 </div>
+{% include 'cuentas/modales_usuario.html' %}
 {% endblock %}
 
 {% block javascripts %}
@@ -116,7 +117,7 @@
 	<script type="application/javascript">
 	$(function(){
 		/************** DESPLEGAR MODAL DE CONFIRMAR ASISTENCIA *************/
-		$(document).on('click','.confirmar_asistencia',function(){
+		$(document).on('click','.confirmar-asistencia',function(){
 			numero_orden = $(this).attr('numero_orden');
 			$('#enviar_confirmar_asistencia').attr('numero_orden', numero_orden);
 			$('#confirmar_asistencia_modal').modal();
@@ -145,9 +146,83 @@
 					}*/
 				})
 				.done(function(data){
-					console.log(data)
+					if(data.valido){
+						celda_estatus = $('#fila_'+numero_orden).children()[4];
+						celda_perito = $('#fila_'+numero_orden).children()[5];
+						$(celda_estatus).html(data.numero_orden.solicitud_inspeccion.estatus);
+						$(celda_perito).html(data.numero_orden.solicitud_inspeccion.perito);
+						// Para desactivar las acciones en la solicitud
+						$.each($('a[numero_orden="'+numero_orden+'"]'), function(key,val){
+							$(val).attr('disabled', true);
+						});
+					}
+					else{
+						alert('ha ocurrido un error');
+						console.log(data.error_msg);
+					}
+					$('#confirmar_asistencia_modal').modal('hide');
 				})
 			}
+		});
+		/************** FIN ****************/
+
+		/************** DESPLEGAR MODAL DE CONFIRMAR NO ASISTENCIA *************/
+		$(document).on('click','.confirmar-no-asistencia',function(){
+			numero_orden = $(this).attr('numero_orden');
+			$('#title_modal_generic').html('Confirmar no asistencia');
+			$('#body_modal_generic').html(
+				'<div class="row">\
+					<div class="col-xs-12 text-center">\
+						¿Está seguro de confirmar la no asistencia para esta solicitud?\
+					</div>\
+				</div>'
+			);
+			$('#footer_modal_generic').html(
+				'<div class="col-xs-6">\
+					<a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>\
+				</div>\
+				<div class="col-xs-6">\
+					<a id="enviar_confirmar_no_asistencia" href="#" class="btn btn-primary btn-block">Aceptar</a>\
+				</div>'
+			);
+			$('#enviar_confirmar_no_asistencia').attr('numero_orden', numero_orden);
+			$('#modal_generic').modal();
+		});
+		/************** FIN ****************/
+
+		/************** ENVIAR CONFIRMACIÓN DE ASISTENCIA *************/
+		$(document).on('click','#enviar_confirmar_no_asistencia',function(){
+			numero_orden = $(this).attr('numero_orden');
+			$.ajax({
+				method: 'POST',
+				url: '{% url "taquilla_accion_solicitud" %}',
+				data:{
+					'id_numero_orden': numero_orden,
+					'tipo_operacion':'confirmar_no_asistencia',
+					csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+				},
+				dataType: 'json',
+				/*complete: function(){
+				  $('#spinner_form').hide();
+				  $('#crear_solicitud').html('Ver Solicitudes');
+				  $('#crear_solicitud').attr('id','ver_solicitudes');
+				}*/
+			})
+			.done(function(data){
+				if(data.valido){
+					celda_estatus = $('#fila_'+numero_orden).children()[4];
+					$(celda_estatus).html(data.numero_orden.solicitud_inspeccion.estatus);
+					// Para desactivar las acciones en la solicitud
+					$.each($('a[numero_orden="'+numero_orden+'"]'), function(key,val){
+						$(val).attr('disabled', true);
+					});
+				}
+				else{
+					alert('ha ocurrido un error');
+					console.log(data.error_msg);
+				}
+				$('#modal_generic').modal('hide');
+			})
 		});
 		/************** FIN ****************/
 	});
