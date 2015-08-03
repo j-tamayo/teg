@@ -215,4 +215,10 @@ urlpatterns = \
             views.ReporteXls.as_view(),
             name='exportar_reporte_xls'
         ),
+
+        url(
+            r'^carga-masiva-centros$',
+            views.CargaMasivaCentros.as_view(),
+            name='carga_masiva_centros'
+        ),
 )

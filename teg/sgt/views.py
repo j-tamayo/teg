@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.views.generic import View
 from sgt.models import *
 from sgt.forms import *
-from sgt.helpers import solicitudes,dates
+from sgt.helpers import solicitudes,dates,utils
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from cuentas import forms as CuentasForm
 from cuentas.models import *
@@ -1691,3 +1691,15 @@ class ReporteXls(View):
 		xls = NumeroOrden.generarReporteXls(numeros_orden)
 		xls.save(response)
 		return response
+
+class CargaMasivaCentros(View):
+	def dispatch(self, *args, **kwargs):
+		return super(CargaMasivaCentros, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Vista que se encarga de la carga masiva de centros provenientes de un xls"""
+		valido = False
+		print request.POST, request.FILES
+		if request.FILES.has_key('archivo_centros'):
+			xlsx_centros = request.FILES['archivo_centros']
+			utils.cargar_centros_desde_xls(xlsx_centros)
