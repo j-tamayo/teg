@@ -133,5 +133,14 @@ class EncuestaSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Encuesta
-		fields = ('id','descripcion','nombre','tipo_encuesta')
+		fields = ('id', 'descripcion', 'nombre', 'tipo_encuesta')
+
+
+class PreguntaSerializer(serializers.ModelSerializer):
+	tipo_respuesta = serializers.ReadOnlyField(source='tipo_respuesta.id')
+
+	class Meta:
+		model = Pregunta
+		fields = ('id', 'enunciado', 'requerida', 'tipo_respuesta')
+
 

@@ -3,7 +3,7 @@ var page_sol = 1;
 
 $(document).ready(function(){
     init_db();  // cargando BD Móvil...
-
+    
     /* Inicializando elementos en las interfaces de la APP Móvil */
     $(".datepicker").datepicker({
         changeYear: true,

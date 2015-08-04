@@ -129,50 +129,60 @@ class InitialData(APIView):
 	"""
 	def get(self, request, format = None):
 		respuesta = {}
+		data = []
+
 		estados = Estado.objects.all()
 		estados_serializer = EstadoSerializer(estados, many=True)
 		if estados_serializer:
-			respuesta['sgt_estado'] = estados_serializer.data
+			#respuesta['sgt_estado'] = estados_serializer.data
+			data.append({'sgt_estado': estados_serializer.data})
 
 		municipios = Municipio.objects.all()
 		municipios_serializer = MunicipioSerializer(municipios, many=True)
 		if municipios_serializer:
-			respuesta['sgt_municipio'] = municipios_serializer.data
+			#respuesta['sgt_municipio'] = municipios_serializer.data
+			data.append({'sgt_municipio': municipios_serializer.data})
 
 		centros = CentroInspeccion.objects.all()
 		centros_serializer = CentroSerializer(centros, many=True)
 		if centros_serializer:
-			respuesta['sgt_centroinspeccion'] = centros_serializer.data
+			#respuesta['sgt_centroinspeccion'] = centros_serializer.data
+			data.append({'sgt_centroinspeccion': centros_serializer.data})
 
 		tipos_inspeccion = TipoInspeccion.objects.all()
 		tipos_inspeccion_serializer = TipoInspeccionSerializer(tipos_inspeccion, many=True)
 		if tipos_inspeccion_serializer:
 			respuesta['sgt_tipoinspeccion'] = tipos_inspeccion_serializer.data
+			data.append({'sgt_tipoinspeccion': tipos_inspeccion_serializer.data})
 
 		estatus = Estatus.objects.all()
 		estatus_serializer = TipoInspeccionSerializer(estatus, many=True)
 		if estatus_serializer:
-			respuesta['sgt_estatus'] = estatus_serializer.data
+			#respuesta['sgt_estatus'] = estatus_serializer.data
+			data.append({'sgt_estatus': estatus_serializer.data})
 
 		tipo_encuesta = TipoEncuesta.objects.all()
 		tipo_encuesta_serializer = TipoEncuestaSerializer(tipo_encuesta, many=True)
 		if tipo_encuesta_serializer:
-			respuesta['sgt_tipoencuesta'] = tipo_encuesta_serializer.data
+			#respuesta['sgt_tipoencuesta'] = tipo_encuesta_serializer.data
+			data.append({'sgt_tipoencuesta': tipo_encuesta_serializer.data})
 
 		tipo_respuesta = TipoRespuesta.objects.all()
 		tipo_respuesta_serializer = TipoRespuestaSerializer(tipo_respuesta, many=True)
 		if tipo_respuesta_serializer:
-			respuesta['sgt_tiporespuesta'] = tipo_respuesta_serializer.data
+			#respuesta['sgt_tiporespuesta'] = tipo_respuesta_serializer.data
+			data.append({'sgt_tiporespuesta': tipo_respuesta_serializer.data})
 
 		tipo_notificacion = TipoNotificacion.objects.all()
 		tipo_notificacion_serializer = TipoNotificacionSerializer(tipo_notificacion, many=True)
 		if tipo_notificacion_serializer:
-			respuesta['sgt_tiponotificacion'] = tipo_notificacion_serializer.data
+			#respuesta['sgt_tiponotificacion'] = tipo_notificacion_serializer.data
+			data.append({'sgt_tiponotificacion': tipo_notificacion_serializer.data})
 
-		#print respuesta
+		print data
 
-		if respuesta:
-			return Response(respuesta, status=status.HTTP_200_OK)
+		if data:
+			return Response(data, status=status.HTTP_200_OK)
 		else:
 			respuesta['errores'] = {'causa':'No se envía nada'}
 			return Response(respuesta, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -190,6 +200,7 @@ class UserInfo(APIView):
 	def post(self, request, format=None):
 		serializer = request.data
 		respuesta = {}
+		data = []
 
 		if serializer:
 			usuario = SgtUsuario.objects.filter(id=serializer['id'])
@@ -198,22 +209,41 @@ class UserInfo(APIView):
 				#encuestas = Encuesta.objects.filter(usuarios = usuario)
 				#encuestas_serializer = EncuestaSerializer(encuestas, many=True)
 				#respuesta['sgt_encuesta'] = encuestas_serializer.data
-				poliza = Poliza.objects.filter(usuario = usuario)
-				poliza_serializer = PolizaSerializer(poliza, many=True)
-				respuesta['sgt_poliza'] = poliza_serializer.data
+				#poliza = Poliza.objects.filter(usuario = usuario)
+				#poliza_serializer = PolizaSerializer(poliza, many=True)
+				#respuesta['sgt_poliza'] = poliza_serializer.data
 				solicitudes = SolicitudInspeccion.objects.filter(usuario = usuario)
 				solicitudes_serializer = SolicitudInspeccionSerializer(solicitudes, many=True)
-				respuesta['sgt_solicitudinspeccion'] = solicitudes_serializer.data
+				data.append({'sgt_solicitudinspeccion': solicitudes_serializer.data})
+				#respuesta['sgt_solicitudinspeccion'] = solicitudes_serializer.data
 				numero_orden = NumeroOrden.objects.filter(solicitud_inspeccion__in = solicitudes)
 				numero_orden_serializer = NumeroOrdenSerializer(numero_orden, many=True)
-				respuesta['sgt_numeroorden'] = numero_orden_serializer.data
+				data.append({'sgt_numeroorden': numero_orden_serializer.data})
+				#respuesta['sgt_numeroorden'] = numero_orden_serializer.data
 				notificacion = Notificacion.objects.filter(id__in=notificacion_usuario.values_list('notificacion_id', flat=True))
 				notificacion_serializer = NotificacionSerializer(notificacion, many=True)
-				respuesta['sgt_notificacion'] = notificacion_serializer.data
+				data.append({'sgt_notificacion': notificacion_serializer.data})
+				#respuesta['sgt_notificacion'] = notificacion_serializer.data
 				notificacion_usuario_serializer = NotificacionUsuarioSerializer(notificacion_usuario, many=True)
-				respuesta['sgt_notificacionusuario'] = notificacion_usuario_serializer.data
+				data.append({'sgt_notificacionusuario': notificacion_usuario_serializer.data})
+				#respuesta['sgt_notificacionusuario'] = notificacion_usuario_serializer.data
+				encuestas = Encuesta.objects.filter(id__in=notificacion.exclude(encuesta=None).values_list('encuesta_id', flat=True))
+				encuestas_serializer = EncuestaSerializer(encuestas, many=True)
+				data.append({'sgt_encuesta': encuestas_serializer.data})
+
+				preguntas = Pregunta.objects.filter(id__in=encuestas.values_list('preguntas', flat=True))
+				preguntas_serializer = PreguntaSerializer(preguntas, many=True)
+				data.append({'sgt_pregunta': preguntas_serializer.data})
+
+				encuestas_preguntas = []
+				aux = encuestas.values('id','preguntas').order_by('id')
+				for p in aux:
+					encuestas_preguntas.append({'encuesta': p['id'], 'pregunta': p['preguntas']})
+				print encuestas_preguntas
+				#data.append({'sgt_encuesta_preguntas': encuestas_preguntas})
+
 				
-				return Response(respuesta, status=status.HTTP_200_OK)
+				return Response(data, status=status.HTTP_200_OK)
 
 			else:
 				raise Http404
@@ -321,6 +351,7 @@ class CrearSolicitud(APIView):
 
 	def post(self, request, format=None):
 		respuesta = {}
+		data = []
 
 		id_centro = request.data['centro_id']
 		fecha_asistencia = request.data['fecha_asistencia']
@@ -358,10 +389,12 @@ class CrearSolicitud(APIView):
 			)
 			numero_orden.save()
 
-			respuesta['sgt_solicitudinspeccion'] = [SolicitudInspeccionSerializer(solicitud).data]
-			respuesta['sgt_numeroorden'] = [NumeroOrdenSerializer(numero_orden).data]
+			data.append({'sgt_solicitudinspeccion': [SolicitudInspeccionSerializer(solicitud).data]})
+			#respuesta['sgt_solicitudinspeccion'] = [SolicitudInspeccionSerializer(solicitud).data]
+			data.append({'sgt_numeroorden': [NumeroOrdenSerializer(numero_orden).data]})
+			#respuesta['sgt_numeroorden'] = [NumeroOrdenSerializer(numero_orden).data]
 
-			return Response(respuesta, status=status.HTTP_200_OK)
+			return Response(data, status=status.HTTP_200_OK)
 
 		else:
 			respuesta['errores'] = {'causa':'No hay disponibilidad'}

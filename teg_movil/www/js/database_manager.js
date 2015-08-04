@@ -58,7 +58,6 @@ function init_db(){
 	        displayName = 'TEG Mobile';
 	        maxSize = 100 * 1024;
 	        db = openDatabase(shortName, version, displayName, maxSize);
-
 	        console.log("iniciando carga de la base de datos local...");
 			//dropTables();
 			createTables();
@@ -75,27 +74,28 @@ function init_db(){
 function createTables(){
 	db.transaction(function(tx){
 		/* viejas tablas */
-		tx.executeSql('create table if not exists sgt_estado(id serial NOT NULL, nombre character varying(255) NOT NULL, CONSTRAINT sgt_estado_pkey PRIMARY KEY (id));');
-		tx.executeSql('create table if not exists sgt_municipio(id serial NOT NULL, nombre character varying(255) NOT NULL, estado integer NOT NULL, CONSTRAINT sgt_municipio_pkey PRIMARY KEY (id), CONSTRAINT sgt_municipio_estado_id_5aca69033bb0577_fk_sgt_estado_id FOREIGN KEY (estado) REFERENCES sgt_estado (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED)');
-		tx.executeSql('create table if not exists cuentas_sgtusuario(id serial NOT NULL, password character varying(128) NOT NULL, apellidos character varying(200) NOT NULL, cedula character varying(100) NOT NULL, correo character varying(255) NOT NULL, direccion text NOT NULL, fecha_nacimiento date NOT NULL, nombres character varying(200) NOT NULL, sexo integer NOT NULL, telefono_local character varying(100), telefono_movil character varying(100), municipio integer, codigo_postal integer NOT NULL, CONSTRAINT cuentas_sgtusuario_pkey PRIMARY KEY (id), CONSTRAINT cuentas_sgtus_municipio_515d51ec673e866e_fk_sgt_municipio FOREIGN KEY (municipio) REFERENCES sgt_municipio (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT cuentas_sgtusuario_correo_key UNIQUE (correo));');
-		tx.executeSql('create table if not exists sgt_centroinspeccion(id serial NOT NULL, nombre character varying(255) NOT NULL, direccion text NOT NULL, municipio integer NOT NULL, capacidad integer NOT NULL, tiempo_atencion integer NOT NULL, codigo character varying(20) NOT NULL, telefonos character varying(255) NOT NULL, hora_apertura_manana time without time zone, hora_apertura_tarde time without time zone, hora_cierre_manana time without time zone, hora_cierre_tarde time without time zone, CONSTRAINT sgt_centroinspeccion_pkey PRIMARY KEY (id), CONSTRAINT sgt_centroinsp_municipio_120feb748cc19ed_fk_sgt_municipio FOREIGN KEY (municipio) REFERENCES sgt_municipio (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
-		tx.executeSql('create table if not exists sgt_tipoinspeccion(id serial NOT NULL, codigo character varying(50) NOT NULL, descripcion text, nombre character varying(255) NOT NULL, CONSTRAINT sgt_tipoinspeccion_pkey PRIMARY KEY (id));');
-		tx.executeSql('create table if not exists sgt_estatus(id serial NOT NULL, nombre character varying(255) NOT NULL, codigo character varying(100) NOT NULL, CONSTRAINT sgt_estatus_pkey PRIMARY KEY (id));');
-		tx.executeSql('create table if not exists sgt_solicitudinspeccion(id serial NOT NULL, fecha_creacion timestamp with time zone NOT NULL, fecha_culminacion timestamp with time zone, perito character varying(200), tipo_inspeccion integer NOT NULL, usuario integer NOT NULL, estatus integer NOT NULL, centro_inspeccion integer NOT NULL, CONSTRAINT sgt_solicitudinspeccion_pkey PRIMARY KEY (id), CONSTRAINT "D8b278793b57d48fd3675e8c02078be7" FOREIGN KEY (centro_inspeccion) REFERENCES sgt_centroinspeccion (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sg_tipo_inspeccion_id_69234f78eec7e48a_fk_sgt_tipoinspeccion_id FOREIGN KEY (tipo_inspeccion) REFERENCES sgt_tipoinspeccion (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sgt_solici_usuario_id_7aee7c4e16426600_fk_cuentas_sgtusuario_id FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sgt_solicitudinsp_estatus_id_3a1feabe663ac6e1_fk_sgt_estatus_id FOREIGN KEY (estatus) REFERENCES sgt_estatus (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
-		tx.executeSql('create table if not exists sgt_numeroorden(id serial NOT NULL, asistencia integer NOT NULL, codigo character varying(50) NOT NULL, fecha_atencion date, solicitud_inspeccion integer NOT NULL, hora_atencion time without time zone, estatus integer NOT NULL, CONSTRAINT sgt_numeroorden_pkey PRIMARY KEY (id), CONSTRAINT "D46cf1f67ff511d5a357a31d83dde78e" FOREIGN KEY (solicitud_inspeccion) REFERENCES sgt_solicitudinspeccion (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sgt_numeroorden_estatus_id_69d79e459cbdeeea_fk_sgt_estatus_id FOREIGN KEY (estatus) REFERENCES sgt_estatus (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
+		tx.executeSql('create table if not exists sgt_estado(id NOT NULL, nombre character varying(255) NOT NULL, PRIMARY KEY (id));');
+		tx.executeSql('create table if not exists sgt_municipio(id NOT NULL, nombre character varying(255) NOT NULL, estado integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (estado) REFERENCES sgt_estado (id))');
+		tx.executeSql('create table if not exists cuentas_sgtusuario(id NOT NULL, password character varying(128) NOT NULL, apellidos character varying(200) NOT NULL, cedula character varying(100) NOT NULL, correo character varying(255) NOT NULL, direccion text NOT NULL, fecha_nacimiento date NOT NULL, nombres character varying(200) NOT NULL, sexo integer NOT NULL, telefono_local character varying(100), telefono_movil character varying(100), municipio integer, codigo_postal integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (municipio) REFERENCES sgt_municipio (id), UNIQUE (correo));');
+		tx.executeSql('create table if not exists sgt_centroinspeccion(id NOT NULL, nombre character varying(255) NOT NULL, direccion text NOT NULL, municipio integer NOT NULL, capacidad integer NOT NULL, tiempo_atencion integer NOT NULL, codigo character varying(20) NOT NULL, telefonos character varying(255) NOT NULL, hora_apertura_manana time without time zone, hora_apertura_tarde time without time zone, hora_cierre_manana time without time zone, hora_cierre_tarde time without time zone, PRIMARY KEY (id), FOREIGN KEY (municipio) REFERENCES sgt_municipio (id));');
+		tx.executeSql('create table if not exists sgt_tipoinspeccion(id NOT NULL, codigo character varying(50) NOT NULL, descripcion text, nombre character varying(255) NOT NULL, PRIMARY KEY (id));');
+		tx.executeSql('create table if not exists sgt_estatus(id NOT NULL, nombre character varying(255) NOT NULL, codigo character varying(100) NOT NULL, PRIMARY KEY (id));');
+		tx.executeSql('create table if not exists sgt_solicitudinspeccion(id NOT NULL, fecha_creacion timestamp with time zone NOT NULL, fecha_culminacion timestamp with time zone, perito character varying(200), tipo_inspeccion integer NOT NULL, usuario integer NOT NULL, estatus integer NOT NULL, centro_inspeccion integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (centro_inspeccion) REFERENCES sgt_centroinspeccion (id), FOREIGN KEY (tipo_inspeccion) REFERENCES sgt_tipoinspeccion (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id), FOREIGN KEY (estatus) REFERENCES sgt_estatus (id));');
+		tx.executeSql('create table if not exists sgt_numeroorden(id NOT NULL, asistencia integer NOT NULL, codigo character varying(50) NOT NULL, fecha_atencion date, solicitud_inspeccion integer NOT NULL, hora_atencion time without time zone, estatus integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (solicitud_inspeccion) REFERENCES sgt_solicitudinspeccion (id), FOREIGN KEY (estatus) REFERENCES sgt_estatus (id));');
 		/* nuevas tablas */
-		tx.executeSql('create table if not exists sgt_tipoencuesta(id serial NOT NULL, codigo character varying(50) NOT NULL, descripcion character varying(255) NOT NULL, CONSTRAINT sgt_tipoencuesta_pkey PRIMARY KEY (id));');
-		tx.executeSql('create table if not exists sgt_tiporespuesta(id serial NOT NULL, codigo character varying(50) NOT NULL, descripcion character varying(255) NOT NULL, CONSTRAINT sgt_tiporespuesta_pkey PRIMARY KEY (id));');
-		tx.executeSql('create table if not exists sgt_encuesta(id serial NOT NULL, descripcion text, nombre character varying(255) NOT NULL, tipo_encuesta integer, CONSTRAINT sgt_encuesta_pkey PRIMARY KEY (id), CONSTRAINT sgt_en_tipo_encuesta_1743d05ff72c7cb5_fk_sgt_tipoencuesta FOREIGN KEY (tipo_encuesta) REFERENCES sgt_tipoencuesta (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
-		tx.executeSql('create table if not exists sgt_pregunta(id serial NOT NULL, enunciado character varying(255) NOT NULL, requerida boolean NOT NULL, tipo_respuesta integer, CONSTRAINT sgt_pregunta_pkey PRIMARY KEY (id), CONSTRAINT sgt__tipo_respuesta_79635142e76532c6_fk_sgt_tiporespuesta FOREIGN KEY (tipo_respuesta) REFERENCES sgt_tiporespuesta (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
-		tx.executeSql('create table if not exists sgt_valorposible(id serial NOT NULL, valor character varying(255) NOT NULL, CONSTRAINT sgt_valorposible_pkey PRIMARY KEY (id));');
-		tx.executeSql('create table if not exists sgt_valorpreguntaencuesta(id serial NOT NULL, encuesta integer NOT NULL, pregunta integer NOT NULL, valor integer NOT NULL, CONSTRAINT sgt_valorpreguntaencuesta_pkey PRIMARY KEY (id), CONSTRAINT sgt_valorpregu_valor_3e5f1654093673e7_fk_sgt_valorposible FOREIGN KEY (valor) REFERENCES sgt_valorposible (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sgt_valorpregun_encuesta_6f2817630d98f6c4_fk_sgt_encuesta FOREIGN KEY (encuesta) REFERENCES sgt_encuesta (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sgt_valorpregun_pregunta_3061bee38bb65f72_fk_sgt_pregunta FOREIGN KEY (pregunta) REFERENCES sgt_pregunta (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
-		tx.executeSql('create table if not exists sgt_respuesta(id serial NOT NULL, pregunta integer NOT NULL, usuario integer, CONSTRAINT sgt_respuesta_pkey PRIMARY KEY (id), CONSTRAINT sgt_respue_usuario_207715ea63eabd47_fk_cuentas_sgtusuario FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sgt_respuesta_pregunta_5f8b316e64be2298_fk_sgt_pregunta FOREIGN KEY (pregunta) REFERENCES sgt_pregunta (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
-		tx.executeSql('create table if not exists sgt_respuestaindefinida(id serial NOT NULL, valor_indefinido character varying(255) NOT NULL, respuesta integer NOT NULL, CONSTRAINT sgt_respuestaindefinida_pkey PRIMARY KEY (id), CONSTRAINT sgt_respuesta_respuesta_6968a27615c16cde_fk_sgt_respuesta FOREIGN KEY (respuesta) REFERENCES sgt_respuesta (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
-		tx.executeSql('create table if not exists sgt_respuestadefinida(id serial NOT NULL, respuesta integer NOT NULL, valor_definido integer NOT NULL, CONSTRAINT sgt_respuestadefinida_pkey PRIMARY KEY (id), CONSTRAINT sgt_r_valor_definido_5f55f9b304887ce7_fk_sgt_valorposible FOREIGN KEY (valor_definido) REFERENCES sgt_valorposible (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sgt_respuesta_respuesta_6a6fb0ea399f700f_fk_sgt_respuesta FOREIGN KEY (respuesta) REFERENCES sgt_respuesta (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
-		tx.executeSql('create table if not exists sgt_tiponotificacion(id serial NOT NULL, codigo character varying(100) NOT NULL, descripcion character varying(255) NOT NULL, CONSTRAINT sgt_tiponotificacion_pkey PRIMARY KEY (id));');
-		tx.executeSql('create table if not exists sgt_notificacion(id serial NOT NULL, mensaje text NOT NULL, tipo_notificacion integer NOT NULL, encuesta integer, CONSTRAINT sgt_notificacion_pkey PRIMARY KEY (id), CONSTRAINT b4e3baf41b725bb1b5c1b8e396572af5 FOREIGN KEY (tipo_notificacion) REFERENCES sgt_tiponotificacion (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sgt_notificacio_encuesta_1952c1f7be29dbcb_fk_sgt_encuesta FOREIGN KEY (encuesta) REFERENCES sgt_encuesta (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
-		tx.executeSql('create table if not exists sgt_notificacionusuario(id serial NOT NULL, fecha_creacion timestamp with time zone NOT NULL, leida boolean NOT NULL, notificacion integer NOT NULL, usuario integer NOT NULL, CONSTRAINT sgt_notificacionusuario_pkey PRIMARY KEY (id), CONSTRAINT sgt_not_notificacion_7fc503473d1ba16a_fk_sgt_notificacion FOREIGN KEY (notificacion) REFERENCES sgt_notificacion (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED, CONSTRAINT sgt_notific_usuario_4b43ddfaf056643_fk_cuentas_sgtusuario FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED);');
+		tx.executeSql('create table if not exists sgt_tipoencuesta(id NOT NULL, codigo character varying(50) NOT NULL, descripcion character varying(255) NOT NULL, PRIMARY KEY (id));');
+		tx.executeSql('create table if not exists sgt_tiporespuesta(id NOT NULL, codigo character varying(50) NOT NULL, descripcion character varying(255) NOT NULL, PRIMARY KEY (id));');
+		tx.executeSql('create table if not exists sgt_encuesta(id NOT NULL, descripcion text, nombre character varying(255) NOT NULL, tipo_encuesta integer, PRIMARY KEY (id), FOREIGN KEY (tipo_encuesta) REFERENCES sgt_tipoencuesta (id));');
+		tx.executeSql('create table if not exists sgt_pregunta(id NOT NULL, enunciado character varying(255) NOT NULL, requerida boolean NOT NULL, tipo_respuesta integer, PRIMARY KEY (id), FOREIGN KEY (tipo_respuesta) REFERENCES sgt_tiporespuesta (id));');
+		tx.executeSql('create table if not exists sgt_encuesta_preguntas(id  NOT NULL, encuesta integer NOT NULL, pregunta integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (encuesta) REFERENCES sgt_encuesta (id), FOREIGN KEY (pregunta) REFERENCES sgt_pregunta (id), UNIQUE (encuesta, pregunta))');
+		tx.executeSql('create table if not exists sgt_valorposible(id NOT NULL, valor character varying(255) NOT NULL, PRIMARY KEY (id));');
+		tx.executeSql('create table if not exists sgt_valorpreguntaencuesta(id NOT NULL, encuesta integer NOT NULL, pregunta integer NOT NULL, valor integer NOT NULL,  PRIMARY KEY (id), FOREIGN KEY (valor) REFERENCES sgt_valorposible (id), FOREIGN KEY (encuesta) REFERENCES sgt_encuesta (id), FOREIGN KEY (pregunta) REFERENCES sgt_pregunta (id));');
+		tx.executeSql('create table if not exists sgt_respuesta(id NOT NULL, pregunta integer NOT NULL, usuario integer, PRIMARY KEY (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id), FOREIGN KEY (pregunta) REFERENCES sgt_pregunta (id));');
+		tx.executeSql('create table if not exists sgt_respuestaindefinida(id NOT NULL, valor_indefinido character varying(255) NOT NULL, respuesta integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (respuesta) REFERENCES sgt_respuesta (id));');
+		tx.executeSql('create table if not exists sgt_respuestadefinida(id NOT NULL, respuesta integer NOT NULL, valor_definido integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (valor_definido) REFERENCES sgt_valorposible (id), FOREIGN KEY (respuesta) REFERENCES sgt_respuesta (id));');
+		tx.executeSql('create table if not exists sgt_tiponotificacion(id NOT NULL, codigo character varying(100) NOT NULL, descripcion character varying(255) NOT NULL, PRIMARY KEY (id));');
+		tx.executeSql('create table if not exists sgt_notificacion(id NOT NULL, mensaje text NOT NULL, tipo_notificacion integer NOT NULL, encuesta integer, PRIMARY KEY (id), FOREIGN KEY (tipo_notificacion) REFERENCES sgt_tiponotificacion (id), FOREIGN KEY (encuesta) REFERENCES sgt_encuesta (id));');
+		tx.executeSql('create table if not exists sgt_notificacionusuario(id NOT NULL, fecha_creacion timestamp with time zone NOT NULL, leida boolean NOT NULL, notificacion integer NOT NULL, usuario integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (notificacion) REFERENCES sgt_notificacion (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id));');
 	}, errorCB, loadTables);
 }
 
@@ -122,6 +122,7 @@ function dropTables(){
 		tx.executeSql('drop table sgt_respuesta;');
 		tx.executeSql('drop table sgt_valorpreguntaencuesta;');
 		tx.executeSql('drop table sgt_valorposible;');
+		tx.executeSql('drop table sgt_encuesta_preguntas;');
 		tx.executeSql('drop table sgt_pregunta;');
 		tx.executeSql('drop table sgt_encuesta;');
 		tx.executeSql('drop table sgt_tiporespuesta;');
@@ -142,91 +143,132 @@ function load_json_data(json){
 	console.log("cargando json en BD...");
 	console.log(json);
 	db.transaction(function(tx){
-		$.each(json, function(table, data){
-			$.each(data, function(parent_key, parent_value){
-				tx.executeSql('SELECT * FROM '+table+' where id = "'+parent_value.id+'";', [],
-				function(tx, results){
-					val = [];
-					col = [];
-					first = true;
-					str_cols = '';
-					str_values = '';
-
-					$.each(parent_value, function(key, value){
-						val.push(value);
-						col.push(key);
-						if(!first){
-							str_cols = str_cols + ',' + key;
-							str_values = str_values + ',' + '?';
-						}
-						else{
-							first = false;
-							str_cols = str_cols + key;
-							str_values = str_values + '?';
-						}
-					});
-					flag = true;
-
-					num_rows = results.rows.length;
-					
-					if(num_rows > 0){
-						pk = -1;
-						str_up = '';
-						val_up = [];
+		$.each(json, function(key, value){
+			$.each(value, function(table, data){
+				$.each(data, function(parent_key, parent_value){
+					tx.executeSql('SELECT * FROM '+table+' where id = '+parent_value.id+';', [],
+					function(tx, results){
+						val = [];
+						col = [];
 						first = true;
-						for (var i = 0; i < results.rows.length; i++){
-							row = results.rows.item(i);
-							pk = row[col[0]];
-							for(j = 0; j < col.length; j++){
-								if(row[col[j]] != val[j]){
-									val_up.push(val[j]);
-									if(!first)
-										str_up = str_up + ', ' + col[j] + '=?';
-									else{
-										first = false;
-										str_up = str_up + col[j] + '=?';
+						str_cols = '';
+						str_values = '';
+
+						$.each(parent_value, function(key, value){
+							val.push(value);
+							col.push(key);
+							if(!first){
+								str_cols = str_cols + ',' + key;
+								str_values = str_values + ',' + '?';
+							}
+							else{
+								first = false;
+								str_cols = str_cols + key;
+								str_values = str_values + '?';
+							}
+						});
+						flag = true;
+
+						num_rows = results.rows.length;
+						
+						if(num_rows > 0){
+							pk = -1;
+							str_up = '';
+							val_up = [];
+							first = true;
+							for (var i = 0; i < results.rows.length; i++){
+								row = results.rows.item(i);
+								pk = row[col[0]];
+								for(j = 0; j < col.length; j++){
+									if(row[col[j]] != val[j]){
+										val_up.push(val[j]);
+										if(!first)
+											str_up = str_up + ', ' + col[j] + '=?';
+										else{
+											first = false;
+											str_up = str_up + col[j] + '=?';
+										}
 									}
 								}
 							}
+
+							if(val_up.length > 0){
+								console.log('UPDATE '+table+' SET '+str_up+' where id = '+pk+';');
+								console.log(val_up);
+
+								tx.executeSql('UPDATE '+table+' SET '+str_up+' where id = '+pk+';', val_up,
+								function(){
+									console.log("registro actualizado exitosamente!");
+								},
+								function(tx, err){
+									throw new Error(err.message);
+								});
+							}
 						}
+						else{
+							console.log('INSERT INTO '+table+'('+str_cols+') values ('+str_values+');');
+							console.log(val);
 
-						if(val_up.length > 0){
-							console.log('UPDATE '+table+' SET '+str_up+' where id = "'+pk+'";');
-							console.log(val_up);
-
-							tx.executeSql('UPDATE '+table+' SET '+str_up+' where id = "'+pk+'";', val_up,
+							tx.executeSql('INSERT INTO '+table+'('+str_cols+') values ('+str_values+');', val,
 							function(){
-								console.log("registro actualizado exitosamente!");
+								console.log("registro cargado exitosamente!");
 							},
 							function(tx, err){
 								throw new Error(err.message);
 							});
 						}
-					}
-					else{
-						console.log('INSERT INTO '+table+'('+str_cols+') values ('+str_values+');');
-						console.log(val);
-
-						tx.executeSql('INSERT INTO '+table+'('+str_cols+') values ('+str_values+');', val,
-						function(){
-							console.log("registro cargado exitosamente!");
-						},
-						function(tx, err){
-							throw new Error(err.message);
-						});
-					}
-				}, 
-				function(tx, err){
-					throw new Error(err.message);
+					}, 
+					function(tx, err){
+						throw new Error(err.message);
+					});
 				});
 			});
 		});
-	}, errorCB, init_data);
+	}, errorCB, function(){
+		console.log('Buscando datos "basura" en BD movil para realizar limpieza...');
+		json = json.reverse();
+		db.transaction(function(tx){
+			$.each(json, function(key, value){
+				$.each(value, function(table, data){
+					tx.executeSql('SELECT id FROM '+table+';', [],
+					function(tx, results){
+						num_rows = results.rows.length;
+						for(var i = 0; i < num_rows; i++){
+							enc = false;
+							row = results.rows.item(i);
+							
+							$.each(data, function(parent_key, parent_value){
+								if(row['id'] == parent_value['id']){
+									enc = true;
+									return;
+								}
+							});
+
+							if(!enc){
+								console.log('DELETE FROM '+table+' WHERE id = '+row['id']+';');
+
+								tx.executeSql('DELETE FROM '+table+' WHERE id = '+row['id']+';', [],
+								function(){
+									console.log("registro borrado exitosamente!");
+								},
+								function(tx, err){
+									throw new Error(err.message);
+								});
+							}
+						}
+					}, 
+					function(tx, err){
+						throw new Error(err.message);
+					});
+				});
+			});
+		}, errorCB, init_data);
+	});
 }
 
 function login(correo, password, user_info){
 	db.transaction(function(tx){
-	    tx.executeSql('SELECT * FROM cuentas_sgtusuario WHERE correo = "'+correo+'" AND password = '+password+';', [], 
+	    tx.executeSql('SELECT * FROM cuentas_sgtusuario WHERE correo = "'+correo+'" AND password = "'+password+'";', [], 
 	    function(tx, results){
 	    	num_rows = results.rows.length;
 	    	if(num_rows > 0){
@@ -236,14 +278,17 @@ function login(correo, password, user_info){
 	    		col_up = [];
 	    		val_up = [];
 				$.each(row, function(key, value){
-					if(value != user_info[key]){
-						col_up.push(key);
-						val_up.push(user_info[key]);
+					if(user_info.length){
+						if(value != user_info[key]){
+							col_up.push(key);
+							val_up.push(user_info[key]);
+						}
 					}
 				});
 
-				if(val_up.length > 0)
+				if(val_up.length > 0){
 					updateTable('cuentas_sgtusuario', col_up, val_up);
+				}
 
 				load_profile_info(row);
 	    	}
@@ -277,6 +322,7 @@ function load_user_tables(){
 	$.post("http://192.168.1.101:8000/api/usuario-info/", {'id': id_usuario})
 	.done(load_json_data)
 	.fail(function(){
+		init_data(); //cargando la data localmente...
 	    console.log("Error de conexión!");
 	});
 }
