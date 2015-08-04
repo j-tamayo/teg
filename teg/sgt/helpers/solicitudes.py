@@ -13,13 +13,37 @@ class Bloque():
 
 
 def generar_horarios(centro, fecha_asistencia):
-	cantidad_minutos_manana = diff_times_in_minutes(centro.hora_apertura_manana,centro.hora_cierre_manana)
-	cantidad_minutos_tarde = diff_times_in_minutes(centro.hora_apertura_tarde,centro.hora_cierre_tarde)
+	fecha_asistencia_date = datetime.datetime.strptime(fecha_asistencia, '%Y-%m-%d').date()
+	now = datetime.datetime.today()
+	if now.date()>=fecha_asistencia_date and now.time() > centro.hora_apertura_manana:
+		hora_inicial_manana = now.time()
+	else:
+		hora_inicial_manana = centro.hora_apertura_manana
+
+	if now.date()>=fecha_asistencia_date and now.time() > centro.hora_apertura_tarde:
+		hora_inicial_tarde = now.time()
+	else:
+		hora_inicial_tarde = centro.hora_apertura_tarde
+	# hora_inicial_manana = centro.hora_apertura_manana if now < centro.hora_apertura_manana else now
+	# hora_inicial_tarde = centro.hora_apertura_tarde if now < centro.hora_apertura_tarde else now
+	
+	if hora_inicial_manana < centro.hora_cierre_manana:
+		cantidad_minutos_manana = diff_times_in_minutes(hora_inicial_manana,centro.hora_cierre_manana)
+	else:
+		cantidad_minutos_manana = 0
+
+	if hora_inicial_tarde < centro.hora_cierre_tarde:
+		cantidad_minutos_tarde = diff_times_in_minutes(hora_inicial_tarde,centro.hora_cierre_tarde)
+	else:
+		cantidad_minutos_tarde = 0
+
 	cantidad_bloques_manana = cantidad_minutos_manana / centro.tiempo_atencion
 	cantidad_bloques_tarde = cantidad_minutos_tarde / centro.tiempo_atencion
+	
 	lista_bloques = []
-	contador_horas = centro.hora_apertura_manana
+	contador_horas = hora_inicial_manana
 	print "Bloq man",cantidad_bloques_manana,"bloq tard",cantidad_bloques_tarde
+
 	for i in range(0,cantidad_bloques_manana):
 		datetime_aux = datetime.datetime(2014,1,1,contador_horas.hour,contador_horas.minute)
 		proxima_hora = (datetime_aux + datetime.timedelta(minutes = centro.tiempo_atencion)).time()
@@ -29,7 +53,7 @@ def generar_horarios(centro, fecha_asistencia):
 		lista_bloques.append(bloque)
 		contador_horas = proxima_hora
 
-	contador_horas = centro.hora_apertura_tarde
+	contador_horas = hora_inicial_tarde
 	for i in range(0,cantidad_bloques_tarde):
 		datetime_aux = datetime.datetime(2014,1,1,contador_horas.hour,contador_horas.minute)
 		proxima_hora = (datetime_aux + datetime.timedelta(minutes = centro.tiempo_atencion)).time()

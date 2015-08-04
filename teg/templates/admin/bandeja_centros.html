@@ -5,9 +5,14 @@
 {% load i18n %}
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-xs-2 col-xs-offset-10">
-			<a href="{% url 'admin_crear_centro' %}" class="btn btn-info pull-right">
+		<div class="col-xs-2 col-xs-offset-8">
+			<a href="{% url 'admin_crear_centro' %}" class="btn btn-info btn-block">
 				<i class="fa fa-plus"></i> Agregar
+			</a>
+		</div>
+		<div class="col-xs-2">
+			<a id="carga_masiva" href="#" class="btn btn-info btn-block">
+				<i class="fa fa-upload"></i> Cargar masiva
 			</a>
 		</div>
 	</div>
@@ -86,13 +91,57 @@
 {% csrf_token %}
 <input type="hidden" name="page" value="{{centros.number}}">
 </form>
+
+<!-- Formulario de Reclamo -->
+<div class="modal fade" id="carga_masiva_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title text-success" id="myModalLabel">Carga masiva</h3>
+				</div>
+			<div class="modal-body">
+				<form id="carga_masiva_form" action="" method="post" enctype="multipart/form-data">
+				<div class="row">
+					<div class="col-xs-12">
+						
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<label>Archivo xls con los centros de inspecci&oacute;n</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<input type="file" name="archivo_centros" class="form-control" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+					</div>
+				</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<div class="col-xs-6">
+					<a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>
+				</div>
+				<div class="col-xs-6">
+					<a href="#" id="enviar_archivo_centros" class="btn btn-primary btn-block">Enviar</button>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
 	{{ block.super }}
+	{% load staticfiles %}
+	<script src="{% static 'js/bootstrap-filestyle/bootstrap-filestyle.min.js' %}" type="application/javascript"></script>
+
+	<script src="{% static 'js/jquery-form/jquery.form.min.js' %}" type="application/javascript"></script>
 
 	<script type="application/javascript">
 	$(function(){
+		var token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 		$('#eliminar_centro').hide();
 		/******** MODAL PARA CONFIRMAR LA ELIMINACIÓN DE UN CENTRO DE INSPECCIÓN ********/
 		$(document).on('click', '.eliminar', function(event){
@@ -124,6 +173,52 @@
 		/******* ELIMINAR CENTRO DE INSPECCIÓN *********/
 		$(document).on('click', '#confirmar', function(){
 			$('#eliminar_centro').submit();
+		});
+		/******* FIN *******/
+
+		/************** MODAL PARA REALIZAR LA CARGA MASIVA ***************/
+		$(document).on('click', '#carga_masiva', function(){
+			$(":file").filestyle('clear');
+			$('#carga_masiva_modal').modal();
+		});
+		/******* FIN *******/
+
+		/********* INICIALIZACIÓN DEL PLUGIN PARA EL FILEINPUT **********/
+		$(":file").filestyle({
+			icon: false,
+			buttonText: "Subir archivo",
+			buttonName: "btn-primary"
+		});
+		/******* FIN *******/
+
+		/********* PROCESAR ARCHIVOS XLS DE CENTROS ***********/
+		$(document).on('click', '#enviar_archivo_centros', function(){
+			value = $(':file').val();
+			if(value.length > 0){
+				$('#carga_masiva_form').ajaxSubmit({
+					method: 'POST',
+					headers: { "X-CSRFToken": token},
+					url: '{% url "carga_masiva_centros" %}',
+					async: false,
+					/*data: $('#carga_masiva_form').serialize(),*/
+					multiple: true,
+					dataType: 'json',
+					beforeSend: function( xhr ) {
+					  console.log('heyy');
+					},
+					complete: function(){
+					  $('#spinner_form').hide();
+					  $('#crear_solicitud').html('Ver Solicitudes');
+					  $('#crear_solicitud').attr('id','ver_solicitudes');
+					},
+					success: function(data){
+						console.log(data);
+					}
+				});
+				
+			}else{
+
+			}
 		});
 		/******* FIN *******/
 	})
