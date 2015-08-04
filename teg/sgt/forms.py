@@ -50,15 +50,15 @@ class CentroInspeccionForm(forms.ModelForm):
 
 	class Meta:
 		model = CentroInspeccion
-		fields = ['codigo','nombre','direccion','telefonos','municipio','hora_apertura_manana','hora_cierre_manana','hora_apertura_tarde','hora_cierre_tarde']
+		fields = ['nombre','direccion','telefonos','municipio','hora_apertura_manana','hora_cierre_manana','hora_apertura_tarde','hora_cierre_tarde']
 		widgets = {
-			'codigo': forms.TextInput(
-				attrs={
-					'class':'form-control',
-					'required':'',
-					'data-error':'Este campo es obligatorio'
-				}
-			),
+			# 'codigo': forms.TextInput(
+			# 	attrs={
+			# 		'class':'form-control',
+			# 		'required':'',
+			# 		'data-error':'Este campo es obligatorio'
+			# 	}
+			# ),
 			'nombre': forms.TextInput(
 				attrs={
 					'class':'form-control', 

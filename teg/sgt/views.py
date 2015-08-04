@@ -1692,6 +1692,7 @@ class ReporteXls(View):
 		xls.save(response)
 		return response
 
+
 class CargaMasivaCentros(View):
 	def dispatch(self, *args, **kwargs):
 		return super(CargaMasivaCentros, self).dispatch(*args, **kwargs)
@@ -1699,7 +1700,31 @@ class CargaMasivaCentros(View):
 	def post(self, request, *args, **kwargs):
 		"""Vista que se encarga de la carga masiva de centros provenientes de un xls"""
 		valido = False
-		print request.POST, request.FILES
+		error_msg = None
 		if request.FILES.has_key('archivo_centros'):
 			xlsx_centros = request.FILES['archivo_centros']
-			utils.cargar_centros_desde_xls(xlsx_centros)
+			if utils.cargar_centros_desde_xls(xlsx_centros):
+				valido = True
+			else:
+				error_msg = 'Ha ocurrido un error con el archivo'
+
+		else:
+			error_msg = 'No se ha enviado ningún archivo'
+
+		return HttpResponse(
+		    json.dumps({
+		    	'valido': valido,
+		    	'error_msg': error_msg,
+		    }),
+		    content_type="application/json"
+		)
+
+
+class AdminParametros(View):
+	def dispatch(self, *args, **kwargs):
+		return super(AdminParametros, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Vista que muestra el formulario para los parámetros generales de la aplicación"""
+		usuario = request.user
+		

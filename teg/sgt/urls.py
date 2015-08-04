@@ -221,4 +221,10 @@ urlpatterns = \
             views.CargaMasivaCentros.as_view(),
             name='carga_masiva_centros'
         ),
+
+        url(
+            r'^admin/parametros-configuracion$',
+            views.CargaMasivaCentros.as_view(),
+            name='admin_parametros'
+        ),
 )

@@ -71,7 +71,7 @@
 			{% for page in peritos.pages %}
 		        {% if page %}
 		            {% ifequal page peritos.number %}
-		                <li><span class="current page">{{ page }}</span></li>
+		                <li class="active"><span class="current page">{{ page }}</span></li>
 		            {% else %}
 		                <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
 		            {% endifequal %}

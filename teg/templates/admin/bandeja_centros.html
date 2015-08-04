@@ -66,7 +66,7 @@
 			{% for page in centros.pages %}
 		        {% if page %}
 		            {% ifequal page centros.number %}
-		                <li><span class="current page">{{ page }}</span></li>
+		                <li class="active"><span class="current page">{{ page }}</span></li>
 		            {% else %}
 		                <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
 		            {% endifequal %}
@@ -203,7 +203,7 @@
 					/*data: $('#carga_masiva_form').serialize(),*/
 					multiple: true,
 					dataType: 'json',
-					beforeSend: function( xhr ) {
+					beforeSend: function(xhr) {
 					  console.log('heyy');
 					},
 					complete: function(){
@@ -213,6 +213,15 @@
 					},
 					success: function(data){
 						console.log(data);
+						$('#carga_masiva_modal').modal('hide');
+						$('#title_modal_generic').html('Confirmación');
+						$('#body_modal_generic').html(
+							'<div class="row">\
+								<div class="col-xs-12"><h4>La carga se ha realizado satisfactoriamente</h4></div>\
+							</div><br>'
+						);
+						$('#footer_modal_generic').html('');
+						$('#modal_generic').modal()
 					}
 				});
 				
