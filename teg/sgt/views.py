@@ -1727,4 +1727,11 @@ class AdminParametros(View):
 	def get(self, request, *args, **kwargs):
 		"""Vista que muestra el formulario para los parámetros generales de la aplicación"""
 		usuario = request.user
-		
+
+		context = {
+			'admin': True,
+			'seccion_parametros': True,
+			'usuario': usuario
+		}
+
+		return render(request, 'admin/parametros.html', context)

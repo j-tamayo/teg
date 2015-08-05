@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+{% include 'cuentas/modales_usuario.html' %}
+{% load i18n %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="panel panel-dashboard-gray">
+			<div class="panel-heading">
+				<h4>Configurar par&aacute;metros generales</h4>
+			</div> <!-- / .panel-heading -->
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-xs-6">
+						<label>Cantidad de d&iacute;as para reserva</label>
+					</div>
+					<div class="col-xs-6">
+						<label>Tiempo promedio de atenci&oacute;n</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-6">
+						<select id="select_dias_reserva" name="dias_reserva" class="form-control">
+							<option value="">--Seleccionar--</option>
+							<option value="1">1 d&iacute;a</option>
+							<option value="2">2 d&iacute;as</option>
+							<option value="3">3 d&iacute;as</option>
+						</select>
+					</div>
+					<div class="col-xs-6">
+						<select id="select_tiempo_promedio" name="tiempo_promedio" class="form-control">
+							<option value="">--Seleccionar--</option>
+							<option value="10">10 minutos</option>
+							<option value="15">15 minutos</option>
+							<option value="30">30 minutos</option>
+							<option value="60">60 minutos</option>
+						</select>
+					</div>
+				</div>
+			</div> <!-- / .panel-body -->
+		</div> <!-- / .panel-dashboard-gray -->
+	</div> <!-- / .row -->
+</div> <!-- / .container-fluid -->
+{% endblock %}
+
+{% block javascripts %}
+	{{ block.super }}
+
+{% endblock %}

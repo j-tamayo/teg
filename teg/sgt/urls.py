@@ -224,7 +224,7 @@ urlpatterns = \
 
         url(
             r'^admin/parametros-configuracion$',
-            views.CargaMasivaCentros.as_view(),
+            views.AdminParametros.as_view(),
             name='admin_parametros'
         ),
 )
