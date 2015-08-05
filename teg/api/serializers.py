@@ -144,3 +144,20 @@ class PreguntaSerializer(serializers.ModelSerializer):
 		fields = ('id', 'enunciado', 'requerida', 'tipo_respuesta')
 
 
+class EncuestaPreguntaSerializer(serializers.Serializer):
+	id = serializers.IntegerField()
+	encuesta_id = serializers.IntegerField()
+	pregunta_id = serializers.IntegerField()
+
+
+class ValorPosibleSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = ValorPosible
+		fields = ('id', 'valor')
+
+
+class ValorPreguntaEncuestaSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = ValorPreguntaEncuesta
+		fields = ('id', 'valor', 'pregunta', 'encuesta')

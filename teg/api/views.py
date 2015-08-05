@@ -179,8 +179,6 @@ class InitialData(APIView):
 			#respuesta['sgt_tiponotificacion'] = tipo_notificacion_serializer.data
 			data.append({'sgt_tiponotificacion': tipo_notificacion_serializer.data})
 
-		print data
-
 		if data:
 			return Response(data, status=status.HTTP_200_OK)
 		else:
@@ -206,9 +204,6 @@ class UserInfo(APIView):
 			usuario = SgtUsuario.objects.filter(id=serializer['id'])
 			notificacion_usuario = NotificacionUsuario.objects.filter(usuario__id=serializer['id'])
 			if usuario:
-				#encuestas = Encuesta.objects.filter(usuarios = usuario)
-				#encuestas_serializer = EncuestaSerializer(encuestas, many=True)
-				#respuesta['sgt_encuesta'] = encuestas_serializer.data
 				#poliza = Poliza.objects.filter(usuario = usuario)
 				#poliza_serializer = PolizaSerializer(poliza, many=True)
 				#respuesta['sgt_poliza'] = poliza_serializer.data
@@ -235,13 +230,22 @@ class UserInfo(APIView):
 				preguntas_serializer = PreguntaSerializer(preguntas, many=True)
 				data.append({'sgt_pregunta': preguntas_serializer.data})
 
-				encuestas_preguntas = []
-				aux = encuestas.values('id','preguntas').order_by('id')
-				for p in aux:
-					encuestas_preguntas.append({'encuesta': p['id'], 'pregunta': p['preguntas']})
-				print encuestas_preguntas
-				#data.append({'sgt_encuesta_preguntas': encuestas_preguntas})
+				encuestas_preguntas_serializer = []
+				for e in encuestas:
+					encuestas_preguntas = e.preguntas.through.objects.filter(encuesta_id=e.id, pregunta_id__in=e.preguntas.values_list('id', flat=True))
+					encuestas_preguntas_serializer += EncuestaPreguntaSerializer(encuestas_preguntas, many=True).data
+				data.append({'sgt_encuesta_preguntas': encuestas_preguntas_serializer})
 
+				preguntas_aux = preguntas.exclude(tipo_respuesta__codigo='RESP_INDEF')
+				encuestas_aux = encuestas.filter(preguntas__in=preguntas_aux)
+				valor_pregunta_encuesta = ValorPreguntaEncuesta.objects.filter(encuesta__in=encuestas_aux, pregunta__in=preguntas_aux)
+				valor_pregunta_encuesta_serializer = ValorPreguntaEncuestaSerializer(valor_pregunta_encuesta, many=True)
+
+				valores = ValorPosible.objects.filter(id__in=valor_pregunta_encuesta.values_list('valor', flat=True))
+				valores_serializer = ValorPosibleSerializer(valores, many=True)
+
+				data.append({'sgt_valorposible': valores_serializer.data})
+				data.append({'sgt_valorpreguntaencuesta': valor_pregunta_encuesta_serializer.data})
 				
 				return Response(data, status=status.HTTP_200_OK)
 
