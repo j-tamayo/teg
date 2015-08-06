@@ -77,7 +77,7 @@ function createTables(){
 		tx.executeSql('create table if not exists sgt_estado(id NOT NULL, nombre character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_municipio(id NOT NULL, nombre character varying(255) NOT NULL, estado integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (estado) REFERENCES sgt_estado (id))');
 		tx.executeSql('create table if not exists cuentas_sgtusuario(id NOT NULL, password character varying(128) NOT NULL, apellidos character varying(200) NOT NULL, cedula character varying(100) NOT NULL, correo character varying(255) NOT NULL, direccion text NOT NULL, fecha_nacimiento date NOT NULL, nombres character varying(200) NOT NULL, sexo integer NOT NULL, telefono_local character varying(100), telefono_movil character varying(100), municipio integer, codigo_postal integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (municipio) REFERENCES sgt_municipio (id), UNIQUE (correo));');
-		tx.executeSql('create table if not exists sgt_centroinspeccion(id NOT NULL, nombre character varying(255) NOT NULL, direccion text NOT NULL, municipio integer NOT NULL, capacidad integer NOT NULL, tiempo_atencion integer NOT NULL, codigo character varying(20) NOT NULL, telefonos character varying(255) NOT NULL, hora_apertura_manana time without time zone, hora_apertura_tarde time without time zone, hora_cierre_manana time without time zone, hora_cierre_tarde time without time zone, PRIMARY KEY (id), FOREIGN KEY (municipio) REFERENCES sgt_municipio (id));');
+		tx.executeSql('create table if not exists sgt_centroinspeccion(id NOT NULL, nombre character varying(255) NOT NULL, direccion text NOT NULL, municipio integer NOT NULL, capacidad integer NOT NULL, tiempo_atencion integer NOT NULL, telefonos character varying(255) NOT NULL, hora_apertura_manana time without time zone, hora_apertura_tarde time without time zone, hora_cierre_manana time without time zone, hora_cierre_tarde time without time zone, PRIMARY KEY (id), FOREIGN KEY (municipio) REFERENCES sgt_municipio (id));');
 		tx.executeSql('create table if not exists sgt_tipoinspeccion(id NOT NULL, codigo character varying(50) NOT NULL, descripcion text, nombre character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_estatus(id NOT NULL, nombre character varying(255) NOT NULL, codigo character varying(100) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_solicitudinspeccion(id NOT NULL, fecha_creacion timestamp with time zone NOT NULL, fecha_culminacion timestamp with time zone, perito character varying(200), tipo_inspeccion integer NOT NULL, usuario integer NOT NULL, estatus integer NOT NULL, centro_inspeccion integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (centro_inspeccion) REFERENCES sgt_centroinspeccion (id), FOREIGN KEY (tipo_inspeccion) REFERENCES sgt_tipoinspeccion (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id), FOREIGN KEY (estatus) REFERENCES sgt_estatus (id));');
@@ -90,9 +90,9 @@ function createTables(){
 		tx.executeSql('create table if not exists sgt_encuesta_preguntas(id  NOT NULL, encuesta_id integer NOT NULL, pregunta_id integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (encuesta_id) REFERENCES sgt_encuesta (id), FOREIGN KEY (pregunta_id) REFERENCES sgt_pregunta (id), UNIQUE (encuesta_id, pregunta_id))');
 		tx.executeSql('create table if not exists sgt_valorposible(id NOT NULL, valor character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_valorpreguntaencuesta(id NOT NULL, encuesta integer NOT NULL, pregunta integer NOT NULL, valor integer NOT NULL,  PRIMARY KEY (id), FOREIGN KEY (valor) REFERENCES sgt_valorposible (id), FOREIGN KEY (encuesta) REFERENCES sgt_encuesta (id), FOREIGN KEY (pregunta) REFERENCES sgt_pregunta (id));');
-		tx.executeSql('create table if not exists sgt_respuesta(id NOT NULL, pregunta integer NOT NULL, usuario integer, PRIMARY KEY (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id), FOREIGN KEY (pregunta) REFERENCES sgt_pregunta (id));');
-		tx.executeSql('create table if not exists sgt_respuestaindefinida(id NOT NULL, valor_indefinido character varying(255) NOT NULL, respuesta integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (respuesta) REFERENCES sgt_respuesta (id));');
-		tx.executeSql('create table if not exists sgt_respuestadefinida(id NOT NULL, respuesta integer NOT NULL, valor_definido integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (valor_definido) REFERENCES sgt_valorposible (id), FOREIGN KEY (respuesta) REFERENCES sgt_respuesta (id));');
+		//tx.executeSql('create table if not exists sgt_respuesta(id NOT NULL, pregunta integer NOT NULL, usuario integer, PRIMARY KEY (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id), FOREIGN KEY (pregunta) REFERENCES sgt_pregunta (id));');
+		//tx.executeSql('create table if not exists sgt_respuestaindefinida(id NOT NULL, valor_indefinido character varying(255) NOT NULL, respuesta integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (respuesta) REFERENCES sgt_respuesta (id));');
+		//tx.executeSql('create table if not exists sgt_respuestadefinida(id NOT NULL, respuesta integer NOT NULL, valor_definido integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (valor_definido) REFERENCES sgt_valorposible (id), FOREIGN KEY (respuesta) REFERENCES sgt_respuesta (id));');
 		tx.executeSql('create table if not exists sgt_tiponotificacion(id NOT NULL, codigo character varying(100) NOT NULL, descripcion character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_notificacion(id NOT NULL, mensaje text NOT NULL, tipo_notificacion integer NOT NULL, encuesta integer, PRIMARY KEY (id), FOREIGN KEY (tipo_notificacion) REFERENCES sgt_tiponotificacion (id), FOREIGN KEY (encuesta) REFERENCES sgt_encuesta (id));');
 		tx.executeSql('create table if not exists sgt_notificacionusuario(id NOT NULL, fecha_creacion timestamp with time zone NOT NULL, leida boolean NOT NULL, notificacion integer NOT NULL, usuario integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (notificacion) REFERENCES sgt_notificacion (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id));');
@@ -117,9 +117,9 @@ function dropTables(){
 		tx.executeSql('drop table sgt_notificacionusuario;');
 		tx.executeSql('drop table sgt_notificacion;');
 		tx.executeSql('drop table sgt_tiponotificacion;');
-		tx.executeSql('drop table sgt_respuestadefinida;');
-		tx.executeSql('drop table sgt_respuestaindefinida;');
-		tx.executeSql('drop table sgt_respuesta;');
+		//tx.executeSql('drop table sgt_respuestadefinida;');
+		//tx.executeSql('drop table sgt_respuestaindefinida;');
+		//tx.executeSql('drop table sgt_respuesta;');
 		tx.executeSql('drop table sgt_valorpreguntaencuesta;');
 		tx.executeSql('drop table sgt_valorposible;');
 		tx.executeSql('drop table sgt_encuesta_preguntas;');
@@ -176,10 +176,14 @@ function load_json_data(json){
 							str_up = '';
 							val_up = [];
 							first = true;
+
 							for (var i = 0; i < results.rows.length; i++){
 								row = results.rows.item(i);
 								pk = row[col[0]];
 								for(j = 0; j < col.length; j++){
+									if(jQuery.type(val[j]) == 'boolean')
+										val[j] = val[j] ? 'true' : 'false';
+
 									if(row[col[j]] != val[j]){
 										val_up.push(val[j]);
 										if(!first)
@@ -497,7 +501,6 @@ function load_profile_info(user_info){
 		tx.executeSql('SELECT e.nombre as estado, m.nombre as municipio FROM sgt_estado e, sgt_municipio m WHERE e.id = m.estado AND m.id = '+user_info['municipio']+';', [], 
 	    function(tx, results){
 	    	row = results.rows.item(0);
-	    	console.log(row);
 	    	$("#profile_page").children(".ui-content").html('<h3 class="text-success" style="text-align: center;">Informaci&oacute;n del usuario</h3>\
 				<p>Nombre: '+user_info['nombres']+'</p>\
 				<p>Apellido: '+user_info['apellidos']+'</p>\
