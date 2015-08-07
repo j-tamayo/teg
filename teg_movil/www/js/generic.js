@@ -113,11 +113,13 @@ $(document).ready(function(){
                 $("#request_form_page2").hide();
                 $("#request_form_page3").hide();
                 $("#prev_request_page").hide();
-
-                inject_toolbar(false);
             }
 
             if(from_page == "#create_request_page" && to == "#request_page"){
+                inject_toolbar(true);
+            }
+
+            if(from_page == "#mail_content_page" && to == "#mail_page"){
                 inject_toolbar(true);
             }
 
@@ -126,6 +128,10 @@ $(document).ready(function(){
                 $("#request_footer").hide();
             }
         }
+    });
+
+    $(document).on("pagebeforeshow", "#mail_content_page, #create_request_page", function(){
+        inject_toolbar(false)
     });
 
     $("#registro_form").submit(function(event){
@@ -275,6 +281,24 @@ $(document).ready(function(){
         $(this).children('.ui-li-aside').css('color', '#FFFFFF');
     });
 
+    $(document).on("click", ".notificacion_item", function(){
+        notificacion_id = $(this).attr('target-id');
+        asunto = $(this).text();
+        flag_leida = $('#notificacion_'+notificacion_id).attr('leida');
+        ref_id = $('#notificacion_'+notificacion_id).attr('ref');
+        if(flag_leida == 'false'){
+            $.post("http://192.168.1.101:8000/api/marcar-notificacion/", {'notificacion_id': ref_id, 'flag_marca': 1})
+            .done(function(){
+                $('#notificacion_'+notificacion_id).attr('leida', 'true');
+                updateTable('sgt_notificacionusuario', ['leida'], ['true'], ref_id);
+            })
+            .fail(function(){
+                console.log("Error de conexión!");
+            });
+        }
+        load_notificacion(notificacion_id, asunto);
+    });
+
     $(document).on("click", "#recordar_contraseña", function(){
 
         /* Espacio reservado para recuperar contraseña por parte del usuario */
@@ -306,8 +330,8 @@ function inject_toolbar(inject_flag){
     if(!inject_flag && !$('#profile_header').is(':empty')){
         $('#profile_header').hide('fold','up');
         $('#profile_header').toolbar('destroy');
-        $('#profile_header').html('');
         $('#profile_header').removeAttr('data-role');
+        $('#profile_header').empty();
         $.mobile.resetActivePageHeight();
     }
 }

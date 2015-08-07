@@ -307,6 +307,7 @@ class Estatus(models.Model):
 
 
 class Notificacion(models.Model):
+	asunto = models.CharField(max_length=255, default="Sin Asunto")
 	mensaje = models.TextField()
 	tipo_notificacion = models.ForeignKey('TipoNotificacion')
 	notificacion_usuario = models.ManyToManyField(USER_MODEL, through='NotificacionUsuario', related_name='notificacion_usuario')

@@ -272,6 +272,11 @@ class CrearValorForm(forms.Form):
 
 
 class NotificacionForm(forms.ModelForm):
+	asunto = forms.CharField(
+		label = u'Asunto',
+		widget = forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
+	)
+
 	tipo_notificacion = forms.ModelChoiceField(
 		label = u'Encuesta',
 		required = True,
@@ -295,4 +300,4 @@ class NotificacionForm(forms.ModelForm):
 
 	class Meta:
 		model = Notificacion
-		fields = ['tipo_notificacion', 'mensaje', 'encuesta']
+		fields = ['asunto', 'tipo_notificacion', 'mensaje', 'encuesta']

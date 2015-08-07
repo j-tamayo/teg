@@ -202,7 +202,7 @@ class UserInfo(APIView):
 
 		if serializer:
 			usuario = SgtUsuario.objects.filter(id=serializer['id'])
-			notificacion_usuario = NotificacionUsuario.objects.filter(usuario__id=serializer['id'])
+			notificacion_usuario = NotificacionUsuario.objects.filter(usuario__id=serializer['id'], borrada=False)
 			if usuario:
 				#poliza = Poliza.objects.filter(usuario = usuario)
 				#poliza_serializer = PolizaSerializer(poliza, many=True)
@@ -403,3 +403,29 @@ class CrearSolicitud(APIView):
 		else:
 			respuesta['errores'] = {'causa':'No hay disponibilidad'}
 			return Response(respuesta, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class MarcarNotificacion(APIView):
+	"""
+	Marcar notidicaciones leidas o borradas
+	"""
+	def post(self, request, format=None):
+		respuesta = {}
+		id_notificacion = request.data['notificacion_id']
+		flag_marca = request.data['flag_marca']
+
+		if id_notificacion and flag_marca:
+			notificacion_usuario = NotificacionUsuario.objects.get(id=id_notificacion)
+
+			if flag_marca == '1':
+				notificacion_usuario.leida = True
+			elif flag_marca == '2':
+				notificacion_usuario.borrada = True
+
+			notificacion_usuario.save()
+
+			respuesta['mensaje'] = 'Notificación marcada de manera exitosa'
+		else:
+			respuesta['mensaje'] = 'No se proporcionó el id de la notificación'
+
+		return Response(respuesta, status=status.HTTP_200_OK)

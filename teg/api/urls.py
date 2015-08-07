@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^usuario-info/$', views.UserInfo.as_view()),
     url(r'^horarios/$', views.Horarios.as_view()),
     url(r'^crear-solicitud/$', views.CrearSolicitud.as_view()),
+    url(r'^marcar-notificacion/$', views.MarcarNotificacion.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -3,6 +3,7 @@ var user_title = '';
 var id_usuario = -1;
 var load_data_id = 0;
 var flag_refresh_solicitudes = false;
+var flag_refresh_notificaciones = false;
 
 var db;
 
@@ -30,6 +31,7 @@ function init_data(){
 	if(load_data_id == 2){
 		console.log('Inicializando perfil del usuario...');
 		$("#request_page").bind("pagebeforeshow", load_solicitudes_inspeccion());
+		$("#mail_page").bind("pagebeforeshow", load_notificaciones());
 
 		$.mobile.changePage("#profile_page", {
 			changeHash: false, 
@@ -94,7 +96,7 @@ function createTables(){
 		//tx.executeSql('create table if not exists sgt_respuestaindefinida(id NOT NULL, valor_indefinido character varying(255) NOT NULL, respuesta integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (respuesta) REFERENCES sgt_respuesta (id));');
 		//tx.executeSql('create table if not exists sgt_respuestadefinida(id NOT NULL, respuesta integer NOT NULL, valor_definido integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (valor_definido) REFERENCES sgt_valorposible (id), FOREIGN KEY (respuesta) REFERENCES sgt_respuesta (id));');
 		tx.executeSql('create table if not exists sgt_tiponotificacion(id NOT NULL, codigo character varying(100) NOT NULL, descripcion character varying(255) NOT NULL, PRIMARY KEY (id));');
-		tx.executeSql('create table if not exists sgt_notificacion(id NOT NULL, mensaje text NOT NULL, tipo_notificacion integer NOT NULL, encuesta integer, PRIMARY KEY (id), FOREIGN KEY (tipo_notificacion) REFERENCES sgt_tiponotificacion (id), FOREIGN KEY (encuesta) REFERENCES sgt_encuesta (id));');
+		tx.executeSql('create table if not exists sgt_notificacion(id NOT NULL, mensaje text NOT NULL, tipo_notificacion integer NOT NULL, encuesta integer, asunto character varying(255) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (tipo_notificacion) REFERENCES sgt_tiponotificacion (id), FOREIGN KEY (encuesta) REFERENCES sgt_encuesta (id));');
 		tx.executeSql('create table if not exists sgt_notificacionusuario(id NOT NULL, fecha_creacion timestamp with time zone NOT NULL, leida boolean NOT NULL, notificacion integer NOT NULL, usuario integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (notificacion) REFERENCES sgt_notificacion (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id));');
 	}, errorCB, loadTables);
 }
@@ -291,7 +293,7 @@ function login(correo, password, user_info){
 				});
 
 				if(val_up.length > 0){
-					updateTable('cuentas_sgtusuario', col_up, val_up);
+					updateTable('cuentas_sgtusuario', col_up, val_up, id_usuario);
 				}
 
 				load_profile_info(row);
@@ -375,7 +377,7 @@ function insertTable(table, cols, values){
 	}, errorCB, successCB);
 }
 
-function updateTable(table, cols, values){
+function updateTable(table, cols, values, id){
 	str_cols = '';
 	for(i = 0; i < cols.length; i++){
 		if(i > 0)
@@ -384,10 +386,10 @@ function updateTable(table, cols, values){
 			str_cols = str_cols + cols[i] + "=?";
 	}
 
-	console.log('UPDATE '+table+' SET '+str_cols+' where id = "'+id_usuario+'";');
+	console.log('UPDATE '+table+' SET '+str_cols+' WHERE id = '+id+';');
 	console.log(values);
 	db.transaction(function(tx){
-		tx.executeSql('UPDATE '+table+' SET '+str_cols+' where id = "'+id_usuario+'";', values,
+		tx.executeSql('UPDATE '+table+' SET '+str_cols+' WHERE id = '+id+';', values,
 		function(){
 			console.log("registro actualizado exitosamente!");
 		},
@@ -397,6 +399,7 @@ function updateTable(table, cols, values){
 	}, errorCB, successCB);
 }
 
+//Pendiente por modificar...
 function selectTable(table, cols){
 	str_cols = '';
 	for(i = 0; i < cols.length; i++){
@@ -622,3 +625,62 @@ function load_solicitudes_inspeccion(){
 		});
 	}, errorCB, successCB);
 }
+
+function load_notificaciones(){
+	db.transaction(function(tx){
+		$('#mail_list').html('');
+		tx.executeSql('SELECT n.id AS notificacion, u.id AS notificacion_usuario, n.asunto, t.codigo, u.leida FROM sgt_notificacion n, sgt_tiponotificacion t, sgt_notificacionusuario u WHERE n.id = u.notificacion AND t.id = n.tipo_notificacion AND u.usuario = '+id_usuario+';', [], 
+	    function(tx, results){
+	    	aux = '';
+	    	num = results.rows.length;
+			for(i = 0; i < num; i++){
+				row = results.rows.item(i);
+
+				img_notificacion = '';
+				if(row['codigo'] == 'NOTI_GEN')
+					img_notificacion = 'mail-icon.png';
+				if(row['codigo'] == 'NOTI_ENC')
+					img_notificacion = 'encuesta-icon.png';
+				if(row['codigo'] == 'NOTI_REC')
+					img_notificacion = 'alert-icon.png';
+
+				aux += '<li id="notificacion_'+row['notificacion']+'" leida="'+row['leida']+'" ref="'+row['notificacion_usuario']+'">\
+							<a href="#" target-id="'+row['notificacion']+'" class="notificacion_item"><img src="img/'+img_notificacion+'" class="ui-li-icon">\
+								<h2>'+row['asunto']+'</h2>\
+							</a>\
+							<a href="#" target-id="'+row['notificacion']+'" class="ui-nodisc-icon ui-alt-icon notificacion_item_elim"></a>\
+						</li>';
+			}
+			$('#mail_list').html(aux);
+
+			if(flag_refresh_notificaciones)
+				$('#mail_list').listview("refresh");
+			else
+				flag_refresh_notificaciones = true;
+	    },
+		function(tx, err){
+			throw new Error(err.message);
+		});
+	}, errorCB, successCB);
+}
+
+function load_notificacion(id, asunto){
+	 db.transaction(function(tx){
+        tx.executeSql('SELECT * FROM sgt_notificacion WHERE id = '+id+';', [], 
+        function(tx, results){
+        	$('#mail_title').html(asunto);
+            
+            row = results.rows.item(0);
+            $('#mail_content').html('<p align="center">'+row['mensaje']+'</p>');
+
+            $.mobile.changePage('#mail_content_page', {
+	            changeHash: false,
+	            transition: 'fade'
+	        });
+        },
+        function(tx, err){
+            throw new Error(err.message);
+        });
+    }, errorCB, successCB);
+}
+					

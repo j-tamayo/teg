@@ -16,6 +16,7 @@
 		<thead>
 			<tr>
 				<th>Tipo</th>
+				<th>Asunto</th>
 				<th>Mensaje</th>
 				<th>Opciones</th>
 			</tr>
@@ -24,6 +25,7 @@
 			{% for notificacion in notificaciones.object_list %}
 			<tr>
 				<td>{{notificacion.tipo_notificacion.descripcion}}</td>
+				<td>{{notificacion.asunto}}</td>
 				<td>{{notificacion.mensaje}}</td>
 				<td>
 					<a href="{% url 'admin_editar_notificacion' notificacion.id %}" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Editar">

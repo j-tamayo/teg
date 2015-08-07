@@ -15,4 +15,12 @@
     "model": "sgt.tiponotificacion",
     "pk": 2
   }
+  {
+    "fields": {
+      "descripcion": "Notificación de recordatorio",
+      "codigo": "NOTI_REC"
+    },
+    "model": "sgt.tiponotificacion",
+    "pk": 3
+  }
 ]

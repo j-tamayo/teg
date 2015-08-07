@@ -164,17 +164,6 @@
         </div>
         
         <div id="profile_header"></div>
-        <!-- <div class="ui-body-b ui-body">
-                <h3 id="user_title">Bienvenido<br>"Nombre Usuario"</h3>
-                <a href="#" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>
-                <div data-role="navbar">
-                    <ul id="nav">
-                        <li><a target="profile_page" data-icon="user">Ver Perfil</a></li>
-                        <li><a target="request_page" data-icon="bullets">Solicitudes</a></li>
-                        <li><a target="mail_page" data-icon="mail">Notificaciones</a></li>
-                    </ul>
-                </div>
-            </div> -->
 
         <div data-url="profile_page" data-role="page" id="profile_page" class="multi_page" data-dom-cache="true" data-theme="d" data-next="request_page">
             <div role="main" class="ui-content">
@@ -197,22 +186,7 @@
 
         <div data-url="mail_page" data-role="page" id="mail_page" class="multi_page" data-dom-cache="true" data-theme="d" data-prev="request_page">
             <div role="main" class="ui-content">
-
-                <ul data-role="listview" data-split-icon="delete" data-theme="a" data-split-theme="a" data-inset="false">
-                    <li>
-                        <a href="#" ><img src="img/mail-icon.png" class="ui-li-icon"><h2>Mensaje</h2></a>
-                        <a href="#purchase" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-nodisc-icon ui-alt-icon">Purchase album</a>
-                    </li>
-                    <li>
-                        <a href="#" ><img src="img/encuesta-icon.png" class="ui-li-icon"><h2>Encuesta</h2></a>
-                        <a href="#purchase" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-nodisc-icon ui-alt-icon">Purchase album</a>
-                    </li>
-                    <li>
-                        <a href="#" ><img src="img/alert-icon.png" class="ui-li-icon"><h2>Recordatorio</h2></a>
-                        <a href="#purchase" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-nodisc-icon ui-alt-icon">Purchase album</a>
-                    </li>
-                </ul>
-
+                <ul id="mail_list" data-role="listview" data-split-icon="delete" data-theme="a" data-split-theme="a" data-inset="false"></ul>
             </div>
             <!-- <div data-role="footer"></div> -->
         </div>
@@ -300,6 +274,21 @@
                 <a id="next_request_page" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-mini footer-button-right ui-btn-icon-right ui-icon-carat-r">Siguiente</a>
             </div>
             </form>
+        </div>
+
+        <div id="mail_content_page" data-role="page" data-theme="d">
+            <div data-role="header" data-theme="b">
+                <a href="#mail_page" data-transition="fade" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-back ui-corner-all back_btn">Volver</a>
+                <h1 id="mail_title"></h1>
+            </div>
+            <div role="main" class="ui-content">
+                <div class="ui-grid-solo">
+                    <div class="ui-block-a">
+                        <div id="mail_content"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div data-role="footer"></div> -->
         </div>
     </body>
 </html>
