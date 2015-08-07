@@ -146,7 +146,7 @@ $(document).ready(function(){
         date_parts = data['fecha_nacimiento'].split('/');
         data['fecha_nacimiento'] = date_parts[2] + '-' + date_parts[1] + '-' + date_parts[0];
 
-        $.post("http://192.168.1.101:8000/api/usuarios/", data)
+        $.post("http://192.168.7.126:8000/api/usuarios/", data)
         .done(function(json){
             console.log("Usuario guardados exitosamente!");
             $.mobile.changePage("#login_page", {
@@ -169,7 +169,7 @@ $(document).ready(function(){
             data[obj.name] = obj.value;
         });
 
-        $.post("http://192.168.1.101:8000/api/login/", data)
+        $.post("http://192.168.7.126:8000/api/login/", data)
         .done(function(json){
             console.log("iniciando sesión...");
             json['password'] = data['password'];
@@ -207,7 +207,7 @@ $(document).ready(function(){
             $('#request_form').trigger('reset');
             
             load_data_id = 3;
-            $.post("http://192.168.1.101:8000/api/crear-solicitud/", data)
+            $.post("http://192.168.7.126:8000/api/crear-solicitud/", data)
             .done(load_json_data)
             .fail(function(json){
                 console.log("Error de conexión!");
@@ -219,7 +219,7 @@ $(document).ready(function(){
                 $("#request_form_page"+page_sol).hide("fade");
 
                 page_sol++;
-                $.post("http://192.168.1.101:8000/api/centros-sol/", {'municipio_id': $('#municipio_sol').val(), 'estado_id':$('#estado_sol').val()})
+                $.post("http://192.168.7.126:8000/api/centros-sol/", {'municipio_id': $('#municipio_sol').val(), 'estado_id':$('#estado_sol').val()})
                 .done(function(json){
                     load_centros_inspeccion(json, $("#request_form_page"+page_sol));
                 })
@@ -232,7 +232,7 @@ $(document).ready(function(){
                     $("#request_form_page"+page_sol).hide("fade");
 
                     page_sol++;
-                    $.post("http://192.168.1.101:8000/api/horarios/", {'id_centro': $('#centro_id_sol').val(), 'fecha': $('#fecha_asistencia_sol').val(), 'id_tipo_inspeccion': $('#tipo_sol').val()})
+                    $.post("http://192.168.7.126:8000/api/horarios/", {'id_centro': $('#centro_id_sol').val(), 'fecha': $('#fecha_asistencia_sol').val(), 'id_tipo_inspeccion': $('#tipo_sol').val()})
                     .done(function(json){
                         $('#preview_centro').text($($('#centros_inspeccion_sol').children('li').find('a.ui-btn-active')).children('h2').text());
                         $('#preview_fecha_sol').text($('#fecha_asistencia_sol').val());
@@ -287,7 +287,7 @@ $(document).ready(function(){
         flag_leida = $('#notificacion_'+notificacion_id).attr('leida');
         ref_id = $('#notificacion_'+notificacion_id).attr('ref');
         if(flag_leida == 'false'){
-            $.post("http://192.168.1.101:8000/api/marcar-notificacion/", {'notificacion_id': ref_id, 'flag_marca': 1})
+            $.post("http://192.168.7.126:8000/api/marcar-notificacion/", {'notificacion_id': ref_id, 'flag_marca': 1})
             .done(function(){
                 $('#notificacion_'+notificacion_id).attr('leida', 'true');
                 updateTable('sgt_notificacionusuario', ['leida'], ['true'], ref_id);

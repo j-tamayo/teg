@@ -323,7 +323,7 @@ class Horarios(APIView):
 	def post(self, request, format=None):
 		id_centro = request.data['id_centro']
 		fecha_asistencia = request.data['fecha']
-		fecha_asistencia = dates.str_to_datetime(fecha_asistencia, '%d/%m/%Y')
+		fecha_asistencia = dates.convert(fecha_asistencia, '%d/%m/%Y', '%Y-%m-%d')
 		id_tipo_solicitud = request.data['id_tipo_inspeccion']
 
 		centro_inspeccion = CentroInspeccion.objects.get(id=id_centro)

@@ -14,7 +14,7 @@
     },
     "model": "sgt.tiponotificacion",
     "pk": 2
-  }
+  },
   {
     "fields": {
       "descripcion": "Notificación de recordatorio",

@@ -140,7 +140,7 @@
 	<script src="{% static 'js/jquery-form/jquery.form.min.js' %}" type="application/javascript"></script>
 
 	<script type="application/javascript">
-	$(function(){
+	$(function(){console.log('hey');
 		var token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 		$('#eliminar_centro').hide();
 		/******** MODAL PARA CONFIRMAR LA ELIMINACIÓN DE UN CENTRO DE INSPECCIÓN ********/

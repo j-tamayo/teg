@@ -15,7 +15,7 @@
 						<label>Cantidad de d&iacute;as para reserva</label>
 					</div>
 					<div class="col-xs-6">
-						<label>Tiempo promedio de atenci&oacute;n</label>
+						<label>D&iacute;as no laborables</label>
 					</div>
 				</div>
 				<div class="row">
@@ -28,13 +28,17 @@
 						</select>
 					</div>
 					<div class="col-xs-6">
-						<select id="select_tiempo_promedio" name="tiempo_promedio" class="form-control">
+						<!-- <select id="select_tiempo_promedio" name="tiempo_promedio" class="form-control">
 							<option value="">--Seleccionar--</option>
 							<option value="10">10 minutos</option>
 							<option value="15">15 minutos</option>
 							<option value="30">30 minutos</option>
 							<option value="60">60 minutos</option>
-						</select>
+						</select> -->
+						<div id="fechas_no_laborables" class="input-append date" data-date-start-date="today" data-date-end-date="+365d">
+						  <input class="col-xs-10" name="fechas_no_laborables" readonly>
+						  <span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
+						</div>
 					</div>
 				</div>
 			</div> <!-- / .panel-body -->
@@ -45,5 +49,27 @@
 
 {% block javascripts %}
 	{{ block.super }}
+	<script type="application/javascript">
+	$(function(){
+		var dates_disabled = [];
+		
+		{% for date in dates_disabled %}
+			dates_disabled.push('{{date}}');
+		{% endfor %}
 
+		$('#fechas_no_laborables').datepicker('remove');
+		
+		$('#fechas_no_laborables').datepicker({
+		  autoclose: false,
+		  clearBtn: true,
+		  language: "es",
+		  startView: 1,
+		  multidate: true,
+		  daysOfWeekDisabled: [0,6],
+		  datesDisabled:dates_disabled,
+		});
+		console.log('youu');
+		console.log($('#fechas_no_laborables'));
+	});
+	</script>
 {% endblock %}
