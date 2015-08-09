@@ -106,7 +106,7 @@ function loadTables(){
 	console.log("procediendo a cargar registros de la web APP...");
 	load_data_id = 1;
 
-	$.getJSON("http://192.168.7.126:8000/api/data-inicial/")
+	$.getJSON("http://192.168.1.101:8000/api/data-inicial/")
 	.done(load_json_data)
 	.fail(function(){
 	    console.log("Error de conexión!");
@@ -231,44 +231,49 @@ function load_json_data(json){
 			});
 		});
 	}, errorCB, function(){
-		console.log('Buscando datos "basura" en BD movil para realizar limpieza...');
-		json = json.reverse();
-		db.transaction(function(tx){
-			$.each(json, function(key, value){
-				$.each(value, function(table, data){
-					tx.executeSql('SELECT id FROM '+table+';', [],
-					function(tx, results){
-						num_rows = results.rows.length;
-						for(var i = 0; i < num_rows; i++){
-							enc = false;
-							row = results.rows.item(i);
-							
-							$.each(data, function(parent_key, parent_value){
-								if(row['id'] == parent_value['id']){
-									enc = true;
-									return;
-								}
-							});
-
-							if(!enc){
-								console.log('DELETE FROM '+table+' WHERE id = '+row['id']+';');
-
-								tx.executeSql('DELETE FROM '+table+' WHERE id = '+row['id']+';', [],
-								function(){
-									console.log("registro borrado exitosamente!");
-								},
-								function(tx, err){
-									throw new Error(err.message);
+		if(load_data_id == 1 || load_data_id == 2){
+			console.log('Buscando datos "basura" en BD movil para realizar limpieza...');
+			json = json.reverse();
+			db.transaction(function(tx){
+				$.each(json, function(key, value){
+					$.each(value, function(table, data){
+						tx.executeSql('SELECT id FROM '+table+';', [],
+						function(tx, results){
+							num_rows = results.rows.length;
+							for(var i = 0; i < num_rows; i++){
+								enc = false;
+								row = results.rows.item(i);
+								
+								$.each(data, function(parent_key, parent_value){
+									if(row['id'] == parent_value['id']){
+										enc = true;
+										return;
+									}
 								});
+
+								if(!enc){
+									console.log('DELETE FROM '+table+' WHERE id = '+row['id']+';');
+
+									tx.executeSql('DELETE FROM '+table+' WHERE id = '+row['id']+';', [],
+									function(){
+										console.log("registro borrado exitosamente!");
+									},
+									function(tx, err){
+										throw new Error(err.message);
+									});
+								}
 							}
-						}
-					}, 
-					function(tx, err){
-						throw new Error(err.message);
+						}, 
+						function(tx, err){
+							throw new Error(err.message);
+						});
 					});
 				});
-			});
-		}, errorCB, init_data);
+			}, errorCB, init_data);
+		}
+		else{
+			init_data();
+		}
 	});
 }
 
@@ -325,7 +330,7 @@ function load_user_tables(){
 	load_data_id = 2;
 
 	/* Buscar y guardar información del usuario vía web service */
-	$.post("http://192.168.7.126:8000/api/usuario-info/", {'id': id_usuario})
+	$.post("http://192.168.1.101:8000/api/usuario-info/", {'id': id_usuario})
 	.done(load_json_data)
 	.fail(function(){
 		init_data(); //cargando la data localmente...
@@ -525,7 +530,7 @@ function load_profile_info(user_info){
 
 function load_centros_inspeccion(json, sel){
 	db.transaction(function(tx){
-		sel.children("ul").html('');
+		sel.children("ul").empty();
 		$(json).each(function(key, value){
 			tx.executeSql('SELECT nombre, telefonos, direccion FROM sgt_centroinspeccion WHERE id = '+value['id']+';', [], 
 		    function(tx, results){
@@ -563,7 +568,7 @@ var dias_semana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vierne
 
 function load_solicitudes_inspeccion(){
 	db.transaction(function(tx){
-		$('#request_list').html('');
+		$('#request_list').empty();
 		tx.executeSql('SELECT n.fecha_atencion, n.hora_atencion, c.nombre AS centro_inspeccion, n.codigo, t.nombre AS tipo_inspeccion, s.perito, e.nombre AS estatus FROM sgt_solicitudinspeccion s, sgt_numeroorden n, sgt_centroinspeccion c, sgt_tipoinspeccion t, sgt_estatus e WHERE n.solicitud_inspeccion = s.id AND s.centro_inspeccion = c.id AND s.tipo_inspeccion = t.id AND s.estatus = e.id AND s.usuario = '+id_usuario+';', [], 
 	    function(tx, results){
 	    	aux = '';
@@ -628,8 +633,8 @@ function load_solicitudes_inspeccion(){
 
 function load_notificaciones(){
 	db.transaction(function(tx){
-		$('#mail_list').html('');
-		tx.executeSql('SELECT n.id AS notificacion, u.id AS notificacion_usuario, n.asunto, t.codigo, u.leida FROM sgt_notificacion n, sgt_tiponotificacion t, sgt_notificacionusuario u WHERE n.id = u.notificacion AND t.id = n.tipo_notificacion AND u.usuario = '+id_usuario+';', [], 
+		$('#mail_list').empty();
+		tx.executeSql('SELECT n.id AS notificacion, u.id AS notificacion_usuario, n.asunto, t.codigo, u.fecha_creacion, u.leida FROM sgt_notificacion n, sgt_tiponotificacion t, sgt_notificacionusuario u WHERE n.id = u.notificacion AND t.id = n.tipo_notificacion AND u.usuario = '+id_usuario+';', [], 
 	    function(tx, results){
 	    	aux = '';
 	    	num = results.rows.length;
@@ -640,18 +645,17 @@ function load_notificaciones(){
 				if(row['codigo'] == 'NOTI_GEN')
 					img_notificacion = 'mail-icon.png';
 				if(row['codigo'] == 'NOTI_ENC')
-					img_notificacion = 'encuesta-icon.png';
+					img_notificacion = 'poll-icon.png';
 				if(row['codigo'] == 'NOTI_REC')
 					img_notificacion = 'alert-icon.png';
 
-				aux += '<li id="notificacion_'+row['notificacion']+'" leida="'+row['leida']+'" ref="'+row['notificacion_usuario']+'">\
-							<a href="#" target-id="'+row['notificacion']+'" class="notificacion_item"><img src="img/'+img_notificacion+'" class="ui-li-icon">\
-								<h2>'+row['asunto']+'</h2>\
-							</a>\
-							<a href="#" target-id="'+row['notificacion']+'" class="ui-nodisc-icon ui-alt-icon notificacion_item_elim"></a>\
-						</li>';
+				$('#mail_list').prepend('<li id="notificacion_'+row['notificacion']+'" leida="'+row['leida']+'" ref="'+row['notificacion_usuario']+'" fecha="'+row['fecha_creacion']+'">\
+											<a href="#" target-id="'+row['notificacion']+'" class="notificacion_item"><img src="img/'+img_notificacion+'" class="ui-li-icon">\
+												<h2>'+row['asunto']+'</h2>\
+											</a>\
+											<a href="#" target-id="'+row['notificacion']+'" class="ui-nodisc-icon ui-alt-icon notificacion_item_elim"></a>\
+										</li>');
 			}
-			$('#mail_list').html(aux);
 
 			if(flag_refresh_notificaciones)
 				$('#mail_list').listview("refresh");
@@ -664,17 +668,20 @@ function load_notificaciones(){
 	}, errorCB, successCB);
 }
 
-function load_notificacion(id, asunto){
+function load_notificacion(id, asunto, fecha){
 	 db.transaction(function(tx){
-        tx.executeSql('SELECT * FROM sgt_notificacion WHERE id = '+id+';', [], 
+        tx.executeSql('SELECT mensaje, encuesta FROM sgt_notificacion WHERE id = '+id+';', [], 
         function(tx, results){
-        	$('#mail_title').html(asunto);
+        	$('#mail_title').html(asunto + '(Recibido el '+fecha +')');
             
             row = results.rows.item(0);
             $('#mail_content').html('<p align="center">'+row['mensaje']+'</p>');
 
+            if(row['encuesta'])
+            	$('#mail_content').append('<br><button id="cargar_encuesta" target-notificacion="'+id+'" target-encuesta="'+row['encuesta']+'" class="ui-btn ui-btn-c ui-corner-all" type="button">Completar encuesta</button>');
+
             $.mobile.changePage('#mail_content_page', {
-	            changeHash: false,
+	            changeHash: true,
 	            transition: 'fade'
 	        });
         },
@@ -682,5 +689,73 @@ function load_notificacion(id, asunto){
             throw new Error(err.message);
         });
     }, errorCB, successCB);
+}
+
+function load_encuesta(notificacion_id, encuesta_id){
+	//$('#mail_content').hide("fade");
+	db.transaction(function(tx){
+        tx.executeSql('SELECT e.nombre AS encuesta, p.id AS pregunta, p.enunciado, t.codigo AS tipo FROM sgt_encuesta e, sgt_pregunta p, sgt_tiporespuesta t, sgt_encuesta_preguntas ep WHERE e.id = ep.encuesta_id AND p.id = ep.pregunta_id AND t.id = p.tipo_respuesta AND e.id = '+encuesta_id+';', [], 
+        function(tx, results){
+        	aux = '';
+        	index = 1;
+        	id_inputs = []
+        	row_aux = results.rows.item(0);
+        	$('#mail_title').html(row_aux['encuesta']);
+
+        	aux = '<form id="encuesta_form">\
+        				<input id="notificacion_enc" name="notificacion" type="hidden" value="'+notificacion_id+'">\
+        				<input id="encuesta_enc" name="encuesta" type="hidden" value="'+encuesta_id+'">';
+
+        	num = results.rows.length;
+			for(i = 0; i < num; i++){
+				row = results.rows.item(i);
+
+				aux += '<div class="ui-field-contain">\
+							<input id="pregunta_enc_'+(i + 1)+'" name="pregunta_'+(i + 1)+'" type="hidden" value="'+row['pregunta']+'">';
+
+				if(row['tipo'] == 'RESP_DEF'){
+					aux += '<fieldset id="respuesta_def_content_'+row['pregunta']+'" data-role="controlgroup" data-iconpos="right" data-theme="a">\
+								<legend>'+row['enunciado']+'</legend>\
+							</fieldset>';
+				}
+
+				if(row['tipo'] == 'RESP_INDEF'){
+					id_inputs.push('#respuesta_indef_enc_'+index);
+					aux += '<label for="respuesta_indef_enc_'+index+'">'+row['enunciado']+'</label>\
+							<textarea cols="40" rows="8" name="respuesta_indef_'+index+'" id="respuesta_indef_enc_'+index+'" required></textarea>';
+					index++;
+				}
+			}
+
+			aux += '</form>';
+			$('#mail_content').html(aux).trigger( "create" );
+        },
+        function(tx, err){
+            throw new Error(err.message);
+        });
+		
+        tx.executeSql('SELECT p.id AS pregunta, v.id, v.valor FROM sgt_encuesta e, sgt_pregunta p, sgt_tiporespuesta t, sgt_valorposible v, sgt_valorpreguntaencuesta vpe, sgt_encuesta_preguntas ep WHERE e.id = ep.encuesta_id AND p.id = ep.pregunta_id AND t.id = p.tipo_respuesta AND t.codigo = "RESP_DEF" AND e.id = vpe.encuesta AND p.id = vpe.pregunta AND v.id = vpe.valor AND e.id = '+encuesta_id+' ORDER BY pregunta;', [], 
+        function(tx, results){
+        	aux = -1;
+        	index = 0;
+        	num = results.rows.length;
+			for(i = 0; i < num; i++){
+				row = results.rows.item(i);
+
+				if(row['pregunta'] != aux){
+					aux = row['pregunta'];
+					index++;
+				}
+
+				$('#respuesta_def_content_'+aux).prepend('<input name="respuesta_def_'+index+'" id="respuesta_def_enc_'+index+'" value="'+row['id']+'" type="radio" required>\
+															<label for="respuesta_def_enc_'+index+'">'+row['valor']+'</label>').trigger( "create" );
+			}
+        },
+        function(tx, err){
+            throw new Error(err.message);
+        });
+    }, errorCB, successCB);
+
+
 }
 					
