@@ -713,11 +713,8 @@ function load_encuesta(notificacion_id, encuesta_id){
 				aux += '<div class="ui-field-contain">\
 							<input id="pregunta_enc_'+(i + 1)+'" name="pregunta_'+(i + 1)+'" type="hidden" value="'+row['pregunta']+'">';
 
-				if(row['tipo'] == 'RESP_DEF'){
-					aux += '<fieldset id="respuesta_def_content_'+row['pregunta']+'" data-role="controlgroup" data-iconpos="right" data-theme="a">\
-								<legend>'+row['enunciado']+'</legend>\
-							</fieldset>';
-				}
+				if(row['tipo'] == 'RESP_DEF')
+					aux += '<fieldset id="respuesta_def_content_'+row['pregunta']+'" data-role="controlgroup" data-iconpos="right" data-theme="a"></fieldset>';
 
 				if(row['tipo'] == 'RESP_INDEF'){
 					id_inputs.push('#respuesta_indef_enc_'+index);
@@ -725,37 +722,63 @@ function load_encuesta(notificacion_id, encuesta_id){
 							<textarea cols="40" rows="8" name="respuesta_indef_'+index+'" id="respuesta_indef_enc_'+index+'" required></textarea>';
 					index++;
 				}
+
+				aux += '</div>';
 			}
 
-			aux += '</form>';
+			aux += '<button class="ui-btn ui-btn-c ui-corner-all" type="submit">Enviar</button></form>';
 			$('#mail_content').html(aux).trigger( "create" );
         },
         function(tx, err){
             throw new Error(err.message);
         });
-		
-        tx.executeSql('SELECT p.id AS pregunta, v.id, v.valor FROM sgt_encuesta e, sgt_pregunta p, sgt_tiporespuesta t, sgt_valorposible v, sgt_valorpreguntaencuesta vpe, sgt_encuesta_preguntas ep WHERE e.id = ep.encuesta_id AND p.id = ep.pregunta_id AND t.id = p.tipo_respuesta AND t.codigo = "RESP_DEF" AND e.id = vpe.encuesta AND p.id = vpe.pregunta AND v.id = vpe.valor AND e.id = '+encuesta_id+' ORDER BY pregunta;', [], 
+
+        tx.executeSql('SELECT p.id AS pregunta, p.enunciado, v.id, v.valor FROM sgt_encuesta e, sgt_pregunta p, sgt_tiporespuesta t, sgt_valorposible v, sgt_valorpreguntaencuesta vpe, sgt_encuesta_preguntas ep WHERE e.id = ep.encuesta_id AND p.id = ep.pregunta_id AND t.id = p.tipo_respuesta AND t.codigo = "RESP_DEF" AND e.id = vpe.encuesta AND p.id = vpe.pregunta AND v.id = vpe.valor AND e.id = '+encuesta_id+' ORDER BY pregunta;', [], 
         function(tx, results){
-        	aux = -1;
+        	aux = '';
         	index = 0;
+        	pregunta_index = '';
+
         	num = results.rows.length;
 			for(i = 0; i < num; i++){
 				row = results.rows.item(i);
+				if(row['pregunta'] != pregunta_index){
+					if(pregunta_index)
+						$('#respuesta_def_content_'+pregunta_index).html(aux).trigger( "create" );
 
-				if(row['pregunta'] != aux){
-					aux = row['pregunta'];
+					pregunta_index = row['pregunta'];
+					aux = '<legend>'+row['enunciado']+'</legend>';
 					index++;
 				}
 
-				$('#respuesta_def_content_'+aux).prepend('<input name="respuesta_def_'+index+'" id="respuesta_def_enc_'+index+'" value="'+row['id']+'" type="radio" required>\
-															<label for="respuesta_def_enc_'+index+'">'+row['valor']+'</label>').trigger( "create" );
+				aux += '<input name="respuesta_def_'+index+'" id="respuesta_def_enc_'+(i + 1)+'" value="'+row['id']+'" type="radio" required>\
+						<label for="respuesta_def_enc_'+(i + 1)+'">'+row['valor']+'</label>';		
 			}
+
+			if(pregunta_index)
+				$('#respuesta_def_content_'+pregunta_index).html(aux).trigger( "create" );
         },
         function(tx, err){
             throw new Error(err.message);
         });
-    }, errorCB, successCB);
+    }, errorCB, function(){
+    	console.log('Transacción exitosa!');
+    	$("#encuesta_form").submit(function(event){
+	        event.preventDefault();
+		    formData = $(this).serializeArray();
+		    data = {};
 
+		    $(formData).each(function(index, obj){
+		        data[obj.name] = obj.value;
+		    });
 
+		    console.log(data);
+
+		    $.mobile.changePage("#mail_page", {
+		        changeHash: false, 
+		        transition: "fade"
+		    });
+	    });
+    });
 }
 					

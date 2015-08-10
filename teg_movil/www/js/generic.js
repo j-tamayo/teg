@@ -307,7 +307,6 @@ $(document).ready(function(){
         load_encuesta(notificacion_id, encuesta_id);
     });
 
-
     $(document).on("click", "#recordar_contraseña", function(){
 
         /* Espacio reservado para recuperar contraseña por parte del usuario */
