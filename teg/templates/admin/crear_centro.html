@@ -17,14 +17,14 @@
 				{% csrf_token %}
 				<div class="row">
 					<div class="col-xs-6">
-						<label >C&oacute;digo:</label>
-						{{form.codigo}}
-						<span class="help-block with-errors"></span>
+						<label >Nombre</label>
+						{{form.nombre}}
+						<span class="text-danger">{{form.nombre.errors.as_text}}</span>
 					</div>
 					<div class="col-xs-6">
-						<label >Nombre:</label>
-						{{form.nombre}}
-						<span class="help-block with-errors"></span>
+						<label >Tiempo promedio de atenci&oacute;n</label>
+						{{form.tiempo_atencion}}
+						<span class="text-danger">{{form.tiempo_atencion.errors.as_text}}</span>
 					</div>
 				</div>
 				<br>
@@ -37,6 +37,7 @@
 							<option {% ifequal e.pk c_estado_id %}selected{%endifequal%} value="{{e.pk}}">{{e.nombre}}</option>
 							{% endfor %}
 						</select>
+						<span class="text-danger">{{form.estado.errors.as_text}}</span>
 					</div>
 					<div class="col-xs-6">
 						<label>Municipio</label>
@@ -46,6 +47,7 @@
 							<option {% ifequal m.pk c_municipio_id %}selected{%endifequal%} value="{{m.pk}}">{{m.nombre}}</option>
 							{% endfor %}
 						</select>
+						<span class="text-danger">{{form.municipio.errors.as_text}}</span>
 					</div>
 				</div>	
 				<br>
@@ -53,10 +55,12 @@
 					<div class="col-xs-6">
 						<label>Direcci&oacute;n</label>
 						{{form.direccion}}
+						<span class="text-danger">{{form.direccion.errors.as_text}}</span>
 					</div>
 					<div class="col-xs-6">
 						<label>Tel&eacute;fonos</label>
 						{{form.telefonos}}
+						<span class="text-danger">{{form.telefonos.errors.as_text}}</span>
 						<br>
 						<label>Peritos</label>
 						<select multiple id="id_peritos" name="peritos" class="form-control select-mul">
@@ -64,6 +68,7 @@
 							<option value="{{perito.pk}}" {% if perito in peritos_asignados %} selected {% endif %}>{{perito.nombres}} {{perito.apellidos}}</option>
 							{% endfor %}
 						</select>
+						<span class="text-danger">{{form.peritos.errors.as_text}}</span>
 					</div>
 				</div>
 				<br>
@@ -74,6 +79,7 @@
 							{{form.hora_apertura_manana}}
 							<span class="add-on"><i class="icon-time"></i></span>
 						</div>
+						<span class="text-danger">{{form.hora_apertura_manana.errors.as_text}}</span>
 					</div>
 					<div class="col-xs-6">
 						<label>Hora de cierre ma&ntilde;ana</label>
@@ -81,6 +87,7 @@
 							{{form.hora_cierre_manana}}
 							<span class="add-on"><i class="icon-time"></i></span>
 						</div>
+						<span class="text-danger">{{form.hora_cierre_manana.errors.as_text}}</span>
 					</div>
 				</div>	
 				<br>
@@ -91,6 +98,7 @@
 							{{form.hora_apertura_tarde}}
 							<span class="add-on"><i class="icon-time"></i></span>
 						</div>
+						<span class="text-danger">{{form.hora_apertura_tarde.errors.as_text}}</span>
 					</div>
 					<div class="col-xs-6">
 						<label>Hora de cierre tarde</label>
@@ -98,6 +106,7 @@
 							{{form.hora_cierre_tarde}}
 							<span class="add-on"><i class="icon-time"></i></span>
 						</div>
+						<span class="text-danger">{{form.hora_cierre_tarde.errors.as_text}}</span>
 					</div>
 				</div>
 				<br>

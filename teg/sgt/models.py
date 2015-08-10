@@ -334,3 +334,20 @@ class TipoNotificacion(models.Model):
 
 	def __unicode__(self):
 		return u'%s' % self.descripcion
+
+
+class CentrosTiemposAtencion(models.Model):
+	fecha = models.DateField()
+	centro_inspeccion = models.ForeignKey(CentroInspeccion)
+	tiempo_atencion = models.IntegerField()
+
+	def __unicode__(self):
+		return u'%s %s %s' % (self.fecha,self.centro_inspeccion,self.tiempo_atencion)
+
+
+class ParametrosGenerales(models.Model):
+	codigo = models.CharField(max_length = 100)
+	valor = models.CharField(max_length = 255)
+
+	def __unicode__(self):
+		return u'%s:%s' % (self.codigo, self.valor)

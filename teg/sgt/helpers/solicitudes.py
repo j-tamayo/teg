@@ -15,6 +15,13 @@ class Bloque():
 def generar_horarios(centro, fecha_asistencia):
 	fecha_asistencia_date = datetime.datetime.strptime(fecha_asistencia, '%Y-%m-%d').date()
 	now = datetime.datetime.today()
+
+	#Para establecer el tiempo promedio
+	tiempo_atencion = centro.tiempo_atencion
+	tiempo_viejo = CentrosTiemposAtencion.objects.filter(fecha = fecha_asistencia_date).first()
+	if tiempo_viejo:
+		tiempo_atencion = tiempo_viejo.tiempo_atencion
+
 	if now.date()>=fecha_asistencia_date and now.time() > centro.hora_apertura_manana:
 		hora_inicial_manana = now.time()
 	else:
@@ -37,8 +44,8 @@ def generar_horarios(centro, fecha_asistencia):
 	else:
 		cantidad_minutos_tarde = 0
 
-	cantidad_bloques_manana = cantidad_minutos_manana / centro.tiempo_atencion
-	cantidad_bloques_tarde = cantidad_minutos_tarde / centro.tiempo_atencion
+	cantidad_bloques_manana = cantidad_minutos_manana / tiempo_atencion
+	cantidad_bloques_tarde = cantidad_minutos_tarde / tiempo_atencion
 	
 	lista_bloques = []
 	contador_horas = hora_inicial_manana
@@ -46,7 +53,7 @@ def generar_horarios(centro, fecha_asistencia):
 
 	for i in range(0,cantidad_bloques_manana):
 		datetime_aux = datetime.datetime(2014,1,1,contador_horas.hour,contador_horas.minute)
-		proxima_hora = (datetime_aux + datetime.timedelta(minutes = centro.tiempo_atencion)).time()
+		proxima_hora = (datetime_aux + datetime.timedelta(minutes = tiempo_atencion)).time()
 		bloque = Bloque(contador_horas, proxima_hora)
 		cantidad_citas = NumeroOrden.objects.filter(hora_atencion = contador_horas, fecha_atencion = fecha_asistencia).count()
 		bloque.capacidad = centro.peritos.filter(activo=True).count() - cantidad_citas
@@ -56,7 +63,7 @@ def generar_horarios(centro, fecha_asistencia):
 	contador_horas = hora_inicial_tarde
 	for i in range(0,cantidad_bloques_tarde):
 		datetime_aux = datetime.datetime(2014,1,1,contador_horas.hour,contador_horas.minute)
-		proxima_hora = (datetime_aux + datetime.timedelta(minutes = centro.tiempo_atencion)).time()
+		proxima_hora = (datetime_aux + datetime.timedelta(minutes = tiempo_atencion)).time()
 		bloque = Bloque(contador_horas, proxima_hora)
 		cantidad_citas = NumeroOrden.objects.filter(hora_atencion = contador_horas, fecha_atencion = fecha_asistencia).count()
 		bloque.capacidad = centro.peritos.filter(activo=True).count() - cantidad_citas

@@ -42,15 +42,26 @@ class SolicitudInspeccionForm(forms.Form):
 
 
 class CentroInspeccionForm(forms.ModelForm):
+	tiempo_atencion_choices = [('10','10 minutos'),('15','15 minutos'),('30','30 minutos'),('60','60 minutos')]
 	hora_apertura_manana = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control timepicker','required':True,'readonly':True}))
 	hora_cierre_manana = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control timepicker','required':True,'readonly':True}))
 	hora_apertura_tarde = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control timepicker','required':True,'readonly':True}))
 	hora_cierre_tarde = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control timepicker','required':True,'readonly':True}))
 	peritos = forms.ModelMultipleChoiceField(queryset=Perito.objects.all(), required=False)
+	estado = forms.ModelChoiceField(
+		label = u'Estado',
+		queryset = Estado.objects.filter().order_by('nombre'),
+		widget = forms.Select(attrs={'id':'select_solicitud_estado'})
+	)
+	tiempo_atencion = forms.ChoiceField(
+		label  = u'Tiempo promedio de atención',
+		choices = tiempo_atencion_choices,
+		widget = forms.Select(attrs={'class':'form-control'})
+	)
 
 	class Meta:
 		model = CentroInspeccion
-		fields = ['nombre','direccion','telefonos','municipio','hora_apertura_manana','hora_cierre_manana','hora_apertura_tarde','hora_cierre_tarde']
+		fields = ['nombre','direccion','telefonos','tiempo_atencion','municipio','hora_apertura_manana','hora_cierre_manana','hora_apertura_tarde','hora_cierre_tarde']
 		widgets = {
 			# 'codigo': forms.TextInput(
 			# 	attrs={

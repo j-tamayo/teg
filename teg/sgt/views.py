@@ -239,6 +239,15 @@ class CrearSolicitudInspeccion(View):
 				)
 				numero_orden.save()
 
+				#Para guardar el tiempo de atención para esta fecha
+				if CentrosTiemposAtencion.objects.filter(fecha = fecha_asistencia).count() <= 0:
+					centro_tiempo_anterior = CentrosTiemposAtencion(
+						fecha = fecha_asistencia,
+						centro_inspeccion = centro_inspeccion,
+						tiempo_atencion = centro_inspeccion.tiempo_atencion
+					)
+					centro_tiempo_anterior.save()
+
 				respuesta['solicitud'] = {
 					'tipo_solicitud': solicitud.tipo_inspeccion.nombre,
 					'numero_orden': numero_orden.codigo,
@@ -360,10 +369,11 @@ class AdminAgregarCentro(View):
 		else:
 			print "MALLLL", form.errors
 			c_estado_id = request.POST.get('estado', None)
-			c_municipios = Municipio.objects.filter(estado__id = c_estado_id)
+			c_municipios = []
 			c_municipio_id = request.POST.get('municipio', None)
 			if c_estado_id:
 				c_estado_id = int(c_estado_id)
+				c_municipios = Municipio.objects.filter(estado__id = c_estado_id)
 			if c_municipio_id:
 				c_municipio_id = int(c_municipio_id)
 
