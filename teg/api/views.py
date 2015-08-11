@@ -425,7 +425,60 @@ class MarcarNotificacion(APIView):
 			notificacion_usuario.save()
 
 			respuesta['mensaje'] = 'Notificación marcada de manera exitosa'
+			resp_status = status.HTTP_200_OK
 		else:
 			respuesta['mensaje'] = 'No se proporcionó el id de la notificación'
+			resp_status = status.HTTP_500_INTERNAL_SERVER_ERROR
 
-		return Response(respuesta, status=status.HTTP_200_OK)
+		return Response(respuesta, status=resp_status)
+
+
+class GuardarRespuestasEncuesta(APIView):
+	"""
+	Vista encargada de guardar las respuestas de los usuarios con relación a las encuestas que reciben
+	"""
+	def post(self, request, format=None):
+		mensaje = {}
+		data = request.data
+		data_response = []
+
+		if data:
+			usuario_id = data['usuario']
+			usuario = SgtUsuario.objects.get(id=usuario_id)
+			encuesta_id = data['encuesta']
+			encuesta = Encuesta.objects.get(id=encuesta_id)
+
+			total_preguntas = data['total_preguntas']
+			for index in range(int(total_preguntas)):
+				aux = 'pregunta_' + str(index + 1)
+				pregunta_id = data[aux]
+				pregunta = Pregunta.objects.get(pk=pregunta_id)
+				tipo_respuesta = pregunta.tipo_respuesta.codigo
+				respuesta = Respuesta(encuesta=encuesta, pregunta=pregunta, usuario=usuario)
+				respuesta.save()
+
+				if tipo_respuesta == "RESP_DEF":
+					aux = 'respuesta_def_' + pregunta_id
+					valor_def_id = data[aux]
+					valor_def = ValorPosible.objects.get(id=valor_def_id)
+					respuesta_definida = RespuestaDefinida(respuesta=respuesta, valor_definido=valor_def)
+					respuesta_definida.save()
+
+				elif tipo_respuesta == "RESP_INDEF":
+					aux = 'respuesta_indef_' + pregunta_id
+					valor_indef = data[aux]
+					respuesta_indefinida = RespuestaIndefinida(respuesta=respuesta, valor_indefinido=valor_indef)
+					respuesta_indefinida.save()
+
+			notificacion_usuario = NotificacionUsuario.objects.get(usuario=usuario)
+			notificacion_usuario.borrada = False
+			notificacion_usuario.save()
+
+			mensaje['mensaje'] = 'Respuestas guardadas de manera exitosa'
+			resp_status = status.HTTP_200_OK
+		else:
+			mensaje['mensaje'] = 'No se proporcioron las respuestas solicitadas'
+			resp_status = status.HTTP_500_INTERNAL_SERVER_ERROR
+
+
+		return Response(mensaje, status=resp_status)

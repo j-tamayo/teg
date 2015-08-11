@@ -98,7 +98,7 @@
 											<div class="row">
 												<div class="col-xs-10">
 													<label>Respuesta:</label>
-													<select multiple id="id_respuesta_{{ i }}" name="valores_posibles_{{ i }}" class="form-control select-mul respuesta_select" data-placeholder="Seleccione la respuesta...">
+													<select multiple id="id_valor_{{ i }}" name="valores_posibles_{{ i }}" class="form-control select-mul respuesta_select" data-placeholder="Seleccione la respuesta...">
 														{% for valor in valores %}
 															<option value="{{valor.id}}" {% if p in valor.valor_pregunta_encuesta.all %} selected {% endif %}>{{valor.valor}}</option>
 														{% endfor %}
@@ -473,8 +473,10 @@
 				        reset_generic_modal();
 				        $('#nuevo_valor').val('');
 				        val_list.push({'id': data.id_respuesta, 'valor': data.valor});
-				        $('.respuesta_select').append('<option value="'+data.id_respuesta+'" selected>'+data.valor+'</option>');
+				        $('.respuesta_select').append('<option value="'+data.id_respuesta+'">'+data.valor+'</option>');
+				        console.log(target_respuesta);
 				        $(target_respuesta + ' option[value='+data.id_respuesta+']').attr('selected', '');
+				        //$(target_respuesta + ' option[value='+data.id_respuesta+']').attr('selected', 'selected');
 				        $('.respuesta_select').trigger("chosen:updated");
 				    },
 				    error: function(){
@@ -486,14 +488,19 @@
 			$('#eliminar_respuesta_form').submit(function(event){
 				event.preventDefault();
 				$('#modal_lista_respuestas').modal('hide');
-				val_elim = $('#valores_elim').val().split('|');
+				val_elim = $('#valores_elim').val();
 				if(val_elim.length){
 					generic_modal_title = '&iquest;Est&aacute; seguro que desea eliminar estas respuestas?';
 
 					generic_modal_content = '<div class="row"><div class="col-xs-6">';
-					
-					for(i = 0; i < val_elim.length; i++)
-						generic_modal_content += '<p>&emsp;'+$(target_respuesta+' option[value='+val_elim[i]+']').text()+'</p>';
+
+					val_elim = val_elim.split('|');
+					for(i = 0; i < val_elim.length; i++){
+						for(j = 0; j < val_list.length; j++){
+							if(val_list[j].id == val_elim[i])
+								generic_modal_content += '<p>&emsp;'+val_list[j].valor+'</p>';
+						}
+					}
 
 					generic_modal_content += '<div></div>';
 
@@ -505,7 +512,7 @@
 
 			$(document).on("click", "#eliminar_viejas_respuestas", function(){
 				value = $('#valores_elim').val();
-				value = $('#valores_elim').val('');
+				$('#valores_elim').val('');
 				if(value){
 					$.ajax({
 					    type: 'POST',
@@ -718,9 +725,18 @@
 			values = [];
 			$('#' + id_input).val('');
 
-			for(i = 0; i < preg_list.length; i++){
-				values.push(preg_list[i].id);
-				texts.push(preg_list[i].enunciado);
+			if(str_token == 'pregunta_'){
+				for(i = 0; i < preg_list.length; i++){
+					values.push(preg_list[i].id);
+					texts.push(preg_list[i].enunciado);
+				}
+			}
+
+			if(str_token == 'valor_'){
+				for(i = 0; i < val_list.length; i++){
+					values.push(val_list[i].id);
+					texts.push(val_list[i].valor);
+				}
 			}
 
 			$('#' + id_list).empty();

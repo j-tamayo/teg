@@ -242,6 +242,7 @@ class ValorPreguntaEncuesta(models.Model):
 
 
 class Respuesta(models.Model):
+	encuesta = models.ForeignKey(Encuesta, default=None)
 	pregunta = models.ForeignKey(Pregunta)
 	usuario = models.ForeignKey(USER_MODEL, null=True)
 

@@ -697,14 +697,15 @@ function load_encuesta(notificacion_id, encuesta_id){
         tx.executeSql('SELECT e.nombre AS encuesta, p.id AS pregunta, p.enunciado, t.codigo AS tipo FROM sgt_encuesta e, sgt_pregunta p, sgt_tiporespuesta t, sgt_encuesta_preguntas ep WHERE e.id = ep.encuesta_id AND p.id = ep.pregunta_id AND t.id = p.tipo_respuesta AND e.id = '+encuesta_id+';', [], 
         function(tx, results){
         	aux = '';
-        	index = 1;
+        	cont = 1;
         	id_inputs = []
         	row_aux = results.rows.item(0);
         	$('#mail_title').html(row_aux['encuesta']);
 
         	aux = '<form id="encuesta_form">\
-        				<input id="notificacion_enc" name="notificacion" type="hidden" value="'+notificacion_id+'">\
-        				<input id="encuesta_enc" name="encuesta" type="hidden" value="'+encuesta_id+'">';
+        				<input id="usuario_enc" name="usuario" type="hidden" value="'+id_usuario+'">\
+        				<input id="encuesta_enc" name="encuesta" type="hidden" value="'+encuesta_id+'">\
+        				<input id="notificacion_enc" name="notificacion" type="hidden" value="'+notificacion_id+'">';
 
         	num = results.rows.length;
 			for(i = 0; i < num; i++){
@@ -717,16 +718,19 @@ function load_encuesta(notificacion_id, encuesta_id){
 					aux += '<fieldset id="respuesta_def_content_'+row['pregunta']+'" data-role="controlgroup" data-iconpos="right" data-theme="a"></fieldset>';
 
 				if(row['tipo'] == 'RESP_INDEF'){
-					id_inputs.push('#respuesta_indef_enc_'+index);
-					aux += '<label for="respuesta_indef_enc_'+index+'">'+row['enunciado']+'</label>\
-							<textarea cols="40" rows="8" name="respuesta_indef_'+index+'" id="respuesta_indef_enc_'+index+'" required></textarea>';
-					index++;
+					id_inputs.push('#respuesta_indef_enc_'+cont);
+					aux += '<label for="respuesta_indef_enc_'+cont+'">'+row['enunciado']+'</label>\
+							<textarea cols="40" rows="8" name="respuesta_indef_'+row['pregunta']+'" id="respuesta_indef_enc_'+cont+'"></textarea>';
+					cont++;
 				}
 
 				aux += '</div>';
 			}
 
-			aux += '<button class="ui-btn ui-btn-c ui-corner-all" type="submit">Enviar</button></form>';
+			aux += '	<input id="total_preguntas_enc" name="total_preguntas" type="hidden" value="'+num+'">\
+						<br><button class="ui-btn ui-btn-c ui-corner-all" type="submit">Enviar</button>\
+					</form>';
+
 			$('#mail_content').html(aux).trigger( "create" );
         },
         function(tx, err){
@@ -744,19 +748,19 @@ function load_encuesta(notificacion_id, encuesta_id){
 				row = results.rows.item(i);
 				if(row['pregunta'] != pregunta_index){
 					if(pregunta_index)
-						$('#respuesta_def_content_'+pregunta_index).html(aux).trigger( "create" );
+						$('#respuesta_def_content_'+pregunta_index).html(aux).trigger('create');
 
 					pregunta_index = row['pregunta'];
 					aux = '<legend>'+row['enunciado']+'</legend>';
 					index++;
 				}
 
-				aux += '<input name="respuesta_def_'+index+'" id="respuesta_def_enc_'+(i + 1)+'" value="'+row['id']+'" type="radio" required>\
+				aux += '<input name="respuesta_def_'+row['pregunta']+'" id="respuesta_def_enc_'+(i + 1)+'" value="'+row['id']+'" type="radio">\
 						<label for="respuesta_def_enc_'+(i + 1)+'">'+row['valor']+'</label>';		
 			}
 
 			if(pregunta_index)
-				$('#respuesta_def_content_'+pregunta_index).html(aux).trigger( "create" );
+				$('#respuesta_def_content_'+pregunta_index).html(aux).trigger('create');
         },
         function(tx, err){
             throw new Error(err.message);
@@ -774,10 +778,17 @@ function load_encuesta(notificacion_id, encuesta_id){
 
 		    console.log(data);
 
-		    $.mobile.changePage("#mail_page", {
-		        changeHash: false, 
-		        transition: "fade"
-		    });
+		    $.post("http://192.168.1.101:8000/api/guardar-respuestas-encuesta/", data)
+	        .done(function(json){
+	            console.log(json);
+	            $.mobile.changePage("#mail_page", {
+			        changeHash: false, 
+			        transition: "fade"
+			    });
+	        })
+	        .fail(function(json) {
+	            console.log(json);
+	        });
 	    });
     });
 }

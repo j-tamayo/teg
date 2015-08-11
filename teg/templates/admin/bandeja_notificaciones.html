@@ -17,7 +17,7 @@
 			<tr>
 				<th>Tipo</th>
 				<th>Asunto</th>
-				<th>Mensaje</th>
+				<th>Encuesta</th>
 				<th>Opciones</th>
 			</tr>
 		</thead>
@@ -26,7 +26,7 @@
 			<tr>
 				<td>{{notificacion.tipo_notificacion.descripcion}}</td>
 				<td>{{notificacion.asunto}}</td>
-				<td>{{notificacion.mensaje}}</td>
+				<td>{% if notificacion.encuesta %} {{notificacion.encuesta}} {% else %} N/A {% endif %}</td>
 				<td>
 					<a href="{% url 'admin_editar_notificacion' notificacion.id %}" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Editar">
 						<i class="fa fa-pencil"></i>
