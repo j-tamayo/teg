@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load sgt_tags %}
+
 
 {% block main_content %}
 {% include 'admin/modales_admin.html' %}
@@ -46,6 +48,7 @@
 						</div>
 					</div>
 					<div id="contenido">
+
 						{% if editar %}
 							{% for p in encuesta_preguntas %}
 								{% with i=forloop.counter %}
@@ -98,10 +101,17 @@
 											<div class="row">
 												<div class="col-xs-10">
 													<label>Respuesta:</label>
-													<select multiple id="id_respuesta_{{ i }}" name="valores_posibles_{{ i }}" class="form-control select-mul respuesta_select" data-placeholder="Seleccione la respuesta...">
+													<select multiple id="id_valor_{{ i }}" name="valores_posibles_{{ i }}" class="form-control select-mul respuesta_select" data-placeholder="Seleccione la respuesta...">
+														{% with valores_actuales=valores_pregunta_encuesta|get_dict_val:p.id %}
 														{% for valor in valores %}
-															<option value="{{valor.id}}" {% if p in valor.valor_pregunta_encuesta.all %} selected {% endif %}>{{valor.valor}}</option>
+															{% if valor not in valores_actuales %}
+															<option value="{{valor.id}}">{{valor.valor}}</option>
+															{% endif %}
 														{% endfor %}
+														{% for valor in valores_actuales %}
+															<option value="{{valor.id}}" selected>{{valor.valor}}</option>
+														{% endfor %}
+														{% endwith %}
 													</select>
 												</div>
 												<div class="col-xs-1" align="right" style="width:20%; margin-left:-4%">
@@ -325,6 +335,28 @@
 				update_select_preguntas(index, $(this).val());		
 			});
 
+			$(document).on("change", ".respuesta_select", function(evt, params){
+				if(params.hasOwnProperty('selected')){
+					resp_val = params['selected'];
+					sel_object = $(this).children('option[value='+resp_val+']');
+					resp_text = sel_object.text();
+
+					sel_object.remove();
+					$(this).append('<option value="'+resp_val+'" selected>'+resp_text+'</option>');
+				}
+
+				if(params.hasOwnProperty('deselected')){
+					resp_val = params['deselected'];
+					sel_object = $(this).children('option[value='+resp_val+']');
+					resp_text = sel_object.text();
+
+					sel_object.remove();
+					$(this).prepend('<option value="'+resp_val+'">'+resp_text+'</option>');
+				}
+
+				$(this).trigger('chosen:updated');
+			});
+
 			$('#pregunta_form').submit(function(event){
 				event.preventDefault();
 				$('#modal_pregunta').modal('hide');
@@ -473,7 +505,7 @@
 				        reset_generic_modal();
 				        $('#nuevo_valor').val('');
 				        val_list.push({'id': data.id_respuesta, 'valor': data.valor});
-				        $('.respuesta_select').append('<option value="'+data.id_respuesta+'" selected>'+data.valor+'</option>');
+				        $('.respuesta_select').append('<option value="'+data.id_respuesta+'">'+data.valor+'</option>');
 				        $(target_respuesta + ' option[value='+data.id_respuesta+']').attr('selected', '');
 				        $('.respuesta_select').trigger("chosen:updated");
 				    },
@@ -486,14 +518,19 @@
 			$('#eliminar_respuesta_form').submit(function(event){
 				event.preventDefault();
 				$('#modal_lista_respuestas').modal('hide');
-				val_elim = $('#valores_elim').val().split('|');
+				val_elim = $('#valores_elim').val();
 				if(val_elim.length){
 					generic_modal_title = '&iquest;Est&aacute; seguro que desea eliminar estas respuestas?';
 
 					generic_modal_content = '<div class="row"><div class="col-xs-6">';
-					
-					for(i = 0; i < val_elim.length; i++)
-						generic_modal_content += '<p>&emsp;'+$(target_respuesta+' option[value='+val_elim[i]+']').text()+'</p>';
+
+					val_elim = val_elim.split('|');
+					for(i = 0; i < val_elim.length; i++){
+						for(j = 0; j < val_list.length; j++){
+							if(val_list[j].id == val_elim[i])
+								generic_modal_content += '<p>&emsp;'+val_list[j].valor+'</p>';
+						}
+					}
 
 					generic_modal_content += '<div></div>';
 
@@ -505,7 +542,7 @@
 
 			$(document).on("click", "#eliminar_viejas_respuestas", function(){
 				value = $('#valores_elim').val();
-				value = $('#valores_elim').val('');
+				$('#valores_elim').val('');
 				if(value){
 					$.ajax({
 					    type: 'POST',
@@ -656,7 +693,6 @@
 					$('#id_tipo_respuesta_' + i).attr('target', 'id_pregunta_' + j + ' ' + 'id_respuestas_definidas_' + j);
 					$('#id_tipo_respuesta_' + i).attr('id', 'id_tipo_respuesta_' + j);
 					$('#id_respuestas_definidas_' + i).attr('id', 'id_respuestas_definidas_' + j);
-					console.log('#id_tipo_respuesta_' + j);
 					init_tipo_resp_sel($('#id_tipo_respuesta_' + j));
 					
 					$('.crear_pregunta[target="id_pregunta_' + i+'"]').attr('target', 'id_pregunta_' + j);
@@ -718,9 +754,18 @@
 			values = [];
 			$('#' + id_input).val('');
 
-			for(i = 0; i < preg_list.length; i++){
-				values.push(preg_list[i].id);
-				texts.push(preg_list[i].enunciado);
+			if(str_token == 'pregunta_'){
+				for(i = 0; i < preg_list.length; i++){
+					values.push(preg_list[i].id);
+					texts.push(preg_list[i].enunciado);
+				}
+			}
+
+			if(str_token == 'valor_'){
+				for(i = 0; i < val_list.length; i++){
+					values.push(val_list[i].id);
+					texts.push(val_list[i].valor);
+				}
 			}
 
 			$('#' + id_list).empty();
@@ -775,7 +820,6 @@
 
 		function update_select_preguntas(index, val_select){
 			if(val_select != -1){
-				console.log($('.pregunta_select option[value='+prev_preg_list[index]+']'));
 				$('.pregunta_select option[value='+val_select+']').attr('disabled', '');
 
 				for(i = 0; i < preg_list.length; i++){
@@ -784,7 +828,6 @@
 				}
 			}
 			if(prev_preg_list[index] != -1){
-				console.log($('.pregunta_select option[value='+prev_preg_list[index]+']'));
 				$('.pregunta_select option[value='+prev_preg_list[index]+']').removeAttr('disabled');
 				for(i = 0; i < preg_list.length; i++){
 					if(preg_list[i].id == prev_preg_list[index])
