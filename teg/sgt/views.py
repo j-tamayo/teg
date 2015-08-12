@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import render,redirect
 from django.core.urlresolvers import reverse
 from django.core import serializers
@@ -157,6 +160,7 @@ class GenerarNumeroOrden(View):
 
 
 class CrearSolicitudInspeccion(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(CrearSolicitudInspeccion, self).dispatch(*args, **kwargs)
 
@@ -299,6 +303,7 @@ class BandejaCliente(View):
 
 
 class AdminBandejaCentros(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminBandejaCentros, self).dispatch(*args, **kwargs)
 
@@ -331,6 +336,7 @@ class AdminBandejaCentros(View):
 
 
 class AdminAgregarCentro(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminAgregarCentro, self).dispatch(*args, **kwargs)
 
@@ -340,7 +346,7 @@ class AdminAgregarCentro(View):
 
 		form = CentroInspeccionForm()
 		estados = Estado.objects.all()
-		peritos = Perito.objects.all()
+		peritos = Perito.objects.filter(activo=True)
 
 		context = {
 			'admin': True,
@@ -359,7 +365,7 @@ class AdminAgregarCentro(View):
 		usuario = request.user
 
 		estados = Estado.objects.all()
-		peritos = Perito.objects.all()
+		peritos = Perito.objects.filter(activo=True)
 		form = CentroInspeccionForm(request.POST)
 
 		if form.is_valid():
@@ -368,6 +374,10 @@ class AdminAgregarCentro(View):
 
 		else:
 			print "MALLLL", form.errors
+			peritos_asignados = request.POST.getlist('peritos',[])
+			if peritos_asignados:
+				peritos_asignados = map(int, peritos_asignados)
+				
 			c_estado_id = request.POST.get('estado', None)
 			c_municipios = []
 			c_municipio_id = request.POST.get('municipio', None)
@@ -387,13 +397,14 @@ class AdminAgregarCentro(View):
 				'peritos': peritos,
 				'seccion_centros': True,
 				'usuario': usuario,
-				'peritos_asignados': [],
+				'peritos_asignados': peritos_asignados,
 			}
 
 			return render(request, 'admin/crear_centro.html', context)
 
 
 class AdminEditarCentro(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEditarCentro, self).dispatch(*args, **kwargs)
 
@@ -409,8 +420,8 @@ class AdminEditarCentro(View):
 			c_municipio_id = centro.municipio.pk
 			form = CentroInspeccionForm(instance = centro)
 			estados = Estado.objects.all()
-			peritos = Perito.objects.all()
-			peritos_asignados = centro.peritos.all()
+			peritos = Perito.objects.filter(activo=True)
+			peritos_asignados = centro.peritos.filter(activo=True).values_list('id',flat=True)
 
 			context = {
 				'admin': True,
@@ -437,18 +448,23 @@ class AdminEditarCentro(View):
 		usuario = request.user
 
 		estados = Estado.objects.all()
-		peritos = Perito.objects.all()
+		peritos = Perito.objects.filter(activo=True)
 		centro = CentroInspeccion.objects.filter(id=kwargs['centro_id']).first()
-		peritos_asignados = centro.peritos.all()
+		peritos_asignados = centro.peritos.filter(activo=True).values_list('id',flat=True)
 		form = CentroInspeccionForm(request.POST, instance = centro)
 
 		if form.is_valid():
+			print "HEYYYYY",request.POST.getlist('peritos')
 			print form.cleaned_data['municipio']
 			form.save()
 			return redirect(reverse('admin_centros'))
 
 		else:
 			print "MALLLL", form.errors
+			peritos_asignados = request.POST.getlist('peritos',[])
+			if peritos_asignados:
+				peritos_asignados = map(int, peritos_asignados)
+
 			c_estado_id = request.POST.get('estado', None)
 			c_municipios = Municipio.objects.filter(estado__id = c_estado_id)
 			c_municipio_id = request.POST.get('municipio', None)
@@ -475,6 +491,7 @@ class AdminEditarCentro(View):
 
 
 class AdminEliminarCentro(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEliminarCentro, self).dispatch(*args, **kwargs)
 
@@ -496,6 +513,7 @@ class AdminEliminarCentro(View):
 
 
 class AdminBandejaUsuarios(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminBandejaUsuarios, self).dispatch(*args, **kwargs)
 
@@ -524,6 +542,7 @@ class AdminBandejaUsuarios(View):
 
 
 class AdminCrearUsuario(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminCrearUsuario, self).dispatch(*args, **kwargs)
 
@@ -608,6 +627,7 @@ class AdminCrearUsuario(View):
 
 
 class AdminEditarUsuario(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEditarUsuario, self).dispatch(*args, **kwargs)
 
@@ -721,6 +741,7 @@ class AdminEditarUsuario(View):
 
 
 class AdminDeshabilitarUsuario(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminDeshabilitarUsuario, self).dispatch(*args, **kwargs)
 
@@ -743,6 +764,7 @@ class AdminDeshabilitarUsuario(View):
 
 
 class AdminBandejaPeritos(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminBandejaPeritos, self).dispatch(*args, **kwargs)
 
@@ -773,6 +795,7 @@ class AdminBandejaPeritos(View):
 
 
 class AdminAgregarPerito(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminAgregarPerito, self).dispatch(*args, **kwargs)
 
@@ -815,6 +838,7 @@ class AdminAgregarPerito(View):
 
 
 class AdminEditarPerito(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEditarPerito, self).dispatch(*args, **kwargs)
 
@@ -867,6 +891,7 @@ class AdminEditarPerito(View):
 
 
 class AdminDeshabilitarPerito(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminDeshabilitarPerito, self).dispatch(*args, **kwargs)
 
@@ -889,6 +914,7 @@ class AdminDeshabilitarPerito(View):
 
 
 class AdminBandejaEncuestas(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminBandejaEncuestas, self).dispatch(*args, **kwargs)
 
@@ -917,6 +943,7 @@ class AdminBandejaEncuestas(View):
 
 
 class AdminAgregarEncuesta(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminAgregarEncuesta, self).dispatch(*args, **kwargs)
 
@@ -1010,6 +1037,7 @@ class AdminAgregarEncuesta(View):
 
 
 class AdminEditarEncuesta(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEditarEncuesta, self).dispatch(*args, **kwargs)
 
@@ -1175,6 +1203,7 @@ class AdminEditarEncuesta(View):
 
 
 class AdminEliminarEncuesta(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEliminarEncuesta, self).dispatch(*args, **kwargs)
 
@@ -1211,6 +1240,7 @@ class AdminEliminarEncuesta(View):
 
 
 class AdminAgregarPregunta(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminAgregarPregunta, self).dispatch(*args, **kwargs)
 
@@ -1262,6 +1292,7 @@ class AdminAgregarPregunta(View):
 
 
 class AdminEliminarPregunta(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEliminarPregunta, self).dispatch(*args, **kwargs)
 
@@ -1294,6 +1325,7 @@ class AdminEliminarPregunta(View):
 
 
 class AdminAgregarRespuesta(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminAgregarRespuesta, self).dispatch(*args, **kwargs)
 
@@ -1323,6 +1355,7 @@ class AdminAgregarRespuesta(View):
 
 
 class AdminEliminarRespuesta(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEliminarRespuesta, self).dispatch(*args, **kwargs)
 
@@ -1355,6 +1388,7 @@ class AdminEliminarRespuesta(View):
 
 
 class AdminBandejaNotificaciones(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminBandejaNotificaciones, self).dispatch(*args, **kwargs)
 
@@ -1383,6 +1417,7 @@ class AdminBandejaNotificaciones(View):
 
 
 class AdminAgregarNotificacion(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminAgregarNotificacion, self).dispatch(*args, **kwargs)
 
@@ -1425,6 +1460,7 @@ class AdminAgregarNotificacion(View):
 
 
 class AdminEditarNotificacion(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEditarNotificacion, self).dispatch(*args, **kwargs)
 
@@ -1480,6 +1516,7 @@ class AdminEditarNotificacion(View):
 
 
 class AdminEliminarNotificacion(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEliminarNotificacion, self).dispatch(*args, **kwargs)
 
@@ -1502,6 +1539,7 @@ class AdminEliminarNotificacion(View):
 
 
 class AdminEnviarNotificacion(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminEnviarNotificacion, self).dispatch(*args, **kwargs)
 
@@ -1533,6 +1571,7 @@ class AdminEnviarNotificacion(View):
 
 
 class AdminReportes(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminReportes, self).dispatch(*args, **kwargs)
 
@@ -1612,6 +1651,7 @@ class AdminReportes(View):
 
 
 class BandejaTaquilla(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(BandejaTaquilla, self).dispatch(*args, **kwargs)
 
@@ -1633,6 +1673,7 @@ class BandejaTaquilla(View):
 
 
 class TaquillaAccionSolicitud(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(TaquillaAccionSolicitud, self).dispatch(*args, **kwargs)
 
@@ -1684,6 +1725,7 @@ class TaquillaAccionSolicitud(View):
 
 
 class ReporteXls(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(ReporteXls, self).dispatch(*args, **kwargs)
 
@@ -1704,6 +1746,7 @@ class ReporteXls(View):
 
 
 class CargaMasivaCentros(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(CargaMasivaCentros, self).dispatch(*args, **kwargs)
 
@@ -1731,6 +1774,7 @@ class CargaMasivaCentros(View):
 
 
 class AdminParametros(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(AdminParametros, self).dispatch(*args, **kwargs)
 

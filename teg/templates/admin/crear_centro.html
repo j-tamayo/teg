@@ -65,7 +65,7 @@
 						<label>Peritos</label>
 						<select multiple id="id_peritos" name="peritos" class="form-control select-mul">
 							{% for perito in peritos %}
-							<option value="{{perito.pk}}" {% if perito in peritos_asignados %} selected {% endif %}>{{perito.nombres}} {{perito.apellidos}}</option>
+							<option value="{{perito.pk}}" {% if perito.pk in peritos_asignados %} selected {% endif %}>{{perito.nombres}} {{perito.apellidos}}</option>
 							{% endfor %}
 						</select>
 						<span class="text-danger">{{form.peritos.errors.as_text}}</span>
