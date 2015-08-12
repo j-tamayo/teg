@@ -236,6 +236,7 @@ class ValorPreguntaEncuesta(models.Model):
     valor = models.ForeignKey(ValorPosible, related_name='valor_pregunta')
     pregunta = models.ForeignKey(Pregunta, related_name='pregunta_encuesta')
     encuesta = models.ForeignKey(Encuesta, related_name='encuesta')
+    orden = models.IntegerField(default=0)
 
     def __unicode__(self):
         return u'%s : %s ->  %s' % (self.valor, self.pregunta, self.encuesta)

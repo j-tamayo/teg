@@ -968,7 +968,8 @@ class AdminAgregarEncuesta(View):
 	def post(self, request, *args, **kwargs):
 		"""Crea la encuesta"""
 		usuario = request.user
-		form = CrearEncuestaForm(request.POST, extra=request.POST.get('extra_field_count'))
+		data = request.POST
+		form = CrearEncuestaForm(data, extra=request.POST.get('extra_field_count'))
 
 		if form.is_valid():
 			encuesta_data = form.cleaned_data
@@ -990,15 +991,22 @@ class AdminAgregarEncuesta(View):
 
 				if tipo_respuesta.codigo == 'RESP_DEF':
 					aux = 'valores_posibles_' + str(index + 1)
-					valores_posibles = encuesta_data[aux]
+					val_id_list = data.getlist(aux)
 
+					valores_posibles = []
+					for v in val_id_list:
+						valores_posibles.append(ValorPosible.objects.get(id=v))
+
+					orden = 1
 					for v in valores_posibles:
 						valor_pregunta_encuesta = ValorPreguntaEncuesta(
 							valor = v, 
 							pregunta = pregunta,
-							encuesta = encuesta)
+							encuesta = encuesta,
+							orden = orden)
 
 						valor_pregunta_encuesta.save()
+						orden = orden + 1
 
 				encuesta.preguntas.add(pregunta)
 
@@ -1033,6 +1041,12 @@ class AdminEditarEncuesta(View):
 		extra_fields = len(encuesta.preguntas.all())
 		encuesta_preguntas = encuesta.preguntas.all().order_by('id')
 		encuesta_valores = ValorPosible.objects.filter(valor_pregunta__pregunta=encuesta_preguntas)
+
+		valores_pregunta_encuesta = {}
+		encuesta_preguntas_def = encuesta_preguntas.exclude(tipo_respuesta__codigo="RESP_INDEF")
+		for p in encuesta_preguntas_def:
+			aux = ValorPreguntaEncuesta.objects.filter(pregunta=p, encuesta=encuesta).order_by('orden')
+			valores_pregunta_encuesta[p.id] = [vals.valor for vals in aux]
 
 		if not form:
 			initial_data = {
@@ -1076,7 +1090,7 @@ class AdminEditarEncuesta(View):
 			'tipos_encuesta': tipos_encuesta,
 			'encuesta': encuesta,
 			'encuesta_preguntas': encuesta_preguntas,
-			'encuesta_valores': encuesta_valores,
+			'valores_pregunta_encuesta': valores_pregunta_encuesta,
 			'seccion_encuestas': True,
 			'usuario': usuario
 		}
@@ -1099,7 +1113,9 @@ class AdminEditarEncuesta(View):
 		usuario = request.user
 		encuesta_id = kwargs['encuesta_id']
 		encuesta = Encuesta.objects.filter(id=kwargs['encuesta_id']).first()
-		form = CrearEncuestaForm(request.POST, extra=request.POST.get('extra_field_count'))
+		
+		data = request.POST
+		form = CrearEncuestaForm(data, extra=request.POST.get('extra_field_count'))
 
 		if form.is_valid():
 			encuesta_data = form.cleaned_data
@@ -1137,17 +1153,31 @@ class AdminEditarEncuesta(View):
 					if tipo_respuesta.codigo == 'RESP_DEF':
 						valores_pregunta = ValorPosible.objects.filter(valor_pregunta_encuesta=pregunta)
 						aux = 'valores_posibles_' + str(index + 1)
-						valores_posibles = encuesta_data[aux]
+						val_id_list = data.getlist(aux)
 
+						valores_posibles = []
+						for v in val_id_list:
+							valores_posibles.append(ValorPosible.objects.get(id=v))
+
+						#valores_posibles = encuesta_data[aux]
+
+						orden = 1
 						valores_pregunta_exclude = []
 						for valor in valores_posibles:
 							if valor not in valores_pregunta:
 								vpe = ValorPreguntaEncuesta(
 									valor = valor, 
 									pregunta = pregunta, 
-									encuesta = encuesta)
+									encuesta = encuesta,
+									orden = orden)
 								vpe.save()
+							else:
+								valor_pregunta_encuesta = ValorPreguntaEncuesta.objects.get(valor=valor, pregunta=pregunta, encuesta=encuesta)
+								if valor_pregunta_encuesta.orden != orden:
+									valor_pregunta_encuesta.orden = orden
+									valor_pregunta_encuesta.save()
 
+							orden = orden + 1
 							valores_pregunta_exclude.append(valor.id)
 
 						#Nota: hay que excluir para despues eliminar lo que sobra...
