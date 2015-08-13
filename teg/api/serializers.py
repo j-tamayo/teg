@@ -151,7 +151,6 @@ class EncuestaPreguntaSerializer(serializers.Serializer):
 
 
 class ValorPosibleSerializer(serializers.ModelSerializer):
-
 	class Meta:
 		model = ValorPosible
 		fields = ('id', 'valor')
@@ -160,4 +159,4 @@ class ValorPosibleSerializer(serializers.ModelSerializer):
 class ValorPreguntaEncuestaSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = ValorPreguntaEncuesta
-		fields = ('id', 'valor', 'pregunta', 'encuesta')
+		fields = ('id', 'valor', 'pregunta', 'encuesta', 'orden')

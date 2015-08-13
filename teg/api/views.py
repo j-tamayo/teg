@@ -74,7 +74,6 @@ class LoginUser(APIView):
 		if serializer.is_valid():
 			correo = serializer.data['correo']
 			password = serializer.data['password']
-			print serializer.data
 			usuario = authenticate(correo=correo, password=password)
 			if usuario:
 				user_serializer = SgtUsuarioSerializer(usuario)
@@ -267,16 +266,12 @@ class ObtenerCentros(APIView):
 		municipio_id = request.data['municipio_id']
 		estado_id = request.data['estado_id']
 
-		print municipio_id
-		print estado_id
-
 		centros = []
 		if municipio_id or estado_id:
 			centros_query = CentroInspeccion.objects.filter(municipio__estado__id = estado_id)
 			if municipio_id:
 				centros_query = centros_query.filter(municipio__id = municipio_id)
 			
-			print centros_query
 			#Para calcular la disponibilidad de cada centro
 			for c in centros_query:
 				en_cola = ColaAtencion.objects.filter(centro_inspeccion = c).count()
@@ -382,7 +377,6 @@ class CrearSolicitud(APIView):
 			)
 			solicitud.save()
 
-			print solicitud.pk
 			numero = codigo_solicitud + '-' + str(total_citas + 1)
 			numero_orden = NumeroOrden(
 				solicitud_inspeccion = solicitud,
@@ -393,16 +387,19 @@ class CrearSolicitud(APIView):
 			)
 			numero_orden.save()
 
-			data.append({'sgt_solicitudinspeccion': [SolicitudInspeccionSerializer(solicitud).data]})
+			#data.append({'sgt_solicitudinspeccion': [SolicitudInspeccionSerializer(solicitud).data]})
 			#respuesta['sgt_solicitudinspeccion'] = [SolicitudInspeccionSerializer(solicitud).data]
-			data.append({'sgt_numeroorden': [NumeroOrdenSerializer(numero_orden).data]})
+			#data.append({'sgt_numeroorden': [NumeroOrdenSerializer(numero_orden).data]})
 			#respuesta['sgt_numeroorden'] = [NumeroOrdenSerializer(numero_orden).data]
+			#return Response(data, status=status.HTTP_200_OK)
 
-			return Response(data, status=status.HTTP_200_OK)
-
+			respuesta['mensaje'] = {'contenido':'Solicitud creada exitosamente'}
+			resp_status = status.HTTP_200_OK
 		else:
 			respuesta['errores'] = {'causa':'No hay disponibilidad'}
-			return Response(respuesta, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+			resp_status = status.HTTP_500_INTERNAL_SERVER_ERROR
+		
+		return Response(respuesta, status=resp_status)
 
 
 class MarcarNotificacion(APIView):
@@ -411,11 +408,11 @@ class MarcarNotificacion(APIView):
 	"""
 	def post(self, request, format=None):
 		respuesta = {}
-		id_notificacion = request.data['notificacion_id']
+		id_notificacion_usuario = request.data['notificacion_usuario_id']
 		flag_marca = request.data['flag_marca']
 
-		if id_notificacion and flag_marca:
-			notificacion_usuario = NotificacionUsuario.objects.get(id=id_notificacion)
+		if id_notificacion_usuario and flag_marca:
+			notificacion_usuario = NotificacionUsuario.objects.get(id=id_notificacion_usuario)
 
 			if flag_marca == '1':
 				notificacion_usuario.leida = True
@@ -447,6 +444,7 @@ class GuardarRespuestasEncuesta(APIView):
 			usuario = SgtUsuario.objects.get(id=usuario_id)
 			encuesta_id = data['encuesta']
 			encuesta = Encuesta.objects.get(id=encuesta_id)
+			notificacion_usuario_id = data['notificacion_usuario']
 
 			total_preguntas = data['total_preguntas']
 			for index in range(int(total_preguntas)):
@@ -470,8 +468,8 @@ class GuardarRespuestasEncuesta(APIView):
 					respuesta_indefinida = RespuestaIndefinida(respuesta=respuesta, valor_indefinido=valor_indef)
 					respuesta_indefinida.save()
 
-			notificacion_usuario = NotificacionUsuario.objects.get(usuario=usuario)
-			notificacion_usuario.borrada = False
+			notificacion_usuario = NotificacionUsuario.objects.get(id=notificacion_usuario_id)
+			notificacion_usuario.borrada = True
 			notificacion_usuario.save()
 
 			mensaje['mensaje'] = 'Respuestas guardadas de manera exitosa'
@@ -482,3 +480,26 @@ class GuardarRespuestasEncuesta(APIView):
 
 
 		return Response(mensaje, status=resp_status)
+
+
+class GuardarReclamo(APIView):
+	"""
+	Vista encargada de registrar los reclamos de los clientes
+	"""
+	def post(self, request, format=None):
+		mensaje = {}
+		data = request.data
+
+		if data:
+			usuario = SgtUsuario.objects.get(id=data['usuario'])
+			reclamo = Reclamo(usuario=usuario, motivo=data['motivo'], contenido=data['contenido'])
+			reclamo.save()
+
+			mensaje['mensaje'] = 'Reclamo enviado de manera exitosa'
+			resp_status = status.HTTP_200_OK
+		else:
+			mensaje['mensaje'] = 'No se proporcioron los datos solicitados'
+			resp_status = status.HTTP_500_INTERNAL_SERVER_ERROR
+
+		return Response(mensaje, status=resp_status)
+

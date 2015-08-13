@@ -505,8 +505,13 @@
 				        reset_generic_modal();
 				        $('#nuevo_valor').val('');
 				        val_list.push({'id': data.id_respuesta, 'valor': data.valor});
-				        $('.respuesta_select').append('<option value="'+data.id_respuesta+'">'+data.valor+'</option>');
-				        $(target_respuesta + ' option[value='+data.id_respuesta+']').attr('selected', '');
+				        $('.respuesta_select').each(function(key, value){
+				        	id_select = '#' + $(value).attr('id');
+				        	if(id_select == target_respuesta)
+				        		$(value).append('<option value="'+data.id_respuesta+'" selected>'+data.valor+'</option>');
+				        	else
+				        		$(value).prepend('<option value="'+data.id_respuesta+'">'+data.valor+'</option>');
+				        });
 				        $('.respuesta_select').trigger("chosen:updated");
 				    },
 				    error: function(){

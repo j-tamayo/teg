@@ -18,8 +18,7 @@ urlpatterns = [
     url(r'^crear-solicitud/$', views.CrearSolicitud.as_view()),
     url(r'^marcar-notificacion/$', views.MarcarNotificacion.as_view()),
     url(r'^guardar-respuestas-encuesta/$', views.GuardarRespuestasEncuesta.as_view()),
+    url(r'^guardar-reclamo/$', views.GuardarReclamo.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
-
-

@@ -75,12 +75,18 @@ $(document).ready(function(){
 
         next = thePage.jqmData("next");
         while(next){
+            if($('a[target='+next+']').hasClass("prev"))
+                $('a[target='+next+']').removeClass("prev");
+
             $('a[target='+next+']').addClass("next");
             next = $("#"+next).jqmData("next");
         }
 
         prev = thePage.jqmData("prev");
         while(prev){
+            if($('a[target='+prev+']').hasClass("next"))
+                $('a[target='+prev+']').removeClass("next");
+
             $('a[target='+prev+']').addClass( "prev");
             prev = $("#"+prev).jqmData("prev");
         }
@@ -115,7 +121,7 @@ $(document).ready(function(){
                 $("#prev_request_page").hide();
             }
 
-            if(from_page == "#create_request_page" && to == "#request_page"){
+            if((from_page == "#create_request_page" || from_page == "#claim_page") && to == "#request_page"){
                 inject_toolbar(true);
             }
 
@@ -130,7 +136,7 @@ $(document).ready(function(){
         }
     });
 
-    $(document).on("pagebeforeshow", "#mail_content_page, #create_request_page", function(){
+    $(document).on("pagebeforeshow", "#mail_content_page, #create_request_page, #claim_page", function(){
         inject_toolbar(false);
     });
 
@@ -186,6 +192,30 @@ $(document).ready(function(){
         });
     });
 
+    $("#reclamo_form").submit(function(event){
+        event.preventDefault();
+        formData = $(this).serializeArray();
+        console.log(formData);
+        data = {};
+        $(formData).each(function(index, obj){
+            data[obj.name] = obj.value;
+        });
+
+        data['usuario'] = id_usuario;
+
+        $.post("http://192.168.1.101:8000/api/guardar-reclamo/", data)
+        .done(function(json){
+            console.log(json);
+            $.mobile.changePage('#request_page', {
+                changeHash: false,
+                transition: 'fade'
+            });
+        })
+        .fail(function(json){
+            console.log("Error de conexión!");
+        });
+    });
+
     $(document).on("click", ".back_btn", function(){
         event.preventDefault();
         $.mobile.changePage($(this).attr('href'), {
@@ -206,9 +236,13 @@ $(document).ready(function(){
             data['usuario'] = id_usuario;
             $('#request_form').trigger('reset');
             
-            load_data_id = 3;
             $.post("http://192.168.1.101:8000/api/crear-solicitud/", data)
-            .done(load_json_data)
+            .done(function(json){
+                console.log(json);
+                next_page = '#request_page';
+                next_page_trans = 'fade';
+                load_user_tables();
+            })
             .fail(function(json){
                 console.log("Error de conexión!");
             });
@@ -282,29 +316,29 @@ $(document).ready(function(){
     });
 
     $(document).on("click", ".notificacion_item", function(){
-        notificacion_id = $(this).attr('target-id');
-        notificacion_id_str = '#notificacion_' + notificacion_id;
+        notificacion_usuario_id = $(this).attr('target-id');
+        notificacion_item_str = '#notificacion_' + notificacion_usuario_id;
         asunto = $(this).text();
-        flag_leida = $(notificacion_id_str).attr('leida');
-        ref_id = $(notificacion_id_str).attr('ref');
-        fecha = $(notificacion_id_str).attr('fecha').replace(/-/g,'/');
+        flag_leida = $(notificacion_item_str).attr('leida');
+        notificacion_id = $(notificacion_item_str).attr('target-ref');
+        fecha = $(notificacion_item_str).attr('fecha').replace(/-/g,'/');
         if(flag_leida == 'false'){
-            $.post("http://192.168.1.101:8000/api/marcar-notificacion/", {'notificacion_id': ref_id, 'flag_marca': 1})
+            $.post("http://192.168.1.101:8000/api/marcar-notificacion/", {'notificacion_usuario_id': notificacion_usuario_id, 'flag_marca': 1})
             .done(function(){
-                $(notificacion_id_str).attr('leida', 'true');
-                updateTable('sgt_notificacionusuario', ['leida'], ['true'], ref_id);
+                $(notificacion_item_str).attr('leida', 'true');
+                updateTable('sgt_notificacionusuario', ['leida'], ['true'], notificacion_usuario_id);
             })
             .fail(function(){
                 console.log("Error de conexión!");
             });
         }
-        load_notificacion(notificacion_id, asunto, fecha);
+        load_notificacion(notificacion_id, notificacion_usuario_id, asunto, fecha);
     });
 
     $(document).on("click", "#cargar_encuesta", function(){
         encuesta_id = $(this).attr('target-encuesta');
-        notificacion_id = $(this).attr('target-notificacion');
-        load_encuesta(notificacion_id, encuesta_id);
+        notificacion_usuario_id = $(this).attr('target-notificacion-usuario');
+        load_encuesta(notificacion_usuario_id, encuesta_id);
     });
 
     $(document).on("click", "#recordar_contraseña", function(){

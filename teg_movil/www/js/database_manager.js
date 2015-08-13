@@ -1,9 +1,14 @@
 /* Variables Globales Auxiliares */
 var user_title = '';
+var next_page = '';
+var next_page_trans = '';
 var id_usuario = -1;
 var load_data_id = 0;
 var flag_refresh_solicitudes = false;
 var flag_refresh_notificaciones = false;
+
+var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+var dias_semana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
 var db;
 
@@ -33,9 +38,9 @@ function init_data(){
 		$("#request_page").bind("pagebeforeshow", load_solicitudes_inspeccion());
 		$("#mail_page").bind("pagebeforeshow", load_notificaciones());
 
-		$.mobile.changePage("#profile_page", {
+		$.mobile.changePage(next_page, {
 			changeHash: false, 
-			transition: "flow"
+			transition: next_page_trans
 		});
 	}
 
@@ -75,7 +80,6 @@ function init_db(){
 
 function createTables(){
 	db.transaction(function(tx){
-		/* viejas tablas */
 		tx.executeSql('create table if not exists sgt_estado(id NOT NULL, nombre character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_municipio(id NOT NULL, nombre character varying(255) NOT NULL, estado integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (estado) REFERENCES sgt_estado (id))');
 		tx.executeSql('create table if not exists cuentas_sgtusuario(id NOT NULL, password character varying(128) NOT NULL, apellidos character varying(200) NOT NULL, cedula character varying(100) NOT NULL, correo character varying(255) NOT NULL, direccion text NOT NULL, fecha_nacimiento date NOT NULL, nombres character varying(200) NOT NULL, sexo integer NOT NULL, telefono_local character varying(100), telefono_movil character varying(100), municipio integer, codigo_postal integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (municipio) REFERENCES sgt_municipio (id), UNIQUE (correo));');
@@ -84,17 +88,13 @@ function createTables(){
 		tx.executeSql('create table if not exists sgt_estatus(id NOT NULL, nombre character varying(255) NOT NULL, codigo character varying(100) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_solicitudinspeccion(id NOT NULL, fecha_creacion timestamp with time zone NOT NULL, fecha_culminacion timestamp with time zone, perito character varying(200), tipo_inspeccion integer NOT NULL, usuario integer NOT NULL, estatus integer NOT NULL, centro_inspeccion integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (centro_inspeccion) REFERENCES sgt_centroinspeccion (id), FOREIGN KEY (tipo_inspeccion) REFERENCES sgt_tipoinspeccion (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id), FOREIGN KEY (estatus) REFERENCES sgt_estatus (id));');
 		tx.executeSql('create table if not exists sgt_numeroorden(id NOT NULL, asistencia integer NOT NULL, codigo character varying(50) NOT NULL, fecha_atencion date, solicitud_inspeccion integer NOT NULL, hora_atencion time without time zone, estatus integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (solicitud_inspeccion) REFERENCES sgt_solicitudinspeccion (id), FOREIGN KEY (estatus) REFERENCES sgt_estatus (id));');
-		/* nuevas tablas */
 		tx.executeSql('create table if not exists sgt_tipoencuesta(id NOT NULL, codigo character varying(50) NOT NULL, descripcion character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_tiporespuesta(id NOT NULL, codigo character varying(50) NOT NULL, descripcion character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_encuesta(id NOT NULL, descripcion text, nombre character varying(255) NOT NULL, tipo_encuesta integer, PRIMARY KEY (id), FOREIGN KEY (tipo_encuesta) REFERENCES sgt_tipoencuesta (id));');
 		tx.executeSql('create table if not exists sgt_pregunta(id NOT NULL, enunciado character varying(255) NOT NULL, requerida boolean NOT NULL, tipo_respuesta integer, PRIMARY KEY (id), FOREIGN KEY (tipo_respuesta) REFERENCES sgt_tiporespuesta (id));');
 		tx.executeSql('create table if not exists sgt_encuesta_preguntas(id  NOT NULL, encuesta_id integer NOT NULL, pregunta_id integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (encuesta_id) REFERENCES sgt_encuesta (id), FOREIGN KEY (pregunta_id) REFERENCES sgt_pregunta (id), UNIQUE (encuesta_id, pregunta_id))');
 		tx.executeSql('create table if not exists sgt_valorposible(id NOT NULL, valor character varying(255) NOT NULL, PRIMARY KEY (id));');
-		tx.executeSql('create table if not exists sgt_valorpreguntaencuesta(id NOT NULL, encuesta integer NOT NULL, pregunta integer NOT NULL, valor integer NOT NULL,  PRIMARY KEY (id), FOREIGN KEY (valor) REFERENCES sgt_valorposible (id), FOREIGN KEY (encuesta) REFERENCES sgt_encuesta (id), FOREIGN KEY (pregunta) REFERENCES sgt_pregunta (id));');
-		//tx.executeSql('create table if not exists sgt_respuesta(id NOT NULL, pregunta integer NOT NULL, usuario integer, PRIMARY KEY (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id), FOREIGN KEY (pregunta) REFERENCES sgt_pregunta (id));');
-		//tx.executeSql('create table if not exists sgt_respuestaindefinida(id NOT NULL, valor_indefinido character varying(255) NOT NULL, respuesta integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (respuesta) REFERENCES sgt_respuesta (id));');
-		//tx.executeSql('create table if not exists sgt_respuestadefinida(id NOT NULL, respuesta integer NOT NULL, valor_definido integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (valor_definido) REFERENCES sgt_valorposible (id), FOREIGN KEY (respuesta) REFERENCES sgt_respuesta (id));');
+		tx.executeSql('create table if not exists sgt_valorpreguntaencuesta(id NOT NULL, encuesta integer NOT NULL, pregunta integer NOT NULL, valor integer NOT NULL, orden integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (valor) REFERENCES sgt_valorposible (id), FOREIGN KEY (encuesta) REFERENCES sgt_encuesta (id), FOREIGN KEY (pregunta) REFERENCES sgt_pregunta (id));');
 		tx.executeSql('create table if not exists sgt_tiponotificacion(id NOT NULL, codigo character varying(100) NOT NULL, descripcion character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_notificacion(id NOT NULL, mensaje text NOT NULL, tipo_notificacion integer NOT NULL, encuesta integer, asunto character varying(255) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (tipo_notificacion) REFERENCES sgt_tiponotificacion (id), FOREIGN KEY (encuesta) REFERENCES sgt_encuesta (id));');
 		tx.executeSql('create table if not exists sgt_notificacionusuario(id NOT NULL, fecha_creacion timestamp with time zone NOT NULL, leida boolean NOT NULL, notificacion integer NOT NULL, usuario integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (notificacion) REFERENCES sgt_notificacion (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id));');
@@ -115,13 +115,9 @@ function loadTables(){
 
 function dropTables(){
 	db.transaction(function(tx){
-		/* nuevas tablas */		
 		tx.executeSql('drop table sgt_notificacionusuario;');
 		tx.executeSql('drop table sgt_notificacion;');
 		tx.executeSql('drop table sgt_tiponotificacion;');
-		//tx.executeSql('drop table sgt_respuestadefinida;');
-		//tx.executeSql('drop table sgt_respuestaindefinida;');
-		//tx.executeSql('drop table sgt_respuesta;');
 		tx.executeSql('drop table sgt_valorpreguntaencuesta;');
 		tx.executeSql('drop table sgt_valorposible;');
 		tx.executeSql('drop table sgt_encuesta_preguntas;');
@@ -129,7 +125,6 @@ function dropTables(){
 		tx.executeSql('drop table sgt_encuesta;');
 		tx.executeSql('drop table sgt_tiporespuesta;');
 		tx.executeSql('drop table sgt_tipoencuesta;');
-		/* viejas tablas */
 		tx.executeSql('drop table sgt_numeroorden;');
 		tx.executeSql('drop table sgt_solicitudinspeccion;');
 		tx.executeSql('drop table sgt_estatus;');
@@ -318,6 +313,9 @@ function login(correo, password, user_info){
 	    			return;
 	    		}
 			}
+
+			next_page = '#profile_page';
+			next_page_trans = 'flow';
 	    },
 		function(tx, err){
 			throw new Error(err.message);
@@ -563,15 +561,12 @@ function load_centros_inspeccion(json, sel){
 	}, errorCB, successCB);
 }
 
-var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-var dias_semana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-
 function load_solicitudes_inspeccion(){
 	db.transaction(function(tx){
-		$('#request_list').empty();
+		$('#request_list_content').empty();
 		tx.executeSql('SELECT n.fecha_atencion, n.hora_atencion, c.nombre AS centro_inspeccion, n.codigo, t.nombre AS tipo_inspeccion, s.perito, e.nombre AS estatus FROM sgt_solicitudinspeccion s, sgt_numeroorden n, sgt_centroinspeccion c, sgt_tipoinspeccion t, sgt_estatus e WHERE n.solicitud_inspeccion = s.id AND s.centro_inspeccion = c.id AND s.tipo_inspeccion = t.id AND s.estatus = e.id AND s.usuario = '+id_usuario+';', [], 
 	    function(tx, results){
-	    	aux = '';
+	    	aux = '<ul data-role="listview" data-inset="false" data-theme="a">';
 	    	num = results.rows.length;
 			for(i = 0; i < num; i++){
 				row = results.rows.item(i);
@@ -618,12 +613,8 @@ function load_solicitudes_inspeccion(){
 							<a href="#" class="ui-btn ui-shadow ui-icon-delete ui-nodisc-icon ui-alt-icon"></a>\
 						</li>';
 			}
-			$('#request_list').html(aux);
-
-			if(flag_refresh_solicitudes)
-				$('#request_list').listview("refresh");
-			else
-				flag_refresh_solicitudes = true;
+			aux += '</ul>';
+			$('#request_list_content').html(aux).trigger('create');
 	    },
 		function(tx, err){
 			throw new Error(err.message);
@@ -633,10 +624,10 @@ function load_solicitudes_inspeccion(){
 
 function load_notificaciones(){
 	db.transaction(function(tx){
-		$('#mail_list').empty();
-		tx.executeSql('SELECT n.id AS notificacion, u.id AS notificacion_usuario, n.asunto, t.codigo, u.fecha_creacion, u.leida FROM sgt_notificacion n, sgt_tiponotificacion t, sgt_notificacionusuario u WHERE n.id = u.notificacion AND t.id = n.tipo_notificacion AND u.usuario = '+id_usuario+';', [], 
+		$('#mail_list_content').empty();
+		tx.executeSql('SELECT n.id AS notificacion, u.id AS notificacion_usuario, n.asunto, t.codigo, u.fecha_creacion, u.leida FROM sgt_notificacion n, sgt_tiponotificacion t, sgt_notificacionusuario u WHERE n.id = u.notificacion AND t.id = n.tipo_notificacion AND u.usuario = '+id_usuario+' ORDER BY notificacion_usuario DESC;', [], 
 	    function(tx, results){
-	    	aux = '';
+	    	aux = '<ul data-role="listview" data-split-icon="delete" data-theme="a" data-split-theme="a" data-inset="false">';
 	    	num = results.rows.length;
 			for(i = 0; i < num; i++){
 				row = results.rows.item(i);
@@ -649,18 +640,27 @@ function load_notificaciones(){
 				if(row['codigo'] == 'NOTI_REC')
 					img_notificacion = 'alert-icon.png';
 
-				$('#mail_list').prepend('<li id="notificacion_'+row['notificacion']+'" leida="'+row['leida']+'" ref="'+row['notificacion_usuario']+'" fecha="'+row['fecha_creacion']+'">\
-											<a href="#" target-id="'+row['notificacion']+'" class="notificacion_item"><img src="img/'+img_notificacion+'" class="ui-li-icon">\
-												<h2>'+row['asunto']+'</h2>\
-											</a>\
-											<a href="#" target-id="'+row['notificacion']+'" class="ui-nodisc-icon ui-alt-icon notificacion_item_elim"></a>\
-										</li>');
-			}
+				text = '';
+				estilo = '';
+				if(row['leida'] == 'true'){
+					texto = 'Leida';
+					estilo = 'style="background-color: #d9edf7;"';
+				}
+				if(row['leida'] == 'false'){
+					texto = 'Nueva';
+					estilo = 'style="background-color: #f0ad4e;"';
+				}
 
-			if(flag_refresh_notificaciones)
-				$('#mail_list').listview("refresh");
-			else
-				flag_refresh_notificaciones = true;
+				aux += '<li id="notificacion_'+row['notificacion_usuario']+'" leida="'+row['leida']+'" target-ref="'+row['notificacion']+'" fecha="'+row['fecha_creacion']+'">\
+							<a href="#" target-id="'+row['notificacion_usuario']+'" class="notificacion_item"><img src="img/'+img_notificacion+'" class="ui-li-icon">\
+								<h2>'+row['asunto']+'</h2>\
+								<span class="ui-li-count" '+estilo+'>'+texto+'</span>\
+							</a>\
+							<a href="#" target-id="'+row['notificacion']+'" class="ui-nodisc-icon ui-alt-icon notificacion_item_elim"></a>\
+						</li>';
+			}
+			aux += '</ul>';
+			$('#mail_list_content').html(aux).trigger('create');
 	    },
 		function(tx, err){
 			throw new Error(err.message);
@@ -668,7 +668,7 @@ function load_notificaciones(){
 	}, errorCB, successCB);
 }
 
-function load_notificacion(id, asunto, fecha){
+function load_notificacion(id, id_ref, asunto, fecha){
 	 db.transaction(function(tx){
         tx.executeSql('SELECT mensaje, encuesta FROM sgt_notificacion WHERE id = '+id+';', [], 
         function(tx, results){
@@ -678,7 +678,7 @@ function load_notificacion(id, asunto, fecha){
             $('#mail_content').html('<p align="center">'+row['mensaje']+'</p>');
 
             if(row['encuesta'])
-            	$('#mail_content').append('<br><button id="cargar_encuesta" target-notificacion="'+id+'" target-encuesta="'+row['encuesta']+'" class="ui-btn ui-btn-c ui-corner-all" type="button">Completar encuesta</button>');
+            	$('#mail_content').append('<br><button id="cargar_encuesta" target-notificacion-usuario="'+id_ref+'" target-encuesta="'+row['encuesta']+'" class="ui-btn ui-btn-c ui-corner-all" type="button">Completar encuesta</button>');
 
             $.mobile.changePage('#mail_content_page', {
 	            changeHash: true,
@@ -691,21 +691,19 @@ function load_notificacion(id, asunto, fecha){
     }, errorCB, successCB);
 }
 
-function load_encuesta(notificacion_id, encuesta_id){
-	//$('#mail_content').hide("fade");
+function load_encuesta(notificacion_usuario_id, encuesta_id){
 	db.transaction(function(tx){
         tx.executeSql('SELECT e.nombre AS encuesta, p.id AS pregunta, p.enunciado, t.codigo AS tipo FROM sgt_encuesta e, sgt_pregunta p, sgt_tiporespuesta t, sgt_encuesta_preguntas ep WHERE e.id = ep.encuesta_id AND p.id = ep.pregunta_id AND t.id = p.tipo_respuesta AND e.id = '+encuesta_id+';', [], 
         function(tx, results){
         	aux = '';
-        	cont = 1;
-        	id_inputs = []
+        	index = 1;
         	row_aux = results.rows.item(0);
         	$('#mail_title').html(row_aux['encuesta']);
 
         	aux = '<form id="encuesta_form">\
         				<input id="usuario_enc" name="usuario" type="hidden" value="'+id_usuario+'">\
         				<input id="encuesta_enc" name="encuesta" type="hidden" value="'+encuesta_id+'">\
-        				<input id="notificacion_enc" name="notificacion" type="hidden" value="'+notificacion_id+'">';
+        				<input id="notificacion_enc" name="notificacion_usuario" type="hidden" value="'+notificacion_usuario_id+'">';
 
         	num = results.rows.length;
 			for(i = 0; i < num; i++){
@@ -718,10 +716,9 @@ function load_encuesta(notificacion_id, encuesta_id){
 					aux += '<fieldset id="respuesta_def_content_'+row['pregunta']+'" data-role="controlgroup" data-iconpos="right" data-theme="a"></fieldset>';
 
 				if(row['tipo'] == 'RESP_INDEF'){
-					id_inputs.push('#respuesta_indef_enc_'+cont);
-					aux += '<label for="respuesta_indef_enc_'+cont+'">'+row['enunciado']+'</label>\
-							<textarea cols="40" rows="8" name="respuesta_indef_'+row['pregunta']+'" id="respuesta_indef_enc_'+cont+'"></textarea>';
-					cont++;
+					aux += '<label for="respuesta_indef_enc_'+index+'">'+row['enunciado']+'</label>\
+							<textarea cols="40" rows="8" name="respuesta_indef_'+row['pregunta']+'" id="respuesta_indef_enc_'+index+'"></textarea>';
+					index++;
 				}
 
 				aux += '</div>';
@@ -737,10 +734,9 @@ function load_encuesta(notificacion_id, encuesta_id){
             throw new Error(err.message);
         });
 
-        tx.executeSql('SELECT p.id AS pregunta, p.enunciado, v.id, v.valor FROM sgt_encuesta e, sgt_pregunta p, sgt_tiporespuesta t, sgt_valorposible v, sgt_valorpreguntaencuesta vpe, sgt_encuesta_preguntas ep WHERE e.id = ep.encuesta_id AND p.id = ep.pregunta_id AND t.id = p.tipo_respuesta AND t.codigo = "RESP_DEF" AND e.id = vpe.encuesta AND p.id = vpe.pregunta AND v.id = vpe.valor AND e.id = '+encuesta_id+' ORDER BY pregunta;', [], 
+        tx.executeSql('SELECT p.id AS pregunta, p.enunciado, v.id, v.valor FROM sgt_encuesta e, sgt_pregunta p, sgt_tiporespuesta t, sgt_valorposible v, sgt_valorpreguntaencuesta vpe, sgt_encuesta_preguntas ep WHERE e.id = ep.encuesta_id AND p.id = ep.pregunta_id AND t.id = p.tipo_respuesta AND t.codigo = "RESP_DEF" AND e.id = vpe.encuesta AND p.id = vpe.pregunta AND v.id = vpe.valor AND e.id = '+encuesta_id+' ORDER BY pregunta, vpe.orden;', [], 
         function(tx, results){
         	aux = '';
-        	index = 0;
         	pregunta_index = '';
 
         	num = results.rows.length;
@@ -752,7 +748,6 @@ function load_encuesta(notificacion_id, encuesta_id){
 
 					pregunta_index = row['pregunta'];
 					aux = '<legend>'+row['enunciado']+'</legend>';
-					index++;
 				}
 
 				aux += '<input name="respuesta_def_'+row['pregunta']+'" id="respuesta_def_enc_'+(i + 1)+'" value="'+row['id']+'" type="radio">\
@@ -776,15 +771,12 @@ function load_encuesta(notificacion_id, encuesta_id){
 		        data[obj.name] = obj.value;
 		    });
 
-		    console.log(data);
-
 		    $.post("http://192.168.1.101:8000/api/guardar-respuestas-encuesta/", data)
 	        .done(function(json){
 	            console.log(json);
-	            $.mobile.changePage("#mail_page", {
-			        changeHash: false, 
-			        transition: "fade"
-			    });
+	            next_page = '#mail_page';
+	            next_page_trans = 'fade';
+	            load_user_tables();
 	        })
 	        .fail(function(json) {
 	            console.log(json);

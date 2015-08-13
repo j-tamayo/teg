@@ -353,3 +353,11 @@ class ParametrosGenerales(models.Model):
 
 	def __unicode__(self):
 		return u'%s:%s' % (self.codigo, self.valor)
+
+class Reclamo(models.Model):
+	usuario = models.ForeignKey(USER_MODEL)
+	motivo = models.CharField(max_length = 255)
+	contenido = models.CharField(max_length = 255)
+
+	def __unicode__(self):
+		return u'%s' % self.motivo
