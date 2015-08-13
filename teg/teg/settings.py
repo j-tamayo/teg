@@ -138,3 +138,11 @@ PAGINATION_SETTINGS = {
     'PAGE_RANGE_DISPLAYED': 5,
     'MARGIN_PAGES_DISPLAYED': 3,
 }
+
+#########################CONFIGURACON EMAIL => SGT#############################
+EMAIL_USE_TLS = True
+EMAIL_HOST ='smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'sgtmail.dev@gmail.com'
+EMAIL_HOST_PASSWORD = 'sgt092015'
+EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'

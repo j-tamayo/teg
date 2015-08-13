@@ -20,6 +20,10 @@ urlpatterns = \
          views.Salir.as_view(),
          name='cuentas_logout'),
 
+        url(r'^recuperar-clave/$',
+         views.RecuperarClave.as_view(),
+         name='recuperar_clave'),
+
         # # Activar cuenta de PST
         # url(
         #  r'^activar/(?P<activation_key>[a-f0-9]{40})/$',

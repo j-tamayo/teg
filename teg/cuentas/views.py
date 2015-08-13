@@ -10,6 +10,10 @@ from django.contrib import messages
 from datetime import datetime
 from cuentas.forms import *
 from cuentas.models import *
+from django.template.loader import get_template
+from django.template import Context
+import string
+import random
 
 # Create your views here.
 class Ingresar(FormView):
@@ -98,6 +102,48 @@ class Salir(View):
             messages.info(self.request, mensaje)
 
         return redirect(reverse_lazy('cuentas_login'))
+
+
+class RecuperarClave(View):
+    def dispatch(self, request, *args, **kwargs):
+        return super(RecuperarClave, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        form = RecuperarClaveForm()
+        context = {
+            'form': form,
+        }
+        return render(request,'cuentas/recuperar_clave.html', context)
+
+    def post(self, request, *args, **kwargs):
+        form = RecuperarClaveForm(request.POST)
+        if form.is_valid():
+            # Se asigna una clave temporal
+            clave_temporal = ''.join(random.choice(string.ascii_letters) for i in range(6))
+
+            correoTemplate = get_template('correo/recuperar_clave.html')
+            usuario = SgtUsuario.objects.filter(correo = form.cleaned_data['correo']).first()
+            #Se le asigna la clave temporal al usuario
+            usuario.set_password(clave_temporal)
+            usuario.save()
+            # uid =  urlsafe_base64_encode(force_bytes(usuario.pk))
+            context = Context({
+                'dominio': request.META['HTTP_HOST'],
+                'clave_temporal': clave_temporal,
+                'usuario': usuario
+            })
+            contenidoHtmlCorreo = correoTemplate.render(context)
+
+            form.correoRecuperacion(contenidoHtmlCorreo)
+
+            messages.info(self.request, 'Se ha enviado un correo a la dirección suministrada')
+            return redirect(reverse_lazy('cuentas_login'))
+        
+        else:
+            context = {
+                'form': form,
+            }
+            return render(request, 'cuentas/recuperar_clave.html', context)
 
 
 class DetectarUsuario(LoginRequiredMixin, View):

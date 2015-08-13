@@ -16,52 +16,46 @@
 	<div class="row">
 		<div class="col-xs-4 col-xs-offset-4 text-success text-center">
 			<br>
-			<h3>Iniciar sesi&oacute;n</h3>
+			<h3>Recuperar contrase&ntilde;a</h3>
 		</div>
 	</div>
 	<br>	
 	<div class="row">
 		<div class="col-xs-6 col-xs-offset-3">
 			<div class="form-box">
-				<form id="login_form" action="{% url 'cuentas_login' %}" method="post" data-toggle="validator">
+				<form id="recuperar_password_form" action="{% url 'recuperar_clave' %}" method="post" novalidate>
 					{% csrf_token %}
 					<div class="row errors">
-						{{ form.non_field_errors }}
 					</div>
 					<div class="row">
 						<div class="form-group">
 							<label for="exampleInputEmail1" class="text-muted">Correo:</label>
 							<!-- <input name="correo" type="email" class="form-control" id="exampleInputEmail1" placeholder="Correo electr&oacute;nico..."> -->
 							{{form.correo}}
-							<div class="help-block with-errors"></div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="form-group">
-							<label for="exampleInputPassword1" class="text-muted">Contrase&ntilde;a:</label>
-							<!-- <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Contrase&ntilde;a..."> -->
-							{{form.password}}
+							<br>
+							<div class="text-danger">{{form.correo.errors.as_text}}{{form.non_field_errors.as_text}}</div>
 						</div>
 					</div>
 					<div class="row ">
-						<!-- <div class="col-xs-5 col-xs-offset-2"> -->
-							<a href="{% url 'cuentas_registro' %}" class="btn btn-primary col-xs-4 col-xs-offset-3">Registrar</a>
-						<!-- </div>
-						<div class="col-xs-5"> -->
-							<input type="submit" value="Entrar" class="btn btn-success col-xs-4 col-xs-offset-1"></input>
-						<!-- </div> -->
+						<div class="col-xs-6">
+							<a href="{% url 'cuentas_login' %}" class="btn btn-danger btn-block">Volver</a>
+						</div>
+						<div class="col-xs-6">
+							<input type="submit" value="Enviar" class="btn btn-primary btn-block"></input>
+						</div>
 					</div>
 				</form>
 			</div>
 		</div>
 	</div>
-	<div class="row">
+	<br><br><br>
+	<!-- <div class="row">
 		<div class="col-xs-6 col-xs-offset-6">
 			<br>
-			<a href="{% url 'recuperar_clave' %}" class="btn btn-link text-center">¿Olvid&oacute; su contrase&ntilde;a?</a>
+			<a class="btn btn-link text-center">¿Olvid&oacute; su contrase&ntilde;a?</a>
 			<br><br>
 		</div>
-	</div>
+	</div> -->
 </div>
 {% endblock %}
 

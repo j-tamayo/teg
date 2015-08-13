@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Recuperar Contraseña</title>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <b>SISGETICKET</b>
+
+      <p>Estimado señor(a) {{usuario.get_full_name}}, le notificamos que se ha registrado una solicitud para la recuperación de la contraseña de acceso al Sistema SISGETICKET.</p>
+
+      <p>Se ha generado una contraseña temporal para que pueda acceder al sistema y cambiarla. La contraseña es la siguiente:</p>
+
+      <p><b>{{clave_temporal}}</b></p>
+
+      <a href="http://{{dominio}}{% url 'cuentas_login' %}">Iniciar sesi&oacute;n</a>
+      
+    </div>
+  </div>
+</body>
+</html>

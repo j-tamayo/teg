@@ -2,6 +2,11 @@
 from django import forms
 from django.contrib.auth import authenticate
 from sgt.models import CentroInspeccion, Estado, Municipio, TipoInspeccion
+from cuentas.models import SgtUsuario
+from django.core.mail import EmailMultiAlternatives
+from django.core.mail import send_mail
+import threading
+from django.conf import settings
 
 class AutenticacionUsuarioForm(forms.Form):
 	""" Formulario para la autenticación de los usuarios """
@@ -155,6 +160,51 @@ class RegistroForm(forms.Form):
 		centro_inspeccion = cleaned_data.get('centro_inspeccion', None)
 		if self.taquilla > 0 and not centro_inspeccion:
 			self.add_error('centro_inspeccion', 'Este campo es obligatorio')
+
+
+class RecuperarClaveForm(forms.Form):
+	"""Formulario para recuperar la contraseña"""
+	correo = forms.EmailField(
+		label = u'Correo',
+		widget = forms.EmailInput(attrs={'class':'form-control'})
+	)
+
+	def clean(self):
+		correo = self.cleaned_data.get('correo')
+		usuario = SgtUsuario.objects.filter(correo = correo).first()
+		if correo and not usuario:
+			raise forms.ValidationError(u'Este correo no se encuentra registrado')
+
+		return self.cleaned_data
+
+	def correoRecuperacion(self, contenido):
+	    correo = self.cleaned_data.get('correo')
+	    threadCorreo = threading.Thread(
+	        name = 'thread_correo',
+	        target = self.enviarCorreoOlvidoClave,
+	        args = (
+	            u'[SGT] Recuperación de Contraseña - SISGETICKET', 
+	            contenido,
+	            [correo],
+	            settings.EMAIL_HOST_USER,
+	        )
+	    )
+	    threadCorreo.start()
+
+	def enviarCorreoOlvidoClave(self, titulo, contenido, receptor, emisor):
+	    funciona = False
+	    i = 0
+	    while i < 3 and funciona == False:
+	        i += 1
+	        try:
+	            msg = EmailMultiAlternatives(titulo, contenido, emisor, receptor)
+	            msg.attach_alternative(contenido, "text/html")           
+	            msg.send()
+	            funciona = True
+	        except Exception, e:
+	            print '=======>error enviar correo<========='
+	            print e
+	            continue
 
 
 class SolicitudInspeccionForm(forms.Form):
