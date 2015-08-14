@@ -113,7 +113,8 @@
     right: 0.4em;
 }
 
-.ui-listview > li p{
+.ui-listview > li p,
+#mail_title{
   white-space: normal;
 }
 

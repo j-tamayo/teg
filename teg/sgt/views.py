@@ -287,6 +287,7 @@ class BandejaCliente(View):
 		form = SolicitudInspeccionForm(request.POST)
 		poliza = Poliza.objects.filter(usuario = usuario).first()
 		solicitudes = SolicitudInspeccion.objects.filter()
+		notificaciones = NotificacionUsuario.objects.filter(usuario = usuario, borrada = False).order_by('-leida', '-pk')
 
 		for s in solicitudes:
 			s.numero_orden = NumeroOrden.objects.filter(solicitud_inspeccion = s).first()
@@ -297,6 +298,7 @@ class BandejaCliente(View):
 		    'form': form,
 		    'poliza': poliza,
 		    'solicitudes': solicitudes,
+		    'notificaciones': notificaciones,
 		}
 
 		return render(request,'cuentas/perfil_cliente.html', context)

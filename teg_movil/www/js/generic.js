@@ -318,6 +318,7 @@ $(document).ready(function(){
     $(document).on("click", ".notificacion_item", function(){
         notificacion_usuario_id = $(this).attr('target-id');
         notificacion_item_str = '#notificacion_' + notificacion_usuario_id;
+        notificacion_item_child = $(this).children('span');
         asunto = $(this).text();
         flag_leida = $(notificacion_item_str).attr('leida');
         notificacion_id = $(notificacion_item_str).attr('target-ref');
@@ -326,6 +327,8 @@ $(document).ready(function(){
             $.post("http://192.168.1.101:8000/api/marcar-notificacion/", {'notificacion_usuario_id': notificacion_usuario_id, 'flag_marca': 1})
             .done(function(){
                 $(notificacion_item_str).attr('leida', 'true');
+                notificacion_item_child.text('Leida');
+                notificacion_item_child.attr('style', 'background-color: #d9edf7;');
                 updateTable('sgt_notificacionusuario', ['leida'], ['true'], notificacion_usuario_id);
             })
             .fail(function(){

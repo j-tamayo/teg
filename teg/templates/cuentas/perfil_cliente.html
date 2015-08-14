@@ -101,7 +101,6 @@
 										<td>{{s.estatus}}</td>
 										<td>...</td>
 									</tr>
-									
 									{% endfor %}
 								</tbody>
 							</table>
@@ -137,32 +136,41 @@
 		    	<div class="row">
 		    		<br>
 					<div class="col-xs-10 col-xs-offset-1">
+		    			{% if notificaciones %}
 		    			<table class="table table-bordered">
-							<tr>
-							 	<th style="width:30%">Tipo Solicitud</th>
-								<th style="width:20%">N&uacute;mero de Orden</th>
-								<th style="width:30%">Estado</th>
-								<th style="width:20%">Opciones</th>
-							</tr>
-							<tr>
-								<td>Suscripci&oacute;n</td>
-								<td>SSI-1234</td>
-								<td>Realizada</td>
-								<td>...</td>
-							</tr>
-							<tr>
-								<td>Reclamo</td>
-								<td>SRI-4567</td>
-								<td>En proceso</td>
-								<td>...</td>
-							</tr>
-							<tr>
-								<td>Reinspecci&oacute;n</td>
-								<td>SRII-3216</td>
-								<td>No procesada</td>
-								<td>...</td>
-							</tr>
+		    				<thead>
+								<tr>
+								 	<th style="width:40%">Asunto</th>
+									<th style="width:30%">Tipo notificaci&oacute;n</th>
+									<th style="width:15%">Fecha recibida</th>
+									<th style="width:5%">Estado</th>
+									<th style="width:10%">Opciones</th>
+								</tr>
+							</thead>
+							<tbody id="solicitudes_table_body">
+								{% for n in notificaciones %}
+								<tr>
+									<td>{{n.notificacion.asunto}}</td>
+									<td>{{n.notificacion.tipo_notificacion.descripcion}}</td>
+									<td>{{ n.fecha_creacion|date:"SHORT_DATE_FORMAT" }}</td>
+									<td>
+										<span class="label {% if n.leida %} label-info {% else %} label-warning {% endif %}">{% if n.leida %} Leida {% else %} Nueva {% endif %}</span>
+									</td>
+									<td>
+										<a class="btn btn-primary btn-sm" role="button" title="Abrir Notificaci&oacute;n">
+											<i class="fa fa-eye"></i>
+										</a>
+										<a class="btn btn-danger btn-sm" role="button" title="Borrar Notificaci&oacute;n">
+											<i class="fa fa-trash"></i>
+										</a>
+									</td>
+								</tr>
+								{% endfor %}
+							</tbody>
 						</table>
+						{% else %}
+						<h4>No posee notificaciones</h4>
+						{% endif %}
 		    		</div>
 		    	</div>
 		    </div>

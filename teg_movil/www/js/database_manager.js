@@ -625,7 +625,7 @@ function load_solicitudes_inspeccion(){
 function load_notificaciones(){
 	db.transaction(function(tx){
 		$('#mail_list_content').empty();
-		tx.executeSql('SELECT n.id AS notificacion, u.id AS notificacion_usuario, n.asunto, t.codigo, u.fecha_creacion, u.leida FROM sgt_notificacion n, sgt_tiponotificacion t, sgt_notificacionusuario u WHERE n.id = u.notificacion AND t.id = n.tipo_notificacion AND u.usuario = '+id_usuario+' ORDER BY notificacion_usuario DESC;', [], 
+		tx.executeSql('SELECT n.id AS notificacion, u.id AS notificacion_usuario, n.asunto, t.codigo, u.fecha_creacion, u.leida FROM sgt_notificacion n, sgt_tiponotificacion t, sgt_notificacionusuario u WHERE n.id = u.notificacion AND t.id = n.tipo_notificacion AND u.usuario = '+id_usuario+' ORDER BY u.leida DESC, notificacion_usuario DESC;', [], 
 	    function(tx, results){
 	    	aux = '<ul data-role="listview" data-split-icon="delete" data-theme="a" data-split-theme="a" data-inset="false">';
 	    	num = results.rows.length;
@@ -672,13 +672,13 @@ function load_notificacion(id, id_ref, asunto, fecha){
 	 db.transaction(function(tx){
         tx.executeSql('SELECT mensaje, encuesta FROM sgt_notificacion WHERE id = '+id+';', [], 
         function(tx, results){
-        	$('#mail_title').html(asunto + '(Recibido el '+fecha +')');
+        	$('#mail_title').html(asunto);
             
             row = results.rows.item(0);
-            $('#mail_content').html('<p align="center">'+row['mensaje']+'</p>');
+            $('#mail_content').html('<p align="justify">'+row['mensaje']+'</p>');
 
             if(row['encuesta'])
-            	$('#mail_content').append('<br><button id="cargar_encuesta" target-notificacion-usuario="'+id_ref+'" target-encuesta="'+row['encuesta']+'" class="ui-btn ui-btn-c ui-corner-all" type="button">Completar encuesta</button>');
+            	$('#mail_content').append('<br><p align="left">(Recibido el '+fecha +')<p><br><button id="cargar_encuesta" target-notificacion-usuario="'+id_ref+'" target-encuesta="'+row['encuesta']+'" class="ui-btn ui-btn-c ui-corner-all" type="button">Completar encuesta</button>');
 
             $.mobile.changePage('#mail_content_page', {
 	            changeHash: true,
