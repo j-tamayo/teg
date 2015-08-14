@@ -1682,6 +1682,16 @@ class AdminReportes(View):
 		return render(request, 'admin/reportes.html', context)
 
 
+class AdminEstadisticasEncuestas(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEstadisticasEncuestas, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Método que muestra una estadística de las respuestas de los usuarios a las encuestas"""
+		
+
+
 class BandejaTaquilla(View):
 	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
