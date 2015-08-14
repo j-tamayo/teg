@@ -1821,3 +1821,5 @@ class AdminParametros(View):
 		}
 
 		return render(request, 'admin/parametros.html', context)
+
+
