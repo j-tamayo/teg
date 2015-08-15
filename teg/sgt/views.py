@@ -1833,3 +1833,122 @@ class AdminParametros(View):
 		return render(request, 'admin/parametros.html', context)
 
 
+class ConsultarNotificacion(View):
+    def dispatch(self, request, *args, **kwargs):
+        return super(ConsultarNotificacion, self).dispatch(request, *args, **kwargs)
+        
+    def get(self, request, *args, **kwargs):
+        """Consultar Notificación"""
+        usuario = request.user
+        notificacion_usuario_id = request.GET.get('notificacion_usuario_id', None)
+
+        respuesta = {}
+        if notificacion_usuario_id:
+        	notificacion_usuario = NotificacionUsuario.objects.get(id=notificacion_usuario_id)
+
+        	if not notificacion_usuario.leida:
+        		notificacion_usuario.leida = True
+        		notificacion_usuario.save()
+
+        	if notificacion_usuario.notificacion.encuesta:
+        		encuesta_id = notificacion_usuario.notificacion.encuesta.id
+        	else:
+        		encuesta_id = None
+
+        	respuesta = {
+        		'asunto': notificacion_usuario.notificacion.asunto,
+            	'mensaje':  notificacion_usuario.notificacion.mensaje,
+            	'encuesta_id':  encuesta_id,
+            	'fecha_creacion':  notificacion_usuario.fecha_creacion.strftime('%d/%m/%Y'),
+            }
+
+        else:
+            respuesta['mensaje'] = 'No se suministró el id de la notificación'
+
+
+        return HttpResponse(
+            json.dumps(respuesta),
+            content_type="application/json"
+        )
+
+class ConsultarEncuesta(View):
+    def dispatch(self, request, *args, **kwargs):
+        return super(ConsultarEncuesta, self).dispatch(request, *args, **kwargs)
+        
+    def get(self, request, *args, **kwargs):
+        """Consultar Encuesta"""
+        usuario = request.user
+        encuesta_id = request.GET.get('encuesta_id', None)
+
+        respuesta = {}
+        if encuesta_id:
+        	encuesta = Encuesta.objects.get(id=encuesta_id)
+        	preguntas = encuesta.preguntas.all()
+
+        	valores_preguntas_definidas = {}
+        	preguntas_definidas = preguntas.exclude(tipo_respuesta__codigo="RESP_INDEF")
+        	for p in preguntas_definidas:
+        		aux = ValorPreguntaEncuesta.objects.filter(pregunta=p, encuesta=encuesta).order_by('orden')
+        		valores_preguntas_definidas[p.id] = [ {'id': vals.valor.id, 'valor': vals.valor.valor} for vals in aux ]
+
+        	preguntas = [ {'id': preg.id, 'enunciado': preg.enunciado, 'tipo_respuesta': preg.tipo_respuesta.codigo} for preg in preguntas ]
+
+        	respuesta = {
+        		'preguntas': preguntas,
+        		'nombre_encuesta': encuesta.nombre, 
+        		'valores_preguntas_definidas': valores_preguntas_definidas,
+            }
+        else:
+            respuesta['mensaje'] = 'No se suministró el id de la notificación'
+
+
+        return HttpResponse(
+            json.dumps(respuesta),
+            content_type="application/json"
+        )
+
+    def post(self, request, *args, **kwargs):
+		""" Guardar respuestas de la encuesta """
+		mensaje = {}
+		data = request.POST
+
+		if data:
+			usuario = request.user
+			encuesta_id = data.get('encuesta')
+			encuesta = Encuesta.objects.get(id=encuesta_id)
+			notificacion_usuario_id = data.get('notificacion_usuario')
+
+			total_preguntas = data.get('total_preguntas')
+			for index in range(int(total_preguntas)):
+				aux = 'pregunta_' + str(index + 1)
+				pregunta_id = data.get(aux)
+				pregunta = Pregunta.objects.get(pk=pregunta_id)
+				tipo_respuesta = pregunta.tipo_respuesta.codigo
+				respuesta = Respuesta(encuesta=encuesta, pregunta=pregunta, usuario=usuario)
+				respuesta.save()
+
+				if tipo_respuesta == "RESP_DEF":
+					aux = 'respuesta_def_' + pregunta_id
+					valor_def_id = data.get(aux)
+					valor_def = ValorPosible.objects.get(id=valor_def_id)
+					respuesta_definida = RespuestaDefinida(respuesta=respuesta, valor_definido=valor_def)
+					respuesta_definida.save()
+
+				elif tipo_respuesta == "RESP_INDEF":
+					aux = 'respuesta_indef_' + pregunta_id
+					valor_indef = data.get(aux)
+					respuesta_indefinida = RespuestaIndefinida(respuesta=respuesta, valor_indefinido=valor_indef)
+					respuesta_indefinida.save()
+
+			notificacion_usuario = NotificacionUsuario.objects.get(id=notificacion_usuario_id)
+			notificacion_usuario.borrada = True
+			notificacion_usuario.save()
+
+			mensaje['mensaje'] = 'Respuestas guardadas de manera exitosa'
+		else:
+			mensaje['mensaje'] = 'No se proporcioron las respuestas solicitadas'
+
+		return HttpResponse(
+		    json.dumps(mensaje),
+		    content_type="application/json"
+		)

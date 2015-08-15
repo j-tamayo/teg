@@ -133,7 +133,7 @@
 						<a class="btn btn-success" data-toggle="modal" data-target="#Buscar">Buscar</a>
 		    		</div>
 		    	</div>
-		    	<div class="row">
+		    	<div id="contenedor_notidicacion_encuesta"  class="row">
 		    		<br>
 					<div class="col-xs-10 col-xs-offset-1">
 		    			{% if notificaciones %}
@@ -149,18 +149,18 @@
 							</thead>
 							<tbody id="solicitudes_table_body">
 								{% for n in notificaciones %}
-								<tr>
+								<tr id="notificacion_{{n}}">
 									<td>{{n.notificacion.asunto}}</td>
 									<td>{{n.notificacion.tipo_notificacion.descripcion}}</td>
 									<td>{{ n.fecha_creacion|date:"SHORT_DATE_FORMAT" }}</td>
 									<td>
-										<span class="label {% if n.leida %} label-info {% else %} label-warning {% endif %}">{% if n.leida %} Leida {% else %} Nueva {% endif %}</span>
+										<span id="marca_{{n.id}}" class="label {% if n.leida %} label-info {% else %} label-warning {% endif %}">{% if n.leida %} Leida {% else %} Nueva {% endif %}</span>
 									</td>
 									<td>
-										<a class="btn btn-primary btn-sm abrir_notificacion" target="{{n.id}}"role="button" title="Abrir Notificaci&oacute;n">
+										<a class="btn btn-primary btn-sm abrir_notificacion" target="{{n.id}}" role="button" title="Abrir Notificaci&oacute;n">
 											<i class="fa fa-eye"></i>
 										</a>
-										<a class="btn btn-danger btn-sm" role="button" title="Borrar Notificaci&oacute;n">
+										<a class="btn btn-danger btn-sm" role="button" target="{{n.id}}" title="Borrar Notificaci&oacute;n">
 											<i class="fa fa-trash"></i>
 										</a>
 									</td>
@@ -172,6 +172,26 @@
 						<h4>No posee notificaciones</h4>
 						{% endif %}
 		    		</div>
+		    	</div>
+		    	<div id="notificacion_encuesta_contenido" class="row" style="display:none">
+		    		<div class="col-xs-10 col-xs-offset-1">
+						<br>
+						<div class="panel panel-dashboard-gray">
+							<div class="panel-heading">
+								<div class="row">
+									<div id="titulo_notificacion_encuesta" class="col-xs-8">
+										
+									</div>
+									<div class="col-xs-4">
+										<a id="cerrar_notificacion" class="btn btn-default pull-right" role="button" title="Cerrar Notificaci&oacute;n"><i class="fa fa-times"></i></a>
+									</div>
+								</div>
+							</div>
+							<div id="contenido_notificacion_encuesta" class="panel-body">
+								
+							</div>
+						</div>
+					</div>
 		    	</div>
 		    </div>
 	  	</div>
@@ -437,23 +457,122 @@
 			/********** ABRIR NOTIFICACIÓN *************/
 
 			$(document).on('click','.abrir_notificacion',function(){
+				notificacion_usuario_id = $(this).attr('target');
 				$.ajax({
 					method: 'GET',
 					url: '{% url "consultar_notificacion" %}',
 					dataType: 'json',
 					data: {
-						'notificacion_id': $(this).attr('target');
-					}
+						'notificacion_usuario_id': notificacion_usuario_id
+					},
 					success:function(data){
 						console.log(data);
-						
+						marca_id = '#marca_' + notificacion_usuario_id;
+						marca = $(marca_id).text().trim();
 
+						if(marca == 'Nueva'){
+							$(marca_id).removeClass("label-warning");
+							$(marca_id).addClass("label-info");
+							$(marca_id).text('Leida');
+						}
+						
+						$('#titulo_notificacion_encuesta').html('<h4>'+data['asunto']+' - (Recibido el '+data['fecha_creacion']+')</h4>');
+
+						$('#contenido_notificacion_encuesta').html('<p align="justify">'+data['mensaje']+'</p>');
+						
+						if(data['encuesta_id'])
+							$('#contenido_notificacion_encuesta').append('<br><a id="enlace_encuesta" class="btn btn-primary pull-right" target-encuesta="'+data['encuesta_id']+'" target-notificacion-usuario="'+notificacion_usuario_id+'" role="button" title="Completar Encuesta">Completar Encuesta</a>');
+
+						$('#contenedor_notidicacion_encuesta').hide('fade');
+						$('#notificacion_encuesta_contenido').show('fade');
 					},
 				    error: function(data){
 				    	console.log("Error...");
 				    	console.log(data);
 				    }
 				});
+			});
+
+			$(document).on('click','#enlace_encuesta',function(){
+				encuesta_id = $(this).attr('target-encuesta');
+				notificacion_uduario_id = $(this).attr('target-notificacion-usuario');
+				$.ajax({
+					method: 'GET',
+					url: '{% url "consultar_encuesta" %}',
+					dataType: 'json',
+					data: {
+						'encuesta_id': encuesta_id
+					},
+					success:function(data){
+						console.log(data);
+						$('#titulo_notificacion_encuesta').html('<h4>'+data['nombre_encuesta']+'</h4>');
+
+						preguntas = data['preguntas'];
+						total_preguntas = preguntas.length;
+
+
+				    	aux = '<form id="encuesta_form" action="{% url "consultar_encuesta" %}" method="POST">\
+				    				<input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">\
+				    				<input name="encuesta" type="hidden" value="'+encuesta_id+'">\
+			        				<input name="notificacion_usuario" type="hidden" value="'+notificacion_usuario_id+'">\
+			        				<input id="total_preguntas_enc" name="total_preguntas" type="hidden" value="'+total_preguntas+'">';
+
+			        	for(i = 0; i < total_preguntas; i++){
+			        		pregunta_id = preguntas[i]['id'];
+			        		aux += '<br>\
+			        				<div class="row">\
+			        					<div class="col-xs-12">\
+			        						<input name="pregunta_'+(i + 1)+'" type="hidden" value="'+pregunta_id+'">';
+
+			        		if(preguntas[i]['tipo_respuesta'] == 'RESP_INDEF'){
+			        			aux += '<label class="text-muted">'+preguntas[i]['enunciado']+'</label>\
+			        					<textarea class="form-control" rows="10" name="respuesta_indef_'+pregunta_id+'"></textarea>';
+			        		}
+
+			        		if(preguntas[i]['tipo_respuesta'] == 'RESP_DEF'){
+			        			aux += '<label class="text-muted">'+preguntas[i]['enunciado']+'</label>\
+			        					<div class="radio">';
+
+			        			valores_posibles = data['valores_preguntas_definidas'][pregunta_id];
+			        			for(j = 0; j < valores_posibles.length; j++){
+			        				valor_id = valores_posibles[j]['id'];
+
+			        				aux += '<div class="radio">\
+			        							<label><input type="radio" name="respuesta_def_'+pregunta_id+'" value="'+valor_id+'">'+valores_posibles[j]['valor']+'</label>\
+			        						</div>';
+			        			}
+
+			        			aux += '</div>';
+			        		}
+
+			        		aux += '	</div>\
+			        				</div>';
+			        	}
+
+			        	aux += '	<br>\
+			        				<button type="submit" class="btn btn-primary pull-right">Enviar</button>\
+			        			</form>';
+
+			        	$('#contenido_notificacion_encuesta').html(aux);
+					},
+				    error: function(data){
+				    	console.log("Error...");
+				    	console.log(data);
+				    }
+				});
+			});
+
+			$(document).on('click','#cerrar_notificacion',function(){
+				$('#notificacion_encuesta_contenido').hide('fade');
+				$('#contenedor_notidicacion_encuesta').show('fade');
+			});
+
+			$(document).on('submit','#encuesta_form',function(){
+				notificacion_target = $('input[name="notificacion_usuario"]').val();
+				$('#notificacion_'+notificacion_target).remove();
+
+				$('#notificacion_encuesta_contenido').hide('fade');
+				$('#contenedor_notidicacion_encuesta').show('fade');
 			});
 
 			/********** END *************/

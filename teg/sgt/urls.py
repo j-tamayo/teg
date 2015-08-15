@@ -227,4 +227,17 @@ urlpatterns = \
             views.AdminParametros.as_view(),
             name='admin_parametros'
         ),
+
+        url(
+            r'^consultar-notificacion$',
+            views.ConsultarNotificacion.as_view(),
+            name='consultar_notificacion'
+        ),
+
+        url(
+            r'^consultar-encuesta$',
+            views.ConsultarEncuesta.as_view(),
+            name='consultar_encuesta'
+        ),
+
 )

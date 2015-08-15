@@ -24,10 +24,6 @@ urlpatterns = \
          views.RecuperarClave.as_view(),
          name='recuperar_clave'),
 
-        url(r'^consultar-notificacion/$',
-         views.ConsultarNotificacion.as_view(),
-         name='consultar_notificacion'),
-
         # # Activar cuenta de PST
         # url(
         #  r'^activar/(?P<activation_key>[a-f0-9]{40})/$',

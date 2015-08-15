@@ -437,7 +437,6 @@ class GuardarRespuestasEncuesta(APIView):
 	def post(self, request, format=None):
 		mensaje = {}
 		data = request.data
-		data_response = []
 
 		if data:
 			usuario_id = data['usuario']
