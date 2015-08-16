@@ -149,7 +149,7 @@
 							</thead>
 							<tbody id="solicitudes_table_body">
 								{% for n in notificaciones %}
-								<tr id="notificacion_{{n}}">
+								<tr id="notificacion_{{n.id}}">
 									<td>{{n.notificacion.asunto}}</td>
 									<td>{{n.notificacion.tipo_notificacion.descripcion}}</td>
 									<td>{{ n.fecha_creacion|date:"SHORT_DATE_FORMAT" }}</td>
@@ -511,7 +511,7 @@
 						total_preguntas = preguntas.length;
 
 
-				    	aux = '<form id="encuesta_form" action="{% url "consultar_encuesta" %}" method="POST">\
+				    	aux = '<form id="encuesta_form">\
 				    				<input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">\
 				    				<input name="encuesta" type="hidden" value="'+encuesta_id+'">\
 			        				<input name="notificacion_usuario" type="hidden" value="'+notificacion_usuario_id+'">\
@@ -562,17 +562,38 @@
 				});
 			});
 
-			$(document).on('click','#cerrar_notificacion',function(){
+			$(document).on('click', '#cerrar_notificacion', function(){
 				$('#notificacion_encuesta_contenido').hide('fade');
 				$('#contenedor_notidicacion_encuesta').show('fade');
 			});
 
-			$(document).on('submit','#encuesta_form',function(){
-				notificacion_target = $('input[name="notificacion_usuario"]').val();
-				$('#notificacion_'+notificacion_target).remove();
+			$(document).on('submit', '#encuesta_form', function(event){
+				event.preventDefault();
+				formData = $(this).serializeArray();
+		        
+		        data = {};
+		        $(formData).each(function(index, obj){
+		            data[obj.name] = obj.value;
+		        });
 
-				$('#notificacion_encuesta_contenido').hide('fade');
-				$('#contenedor_notidicacion_encuesta').show('fade');
+		        $.ajax({
+					method: 'POST',
+					url: '{% url "consultar_encuesta" %}',
+					dataType: 'json',
+					data: data,
+					success:function(data){
+						console.log(data);
+						notificacion_target = $('input[name="notificacion_usuario"]').val();
+						$('#notificacion_'+notificacion_target).remove();
+
+						$('#notificacion_encuesta_contenido').hide('fade');
+						$('#contenedor_notidicacion_encuesta').show('fade');
+					},
+				    error: function(data){
+				    	console.log("Error...");
+				    	console.log(data);
+				    }
+				});
 			});
 
 			/********** END *************/
