@@ -199,6 +199,12 @@ urlpatterns = \
         ),
 
         url(
+            r'^admin/estadistcias-encuestas$',
+            views.AdminEstadisticasEncuestas.as_view(),
+            name='admin_estadisticas_encuestas'
+        ),
+
+        url(
             r'^taquilla$',
             views.BandejaTaquilla.as_view(),
             name='bandeja_taquilla'

@@ -1689,7 +1689,37 @@ class AdminEstadisticasEncuestas(View):
 
 	def get(self, request, *args, **kwargs):
 		"""Método que muestra una estadística de las respuestas de los usuarios a las encuestas"""
-		
+		usuario = request.user
+		encuestas = Encuesta.objects.all()
+
+		context = {
+			'admin': True,
+			'encuestas': encuestas,
+			'seccion_reporte': True,
+			'usuario': usuario
+		}
+
+		return render(request, 'admin/estadisticas_encuestas.html', context)
+
+	def post(self, request, *args, **kwargs):
+		usuario = request.user
+		encuestas = Encuesta.objects.all()
+		encuesta_id = request.POST.get('encuesta', None)
+		print "HEY",encuesta_id
+		encuesta_seleccionada = Encuesta.objects.filter(id = encuesta_id).first()
+		matriz = Encuesta.estadisticas(request.POST)
+
+		context = {
+			'admin': True,
+			'encuesta_seleccionada': encuesta_seleccionada,
+			'encuestas': encuestas,
+			'encuesta_id': encuesta_id,
+			'matriz': matriz,
+			'seccion_reporte': True,
+			'usuario': usuario
+		}
+
+		return render(request, 'admin/estadisticas_encuestas.html', context)
 
 
 class BandejaTaquilla(View):

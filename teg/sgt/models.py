@@ -206,6 +206,26 @@ class Encuesta(models.Model):
 	def __unicode__(self):
 		return u'%s' % self.nombre
 
+	@staticmethod
+	def estadisticas(filtros):
+		"""Método que retorna las estadísticas de las respuestas de las encuestas"""
+		matriz = {}
+		condiciones = []
+		id_encuesta = filtros.get('encuesta', None)
+
+		if id_encuesta:
+			condiciones.append(Q(id = id_encuesta))
+			encuesta = Encuesta.objects.filter(reduce(operator.and_, condiciones)).first()
+			preguntas = Pregunta.objects.filter(encuesta = encuesta, tipo_respuesta__codigo = 'RESP_DEF')
+			for p in preguntas:
+				matriz[p.enunciado] = {}
+				valores_pregunta_encuesta = ValorPreguntaEncuesta.objects.filter(pregunta=p, encuesta = encuesta)
+				for vpe in valores_pregunta_encuesta:
+					matriz[p.enunciado][vpe.valor] = RespuestaDefinida.objects.filter(respuesta__encuesta = encuesta,valor_definido = vpe.valor, respuesta__pregunta = p).count()
+
+		return matriz
+
+
 
 class TipoRespuesta(models.Model):
 	codigo = models.CharField(max_length=50)

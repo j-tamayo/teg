@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+{% include 'cuentas/modales_usuario.html' %}
+<div class="container-fluid">
+	<div class="row">
+		<h4>Estad&iacute;sticas de encuestas</h4>
+	</div> <!-- / .row -->
+	<br>
+	<div class="row">
+		<div class="col-xs-12">
+			<form class="form-inline" action="{% url 'admin_estadisticas_encuestas' %}" method="post">
+			{% csrf_token %}
+			<div class="form-group">
+				<label>Encuesta</label>
+				<select name="encuesta" id="encuesta_select" class="form-control">
+					<option value="0">--Seleccionar--</option>
+					{% for e in encuestas %}
+					<option value="{{e.pk}}">{{e.nombre}}</option>
+					{% endfor %}
+				</select>
+				<input type="submit" id="enviar_form_encuesta" value="Enviar" class="btn btn-primary">
+			</div>
+			</form>
+		</div>
+	</div> <!-- / .row -->
+	<br>
+	{% if matriz %}
+	<div class="row">
+		<div class="col-xs-12">
+			<h4>{{encuesta_seleccionada}} Resultados</h4>
+		</div>
+	</div> <!-- / .row -->
+	<br>
+	
+	<table class="table table-striped">
+		{% for key,value in matriz.items %}
+		<tr>
+			<td></td>
+			{% for k,c in value.items %}
+			<td>{{k}}</td>
+			{% endfor %}
+		</tr>
+		<tr>
+			<td>{{key}}</td>
+			{% for k,c in value.items %}
+			<td>{{c}}</td>
+			{% endfor %}
+		</tr>
+		{% endfor %}
+	</table>
+	{% else %}
+	<div class="row">
+		<div class="alert alert-warning text-center">
+			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+			<span class="sr-only">Error:</span>
+			No se ha seleccionado una encuesta
+		</div>
+	</div> <!-- / .row -->
+	{% endif %}
+</div> <!-- / .container-fluid -->
+{% endblock %}
