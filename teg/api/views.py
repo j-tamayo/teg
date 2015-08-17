@@ -9,8 +9,16 @@ from sgt.models import *
 from django.contrib.auth import authenticate, login
 from django.core import serializers
 from sgt.helpers import solicitudes,dates
+from django.template.loader import get_template
+from django.template import Context
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from django.core.mail import send_mail
 
 import json
+import random
+import string
+import threading
 
 # Create your views here.
 class Usuarios(APIView):
@@ -497,7 +505,73 @@ class GuardarReclamo(APIView):
 			mensaje['mensaje'] = 'Reclamo enviado de manera exitosa'
 			resp_status = status.HTTP_200_OK
 		else:
-			mensaje['mensaje'] = 'No se proporcioron los datos solicitados'
+			mensaje['mensaje'] = 'No se proporcionaron los datos solicitados'
+			resp_status = status.HTTP_500_INTERNAL_SERVER_ERROR
+
+		return Response(mensaje, status=resp_status)
+
+class RecuperarClave(APIView):
+	"""
+	Vista encargada recuperar contraseñas
+	"""
+	def correoRecuperacion(self, contenido, correo):
+	    threadCorreo = threading.Thread(
+	        name = 'thread_correo',
+	        target = self.enviarCorreoOlvidoClave,
+	        args = (
+	            u'[SGT] Recuperación de Contraseña - SISGETICKET', 
+	            contenido,
+	            [correo],
+	            settings.EMAIL_HOST_USER,
+	        )
+	    )
+	    threadCorreo.start()
+
+	def enviarCorreoOlvidoClave(self, titulo, contenido, receptor, emisor):
+	    funciona = False
+	    i = 0
+	    while i < 3 and funciona == False:
+	        i += 1
+	        try:
+	            msg = EmailMultiAlternatives(titulo, contenido, emisor, receptor)
+	            msg.attach_alternative(contenido, "text/html")           
+	            msg.send()
+	            funciona = True
+	        except Exception, e:
+	            print '=======>error enviar correo<========='
+	            print e
+	            continue
+
+	def post(self, request, format=None):
+		mensaje = {}
+		data = request.data
+
+		if data:
+			correo = data['correo']
+			
+			# Se asigna una clave temporal
+			clave_temporal = ''.join(random.choice(string.ascii_letters) for i in range(6))
+
+			correoTemplate = get_template('correo/recuperar_clave.html')
+			usuario = SgtUsuario.objects.filter(correo=correo).first()
+			#Se le asigna la clave temporal al usuario
+			usuario.set_password(clave_temporal)
+			usuario.save()
+
+			context = Context({
+				'dominio': request.META['HTTP_HOST'],
+				'clave_temporal': clave_temporal,
+				'usuario': usuario
+			})
+
+			contenidoHtmlCorreo = correoTemplate.render(context)
+			self.correoRecuperacion(contenidoHtmlCorreo, correo)
+
+			mensaje['clave_temporal'] = clave_temporal
+			mensaje['mensaje'] = 'Se ha enviado un correo a la dirección suministrada'
+			resp_status = status.HTTP_200_OK
+		else:
+			mensaje['mensaje'] = 'No se proporcionó el correo electrónico para la recuperación de la contraseña'
 			resp_status = status.HTTP_500_INTERNAL_SERVER_ERROR
 
 		return Response(mensaje, status=resp_status)

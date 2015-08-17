@@ -47,10 +47,10 @@
                 <form id="login_form">
                     <div class="ui-grid-solo">
                         <div class="ui-block-a">
-                            <label for="correo_log">Correo:</label>
-                            <input name="correo" id="correo_log" value="" type="text">
+                            <label for="correo_log">Correo electr&oacute;nico:</label>
+                            <input name="correo" id="correo_log" type="text">
                             <label for="password_log">Contrase&ntilde;a:</label>
-                            <input name="password" id="password_log" value="" autocomplete="off" type="password">
+                            <input name="password" id="password_log" autocomplete="off" type="password">
                         </div>
                     </div>
                     <div class="ui-grid-a">
@@ -59,6 +59,24 @@
                         </div>
                         <div class="ui-block-b">
                             <button class="ui-btn ui-btn-d ui-corner-all" type="submit">Entrar</button>
+                        </div>
+                    </div>
+                </form>
+                <form id="get_password_form">
+                    <div class="ui-grid-solo">
+                        <div class="ui-block-a">
+                            <br>
+                            <h2 align="center" class="text-success">Recuperar Contrase&ntilde;a</h2>
+                            <label for="correo_rec">Correo electr&oacute;nico:</label>
+                            <input name="correo" id="correo_rec" type="text">
+                        </div>
+                    </div>
+                    <div class="ui-grid-a">
+                        <div class="ui-block-a">
+                            <a id="volver_login" href="#" class="ui-btn ui-btn-c ui-corner-all">Volver</a>
+                        </div>
+                        <div class="ui-block-b">
+                            <button class="ui-btn ui-btn-d ui-corner-all" type="submit">Enviar</button>
                         </div>
                     </div>
                 </form>
@@ -118,11 +136,11 @@
                             </div>
                             <div class="ui-field-contain">
                                 <label for="telefono_local_reg">Tel&eacute;fono local:</label>
-                                <input name="telefono_local" id="telefono_local_reg" value="" type="tel" required>
+                                <input name="telefono_local" id="telefono_local_reg" type="tel" required>
                             </div>
                             <div class="ui-field-contain">
                                 <label for="telefono_movil_reg">Tel&eacute;fono m&oacute;vil:</label>
-                                <input name="telefono_movil" id="telefono_movil_reg" value="" type="tel" required>
+                                <input name="telefono_movil" id="telefono_movil_reg" type="tel" required>
                             </div>
                             <div class="ui-field-contain">
                                 <fieldset data-role="controlgroup" data-iconpos="right" data-theme="a">
@@ -139,11 +157,11 @@
                             </div>
                             <div class="ui-field-contain">
                                 <label for="password_reg">Contrase&ntilde;a:</label>
-                                <input name="password" id="password_reg" value="" autocomplete="off" type="password" required>
+                                <input name="password" id="password_reg" autocomplete="off" type="password" required>
                             </div>
                             <div class="ui-field-contain">
                                 <label for="password_confirm_reg">Repetir Contrase&ntilde;a:</label>
-                                <input name="password_confirm" id="password_confirm_reg" value="" autocomplete="off" type="password" required>        
+                                <input name="password_confirm" id="password_confirm_reg" autocomplete="off" type="password" required>
                             </div>
                             <br>
                             <button class="ui-btn ui-btn-c ui-corner-all" type="submit">Enviar</button>
@@ -298,6 +316,15 @@
                 </div>
             </div>
             <!-- <div data-role="footer"></div> -->
+        </div>
+
+        <div id="dialog_page" data-role="page" data-dialog="true" data-close-btn="none">
+            <div id="dialog_header" data-theme="b" data-role="header"></div>
+            <div data-theme="d" role="main" class="ui-content">
+                <div class="ui-grid-solo">
+                    <div id="dialog_content" class="ui-block-a"></div>
+                </div>
+            </div>
         </div>
     </body>
 </html>

@@ -293,7 +293,7 @@ function login(correo, password, user_info){
 				});
 
 				if(val_up.length > 0){
-					updateTable('cuentas_sgtusuario', col_up, val_up, id_usuario);
+					updateTable('cuentas_sgtusuario', col_up, val_up, 'id', id_usuario);
 				}
 
 				load_profile_info(row);
@@ -380,7 +380,7 @@ function insertTable(table, cols, values){
 	}, errorCB, successCB);
 }
 
-function updateTable(table, cols, values, id){
+function updateTable(table, cols, values, cond, cond_val){
 	str_cols = '';
 	for(i = 0; i < cols.length; i++){
 		if(i > 0)
@@ -389,10 +389,10 @@ function updateTable(table, cols, values, id){
 			str_cols = str_cols + cols[i] + "=?";
 	}
 
-	console.log('UPDATE '+table+' SET '+str_cols+' WHERE id = '+id+';');
+	console.log('UPDATE '+table+' SET '+str_cols+' WHERE '+cond+' = '+cond_val+';');
 	console.log(values);
 	db.transaction(function(tx){
-		tx.executeSql('UPDATE '+table+' SET '+str_cols+' WHERE id = '+id+';', values,
+		tx.executeSql('UPDATE '+table+' SET '+str_cols+' WHERE '+cond+' = '+cond_val+';', values,
 		function(){
 			console.log("registro actualizado exitosamente!");
 		},

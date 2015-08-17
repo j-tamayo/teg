@@ -3,6 +3,8 @@ var page_sol = 1;
 
 $(document).ready(function(){
     init_db();  // cargando BD Móvil...
+
+    $('#get_password_form').hide();
     
     /* Inicializando elementos en las interfaces de la APP Móvil */
     $(".datepicker").datepicker({
@@ -143,7 +145,7 @@ $(document).ready(function(){
     $("#registro_form").submit(function(event){
         event.preventDefault();
         formData = $(this).serializeArray();
-        console.log(formData);
+
         data = {};
         $(formData).each(function(index, obj){
             data[obj.name] = obj.value;
@@ -169,7 +171,7 @@ $(document).ready(function(){
     $("#login_form").submit(function(event){
         event.preventDefault();
         formData = $(this).serializeArray();
-        console.log(formData);
+
         data = {};
         $(formData).each(function(index, obj){
             data[obj.name] = obj.value;
@@ -192,10 +194,44 @@ $(document).ready(function(){
         });
     });
 
+
+    $("#get_password_form").submit(function(event){
+        event.preventDefault();
+        formData = $(this).serializeArray();
+
+        data = {};
+        $(formData).each(function(index, obj){
+            data[obj.name] = obj.value;
+        });
+
+        $.post("http://192.168.1.101:8000/api/recuperar-clave/", data)
+        .done(function(json){
+            updateTable('cuentas_sgtusuario', ['password'], [json['clave_temporal']], 'correo', '"'+data['correo']+'"');
+
+            $('#get_password_form').hide('puff');
+            $('#login_form').show('puff');
+            $('#recordar_contraseña').show('puff');
+
+            $('#dialog_header').html('<h1>Aviso</h1>');
+            $('#dialog_content').html('<p align="justify">'+json['mensaje']+'</p>\
+                                        <br>\
+                                        <a href="#login_page" data-transition="pop" class="ui-btn ui-btn-b ui-corner-all back_btn">Aceptar</a>');
+            
+            $.mobile.changePage('#dialog_page', {
+                changeHash: false, 
+                transition: 'pop'
+            });
+        })
+        .fail(function(json) {
+            console.log("Error de carga!");
+            console.log(json.responseText);
+        });
+    });
+
     $("#reclamo_form").submit(function(event){
         event.preventDefault();
         formData = $(this).serializeArray();
-        console.log(formData);
+
         data = {};
         $(formData).each(function(index, obj){
             data[obj.name] = obj.value;
@@ -345,9 +381,15 @@ $(document).ready(function(){
     });
 
     $(document).on("click", "#recordar_contraseña", function(){
+        $(this).hide('puff');
+        $('#login_form').hide('puff');
+        $('#get_password_form').show('puff');
+    });
 
-        /* Espacio reservado para recuperar contraseña por parte del usuario */
-
+    $(document).on("click", "#volver_login", function(){
+        $('#get_password_form').hide('puff');
+        $('#login_form').show('puff');
+        $('#recordar_contraseña').show('puff');
     });
 });
 
