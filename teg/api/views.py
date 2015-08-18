@@ -128,10 +128,73 @@ class LoginUser(APIView):
 	"""
 	List all snippets, or create a new snippet.
 	"""
-	def get(self, request, format = None):
-		usuarios = SgtUsuario.objects.all()
-		serializer = SgtUsuarioSerializer(usuarios, many=True)
-		return Response(serializer.data)
+	def get(self, request, pk, format = None):
+		# usuarios = SgtUsuario.objects.all()
+		# serializer = SgtUsuarioSerializer(usuarios, many=True)
+		# return Response(serializer.data)
+
+		serializer = request.data
+		print "HHHH",pk
+		respuesta = {}
+		data = []
+
+		if pk:
+			usuario = SgtUsuario.objects.filter(id=pk)
+			notificacion_usuario = NotificacionUsuario.objects.filter(usuario__id=pk, borrada=False)
+			if usuario:
+				# user_serializer = SgtUsuarioSerializer(usuario, many=True)
+				# data.append({'cuentas_sgtusuario': user_serializer.data})
+				
+				#poliza = Poliza.objects.filter(usuario = usuario)
+				#poliza_serializer = PolizaSerializer(poliza, many=True)
+				#respuesta['sgt_poliza'] = poliza_serializer.data
+				solicitudes = SolicitudInspeccion.objects.filter(usuario = usuario)
+				solicitudes_serializer = SolicitudInspeccionSerializer(solicitudes, many=True)
+				data.append({'sgt_solicitudinspeccion': solicitudes_serializer.data})
+				#respuesta['sgt_solicitudinspeccion'] = solicitudes_serializer.data
+				numero_orden = NumeroOrden.objects.filter(solicitud_inspeccion__in = solicitudes)
+				numero_orden_serializer = NumeroOrdenSerializer(numero_orden, many=True)
+				data.append({'sgt_numeroorden': numero_orden_serializer.data})
+				#respuesta['sgt_numeroorden'] = numero_orden_serializer.data
+				notificacion = Notificacion.objects.filter(id__in=notificacion_usuario.values_list('notificacion_id', flat=True))
+				notificacion_serializer = NotificacionSerializer(notificacion, many=True)
+				data.append({'sgt_notificacion': notificacion_serializer.data})
+				#respuesta['sgt_notificacion'] = notificacion_serializer.data
+				notificacion_usuario_serializer = NotificacionUsuarioSerializer(notificacion_usuario, many=True)
+				data.append({'sgt_notificacionusuario': notificacion_usuario_serializer.data})
+				#respuesta['sgt_notificacionusuario'] = notificacion_usuario_serializer.data
+				encuestas = Encuesta.objects.filter(id__in=notificacion.exclude(encuesta=None).values_list('encuesta_id', flat=True))
+				encuestas_serializer = EncuestaSerializer(encuestas, many=True)
+				data.append({'sgt_encuesta': encuestas_serializer.data})
+
+				preguntas = Pregunta.objects.filter(id__in=encuestas.values_list('preguntas', flat=True))
+				preguntas_serializer = PreguntaSerializer(preguntas, many=True)
+				data.append({'sgt_pregunta': preguntas_serializer.data})
+
+				encuestas_preguntas_serializer = []
+				for e in encuestas:
+					encuestas_preguntas = e.preguntas.through.objects.filter(encuesta_id=e.id, pregunta_id__in=e.preguntas.values_list('id', flat=True))
+					encuestas_preguntas_serializer += EncuestaPreguntaSerializer(encuestas_preguntas, many=True).data
+				data.append({'sgt_encuesta_preguntas': encuestas_preguntas_serializer})
+
+				preguntas_aux = preguntas.exclude(tipo_respuesta__codigo='RESP_INDEF')
+				encuestas_aux = encuestas.filter(preguntas__in=preguntas_aux)
+				valor_pregunta_encuesta = ValorPreguntaEncuesta.objects.filter(encuesta__in=encuestas_aux, pregunta__in=preguntas_aux)
+				valor_pregunta_encuesta_serializer = ValorPreguntaEncuestaSerializer(valor_pregunta_encuesta, many=True)
+
+				valores = ValorPosible.objects.filter(id__in=valor_pregunta_encuesta.values_list('valor', flat=True))
+				valores_serializer = ValorPosibleSerializer(valores, many=True)
+
+				data.append({'sgt_valorposible': valores_serializer.data})
+				data.append({'sgt_valorpreguntaencuesta': valor_pregunta_encuesta_serializer.data})
+				
+				return Response(data, status=status.HTTP_200_OK)
+
+			else:
+				raise Http404
+		else:
+			respuesta['errores'] = {'causa':'No se envía nada'}
+			return Response(respuesta, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 	def post(self, request, format = None):
 		serializer = LoginSerializer(data=request.data)

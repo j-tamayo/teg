@@ -7,6 +7,7 @@ urlpatterns = [
     # url(r'^snippets/(?P<pk>[0-9]+)/$', views.snippet_detail),
     url(r'^usuarios/$', views.Usuarios.as_view()),
     url(r'^usuarios-edit/$', views.UsuariosEdit.as_view()),
+    url(r'^login/(?P<pk>[0-9]+)$', views.LoginUser.as_view()),
     url(r'^login/$', views.LoginUser.as_view()),
     url(r'^estados/$', views.Estados.as_view()),
     url(r'^municipios/$', views.Municipios.as_view()),
