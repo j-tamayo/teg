@@ -33,7 +33,7 @@ class Usuarios(APIView):
 
 	def post(self, request, format = None):
 		serializer = SgtUsuarioSerializer(data=request.data)
-		if serializer.is_valid():
+		if serializer.is_valid():	
 			registro = serializer.data
 			rol_cliente = RolSgt.objects.get(codigo='cliente')
 			registro['municipio'] = Municipio.objects.filter(id=registro['municipio']).first()
@@ -66,6 +66,62 @@ class Usuarios(APIView):
 			#serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UsuariosEdit(APIView):
+	"""
+	Editar información de usuario
+	"""
+	def post(self, request, format = None):
+		mensaje = {}
+		data = request.data
+
+		if data: 	#queda pendiente validar los password...
+			data['municipio'] = Municipio.objects.filter(id=data['municipio']).first()
+			usuario = SgtUsuario.objects.filter(id=data['usuario']).first()
+
+			if usuario.nombres != data['nombres']:
+				usuario.nombres = data['nombres']
+
+			if usuario.apellidos != data['apellidos']:
+				usuario.apellidos = data['apellidos']
+
+			if usuario.cedula != data['cedula']:
+				usuario.cedula = data['cedula']
+
+			if usuario.municipio.id != data['municipio'].id:
+				usuario.municipio = data['municipio']
+
+			if usuario.direccion != data['direccion']:
+				usuario.direccion = data['direccion']
+
+			if usuario.codigo_postal != data['codigo_postal']:
+				usuario.codigo_postal = data['codigo_postal']
+ 			
+ 			if usuario.correo != data['correo']:
+				usuario.correo = data['correo']
+
+			if usuario.fecha_nacimiento != data['fecha_nacimiento']:
+				usuario.fecha_nacimiento = data['fecha_nacimiento']
+
+			if usuario.telefono_local != data['telefono_local']:
+				usuario.telefono_local = data['telefono_local']
+
+			if usuario.telefono_movil != data['telefono_movil']:
+				usuario.telefono_movil = data['telefono_movil']
+
+			if usuario.sexo != data['sexo']:
+				usuario.sexo = data['sexo']
+
+			usuario.set_password(data['password'])
+			usuario.save()
+
+			mensaje['mensaje'] = 'Se han actualizado los datos del perfil exitosamente'
+			resp_status = status.HTTP_200_OK
+		else:
+			mensaje['mensaje'] = 'No se proporcionaron los datos necesarios para realizar esta acción'
+			resp_status = status.HTTP_500_INTERNAL_SERVER_ERROR
+
+		return Response(mensaje, status=resp_status)
 
 
 class LoginUser(APIView):
@@ -211,6 +267,9 @@ class UserInfo(APIView):
 			usuario = SgtUsuario.objects.filter(id=serializer['id'])
 			notificacion_usuario = NotificacionUsuario.objects.filter(usuario__id=serializer['id'], borrada=False)
 			if usuario:
+				# user_serializer = SgtUsuarioSerializer(usuario, many=True)
+				# data.append({'cuentas_sgtusuario': user_serializer.data})
+				
 				#poliza = Poliza.objects.filter(usuario = usuario)
 				#poliza_serializer = PolizaSerializer(poliza, many=True)
 				#respuesta['sgt_poliza'] = poliza_serializer.data

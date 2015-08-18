@@ -1,8 +1,8 @@
 /* Variables Globales Auxiliares */
+var id_usuario = -1;
 var user_title = '';
 var next_page = '';
 var next_page_trans = '';
-var id_usuario = -1;
 var load_data_id = 0;
 var flag_refresh_solicitudes = false;
 var flag_refresh_notificaciones = false;
@@ -35,6 +35,7 @@ function init_data(){
 
 	if(load_data_id == 2){
 		console.log('Inicializando perfil del usuario...');
+		$("#profile_page").bind("pagebeforeshow", load_profile_info());
 		$("#request_page").bind("pagebeforeshow", load_solicitudes_inspeccion());
 		$("#mail_page").bind("pagebeforeshow", load_notificaciones());
 
@@ -42,16 +43,6 @@ function init_data(){
 			changeHash: false, 
 			transition: next_page_trans
 		});
-	}
-
-	if(load_data_id == 3){
-		console.log('Cargando nueva solicitud...');
-		$("#request_page").bind("pagebeforeshow", load_solicitudes_inspeccion());
-
-        $.mobile.changePage('#request_page', {
-            changeHash: false,
-            transition: 'fade'
-        });
 	}
 }
 
@@ -295,8 +286,6 @@ function login(correo, password, user_info){
 				if(val_up.length > 0){
 					updateTable('cuentas_sgtusuario', col_up, val_up, 'id', id_usuario);
 				}
-
-				load_profile_info(row);
 	    	}
 	    	else{
 	    		if(user_info){
@@ -305,8 +294,6 @@ function login(correo, password, user_info){
 	    			insertTable('cuentas_sgtusuario', 
 	    						['id', 'password', 'apellidos', 'cedula', 'correo', 'direccion', 'fecha_nacimiento', 'nombres', 'sexo', 'telefono_local', 'telefono_movil', 'municipio', 'codigo_postal'],
 	    						[user_info['id'], user_info['password'], user_info['apellidos'], user_info['cedula'], user_info['correo'], user_info['direccion'], user_info['fecha_nacimiento'], user_info['nombres'], user_info['sexo'], user_info['telefono_local'], user_info['telefono_movil'], user_info['municipio'], user_info['codigo_postal']]);
-	    			
-	    			load_profile_info(user_info);
 	    		}
 	    		else{
 	    			console.log("Usuario inválido...");
@@ -500,24 +487,32 @@ function fill_tipos_inspeccion(){
 	}, errorCB, successCB);
 }
 
-function load_profile_info(user_info){
-	user_title = user_info['nombres'];
+function load_profile_info(){
 	//$("#user_title").html('Bienvenido<br>'+user_info['nombres']);
 	db.transaction(function(tx){
-		tx.executeSql('SELECT e.nombre as estado, m.nombre as municipio FROM sgt_estado e, sgt_municipio m WHERE e.id = m.estado AND m.id = '+user_info['municipio']+';', [], 
-	    function(tx, results){
-	    	row = results.rows.item(0);
-	    	$("#profile_page").children(".ui-content").html('<h3 class="text-success" style="text-align: center;">Informaci&oacute;n del usuario</h3>\
-				<p>Nombre: '+user_info['nombres']+'</p>\
-				<p>Apellido: '+user_info['apellidos']+'</p>\
-				<p>C&eacute;dula: '+user_info['cedula']+'</p>\
-				<p>Estado: '+row['estado']+'</p>\
-				<p>Municipio: '+row['municipio']+'</p>\
-				<p>Direcci&oacute;n: '+user_info['direccion']+'</p>\
-				<p>Correo: '+user_info['correo']+'</p>\
-				<hr>\
-				<h3 class="text-success" style="text-align: center;">El usuario no posee<br>póliza asociada</h3>'	
-			);
+		tx.executeSql('SELECT * FROM cuentas_sgtusuario WHERE id = '+id_usuario+';', [], 
+		function(tx, results){
+			user_info = results.rows.item(0);
+			user_title = user_info['nombres'];
+			tx.executeSql('SELECT e.nombre as estado, m.nombre as municipio FROM sgt_estado e, sgt_municipio m WHERE e.id = m.estado AND m.id = '+user_info['municipio']+';', [], 
+	    	function(tx, results){
+		    	row = results.rows.item(0);
+		    	$("#profile_page").children(".ui-content").html('<h3 class="text-success" style="text-align: center;">Informaci&oacute;n del usuario</h3>\
+					<p>Nombre: '+user_info['nombres']+'</p>\
+					<p>Apellido: '+user_info['apellidos']+'</p>\
+					<p>C&eacute;dula: '+user_info['cedula']+'</p>\
+					<p>Estado: '+row['estado']+'</p>\
+					<p>Municipio: '+row['municipio']+'</p>\
+					<p>Direcci&oacute;n: '+user_info['direccion']+'</p>\
+					<p>Correo: '+user_info['correo']+'</p>\
+					<hr>\
+					<h3 class="text-success" style="text-align: center;">El usuario no posee<br>póliza asociada</h3>'	
+				);
+			},
+			function(tx, err){
+				console.log("error");
+				throw new Error(err.message);
+			});
 	    },
 		function(tx, err){
 			console.log("error");
@@ -784,4 +779,62 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 	    });
     });
 }
-					
+
+function load_user_edit_info(next_page, trans){
+	db.transaction(function(tx){
+        tx.executeSql('SELECT u.nombres, u.apellidos, u.sexo, u.cedula, u.correo, u.direccion, u.fecha_nacimiento, u.telefono_local, u.telefono_movil, m.estado , u.municipio, u.codigo_postal FROM cuentas_sgtusuario u, sgt_municipio m WHERE u.municipio = m.id AND u.id = '+id_usuario+';', [], 
+        function(tx, results){
+        	row = results.rows.item(0);
+
+        	$('#nombres_reg').val(row['nombres']);
+        	$('#apellidos_reg').val(row['apellidos']);
+        	$('#cedula_reg').val(row['cedula']);
+        	$('#direccion_reg').val(row['direccion']);
+        	$('#codigo_postal_reg').val(row['codigo_postal']);
+        	$('#telefono_local_reg').val(row['telefono_local']);
+        	$('#telefono_movil_reg').val(row['telefono_movil']);
+        	$('#correo_reg').val(row['correo']);
+
+        	if(row['sexo'] == '0')
+        		$('#sexo_reg0').attr('checked', 'checked').checkboxradio('refresh');
+        	if(row['sexo'] == '1')
+        		$('#sexo_reg1').attr('checked', 'checked').checkboxradio('refresh');
+
+        	fecha_nacimiento_aux = row['fecha_nacimiento'];
+        	fecha_nacimiento_aux = fecha_nacimiento_aux.split('-');
+        	fecha_nacimiento_aux = fecha_nacimiento_aux[2] + '/' + fecha_nacimiento_aux[1] + '/' + fecha_nacimiento_aux[0];
+        	$('#fecha_nacimiento_reg').val(fecha_nacimiento_aux);
+
+        	estado_aux = row['estado'];
+        	$('#estado_reg').val(estado_aux).selectmenu('refresh');
+
+        	municipio_aux = row['municipio'];
+
+        	tx.executeSql('SELECT m.id, m.nombre FROM sgt_estado e, sgt_municipio m WHERE e.id = m.estado AND e.id = '+estado_aux+';', [],
+			function(tx, results){
+				num = results.rows.length;
+		    	aux = '<option value="">---Seleccione un municipio---</option>';
+
+				for(i = 0; i < num; i++){
+					row = results.rows.item(i);
+					aux += '<option value="'+row['id']+'">'+row['nombre']+'</option>';
+				}
+
+				$('#municipio_reg').html(aux);
+				$('#municipio_reg').val(municipio_aux);
+				$('#municipio_reg').selectmenu('refresh');
+
+				$.mobile.changePage(next_page, {
+			        changeHash: false,
+			        transition: trans
+			    });
+			},
+			function(tx, err){
+				throw new Error(err.message);
+			});
+		},
+        function(tx, err){
+            throw new Error(err.message);
+        });
+    }, errorCB, successCB);
+}

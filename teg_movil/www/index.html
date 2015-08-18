@@ -91,13 +91,14 @@
 
         <div id="register_page" class="init_data" data-role="page" data-theme="d">
             <div data-role="header" data-theme="b">
-                <a href="#login_page" data-transition="flip" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-back ui-corner-all back_btn">Volver</a>
+                <a id="register_back_btn" href="#login_page" data-transition="flip" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-back ui-corner-all back_btn">Volver</a>
                 <h1>Registro de Usuario</h1>
             </div>
             <div role="main" class="ui-content">
                 <div class="ui-grid-solo">
                     <div class="ui-block-a">
                         <form id="registro_form">
+                            <input id="usuario_reg" name="usuario" type="hidden">
                             <div class="ui-field-contain">
                                 <label for="nombres_reg">Nombres:</label>
                                 <input name="nombres" id="nombres_reg" type="text" required>
@@ -145,7 +146,7 @@
                             <div class="ui-field-contain">
                                 <fieldset data-role="controlgroup" data-iconpos="right" data-theme="a">
                                     <legend>Sexo:</legend>
-                                    <input name="sexo" id="sexo_reg0" value="0" checked="checked" type="radio" required>
+                                    <input name="sexo" id="sexo_reg0" value="0" type="radio" required>
                                     <label for="sexo_reg0">Masculino</label>
                                     <input name="sexo" id="sexo_reg1" value="1" type="radio">
                                     <label for="sexo_reg1">Femenino</label>
@@ -173,14 +174,31 @@
         </div>
         
         <div id="profile_header"></div>
+        
+        <!-- /panel -->
+        <div id="nav-panel">
+            <h2 class="text-success">Opciones:</h2>
+            <br>
+            <ul id="option_list">
+                <li data-icon="refresh">
+                    <a href="#">Refrescar</a>
+                </li>
+                <li data-icon="edit">
+                    <a id="edit_profile_option" href="#register_page" data-transition="flip">Editar perfil</a>
+                </li>
+                <li>
+                    <a href="#">Cerrar sesi&oacute;n</a>
+                </li>
+            </ul>
+            <br><br>
+            <a align="center" data-rel="close" class="ui-btn ui-shadow ui-corner-all ui-btn-a ui-icon-delete ui-btn-icon-right">Cerrar</a>
+        </div>
 
         <div data-url="profile_page" data-role="page" id="profile_page" class="multi_page" data-dom-cache="true" data-theme="d" data-next="request_page">
-            <div role="main" class="ui-content">
-            </div>
-            <!-- <div data-role="footer"></div> -->
+            <div role="main" class="ui-content"></div>
         </div>
 
-        <div data-url="request_page" data-role="page" id="request_page" class="multi_page" data-dom-cache="true" data-theme="d" data-prev="profile_page" data-next="mail_page">
+        <div data-url="request_page" data-role="page" id="request_page" class="multi_page" data-dom-cache="true" data-theme="c" data-prev="profile_page" data-next="mail_page">
             <div id="request_list_content" role="main" class="ui-content"></div>
             <div id="request_footer" data-role="footer" data-position="fixed" data-theme="b">
                 <div class="ui-grid-b" align="center">

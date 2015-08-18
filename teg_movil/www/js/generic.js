@@ -6,6 +6,17 @@ $(document).ready(function(){
 
     $('#get_password_form').hide();
     
+    $('#nav-panel').panel({
+        theme: 'c',
+        positionFixed: true,
+        position: 'right',
+        display: 'push'
+    });
+
+    $('#option_list').listview({
+        theme: 'c',
+    });
+
     /* Inicializando elementos en las interfaces de la APP Móvil */
     $(".datepicker").datepicker({
         changeYear: true,
@@ -105,10 +116,20 @@ $(document).ready(function(){
             prev_page = '#' + data.prevPage[0].id;
             from_page = '#' + data.options.fromPage[0].id;
 
-            if($(prev_page).hasClass("multi_page") && data.options.direction == "back"){
-                
+            //data.options.direction == "back" //just in case... xD
+            if($(prev_page).hasClass("multi_page") && to == "#login_page"){
                 /* Espacio Reservado para el Logout de la APP Móvil */
+                id_usuario = -1;
+            }
 
+            if($(prev_page).hasClass("multi_page") && to == "#register_page"){
+                $('#usuario_reg').val(id_usuario);
+                $('#register_back_btn').attr('href', '#profile_page');
+            }
+
+            if(from_page == '#login_page' && to == "#register_page"){
+                $('#usuario_reg').val('');
+                $('#register_back_btn').attr('href', '#login_page');
             }
 
             if(from_page == "#request_page" && (to == "#mail_page" ||  to == "#profile_page")){
@@ -121,6 +142,10 @@ $(document).ready(function(){
                 $("#request_form_page2").hide();
                 $("#request_form_page3").hide();
                 $("#prev_request_page").hide();
+            }
+
+            if(prev_page == "#register_page" && $(to).hasClass("multi_page")){
+                inject_toolbar(true);
             }
 
             if((from_page == "#create_request_page" || from_page == "#claim_page") && to == "#request_page"){
@@ -138,7 +163,7 @@ $(document).ready(function(){
         }
     });
 
-    $(document).on("pagebeforeshow", "#mail_content_page, #create_request_page, #claim_page", function(){
+    $(document).on("pagebeforeshow", "#mail_content_page, #create_request_page, #claim_page, #register_page", function(){
         inject_toolbar(false);
     });
 
@@ -146,21 +171,49 @@ $(document).ready(function(){
         event.preventDefault();
         formData = $(this).serializeArray();
 
+        col_up = [];
+        val_up = [];
+        flag = false;
+        url = '/api/usuarios/';
+        if($('#usuario_reg').val()){
+            flag = true;
+            url = '/api/usuarios-edit/';
+        }
+
         data = {};
         $(formData).each(function(index, obj){
             data[obj.name] = obj.value;
+            if(flag){
+                if(obj.name != 'usuario' && obj.name != 'estado' && obj.name != 'fecha_nacimiento' && obj.name != 'password_confirm'){
+                    col_up.push(obj.name);
+                    val_up.push(obj.value);
+                }
+            }
         });
 
         date_parts = data['fecha_nacimiento'].split('/');
         data['fecha_nacimiento'] = date_parts[2] + '-' + date_parts[1] + '-' + date_parts[0];
+        if(flag){
+            col_up.push('fecha_nacimiento');
+            val_up.push(data['fecha_nacimiento']);
+        }
 
-        $.post("http://192.168.1.101:8000/api/usuarios/", data)
+        $.post('http://192.168.1.101:8000'+url, data)
         .done(function(json){
             console.log("Usuario guardados exitosamente!");
-            $.mobile.changePage("#login_page", {
-                changeHash: false, 
-                transition: "flip"
-            });
+            ref = $('#register_back_btn').attr('href');
+            if(flag){
+                updateTable('cuentas_sgtusuario', col_up, val_up, 'id', id_usuario);
+                next_page = ref;
+                next_page_trans = 'flip';
+                load_user_tables();
+            }
+            else{
+                $.mobile.changePage(ref, {
+                    changeHash: false, 
+                    transition: "flip"
+                });
+            }
         })
         .fail(function(json) {
             console.log("Error de carga!");
@@ -193,7 +246,6 @@ $(document).ready(function(){
             }
         });
     });
-
 
     $("#get_password_form").submit(function(event){
         event.preventDefault();
@@ -391,6 +443,14 @@ $(document).ready(function(){
         $('#login_form').show('puff');
         $('#recordar_contraseña').show('puff');
     });
+
+    $(document).on("click", "#edit_profile_option", function(){
+        event.preventDefault();
+        next_page = $(this).attr('href');
+        trans = $(this).attr('data-transition');
+        load_user_edit_info(next_page, trans);
+    });
+
 });
 
 /* Funciones auxiliares definidas utilizadas por los eventos dentro de la APP móvil */
@@ -399,7 +459,7 @@ function inject_toolbar(inject_flag){
         $('#profile_header').attr('data-role','header');
         $('#profile_header').html('<div class="ui-body-b ui-body">\
                     <h3 id="user_title">Bienvenido<br>'+user_title+'</h3>\
-                    <a href="#" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>\
+                    <a href="#nav-panel" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>\
                     <div data-role="navbar">\
                         <ul id="nav">\
                             <li><a target="profile_page" data-icon="user">Ver Perfil</a></li>\
