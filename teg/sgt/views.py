@@ -1722,6 +1722,37 @@ class AdminEstadisticasEncuestas(View):
 		return render(request, 'admin/estadisticas_encuestas.html', context)
 
 
+class AdminEncuestasRespondidas(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEncuestasRespondidas, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Bandeja para ver todas las encuesta resueltas"""
+		usuario = request.user
+
+		encuestas_resueltas = NotificacionUsuario.encuestas_resueltas({})
+
+		paginator = Paginator(encuestas_resueltas, 10, request=request)
+		try:
+			page = request.GET.get('page', 1)
+			encuestas_resueltas = paginator.page(page)
+		except PageNotAnInteger:
+			encuestas_resueltas = paginator.page(1)
+			page = 0
+		except EmptyPage:
+			encuestas_resueltas = paginator.page(paginator.num_pages)
+
+		context = {
+			'admin': True,
+			'encuestas_resueltas': encuestas_resueltas,
+			'seccion_reporte': True,
+			'usuario': usuario
+		}
+
+		return render(request, 'admin/encuestas_respondidas.html', context)
+
+
 class BandejaTaquilla(View):
 	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):

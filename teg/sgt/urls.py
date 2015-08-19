@@ -199,9 +199,15 @@ urlpatterns = \
         ),
 
         url(
-            r'^admin/estadistcias-encuestas$',
+            r'^admin/estadisticas-encuestas$',
             views.AdminEstadisticasEncuestas.as_view(),
             name='admin_estadisticas_encuestas'
+        ),
+
+        url(
+            r'^admin/encuestas-respondidas$',
+            views.AdminEncuestasRespondidas.as_view(),
+            name='admin_encuestas_respondidas'
         ),
 
         url(

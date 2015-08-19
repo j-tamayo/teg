@@ -73,6 +73,7 @@ class SolicitudInspeccion(models.Model):
 	tipo_inspeccion = models.ForeignKey(TipoInspeccion)
 	estatus = models.ForeignKey('Estatus')
 	usuario = models.ForeignKey(USER_MODEL)
+	borrada = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return u'%s' % self.tipo_inspeccion.nombre
@@ -225,6 +226,13 @@ class Encuesta(models.Model):
 
 		return matriz
 
+	@staticmethod
+	def encuestas_resueltas(filtros):
+		"""Método que retorna las encuestas respondidas por los usuarios"""
+		condiciones = []
+
+		encuestas = Encuesta.objects.filter(reduce(operator.and_,condiciones))
+
 
 
 class TipoRespuesta(models.Model):
@@ -339,15 +347,26 @@ class Notificacion(models.Model):
 		return u'%s' % self.mensaje
 
 
+
 class NotificacionUsuario(models.Model):
 	notificacion = models.ForeignKey(Notificacion, related_name='notificacion')
 	usuario = models.ForeignKey(USER_MODEL, related_name='usuario')
 	fecha_creacion = models.DateField(auto_now_add=True)
 	leida = models.BooleanField(default=False)
 	borrada = models.BooleanField(default=False)
+	encuesta_respondida = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return u'%s <- %s' % (self.usuario, self.notificacion)
+
+	@staticmethod
+	def encuestas_resueltas(filtros):
+		"""Método que retorna las encuestas respondidas por los usuarios"""
+		condiciones = []
+		notificaciones = NotificacionUsuario.objects.filter(notificacion__encuesta__isnull = False, encuesta_respondida = True)
+
+		return notificaciones
+
 
 
 class TipoNotificacion(models.Model):

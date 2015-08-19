@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+{% include 'cuentas/modales_usuario.html' %}
+<div class="container">
+	<div class="row">
+		<h4>Encuestas respondidas</h4>
+	</div> <!-- / .row -->
+	<br>
+	<div class="row">
+		<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+			<div class="panel panel-default">
+				<div class="panel-heading" role="tab" id="headingOne">
+					<div class="row">
+						<a class="btn btn-primary col-xs-2 col-xs-offset-10" data-toggle="collapse" data-parent="#accordion" href="#filtros_cont" aria-expanded="true" aria-controls="collapseOne">
+						  Filtros <i class="fa fa-filter"></i> 
+						</a>
+					</div> <!-- / .row -->
+				</div> <!-- / .panel-heading -->
+				<div id="filtros_cont" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+					<div class="panel-body">
+						<form action="{% url 'admin_reportes' %}" method="POST">
+						{% csrf_token %}
+						<div class="row">
+							<div class="col-xs-3">
+								<label>Nombres de usuario</label>
+							</div>
+							<div class="col-xs-3">
+								<label>Apellidos de usuario</label>
+							</div>
+							<div class="col-xs-3">
+								<label>Tipo de encuesta</label>
+							</div>
+							<div class="col-xs-3">
+								<label>Encuesta</label>
+							</div>
+						</div>
+						<br>
+						<div class="row">
+							<div class="col-xs-3">
+								<input type="text" name="usuario_nombres" class="form-control">
+							</div>
+							<div class="col-xs-3">
+								<input type="text" name="usuario_apellidos" class="form-control">
+							</div>
+							<div class="col-xs-3">
+								<select name="tipo_encuesta" class="form-control">
+									<option value="">--Seleccionar--</option>
+								</select>
+							</div>
+							<div class="col-xs-3">
+								<select name="encuesta" class="form-control">
+									<option value="">--Seleccionar--</option>
+								</select>
+							</div>
+						</div>
+						</form>
+					</div> <!-- / .panel-body -->
+				</div> <!-- / .panel-collapse #filtros_cont -->
+			</div> <!-- / .panel-default -->
+		</div> <!-- / .panel-group -->
+	</div>
+	{% if encuestas_resueltas.object_list %}
+	<table class="table">
+		<thead>
+			<th>Usuario</th>
+			<th>Tipo de encuesta</th>
+			<th>Encuesta</th>
+			<th>Opciones</th>
+		</thead>
+		<tbody>
+			{% for e in encuestas_resueltas.object_list %}
+			<tr>
+				<td>{{e.usuario.get_full_name}}</td>
+				<td>{{e.notificacion.encuesta.tipo_encuesta}}</td>
+				<td>{{e.notificacion.encuesta}}</td>
+				<td>
+					<a href="#" class="btn btn-primary btn-sm">
+						<i class="fa fa-eye"></i>
+					</a>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% else %}
+	<div class="row">
+		<div class="alert alert-warning text-center">
+			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+			<span class="sr-only">Error:</span>
+			No hay encuestas que mostrar
+		</div>
+	</div> <!-- / .row -->
+	{% endif %}
+</div> <!-- / .container -->
+{% endblock %}
