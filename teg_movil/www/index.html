@@ -172,8 +172,27 @@
             </div>
             <!-- <div data-role="footer"></div> -->
         </div>
-        
+
         <div id="profile_header"></div>
+
+        <!-- Panel -->
+        <div id="nav-panel" data-role="panel">
+            <h2 class="text-success">Opciones:</h2>
+            <br>
+            <ul id="option_list">
+                <li data-icon="refresh">
+                    <a id="refresh_profile_option" href="#">Refrescar</a>
+                </li>
+                <li data-icon="edit">
+                    <a id="edit_profile_option" href="#register_page" data-transition="flip">Editar perfil</a>
+                </li>
+                <li>
+                    <a id="logout_option" href="#">Cerrar sesi&oacute;n</a>
+                </li>
+            </ul>
+            <br><br>
+            <a align="center" data-rel="close" class="ui-btn ui-shadow ui-corner-all ui-btn-a ui-icon-delete ui-btn-icon-right">Cerrar</a>
+        </div>
 
         <div data-url="profile_page" data-role="page" id="profile_page" class="multi_page" data-dom-cache="true" data-theme="d" data-next="request_page">
             <div id="profile_content" role="main" class="ui-content"></div>
@@ -325,25 +344,5 @@
                 </div>
             </div>
         </div>
-
-        <!-- Panel -->
-        <div id="nav-panel" class="single_page">
-            <h2 class="text-success">Opciones:</h2>
-            <br>
-            <ul id="option_list">
-                <li data-icon="refresh">
-                    <a id="refresh_profile_option" href="#">Refrescar</a>
-                </li>
-                <li data-icon="edit">
-                    <a id="edit_profile_option" href="#register_page" data-transition="flip">Editar perfil</a>
-                </li>
-                <li>
-                    <a id="logout_option" href="#">Cerrar sesi&oacute;n</a>
-                </li>
-            </ul>
-            <br><br>
-            <a align="center" data-rel="close" class="ui-btn ui-shadow ui-corner-all ui-btn-a ui-icon-delete ui-btn-icon-right">Cerrar</a>
-        </div>
-
     </body>
 </html>

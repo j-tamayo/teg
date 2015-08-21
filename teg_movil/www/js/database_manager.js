@@ -817,9 +817,9 @@ function load_user_edit_info(next_page, trans){
         	$('#correo_reg').val(row['correo']);
 
         	if(row['sexo'] == '0')
-        		$('#sexo_reg0').attr('checked', 'checked') //.checkboxradio('refresh');
+        		$('#sexo_reg0').attr('checked', 'checked').trigger('create'); //.checkboxradio('refresh');
         	if(row['sexo'] == '1')
-        		$('#sexo_reg1').attr('checked', 'checked') //.checkboxradio('refresh');
+        		$('#sexo_reg1').attr('checked', 'checked').trigger('create'); //.checkboxradio('refresh');
 
         	fecha_nacimiento_aux = row['fecha_nacimiento'];
         	fecha_nacimiento_aux = fecha_nacimiento_aux.split('-');

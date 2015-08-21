@@ -145,31 +145,47 @@ $(document).ready(function(){
                 $('#nav-panel').hide();
             }
 
-            if(prev_page == "#register_page" && $(to).hasClass("multi_page")){
-                inject_toolbar(true);
-            }
-
-            if((from_page == "#create_request_page" || from_page == "#claim_page") && to == "#request_page"){
-                inject_toolbar(true);
-            }
-
-            if(from_page == "#mail_content_page" && to == "#mail_page"){
-                inject_toolbar(true);
-            }
-
-            if(from_page == "#login_page" && to == "#profile_page"){
-                inject_toolbar(true);
-                $("#request_footer").hide();
-            }
-
-            if(prev_page == "#dialog_page" && $(to).hasClass("multi_page")){
-                inject_toolbar(true);
+            //parchazo.... -_-"
+            if($(from_page).hasClass("single_page") && $(to).hasClass("single_page") && $('#profile_header').is(':empty')){
+                $('#profile_header').css('background-color', '#d9edf7');
+                $('#profile_header').attr('data-role','header');
+                $('#profile_header').html('<div class="ui-body-b ui-body"></div>');
+                $('#profile_header').toolbar({theme: 'a', position: 'fixed'});
+                $('#profile_header').show('fold','down').trigger('updatelayout');
             }
         }
     });
 
+    $(document).on("pagebeforeshow", ".multi_page", function(){
+        if($('#profile_header').is(':empty')){
+            $('#profile_header').css('background-color', '#000000');
+            $('#profile_header').attr('data-role','header');
+            $('#profile_header').html('<div class="ui-body-b ui-body">\
+                        <h3 id="user_title">Bienvenido<br>'+user_title+'</h3>\
+                        <a href="#nav-panel" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>\
+                        <div data-role="navbar">\
+                            <ul id="nav">\
+                                <li><a target="profile_page" data-icon="user">Ver Perfil</a></li>\
+                                <li><a target="request_page" data-icon="bullets">Solicitudes</a></li>\
+                                <li><a target="mail_page" data-icon="mail">Notificaciones</a></li>\
+                            </ul>\
+                        </div>\
+                    </div>').trigger('create');
+
+            $('#profile_header').toolbar({theme: 'a', position: 'fixed'});
+            $('#profile_header').show('fold','down').trigger('updatelayout');
+        }
+    });
+
     $(document).on("pagebeforeshow", ".single_page", function(){
-        inject_toolbar(false);
+        if(!$('#profile_header').is(':empty')){
+            $('#profile_header').toolbar('destroy');
+            $('#profile_header').empty().trigger('create');
+            $('#profile_header').removeAttr('data-role');
+            $('#profile_header').removeAttr('class');
+            $('#profile_header').empty();
+            $('#profile_header').hide('fold','up').trigger('updatelayout');
+        }
     });
 
     $("#registro_form").submit(function(event){
@@ -549,6 +565,8 @@ $(document).ready(function(){
     });
 
     $(document).on("click", "#logout_option", function(){
+        $('#nav-panel').panel('close');
+        
         id_usuario = -1;
         load_data_id = 0;
 
@@ -561,34 +579,9 @@ $(document).ready(function(){
             transition: 'slidefade'
         });
     });
+
+    // $(document).on("click", "#nav_option", function(){
+    //     console.log('abriendo opciones...');
+    //     $('#nav-panel').panel('toggle');
+    // });
 });
-
-/* Funciones auxiliares definidas utilizadas por los eventos dentro de la APP móvil */
-function inject_toolbar(inject_flag){
-    if(inject_flag && $('#profile_header').is(':empty')){
-        $('#profile_header').attr('data-role','header');
-        $('#profile_header').html('<div class="ui-body-b ui-body">\
-                    <h3 id="user_title">Bienvenido<br>'+user_title+'</h3>\
-                    <a href="#nav-panel" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>\
-                    <div data-role="navbar">\
-                        <ul id="nav">\
-                            <li><a target="profile_page" data-icon="user">Ver Perfil</a></li>\
-                            <li><a target="request_page" data-icon="bullets">Solicitudes</a></li>\
-                            <li><a target="mail_page" data-icon="mail">Notificaciones</a></li>\
-                        </ul>\
-                    </div>\
-                </div>');
-
-        $('#profile_header').toolbar({theme: 'a', position: 'fixed'});
-        $('#profile_header').show('fold','down');
-        $.mobile.resetActivePageHeight();
-    }
-
-    if(!inject_flag && !$('#profile_header').is(':empty')){
-        $('#profile_header').hide('fold','up');
-        $('#profile_header').toolbar('destroy');
-        $('#profile_header').removeAttr('data-role');
-        $('#profile_header').empty();
-        $.mobile.resetActivePageHeight();
-    }
-}
