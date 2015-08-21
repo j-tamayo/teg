@@ -227,11 +227,29 @@ class Encuesta(models.Model):
 		return matriz
 
 	@staticmethod
-	def encuestas_resueltas(filtros):
+	def generarEstadisticasEncuestasXls(matriz):
 		"""Método que retorna las encuestas respondidas por los usuarios"""
-		condiciones = []
+		wb = Workbook()
+		ws = wb.active
+		ws.title = "Estadisticas de encuestas"
+		i = 1
+		j = 'B'
+		for key, value in matriz.items():
+			j = 'B'
+			for k,v in value.items():
+				ws[j+str(i)] = k.valor
+				j = chr(ord(j)+1)
 
-		encuestas = Encuesta.objects.filter(reduce(operator.and_,condiciones))
+			j = 'B'
+			i+=1
+			ws['A'+str(i)] = key
+			for k,v in value.items():
+				ws[j+str(i)] = v
+				j = chr(ord(j)+1)
+
+			i+=1
+
+		return wb
 
 
 
@@ -274,6 +292,7 @@ class Respuesta(models.Model):
 	encuesta = models.ForeignKey(Encuesta, default=None)
 	pregunta = models.ForeignKey(Pregunta)
 	usuario = models.ForeignKey(USER_MODEL, null=True)
+	notificacion_usuario = models.ForeignKey('NotificacionUsuario')
 
 	def __unicode__(self):
 		return u'%s' % self.id
@@ -363,7 +382,27 @@ class NotificacionUsuario(models.Model):
 	def encuestas_resueltas(filtros):
 		"""Método que retorna las encuestas respondidas por los usuarios"""
 		condiciones = []
-		notificaciones = NotificacionUsuario.objects.filter(notificacion__encuesta__isnull = False, encuesta_respondida = True)
+		usuario_nombres = filtros.get('usuario_nombres', None)
+		usuario_apellidos = filtros.get('usuario_apellidos', None)
+		tipo_encuesta = filtros.get('tipo_encuesta', None)
+		encuesta = filtros.get('encuesta', None)
+
+		if filtros:
+			if usuario_nombres:
+				condiciones.append(Q(usuario__nombres__icontains = usuario_nombres))
+
+			if usuario_apellidos:
+				condiciones.append(Q(usuario__apellidos__icontains = usuario_apellidos))
+
+			if tipo_encuesta:
+				condiciones.append(Q(notificacion__encuesta__tipo__id = tipo_encuesta))
+
+			if encuesta:
+				condiciones.append(Q(notificacion__encuesta__id = encuesta))
+
+		condiciones.append(Q(notificacion__encuesta__isnull = False))
+		condiciones.append(Q(encuesta_respondida = True))
+		notificaciones = NotificacionUsuario.objects.filter(reduce(operator.and_, condiciones))
 
 		return notificaciones
 

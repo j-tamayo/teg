@@ -205,9 +205,21 @@ urlpatterns = \
         ),
 
         url(
+            r'^exportar-estadisticas-encuestas-xls/(?P<encuesta>\d+)$',
+            views.EstadisticasEncuestasXls.as_view(),
+            name='exportar_estadisticas_encuestas_xls'
+        ),
+
+        url(
             r'^admin/encuestas-respondidas$',
             views.AdminEncuestasRespondidas.as_view(),
             name='admin_encuestas_respondidas'
+        ),
+
+        url(
+            r'^admin/ver-encuesta-respondida/(?P<notificacion_usuario_id>\d+)$',
+            views.AdminVerEncuestaRespondida.as_view(),
+            name='admin_ver_encuesta_respondida'
         ),
 
         url(

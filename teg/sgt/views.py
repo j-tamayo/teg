@@ -1715,11 +1715,30 @@ class AdminEstadisticasEncuestas(View):
 			'encuestas': encuestas,
 			'encuesta_id': encuesta_id,
 			'matriz': matriz,
-			'seccion_reporte': True,
+			'seccion_reportes': True,
 			'usuario': usuario
 		}
 
 		return render(request, 'admin/estadisticas_encuestas.html', context)
+
+
+class EstadisticasEncuestasXls(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, *args, **kwargs):
+		return super(EstadisticasEncuestasXls, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Vista que genera el XLS de las estadísticas de las respuestas por encuesta"""
+		filtros = {'encuesta': kwargs['encuesta']}
+
+		matriz = Encuesta.estadisticas(filtros)
+
+		response = HttpResponse(content_type='application/vnd.ms-excel')
+		response['Content-Disposition'] = 'attachment; filename=Consultas_solicitudes.xls'
+
+		xls = Encuesta.generarEstadisticasEncuestasXls(matriz)
+		xls.save(response)
+		return response
 
 
 class AdminEncuestasRespondidas(View):
@@ -1730,8 +1749,11 @@ class AdminEncuestasRespondidas(View):
 	def get(self, request, *args, **kwargs):
 		"""Bandeja para ver todas las encuesta resueltas"""
 		usuario = request.user
+		tipos_encuesta = TipoEncuesta.objects.all()
+		encuestas = Encuesta.objects.all()
+		url = ''
 
-		encuestas_resueltas = NotificacionUsuario.encuestas_resueltas({})
+		encuestas_resueltas = NotificacionUsuario.encuestas_resueltas(request.GET)
 
 		paginator = Paginator(encuestas_resueltas, 10, request=request)
 		try:
@@ -1743,14 +1765,119 @@ class AdminEncuestasRespondidas(View):
 		except EmptyPage:
 			encuestas_resueltas = paginator.page(paginator.num_pages)
 
+		if encuestas_resueltas.object_list:
+			usuario_nombres = request.GET.get('usuario_nombres', None)
+			usuario_apellidos = request.GET.get('usuario_apellidos', None)
+			tipo_encuesta = request.GET.get('tipo_encuesta', None)
+			encuesta = request.GET.get('encuesta', None)
+			if usuario_nombres:
+				url += '&&usuario_nombres=%s' % usuario_nombres
+			if usuario_apellidos:
+				url += '&&usuario_apellidos=%s' % usuario_apellidos
+			if tipo_encuesta:
+				url += '&&tipo_encuesta=%s' % tipo_encuesta
+			if encuesta:
+				url += '&&encuesta=%s' % encuesta
+
 		context = {
 			'admin': True,
+			'encuestas': encuestas,
 			'encuestas_resueltas': encuestas_resueltas,
-			'seccion_reporte': True,
+			'seccion_reportes': True,
+			'tipos_encuesta': tipos_encuesta,
+			'url': url,
 			'usuario': usuario
 		}
 
 		return render(request, 'admin/encuestas_respondidas.html', context)
+
+	def post(self, request, *args, **kwargs):
+		"""Aplicación de filtros para las encuestas respondidas"""
+		usuario = request.user
+		tipos_encuesta = TipoEncuesta.objects.all()
+		encuestas = Encuesta.objects.all()
+		url = ''
+
+		encuestas_resueltas = NotificacionUsuario.encuestas_resueltas(request.POST)
+
+		paginator = Paginator(encuestas_resueltas, 10, request=request)
+		try:
+			page = request.GET.get('page', 1)
+			encuestas_resueltas = paginator.page(page)
+		except PageNotAnInteger:
+			encuestas_resueltas = paginator.page(1)
+			page = 0
+		except EmptyPage:
+			encuestas_resueltas = paginator.page(paginator.num_pages)
+
+		if encuestas_resueltas.object_list:
+			usuario_nombres = request.POST.get('usuario_nombres', None)
+			usuario_apellidos = request.POST.get('usuario_apellidos', None)
+			tipo_encuesta = request.POST.get('tipo_encuesta', None)
+			encuesta = request.POST.get('encuesta', None)
+			if usuario_nombres:
+				url += '&&usuario_nombres=%s' % usuario_nombres
+			if usuario_apellidos:
+				url += '&&usuario_apellidos=%s' % usuario_apellidos
+			if tipo_encuesta:
+				url += '&&tipo_encuesta=%s' % tipo_encuesta
+			if encuesta:
+				url += '&&encuesta=%s' % encuesta
+
+		context = {
+			'admin': True,
+			'encuestas': encuestas,
+			'encuestas_resueltas': encuestas_resueltas,
+			'filtros': request.POST,
+			'seccion_reportes': True,
+			'tipos_encuesta': tipos_encuesta,
+			'url': url,
+			'usuario': usuario
+		}
+
+		return render(request, 'admin/encuestas_respondidas.html', context)
+
+
+class AdminVerEncuestaRespondida(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, *args, **kwargs):
+		return super(AdminVerEncuestaRespondida, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		"""Vista para mostrar la encuesta respondida de un usuario"""
+		usuario = request.user
+		valores_posibles = {}
+		notificacion_usuario_id = kwargs['notificacion_usuario_id']
+		notificacion_usuario = NotificacionUsuario.objects.filter(id=notificacion_usuario_id).first()
+		if notificacion_usuario and notificacion_usuario.notificacion.encuesta:
+			respuestas = {}
+			encuesta = notificacion_usuario.notificacion.encuesta
+			preguntas = encuesta.preguntas.all()
+			valores_preguntas_encuesta = ValorPreguntaEncuesta.objects.filter(encuesta= encuesta, pregunta__in = preguntas).order_by('pregunta','orden')
+			for p in preguntas:
+				#Para agregar la respuesta
+				resp = Respuesta.objects.filter(pregunta = p, usuario = notificacion_usuario.usuario, notificacion_usuario = notificacion_usuario).first()
+				print "R--", resp.respuestadefinida_set.all()
+				if resp.pregunta.tipo_respuesta.codigo == 'RESP_DEF':
+					respuestas[p.pk] = resp.respuestadefinida_set.all().first().valor_definido.pk
+				elif resp.pregunta.tipo_respuesta.codigo == 'RESP_INDEF':
+					respuestas[p.pk] = resp.respuestaindefinida_set.all().first().valor_indefinido
+				
+				#Para agregar los valores preguntas encuesta
+				valores_posibles[p.pk] = [vp for vp in valores_preguntas_encuesta if vp.pregunta == p]
+
+			print "RESPUESTAS", respuestas
+			context = {
+				'admin': True,
+				'preguntas': preguntas,
+				'respuestas': respuestas,
+				'seccion_reportes': True,
+				'usuario': usuario,
+				'valores_posibles': valores_posibles
+			}
+
+			return render(request, 'admin/ver_encuesta_respondida.html', context)
+
 
 
 class BandejaTaquilla(View):
@@ -1978,6 +2105,7 @@ class ConsultarEncuesta(View):
 			encuesta_id = data.get('encuesta')
 			encuesta = Encuesta.objects.get(id=encuesta_id)
 			notificacion_usuario_id = data.get('notificacion_usuario')
+			notificacion_usuario = NotificacionUsuario.objects.get(id=notificacion_usuario_id)
 
 			total_preguntas = data.get('total_preguntas')
 			for index in range(int(total_preguntas)):
@@ -1985,7 +2113,7 @@ class ConsultarEncuesta(View):
 				pregunta_id = data.get(aux)
 				pregunta = Pregunta.objects.get(pk=pregunta_id)
 				tipo_respuesta = pregunta.tipo_respuesta.codigo
-				respuesta = Respuesta(encuesta=encuesta, pregunta=pregunta, usuario=usuario)
+				respuesta = Respuesta(encuesta=encuesta, pregunta=pregunta, usuario=usuario, notificacion_usuario = notificacion_usuario)
 				respuesta.save()
 
 				if tipo_respuesta == "RESP_DEF":
@@ -2001,8 +2129,9 @@ class ConsultarEncuesta(View):
 					respuesta_indefinida = RespuestaIndefinida(respuesta=respuesta, valor_indefinido=valor_indef)
 					respuesta_indefinida.save()
 
-			notificacion_usuario = NotificacionUsuario.objects.get(id=notificacion_usuario_id)
+			# notificacion_usuario = NotificacionUsuario.objects.get(id=notificacion_usuario_id)
 			notificacion_usuario.borrada = True
+			notificacion_usuario.encuesta_respondida = True
 			notificacion_usuario.save()
 
 			mensaje['mensaje'] = 'Respuestas guardadas de manera exitosa'

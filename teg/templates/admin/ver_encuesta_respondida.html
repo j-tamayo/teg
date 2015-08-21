@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load sgt_tags %}
+{% block main_content %}
+<div class="container">
+	<div class="row">
+		<h4>Encuesta</h4>
+	</div> <!-- / .row -->
+	{% for p in preguntas %}
+	<div class="row">
+		<div class="col-xs-12">
+			<label class="text-muted">{{p.enunciado}}</label>
+		</div>
+		{% if p.tipo_respuesta.codigo == 'RESP_DEF' %}
+		<div class="col-xs-12">
+			{% for vp in valores_posibles|get_item:p.pk %}
+			<div class="radio {% ifequal vp.valor.pk respuestas|get_item:p.pk %}bg-success{%endifequal%}">
+				<label>
+					<input type="radio" name="{{p.pk}}" {% ifequal vp.valor.pk respuestas|get_item:p.pk %}checked{%endifequal%}>
+					{{vp.valor}}
+				</label>
+			</div> <!-- / radio -->
+			{% endfor %}
+		</div> <!-- / .radio -->
+		{% elif p.tipo_respuesta.codigo == 'RESP_INDEF' %}
+		<div class="col-xs-12">
+			<textarea class="form-control">{{respuestas|get_item:p.pk}}</textarea>
+		</div>
+		{% endif %}
+	</div>
+	<br>
+	{% endfor %}
+</div> <!-- / .container -->
+{% endblock %}

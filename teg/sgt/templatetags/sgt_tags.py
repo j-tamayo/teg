@@ -16,3 +16,7 @@ def get_dict_val(value, arg):
 		aux =  value[arg]
 
 	return aux
+
+@register.filter
+def get_item(dictionary, key):
+	return dictionary.get(key)
