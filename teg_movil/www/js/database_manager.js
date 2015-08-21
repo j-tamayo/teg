@@ -1,16 +1,15 @@
-/* Variables Globales Auxiliares */
+/* Variables Globales dedicadas al manejo del flujo y consulta de datos en la APP Móvil*/
+var db;
 var id_usuario = -1;
+var load_data_id = 0;
+
+/* Variables Globales Auxiliares */
 var user_title = '';
 var next_page = '';
 var next_page_trans = '';
-var load_data_id = 0;
-var flag_refresh_solicitudes = false;
-var flag_refresh_notificaciones = false;
 
 var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 var dias_semana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-
-var db;
 
 /* PROCEDIMIENTO QUE MUESTRA QUE OCURRIO UN ERROR CON UNA OPERACION EN LA BASE DE DATOS */
 function errorCB(){
@@ -20,30 +19,6 @@ function errorCB(){
 /* PROCEDIMIENTO QUE MUESTRA QUE UNA OPERACION CON LA BASE DE DATOS FUE EXITOSA */
 function successCB(){
 	console.log('Transacción exitosa!');
-}
-
-function init_data(){
-	if(load_data_id == 0)
-		console.log('Transacción exitosa!');
-
-	if(load_data_id == 1){
-		console.log('Inicializando páginas...');
-		$(".init_data").bind("pagebeforecreate", fill_estados('SELECT id, nombre FROM sgt_estado;', 0));
-		$(".init_data_sol").bind("pagebeforecreate", fill_estados('SELECT DISTINCT e.id, e.nombre FROM sgt_estado e, sgt_municipio m, sgt_centroinspeccion c WHERE m.estado = e.id AND c.municipio =  m.id;', 1));
-		$(".init_data_sol").bind("pagebeforecreate", fill_tipos_inspeccion());
-	}
-
-	if(load_data_id == 2){
-		console.log('Inicializando perfil del usuario...');
-		$("#profile_page").bind("pagebeforeshow", load_profile_info());
-		$("#request_page").bind("pagebeforeshow", load_solicitudes_inspeccion());
-		$("#mail_page").bind("pagebeforeshow", load_notificaciones());
-
-		$.mobile.changePage(next_page, {
-			changeHash: false, 
-			transition: next_page_trans
-		});
-	}
 }
 
 function init_db(){
@@ -95,9 +70,9 @@ function createTables(){
 function loadTables(){
 	console.log("tablas cargadas exitosamente...");
 	console.log("procediendo a cargar registros de la web APP...");
+	
 	load_data_id = 1;
-
-	$.getJSON("http://192.168.7.126:8000/api/data-inicial/")
+	$.getJSON("http://192.168.1.101:8000/api/data-inicial/")
 	.done(load_json_data)
 	.fail(function(){
 	    console.log("Error de conexión!");
@@ -125,6 +100,23 @@ function dropTables(){
 		tx.executeSql('drop table sgt_municipio;');
 		tx.executeSql('drop table sgt_estado;');
 	}, errorCB, successCB);
+}
+
+function init_data(){
+	if(load_data_id == 0)
+		console.log('Transacción exitosa!');
+
+	if(load_data_id == 1){
+		console.log('Inicializando páginas...');
+		$('#register_page').bind('pagebeforecreate', fill_estados('SELECT id, nombre FROM sgt_estado;', 0));
+		$('#create_request_page').bind('pagebeforecreate', fill_estados('SELECT DISTINCT e.id, e.nombre FROM sgt_estado e, sgt_municipio m, sgt_centroinspeccion c WHERE m.estado = e.id AND c.municipio =  m.id;', 1));
+		$('#create_request_page').bind('pagebeforecreate', fill_tipos_inspeccion());
+	}
+
+	if(load_data_id == 2){
+		console.log('Inicializando perfil del usuario...');
+		load_profile_info();
+	}
 }
 
 function load_json_data(json){
@@ -165,7 +157,7 @@ function load_json_data(json){
 							val_up = [];
 							first = true;
 
-							for (var i = 0; i < results.rows.length; i++){
+							for(i = 0; i < results.rows.length; i++){
 								row = results.rows.item(i);
 								pk = row[col[0]];
 								for(j = 0; j < col.length; j++){
@@ -217,7 +209,7 @@ function load_json_data(json){
 			});
 		});
 	}, errorCB, function(){
-		if(load_data_id == 1 || load_data_id == 2){
+		if(load_data_id == 1 || load_data_id == 2){ 
 			console.log('Buscando datos "basura" en BD movil para realizar limpieza...');
 			json = json.reverse();
 			db.transaction(function(tx){
@@ -226,7 +218,7 @@ function load_json_data(json){
 						tx.executeSql('SELECT id FROM '+table+';', [],
 						function(tx, results){
 							num_rows = results.rows.length;
-							for(var i = 0; i < num_rows; i++){
+							for(i = 0; i < num_rows; i++){
 								enc = false;
 								row = results.rows.item(i);
 								
@@ -263,9 +255,27 @@ function load_json_data(json){
 	});
 }
 
+function load_user_tables(){
+	/* Buscar y guardar información del usuario vía web service */
+	console.log("login extitoso, procediendo a cargar información de usuario...");
+	
+	load_data_id = 2;
+	$.post("http://192.168.1.101:8000/api/usuario-info/", {'id': id_usuario})
+	.done(load_json_data)
+	.fail(function(){
+		init_data(); //cargando la data localmente...
+	    console.log("Error de conexión!");
+	});
+}
+
 function login(correo, password, user_info){
+	aux = '';
+	if(user_info['id'])
+		aux = 'OR id = ' + user_info['id'];
+
+	flag_login = false;
 	db.transaction(function(tx){
-	    tx.executeSql('SELECT * FROM cuentas_sgtusuario WHERE correo = "'+correo+'" AND password = "'+password+'";', [], 
+	    tx.executeSql('SELECT * FROM cuentas_sgtusuario WHERE (correo = "'+correo+'" AND password = "'+password+'") '+aux+';', [], 
 	    function(tx, results){
 	    	num_rows = results.rows.length;
 	    	if(num_rows > 0){
@@ -283,9 +293,10 @@ function login(correo, password, user_info){
 					}
 				});
 
-				if(val_up.length > 0){
+				if(val_up.length > 0)
 					updateTable('cuentas_sgtusuario', col_up, val_up, 'id', id_usuario);
-				}
+				
+				flag_login = true;
 	    	}
 	    	else{
 	    		if(user_info){
@@ -294,32 +305,22 @@ function login(correo, password, user_info){
 	    			insertTable('cuentas_sgtusuario', 
 	    						['id', 'password', 'apellidos', 'cedula', 'correo', 'direccion', 'fecha_nacimiento', 'nombres', 'sexo', 'telefono_local', 'telefono_movil', 'municipio', 'codigo_postal'],
 	    						[user_info['id'], user_info['password'], user_info['apellidos'], user_info['cedula'], user_info['correo'], user_info['direccion'], user_info['fecha_nacimiento'], user_info['nombres'], user_info['sexo'], user_info['telefono_local'], user_info['telefono_movil'], user_info['municipio'], user_info['codigo_postal']]);
+	    		
+	    			flag_login = true;
 	    		}
-	    		else{
+	    		else
 	    			console.log("Usuario inválido...");
-	    			return;
-	    		}
 			}
-
-			next_page = '#profile_page';
-			next_page_trans = 'flow';
 	    },
 		function(tx, err){
 			throw new Error(err.message);
 		});
-	}, errorCB, load_user_tables);
-}
-
-function load_user_tables(){
-	console.log("login extitoso, procediendo a cargar información de usuario...");
-	load_data_id = 2;
-
-	/* Buscar y guardar información del usuario vía web service */
-	$.post("http://192.168.7.126:8000/api/usuario-info/", {'id': id_usuario})
-	.done(load_json_data)
-	.fail(function(){
-		init_data(); //cargando la data localmente...
-	    console.log("Error de conexión!");
+	}, errorCB, function(){
+		if(flag_login){
+			next_page = '#profile_page';
+			next_page_trans = 'flow';
+			load_user_tables();
+		}
 	});
 }
 
@@ -380,6 +381,19 @@ function updateTable(table, cols, values, cond, cond_val){
 	console.log(values);
 	db.transaction(function(tx){
 		tx.executeSql('UPDATE '+table+' SET '+str_cols+' WHERE '+cond+' = '+cond_val+';', values,
+		function(){
+			console.log("registro actualizado exitosamente!");
+		},
+		function(tx, err){
+			throw new Error(err.message);
+		});
+	}, errorCB, successCB);
+}
+
+function deleteTable(table, cond, cond_val){
+	console.log('DELETE FROM '+table+' WHERE '+cond+' = '+cond_val+';');
+	db.transaction(function(tx){
+		tx.executeSql('DELETE FROM '+table+' WHERE '+cond+' = '+cond_val+';', [],
 		function(){
 			console.log("registro actualizado exitosamente!");
 		},
@@ -488,37 +502,151 @@ function fill_tipos_inspeccion(){
 }
 
 function load_profile_info(){
-	//$("#user_title").html('Bienvenido<br>'+user_info['nombres']);
+	$("#profile_content").empty();
+	$("#request_list_content").empty();
+	$("#mail_list_content").empty();
+
 	db.transaction(function(tx){
-		tx.executeSql('SELECT * FROM cuentas_sgtusuario WHERE id = '+id_usuario+';', [], 
+
+		/* Cargando información del perfil de usuario */
+		tx.executeSql('SELECT u.nombres, u.apellidos, u.cedula, u.direccion, u.correo, e.nombre AS estado, m.nombre AS municipio FROM cuentas_sgtusuario u, sgt_estado e, sgt_municipio m WHERE e.id = m.estado AND u.municipio = m.id AND u.id = '+id_usuario+';', [], 
 		function(tx, results){
-			user_info = results.rows.item(0);
-			user_title = user_info['nombres'];
-			tx.executeSql('SELECT e.nombre as estado, m.nombre as municipio FROM sgt_estado e, sgt_municipio m WHERE e.id = m.estado AND m.id = '+user_info['municipio']+';', [], 
-	    	function(tx, results){
-		    	row = results.rows.item(0);
-		    	$("#profile_page").children(".ui-content").html('<h3 class="text-success" style="text-align: center;">Informaci&oacute;n del usuario</h3>\
-					<p>Nombre: '+user_info['nombres']+'</p>\
-					<p>Apellido: '+user_info['apellidos']+'</p>\
-					<p>C&eacute;dula: '+user_info['cedula']+'</p>\
-					<p>Estado: '+row['estado']+'</p>\
-					<p>Municipio: '+row['municipio']+'</p>\
-					<p>Direcci&oacute;n: '+user_info['direccion']+'</p>\
-					<p>Correo: '+user_info['correo']+'</p>\
-					<hr>\
-					<h3 class="text-success" style="text-align: center;">El usuario no posee<br>póliza asociada</h3>'	
-				);
-			},
-			function(tx, err){
-				console.log("error");
-				throw new Error(err.message);
-			});
+			row = results.rows.item(0);
+			user_title = row['nombres'];
+
+	    	$("#profile_content").html('<h3 class="text-success" style="text-align: center;">Informaci&oacute;n del usuario</h3>\
+				<p>Nombre: '+row['nombres']+'</p>\
+				<p>Apellido: '+row['apellidos']+'</p>\
+				<p>C&eacute;dula: '+row['cedula']+'</p>\
+				<p>Estado: '+row['estado']+'</p>\
+				<p>Municipio: '+row['municipio']+'</p>\
+				<p>Direcci&oacute;n: '+row['direccion']+'</p>\
+				<p>Correo: '+row['correo']+'</p>\
+				<hr>\
+				<h3 class="text-success" style="text-align: center;">El usuario no posee<br>póliza asociada</h3>'	
+			);	/* OJO!!! Falta cargar la información de la poliza... */
 	    },
 		function(tx, err){
 			console.log("error");
 			throw new Error(err.message);
 		});
-	}, errorCB, successCB);
+		
+		/* Cargando las solicitudes realizadas por el usuario */
+		tx.executeSql('SELECT s.id, n.fecha_atencion, n.hora_atencion, c.nombre AS centro_inspeccion, n.codigo, t.nombre AS tipo_inspeccion, s.perito, e.nombre AS estatus FROM sgt_solicitudinspeccion s, sgt_numeroorden n, sgt_centroinspeccion c, sgt_tipoinspeccion t, sgt_estatus e WHERE n.solicitud_inspeccion = s.id AND s.centro_inspeccion = c.id AND s.tipo_inspeccion = t.id AND s.estatus = e.id AND s.usuario = '+id_usuario+';', [], 
+	    function(tx, results){
+	    	num = results.rows.length;
+
+	    	if(num > 0){
+	    		aux = '<ul id="solicitudes_usuario" data-role="listview" data-inset="false" data-theme="a">';
+
+				for(i = 0; i < num; i++){
+					row = results.rows.item(i);
+
+					fecha_atencion = row['fecha_atencion'].split('-');
+					fecha_atencion = new Date(fecha_atencion[2] + '-' + fecha_atencion[1] + '-' + fecha_atencion[0]);
+					fecha_atencion = dias_semana[fecha_atencion.getDay()] + ", " + fecha_atencion.getDate() + " de " + meses[fecha_atencion.getMonth()] + " del " + fecha_atencion.getFullYear();
+
+					hora_atencion = row['hora_atencion'].split(':');
+					hora_aux = parseInt(hora_atencion[0]);
+					
+					am_pm = 'AM';
+					if(hora_aux > 11)
+						am_pm = 'PM';
+
+					if(hora_aux >= 12)
+						hora_aux = hora_aux - 12;
+
+					hora_atencion = hora_aux + ':' + hora_atencion[1] + ' ' + am_pm;
+
+					estatus_color_bg = '';
+					estatus_color_text = 'text-primary';
+					if(row['estatus'] == 'solicitud_en_proceso'){
+						estatus_color_bg = 'class = "brand-warning"';
+						estatus_color_text = 'text-warning';
+					}
+					if(row['estatus'] == 'solicitud_no_procesada'){
+						estatus_color_bg = 'class = "brand-danger"';
+						estatus_color_text = 'text-danger';
+					}
+
+					perito_asignado = row['perito'];
+					if(perito_asignado == '')
+						perito_asignado = 'N/A'; 
+
+					aux += '<li class="solicitud_'+row['id']+'" data-role="list-divider" data-theme="c" '+estatus_color_bg+'>'+fecha_atencion+'<span class="ui-li-count">'+hora_atencion+'</span></li>\
+							<li class="solicitud_'+row['id']+'">\
+								<a href="#">\
+									<h2 class="text-success"><br>'+row['centro_inspeccion']+'</h2>\
+									<p><strong>N&uacute;mero: '+row['codigo']+'&emsp;-&emsp;Tipo: '+row['tipo_inspeccion']+'</strong></p>\
+									<p>Perito asignado: '+perito_asignado+'</p>\
+									<p class="ui-li-aside '+estatus_color_text+'"><strong>'+row['estatus']+'</strong></p>\
+								</a>\
+								<a href="#" target-id="'+row['id']+'" class="ui-btn ui-shadow ui-icon-delete ui-nodisc-icon ui-alt-icon solicitud_item_elim"></a>\
+							</li>';
+				}
+
+				aux += '</ul>';
+				$('#request_list_content').html(aux).trigger('create');
+			}
+	    },
+		function(tx, err){
+			throw new Error(err.message);
+		});
+		
+		/* Cargando las notificaciones recibidas del usuario */
+		tx.executeSql('SELECT n.id AS notificacion, u.id AS notificacion_usuario, n.asunto, t.codigo, u.fecha_creacion, u.leida FROM sgt_notificacion n, sgt_tiponotificacion t, sgt_notificacionusuario u WHERE n.id = u.notificacion AND t.id = n.tipo_notificacion AND u.usuario = '+id_usuario+' ORDER BY u.leida DESC, notificacion_usuario DESC;', [], 
+	    function(tx, results){
+	    	num = results.rows.length;
+
+	    	if(num > 0){
+	    		aux = '<ul id="notificaciones_usuario" data-role="listview" data-split-icon="delete" data-theme="a" data-split-theme="a" data-inset="false">';
+
+				for(i = 0; i < num; i++){
+					row = results.rows.item(i);
+
+					img_notificacion = '';
+					if(row['codigo'] == 'NOTI_GEN')
+						img_notificacion = 'mail-icon.png';
+					if(row['codigo'] == 'NOTI_ENC')
+						img_notificacion = 'poll-icon.png';
+					if(row['codigo'] == 'NOTI_REC')
+						img_notificacion = 'alert-icon.png';
+
+					text = '';
+					estilo = '';
+					if(row['leida'] == 'true'){
+						texto = 'Leida';
+						estilo = 'style="background-color: #d9edf7;"';
+					}
+					if(row['leida'] == 'false'){
+						texto = 'Nueva';
+						estilo = 'style="background-color: #f0ad4e;"';
+					}
+
+					aux += '<li id="notificacion_'+row['notificacion_usuario']+'" leida="'+row['leida']+'" target-ref="'+row['notificacion']+'" fecha="'+row['fecha_creacion']+'">\
+								<a href="#" target-id="'+row['notificacion_usuario']+'" class="notificacion_item"><img src="img/'+img_notificacion+'" class="ui-li-icon">\
+									<h2>'+row['asunto']+'</h2>\
+									<span class="ui-li-count" '+estilo+'>'+texto+'</span>\
+								</a>\
+								<a href="#" target-id="'+row['notificacion_usuario']+'" class="ui-nodisc-icon ui-alt-icon notificacion_item_elim"></a>\
+							</li>';
+				}
+
+				aux += '</ul>';
+				$('#mail_list_content').html(aux).trigger('create');
+			}
+	    },
+		function(tx, err){
+			throw new Error(err.message);
+		});
+		
+	}, errorCB, function(){
+		console.log('La información del perfil de usuario ha sido cargada exitosamente...');
+		$.mobile.changePage(next_page, {
+			changeHash: false, 
+			transition: next_page_trans
+		});
+	});
 }
 
 function load_centros_inspeccion(json, sel){
@@ -552,113 +680,6 @@ function load_centros_inspeccion(json, sel){
 			function(tx, err){
 				throw new Error(err.message);
 			});
-		});
-	}, errorCB, successCB);
-}
-
-function load_solicitudes_inspeccion(){
-	db.transaction(function(tx){
-		$('#request_list_content').empty();
-		tx.executeSql('SELECT n.fecha_atencion, n.hora_atencion, c.nombre AS centro_inspeccion, n.codigo, t.nombre AS tipo_inspeccion, s.perito, e.nombre AS estatus FROM sgt_solicitudinspeccion s, sgt_numeroorden n, sgt_centroinspeccion c, sgt_tipoinspeccion t, sgt_estatus e WHERE n.solicitud_inspeccion = s.id AND s.centro_inspeccion = c.id AND s.tipo_inspeccion = t.id AND s.estatus = e.id AND s.usuario = '+id_usuario+';', [], 
-	    function(tx, results){
-	    	aux = '<ul data-role="listview" data-inset="false" data-theme="a">';
-	    	num = results.rows.length;
-			for(i = 0; i < num; i++){
-				row = results.rows.item(i);
-
-				fecha_atencion = row['fecha_atencion'].split('-');
-				fecha_atencion = new Date(fecha_atencion[2] + '-' + fecha_atencion[1] + '-' + fecha_atencion[0]);
-				fecha_atencion = dias_semana[fecha_atencion.getDay()] + ", " + fecha_atencion.getDate() + " de " + meses[fecha_atencion.getMonth()] + " del " + fecha_atencion.getFullYear();
-
-				hora_atencion = row['hora_atencion'].split(':');
-				hora_aux = parseInt(hora_atencion[0]);
-				
-				am_pm = 'AM';
-				if(hora_aux > 11)
-					am_pm = 'PM';
-
-				if(hora_aux >= 12)
-					hora_aux = hora_aux - 12;
-
-				hora_atencion = hora_aux + ':' + hora_atencion[1] + ' ' + am_pm;
-
-				estatus_color_bg = '';
-				estatus_color_text = 'text-primary';
-				if(row['estatus'] == 'solicitud_en_proceso'){
-					estatus_color_bg = 'class = "brand-warning"';
-					estatus_color_text = 'text-warning';
-				}
-				if(row['estatus'] == 'solicitud_no_procesada'){
-					estatus_color_bg = 'class = "brand-danger"';
-					estatus_color_text = 'text-danger';
-				}
-
-				perito_asignado = row['perito'];
-				if(perito_asignado == '')
-					perito_asignado = 'N/A'; 
-
-				aux += '<li data-role="list-divider" data-theme="c" '+estatus_color_bg+'>'+fecha_atencion+'<span class="ui-li-count">'+hora_atencion+'</span></li>\
-						<li>\
-							<a href="#">\
-								<h2 class="text-success"><br>'+row['centro_inspeccion']+'</h2>\
-								<p><strong>N&uacute;mero: '+row['codigo']+'&emsp;-&emsp;Tipo: '+row['tipo_inspeccion']+'</strong></p>\
-								<p>Perito asignado: '+perito_asignado+'</p>\
-								<p class="ui-li-aside '+estatus_color_text+'"><strong>'+row['estatus']+'</strong></p>\
-							</a>\
-							<a href="#" class="ui-btn ui-shadow ui-icon-delete ui-nodisc-icon ui-alt-icon"></a>\
-						</li>';
-			}
-			aux += '</ul>';
-			$('#request_list_content').html(aux).trigger('create');
-	    },
-		function(tx, err){
-			throw new Error(err.message);
-		});
-	}, errorCB, successCB);
-}
-
-function load_notificaciones(){
-	db.transaction(function(tx){
-		$('#mail_list_content').empty();
-		tx.executeSql('SELECT n.id AS notificacion, u.id AS notificacion_usuario, n.asunto, t.codigo, u.fecha_creacion, u.leida FROM sgt_notificacion n, sgt_tiponotificacion t, sgt_notificacionusuario u WHERE n.id = u.notificacion AND t.id = n.tipo_notificacion AND u.usuario = '+id_usuario+' ORDER BY u.leida DESC, notificacion_usuario DESC;', [], 
-	    function(tx, results){
-	    	aux = '<ul data-role="listview" data-split-icon="delete" data-theme="a" data-split-theme="a" data-inset="false">';
-	    	num = results.rows.length;
-			for(i = 0; i < num; i++){
-				row = results.rows.item(i);
-
-				img_notificacion = '';
-				if(row['codigo'] == 'NOTI_GEN')
-					img_notificacion = 'mail-icon.png';
-				if(row['codigo'] == 'NOTI_ENC')
-					img_notificacion = 'poll-icon.png';
-				if(row['codigo'] == 'NOTI_REC')
-					img_notificacion = 'alert-icon.png';
-
-				text = '';
-				estilo = '';
-				if(row['leida'] == 'true'){
-					texto = 'Leida';
-					estilo = 'style="background-color: #d9edf7;"';
-				}
-				if(row['leida'] == 'false'){
-					texto = 'Nueva';
-					estilo = 'style="background-color: #f0ad4e;"';
-				}
-
-				aux += '<li id="notificacion_'+row['notificacion_usuario']+'" leida="'+row['leida']+'" target-ref="'+row['notificacion']+'" fecha="'+row['fecha_creacion']+'">\
-							<a href="#" target-id="'+row['notificacion_usuario']+'" class="notificacion_item"><img src="img/'+img_notificacion+'" class="ui-li-icon">\
-								<h2>'+row['asunto']+'</h2>\
-								<span class="ui-li-count" '+estilo+'>'+texto+'</span>\
-							</a>\
-							<a href="#" target-id="'+row['notificacion']+'" class="ui-nodisc-icon ui-alt-icon notificacion_item_elim"></a>\
-						</li>';
-			}
-			aux += '</ul>';
-			$('#mail_list_content').html(aux).trigger('create');
-	    },
-		function(tx, err){
-			throw new Error(err.message);
 		});
 	}, errorCB, successCB);
 }
@@ -766,7 +787,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 		        data[obj.name] = obj.value;
 		    });
 
-		    $.post("http://192.168.7.126:8000/api/guardar-respuestas-encuesta/", data)
+		    $.post("http://192.168.1.101:8000/api/guardar-respuestas-encuesta/", data)
 	        .done(function(json){
 	            console.log(json);
 	            next_page = '#mail_page';
@@ -796,9 +817,9 @@ function load_user_edit_info(next_page, trans){
         	$('#correo_reg').val(row['correo']);
 
         	if(row['sexo'] == '0')
-        		$('#sexo_reg0').attr('checked', 'checked').checkboxradio('refresh');
+        		$('#sexo_reg0').attr('checked', 'checked') //.checkboxradio('refresh');
         	if(row['sexo'] == '1')
-        		$('#sexo_reg1').attr('checked', 'checked').checkboxradio('refresh');
+        		$('#sexo_reg1').attr('checked', 'checked') //.checkboxradio('refresh');
 
         	fecha_nacimiento_aux = row['fecha_nacimiento'];
         	fecha_nacimiento_aux = fecha_nacimiento_aux.split('-');
@@ -806,7 +827,7 @@ function load_user_edit_info(next_page, trans){
         	$('#fecha_nacimiento_reg').val(fecha_nacimiento_aux);
 
         	estado_aux = row['estado'];
-        	$('#estado_reg').val(estado_aux).selectmenu('refresh');
+        	$('#estado_reg').val(estado_aux) //.selectmenu('refresh');
 
         	municipio_aux = row['municipio'];
 
@@ -822,7 +843,7 @@ function load_user_edit_info(next_page, trans){
 
 				$('#municipio_reg').html(aux);
 				$('#municipio_reg').val(municipio_aux);
-				$('#municipio_reg').selectmenu('refresh');
+				//$('#municipio_reg').selectmenu('refresh');
 
 				$.mobile.changePage(next_page, {
 			        changeHash: false,

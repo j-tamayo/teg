@@ -142,6 +142,7 @@ $(document).ready(function(){
                 $("#request_form_page2").hide();
                 $("#request_form_page3").hide();
                 $("#prev_request_page").hide();
+                $('#nav-panel').hide();
             }
 
             if(prev_page == "#register_page" && $(to).hasClass("multi_page")){
@@ -160,10 +161,14 @@ $(document).ready(function(){
                 inject_toolbar(true);
                 $("#request_footer").hide();
             }
+
+            if(prev_page == "#dialog_page" && $(to).hasClass("multi_page")){
+                inject_toolbar(true);
+            }
         }
     });
 
-    $(document).on("pagebeforeshow", "#mail_content_page, #create_request_page, #claim_page, #register_page", function(){
+    $(document).on("pagebeforeshow", ".single_page", function(){
         inject_toolbar(false);
     });
 
@@ -198,15 +203,18 @@ $(document).ready(function(){
             val_up.push(data['fecha_nacimiento']);
         }
 
-        $.post('http://192.168.7.126:8000'+url, data)
+        $(this).trigger('reset');
+
+        $.post('http://192.168.1.101:8000'+url, data)
         .done(function(json){
             console.log("Usuario guardados exitosamente!");
             ref = $('#register_back_btn').attr('href');
             if(flag){
                 updateTable('cuentas_sgtusuario', col_up, val_up, 'id', id_usuario);
+
                 next_page = ref;
                 next_page_trans = 'flip';
-                load_user_tables();
+                load_profile_info();
             }
             else{
                 $.mobile.changePage(ref, {
@@ -230,7 +238,9 @@ $(document).ready(function(){
             data[obj.name] = obj.value;
         });
 
-        $.post("http://192.168.7.126:8000/api/login/", data)
+        $(this).trigger('reset');
+
+        $.post("http://192.168.1.101:8000/api/login/", data)
         .done(function(json){
             console.log("iniciando sesión...");
             json['password'] = data['password'];
@@ -256,7 +266,9 @@ $(document).ready(function(){
             data[obj.name] = obj.value;
         });
 
-        $.post("http://192.168.7.126:8000/api/recuperar-clave/", data)
+        $(this).trigger('reset');
+
+        $.post("http://192.168.1.101:8000/api/recuperar-clave/", data)
         .done(function(json){
             updateTable('cuentas_sgtusuario', ['password'], [json['clave_temporal']], 'correo', '"'+data['correo']+'"');
 
@@ -288,10 +300,11 @@ $(document).ready(function(){
         $(formData).each(function(index, obj){
             data[obj.name] = obj.value;
         });
-
         data['usuario'] = id_usuario;
 
-        $.post("http://192.168.7.126:8000/api/guardar-reclamo/", data)
+        $(this).trigger('reset');
+
+        $.post("http://192.168.1.101:8000/api/guardar-reclamo/", data)
         .done(function(json){
             console.log(json);
             $.mobile.changePage('#request_page', {
@@ -304,7 +317,7 @@ $(document).ready(function(){
         });
     });
 
-    $(document).on("click", ".back_btn", function(){
+    $(document).on("click", ".back_btn", function(event){
         event.preventDefault();
         $.mobile.changePage($(this).attr('href'), {
             changeHash: false,
@@ -324,7 +337,7 @@ $(document).ready(function(){
             data['usuario'] = id_usuario;
             $('#request_form').trigger('reset');
             
-            $.post("http://192.168.7.126:8000/api/crear-solicitud/", data)
+            $.post("http://192.168.1.101:8000/api/crear-solicitud/", data)
             .done(function(json){
                 console.log(json);
                 next_page = '#request_page';
@@ -341,7 +354,7 @@ $(document).ready(function(){
                 $("#request_form_page"+page_sol).hide("fade");
 
                 page_sol++;
-                $.post("http://192.168.7.126:8000/api/centros-sol/", {'municipio_id': $('#municipio_sol').val(), 'estado_id':$('#estado_sol').val()})
+                $.post("http://192.168.1.101:8000/api/centros-sol/", {'municipio_id': $('#municipio_sol').val(), 'estado_id':$('#estado_sol').val()})
                 .done(function(json){
                     load_centros_inspeccion(json, $("#request_form_page"+page_sol));
                 })
@@ -352,9 +365,8 @@ $(document).ready(function(){
             else{
                 if(page_sol == 2 && $("#centros_inspeccion_sol").find('a').hasClass('ui-btn-active')){
                     $("#request_form_page"+page_sol).hide("fade");
-
                     page_sol++;
-                    $.post("http://192.168.7.126:8000/api/horarios/", {'id_centro': $('#centro_id_sol').val(), 'fecha': $('#fecha_asistencia_sol').val(), 'id_tipo_inspeccion': $('#tipo_sol').val()})
+                    $.post("http://192.168.1.101:8000/api/horarios/", {'id_centro': $('#centro_id_sol').val(), 'fecha': $('#fecha_asistencia_sol').val(), 'id_tipo_inspeccion': $('#tipo_sol').val()})
                     .done(function(json){
                         $('#preview_centro').text($($('#centros_inspeccion_sol').children('li').find('a.ui-btn-active')).children('h2').text());
                         $('#preview_fecha_sol').text($('#fecha_asistencia_sol').val());
@@ -412,18 +424,87 @@ $(document).ready(function(){
         notificacion_id = $(notificacion_item_str).attr('target-ref');
         fecha = $(notificacion_item_str).attr('fecha').replace(/-/g,'/');
         if(flag_leida == 'false'){
-            $.post("http://192.168.7.126:8000/api/marcar-notificacion/", {'notificacion_usuario_id': notificacion_usuario_id, 'flag_marca': 1})
-            .done(function(){
+            $.post("http://192.168.1.101:8000/api/marcar-notificacion/", {'notificacion_usuario_id': notificacion_usuario_id, 'flag_marca': 1})
+            .done(function(json){
+                console.log(json);
                 $(notificacion_item_str).attr('leida', 'true');
                 notificacion_item_child.text('Leida');
                 notificacion_item_child.attr('style', 'background-color: #d9edf7;');
-                updateTable('sgt_notificacionusuario', ['leida'], ['true'], notificacion_usuario_id);
+                updateTable('sgt_notificacionusuario', ['leida'], ['true'], 'id', notificacion_usuario_id);
             })
             .fail(function(){
                 console.log("Error de conexión!");
             });
         }
         load_notificacion(notificacion_id, notificacion_usuario_id, asunto, fecha);
+    });
+
+    $(document).on("click", ".notificacion_item_elim", function(){
+        notificacion_usuario_id = $(this).attr('target-id');
+
+        $('#dialog_header').html('<h1>Aviso</h1>');
+        $('#dialog_content').html('<p align="justify">¿Est&aacute; seguro que desea eliminar esta notificaci&oacute;n?</p>\
+                                    <br>\
+                                    <a id="noti_elim_confirm" href="#mail_page" data-transition="pop" class="ui-btn ui-btn-b ui-corner-all">Aceptar</a>\
+                                    <a href="#mail_page" data-transition="pop" class="ui-btn ui-btn-b ui-corner-all back_btn">Cancelar</a>');
+        
+        $(document).on("click", "#noti_elim_confirm", function(event){
+            event.preventDefault();
+            ref = $(this).attr('href');
+            trans = $(this).attr('data-transition');
+            $.post("http://192.168.1.101:8000/api/marcar-notificacion/", {'notificacion_usuario_id': notificacion_usuario_id, 'flag_marca': 2})
+            .done(function(json){
+                console.log(json);
+                next_page = ref;
+                next_page_trans = trans;
+                deleteTable('sgt_notificacionusuario', 'id', notificacion_usuario_id);
+                $('#notificacion_'+notificacion_usuario_id).remove();
+                $('#notificaciones_usuario').listview('refresh');
+                load_user_tables();
+            })
+            .fail(function(){
+                console.log("Error de conexión!");
+            });
+        });
+        
+        $.mobile.changePage('#dialog_page', {
+            changeHash: false, 
+            transition: 'pop'
+        });
+    });
+
+    $(document).on("click", ".solicitud_item_elim", function(){
+        solicitud_id = $(this).attr('target-id');
+
+        $('#dialog_header').html('<h1>Aviso</h1>');
+        $('#dialog_content').html('<p align="justify">¿Est&aacute; seguro que desea eliminar esta solicitud?</p>\
+                                    <br>\
+                                    <a id="sol_elim_confirm" href="#request_page" data-transition="pop" class="ui-btn ui-btn-b ui-corner-all">Aceptar</a>\
+                                    <a href="#request_page" data-transition="pop" class="ui-btn ui-btn-b ui-corner-all back_btn">Cancelar</a>');
+        
+        $(document).on("click", "#sol_elim_confirm", function(event){
+            event.preventDefault();
+            ref = $(this).attr('href');
+            trans = $(this).attr('data-transition');
+            $.post("http://192.168.1.101:8000/api/marcar-solicitud/", {'solicitud_id': solicitud_id})
+            .done(function(json){
+                console.log(json);
+                next_page = ref;
+                next_page_trans = trans;
+                deleteTable('sgt_solicitudinspeccion', 'id', solicitud_id);
+                $('.solicitud_'+notificacion_usuario_id).remove();
+                $('#solicitudes_usuario').listview('refresh');
+                load_user_tables();
+            })
+            .fail(function(){
+                console.log("Error de conexión!");
+            });
+        });
+        
+        $.mobile.changePage('#dialog_page', {
+            changeHash: false, 
+            transition: 'pop'
+        });
     });
 
     $(document).on("click", "#cargar_encuesta", function(){
@@ -444,13 +525,42 @@ $(document).ready(function(){
         $('#recordar_contraseña').show('puff');
     });
 
-    $(document).on("click", "#edit_profile_option", function(){
+    $(document).on("click", "#edit_profile_option", function(event){
         event.preventDefault();
         next_page = $(this).attr('href');
         trans = $(this).attr('data-transition');
         load_user_edit_info(next_page, trans);
     });
 
+    $(document).on("click", "#refresh_profile_option", function(){
+        activePage = $.mobile.activePage.attr('id');
+        $('#nav-panel').panel('close');
+        next_page = '#' + activePage;
+        next_page_trans = 'flow';
+        load_user_tables();
+    });
+
+    $(document).on("click", "#refresh_profile_option", function(){
+        activePage = $.mobile.activePage.attr('id');
+        $('#nav-panel').panel('close');
+        next_page = '#' + activePage;
+        next_page_trans = 'flow';
+        load_user_tables();
+    });
+
+    $(document).on("click", "#logout_option", function(){
+        id_usuario = -1;
+        load_data_id = 0;
+
+        user_title = '';
+        next_page = '';
+        next_page_trans = '';
+
+        $.mobile.changePage('#login_page', {
+            changeHash: false,
+            transition: 'slidefade'
+        });
+    });
 });
 
 /* Funciones auxiliares definidas utilizadas por los eventos dentro de la APP móvil */

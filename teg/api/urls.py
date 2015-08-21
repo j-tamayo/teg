@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'^horarios/$', views.Horarios.as_view()),
     url(r'^crear-solicitud/$', views.CrearSolicitud.as_view()),
     url(r'^marcar-notificacion/$', views.MarcarNotificacion.as_view()),
+    url(r'^marcar-solicitud/$', views.MarcarSolicitud.as_view()),
     url(r'^guardar-respuestas-encuesta/$', views.GuardarRespuestasEncuesta.as_view()),
     url(r'^guardar-reclamo/$', views.GuardarReclamo.as_view()),
     url(r'^recuperar-clave/$', views.RecuperarClave.as_view()),

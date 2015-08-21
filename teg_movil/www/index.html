@@ -37,7 +37,7 @@
     </head>
 
     <body>
-        <div id="login_page" data-role="page" data-theme="d">
+        <div id="login_page" class="single_page" data-role="page" data-theme="d">
             <div role="main" class="ui-content">
                 <br><br><br><br>
                 <div class="ui-grid-a">
@@ -89,7 +89,7 @@
             </div>
         </div>
 
-        <div id="register_page" class="init_data" data-role="page" data-theme="d">
+        <div id="register_page" class="single_page" data-role="page" data-theme="d">
             <div data-role="header" data-theme="b">
                 <a id="register_back_btn" href="#login_page" data-transition="flip" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-back ui-corner-all back_btn">Volver</a>
                 <h1>Registro de Usuario</h1>
@@ -174,31 +174,12 @@
         </div>
         
         <div id="profile_header"></div>
-        
-        <!-- /panel -->
-        <div id="nav-panel">
-            <h2 class="text-success">Opciones:</h2>
-            <br>
-            <ul id="option_list">
-                <li data-icon="refresh">
-                    <a href="#">Refrescar</a>
-                </li>
-                <li data-icon="edit">
-                    <a id="edit_profile_option" href="#register_page" data-transition="flip">Editar perfil</a>
-                </li>
-                <li>
-                    <a href="#">Cerrar sesi&oacute;n</a>
-                </li>
-            </ul>
-            <br><br>
-            <a align="center" data-rel="close" class="ui-btn ui-shadow ui-corner-all ui-btn-a ui-icon-delete ui-btn-icon-right">Cerrar</a>
-        </div>
 
         <div data-url="profile_page" data-role="page" id="profile_page" class="multi_page" data-dom-cache="true" data-theme="d" data-next="request_page">
-            <div role="main" class="ui-content"></div>
+            <div id="profile_content" role="main" class="ui-content"></div>
         </div>
 
-        <div data-url="request_page" data-role="page" id="request_page" class="multi_page" data-dom-cache="true" data-theme="c" data-prev="profile_page" data-next="mail_page">
+        <div data-url="request_page" data-role="page" id="request_page" class="multi_page" data-dom-cache="true" data-theme="d" data-prev="profile_page" data-next="mail_page">
             <div id="request_list_content" role="main" class="ui-content"></div>
             <div id="request_footer" data-role="footer" data-position="fixed" data-theme="b">
                 <div class="ui-grid-b" align="center">
@@ -215,89 +196,89 @@
         </div>
 
         <!-- Formularios utilizados en el perfil de usuario -->
-        <div id="create_request_page" class="init_data_sol" data-role="page" data-theme="d">
+        <div id="create_request_page" class="single_page" data-role="page" data-theme="d">
             <div data-role="header" data-theme="b">
                 <a href="#request_page" data-transition="fade" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-delete ui-corner-all back_btn">Cancelar</a>
                 <h1>Crear Solicitud</h1>
             </div>
-            <form id="request_form">
             <div role="main" class="ui-content">
-                <div class="ui-grid-solo">
-                    <div class="ui-block-a">
-                        <div id="request_form_page1">
-                            <input name="centro_id" id="centro_id_sol" type="hidden">
-                            <div class="ui-field-contain">
-                                <label for="tipo_sol" class="select">Tipo de solicitud:</label>
-                                <select name="tipo" id="tipo_sol" data-theme="a" data-native-menu="false" class="tipos_inspeccion" required>
-                                    <option>---Seleccione un tipo---</option>
-                                </select>
+                <form id="request_form">
+                    <div class="ui-grid-solo">
+                        <div class="ui-block-a">
+                            <div id="request_form_page1">
+                                <input name="centro_id" id="centro_id_sol" type="hidden">
+                                <div class="ui-field-contain">
+                                    <label for="tipo_sol" class="select">Tipo de solicitud:</label>
+                                    <select name="tipo" id="tipo_sol" data-theme="a" data-native-menu="false" class="tipos_inspeccion" required>
+                                        <option>---Seleccione un tipo---</option>
+                                    </select>
+                                </div>
+                                <br>
+                                <div class="ui-field-contain">
+                                    <label for="estado_sol" class="select">Estado:</label>
+                                    <select name="estado" id="estado_sol" data-theme="a" data-native-menu="false" class="estados_centros" target="municipio_sol" required>
+                                        <option>---Seleccione un estado---</option>
+                                    </select>
+                                </div>
+                                <br>
+                                <div class="ui-field-contain">
+                                    <label for="municipio_sol" class="select">Municipio:</label>
+                                    <select name="municipio" id="municipio_sol" data-theme="a" data-native-menu="false" class="municipios" required>
+                                        <option>---Seleccione un municipio---</option>
+                                    </select>
+                                </div>
+                                <br>
+                                <div class="ui-field-contain">
+                                    <label for="fecha_asistencia_sol">Fecha de asistencia:</label>
+                                    <input name="fecha_asistencia" id="fecha_asistencia_sol" class="datepicker" data-role="date" type="text" required>
+                                </div>
                             </div>
-                            <br>
-                            <div class="ui-field-contain">
-                                <label for="estado_sol" class="select">Estado:</label>
-                                <select name="estado" id="estado_sol" data-theme="a" data-native-menu="false" class="estados_centros" target="municipio_sol" required>
-                                    <option>---Seleccione un estado---</option>
-                                </select>
+                            <div id="request_form_page2">
+                                <br>
+                                <label>Seleccione un centro de inspecci&oacute;n</label>
+                                <ul id="centros_inspeccion_sol" data-role="listview" data-inset="true" data-theme="a"></ul>
+                                </ul>
                             </div>
-                            <br>
-                            <div class="ui-field-contain">
-                                <label for="municipio_sol" class="select">Municipio:</label>
-                                <select name="municipio" id="municipio_sol" data-theme="a" data-native-menu="false" class="municipios" required>
-                                    <option>---Seleccione un municipio---</option>
-                                </select>
-                            </div>
-                            <br>
-                            <div class="ui-field-contain">
-                                <label for="fecha_asistencia_sol">Fecha de asistencia:</label>
-                                <input name="fecha_asistencia" id="fecha_asistencia_sol" class="datepicker" data-role="date" type="text" required>
-                            </div>
-                        </div>
-                        <div id="request_form_page2">
-                            <br>
-                            <label>Seleccione un centro de inspecci&oacute;n</label>
-                            <ul data-role="listview" data-inset="true" data-theme="a"></ul>
-                            </ul>
-                        </div>
-                        <div id="request_form_page3">
-                            <div class="ui-field-contain">
-                                <label for="preview_centro_sol">Centro de inspecci&oacute;n:</label>
-                                <p id="preview_centro"></p>
-                            </div>
-                            <br>
-                            <div class="ui-field-contain">
-                                <label for="preview_fecha_sol">Fecha de asistencia:</label>
-                                <p id="preview_fecha_sol"></p>
-                            </div>
-                            <br>
-                            <div class="ui-field-contain">
-                                <label for="preview_estado_sol">Estado:</label>
-                                <p id="preview_estado_sol"></p>
-                            </div>
-                            <br>
-                            <div class="ui-field-contain">
-                                <label for="preview_municipio_sol">Municipio:</label>
-                                <p id="preview_municipio_sol"></p>
-                            </div>
-                            <br>
-                            <div class="ui-field-contain">
-                                <label for="horario_sol" class="select">Hora aproximada de asistencia:</label>
-                                <select name="horario" id="horario_sol" data-theme="a" data-native-menu="false" class="horarios" required>
-                                    <option>---Seleccione una hora---</option>
-                                </select>
+                            <div id="request_form_page3">
+                                <div class="ui-field-contain">
+                                    <label for="preview_centro_sol">Centro de inspecci&oacute;n:</label>
+                                    <p id="preview_centro"></p>
+                                </div>
+                                <br>
+                                <div class="ui-field-contain">
+                                    <label for="preview_fecha_sol">Fecha de asistencia:</label>
+                                    <p id="preview_fecha_sol"></p>
+                                </div>
+                                <br>
+                                <div class="ui-field-contain">
+                                    <label for="preview_estado_sol">Estado:</label>
+                                    <p id="preview_estado_sol"></p>
+                                </div>
+                                <br>
+                                <div class="ui-field-contain">
+                                    <label for="preview_municipio_sol">Municipio:</label>
+                                    <p id="preview_municipio_sol"></p>
+                                </div>
+                                <br>
+                                <div class="ui-field-contain">
+                                    <label for="horario_sol" class="select">Hora aproximada de asistencia:</label>
+                                    <select name="horario" id="horario_sol" data-theme="a" data-native-menu="false" class="horarios" required>
+                                        <option>---Seleccione una hora---</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
             <div data-role="footer" data-theme="b" data-position="fixed">
                 <h2></h2>
                 <a id="prev_request_page" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-mini footer-button-left ui-btn-icon-left ui-icon-carat-l">Volver</a>
                 <a id="next_request_page" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-mini footer-button-right ui-btn-icon-right ui-icon-carat-r">Siguiente</a>
             </div>
-            </form>
         </div>
 
-        <div id="mail_content_page" data-role="page" data-theme="d">
+        <div id="mail_content_page" class="single_page" data-role="page" data-theme="d">
             <div data-role="header" data-theme="b">
                 <a href="#mail_page" data-transition="fade" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-back ui-corner-all back_btn">Volver</a>
                 <h1 id="mail_title"></h1>
@@ -310,7 +291,7 @@
             <!-- <div data-role="footer"></div> -->
         </div>
 
-        <div id="claim_page" data-role="page" data-theme="d">
+        <div id="claim_page" class="single_page" data-role="page" data-theme="d">
             <div data-role="header" data-theme="b">
                 <a href="#request_page" data-transition="fade" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-delete ui-corner-all back_btn">Cancelar</a>
                 <h1>Redacar Reclamo</h1>
@@ -336,7 +317,7 @@
             <!-- <div data-role="footer"></div> -->
         </div>
 
-        <div id="dialog_page" data-role="page" data-dialog="true" data-close-btn="none">
+        <div id="dialog_page" class="single_page" data-role="page" data-dialog="true" data-close-btn="none">
             <div id="dialog_header" data-theme="b" data-role="header"></div>
             <div data-theme="d" role="main" class="ui-content">
                 <div class="ui-grid-solo">
@@ -344,5 +325,25 @@
                 </div>
             </div>
         </div>
+
+        <!-- Panel -->
+        <div id="nav-panel" class="single_page">
+            <h2 class="text-success">Opciones:</h2>
+            <br>
+            <ul id="option_list">
+                <li data-icon="refresh">
+                    <a id="refresh_profile_option" href="#">Refrescar</a>
+                </li>
+                <li data-icon="edit">
+                    <a id="edit_profile_option" href="#register_page" data-transition="flip">Editar perfil</a>
+                </li>
+                <li>
+                    <a id="logout_option" href="#">Cerrar sesi&oacute;n</a>
+                </li>
+            </ul>
+            <br><br>
+            <a align="center" data-rel="close" class="ui-btn ui-shadow ui-corner-all ui-btn-a ui-icon-delete ui-btn-icon-right">Cerrar</a>
+        </div>
+
     </body>
 </html>

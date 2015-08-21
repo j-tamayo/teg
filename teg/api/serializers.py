@@ -7,7 +7,7 @@ from sgt.models import *
 class SgtUsuarioSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = SgtUsuario
-		fields = ('id','password','nombres','apellidos','cedula','correo','codigo_postal','direccion','fecha_nacimiento','sexo','telefono_local','telefono_movil','municipio')
+		fields = ('id','nombres','apellidos','cedula','correo','codigo_postal','direccion','fecha_nacimiento','sexo','telefono_local','telefono_movil','municipio')
 
 	# def create(self, validated_data):
 
