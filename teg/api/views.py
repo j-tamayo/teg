@@ -529,6 +529,7 @@ class GuardarRespuestasEncuesta(APIView):
 			encuesta_id = data['encuesta']
 			encuesta = Encuesta.objects.get(id=encuesta_id)
 			notificacion_usuario_id = data['notificacion_usuario']
+			notificacion_usuario = NotificacionUsuario.objects.get(id=notificacion_usuario_id)
 
 			total_preguntas = data['total_preguntas']
 			for index in range(int(total_preguntas)):
@@ -536,7 +537,7 @@ class GuardarRespuestasEncuesta(APIView):
 				pregunta_id = data[aux]
 				pregunta = Pregunta.objects.get(pk=pregunta_id)
 				tipo_respuesta = pregunta.tipo_respuesta.codigo
-				respuesta = Respuesta(encuesta=encuesta, pregunta=pregunta, usuario=usuario)
+				respuesta = Respuesta(encuesta=encuesta, pregunta=pregunta, usuario=usuario, notificacion_usuario = notificacion_usuario)
 				respuesta.save()
 
 				if tipo_respuesta == "RESP_DEF":
@@ -552,8 +553,8 @@ class GuardarRespuestasEncuesta(APIView):
 					respuesta_indefinida = RespuestaIndefinida(respuesta=respuesta, valor_indefinido=valor_indef)
 					respuesta_indefinida.save()
 
-			notificacion_usuario = NotificacionUsuario.objects.get(id=notificacion_usuario_id)
 			notificacion_usuario.borrada = True
+			notificacion_usuario.encuesta_respondida = True
 			notificacion_usuario.save()
 
 			mensaje['mensaje'] = 'Respuestas guardadas de manera exitosa'
