@@ -5,17 +5,8 @@ $(document).ready(function(){
     init_db();  // cargando BD Móvil...
 
     $('#get_password_form').hide();
-    
-    $('#nav-panel').panel({
-        theme: 'c',
-        positionFixed: true,
-        position: 'right',
-        display: 'push'
-    });
-
-    $('#option_list').listview({
-        theme: 'c',
-    });
+    $('#profile_header').hide();
+    $("#request_footer").hide();
 
     /* Inicializando elementos en las interfaces de la APP Móvil */
     $(".datepicker").datepicker({
@@ -26,6 +17,9 @@ $(document).ready(function(){
     $('ul,.request,.aux').html(function(i,h){
         return h.replace(/&nbsp;/g,'');
     });
+
+    $('#nav-panel').panel();
+    $('#option_list').listview();
 
     /* Definición de los eventos dentro de la APP Móvil */ 
     $(document).one("pagecreate", ".multi_page", function(){
@@ -61,7 +55,6 @@ $(document).ready(function(){
 
         $(document).on("swiperight", ".ui-page", function(event){
             prev = $(this).jqmData("prev");
-            //console.log(next);
             if(prev && (event.target === $(this)[0])){
                 $('a[target='+$(this).attr("id")+']').removeClass("ui-btn-active");
                 navprev(prev);
@@ -77,6 +70,24 @@ $(document).ready(function(){
     });
 
     $(document).on("pageshow", ".multi_page", function(){
+        if($('#profile_header').is(':empty')){
+            $('#profile_header').css('background-color', '#000000');
+            $('#profile_header').html('<div class="ui-body-b ui-body">\
+                                            <h3 id="user_title">Bienvenido<br>'+user_title+'</h3>\
+                                            <a href="#nav-panel" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>\
+                                            <div id="navbar_profile" data-role="navbar">\
+                                                <ul id="nav">\
+                                                    <li><a target="profile_page" data-icon="user">Ver Perfil</a></li>\
+                                                    <li><a target="request_page" data-icon="bullets">Solicitudes</a></li>\
+                                                    <li><a target="mail_page" data-icon="mail">Notificaciones</a></li>\
+                                                </ul>\
+                                            </div>\
+                                        </div>');
+
+            $('#profile_header').toolbar({theme: 'a', position: 'fixed'});
+            $('#profile_header').show('fold', 'down').trigger('updatelayout'); 
+        }
+
         thePage = $(this);
         link = $('a[target='+thePage.attr("id")+']');
         
@@ -106,6 +117,17 @@ $(document).ready(function(){
 
         if(thePage.attr("id") == "request_page")
             $("#request_footer").show("fold","up");
+    });
+
+    $(document).on("pagebeforeshow", ".single_page", function(){
+        if(!$('#profile_header').is(':empty')){
+            $('#profile_header').hide('fold', 'up').trigger('updatelayout');
+            $('#profile_header').toolbar('destroy');
+            $('#profile_header').empty();
+        }
+
+        if($('#nav-panel').hasClass('ui-panel-open'))
+            $('#nav-panel').panel('close');
     });
 
     $(document).on('pagecontainerbeforechange', function(e, data){  
@@ -142,49 +164,7 @@ $(document).ready(function(){
                 $("#request_form_page2").hide();
                 $("#request_form_page3").hide();
                 $("#prev_request_page").hide();
-                $('#nav-panel').hide();
             }
-
-            //parchazo.... -_-"
-            if($(from_page).hasClass("single_page") && $(to).hasClass("single_page") && $('#profile_header').is(':empty')){
-                $('#profile_header').css('background-color', '#d9edf7');
-                $('#profile_header').attr('data-role','header');
-                $('#profile_header').html('<div class="ui-body-b ui-body"></div>');
-                $('#profile_header').toolbar({theme: 'a', position: 'fixed'});
-                $('#profile_header').show('fold','down').trigger('updatelayout');
-            }
-        }
-    });
-
-    $(document).on("pagebeforeshow", ".multi_page", function(){
-        if($('#profile_header').is(':empty')){
-            $('#profile_header').css('background-color', '#000000');
-            $('#profile_header').attr('data-role','header');
-            $('#profile_header').html('<div class="ui-body-b ui-body">\
-                        <h3 id="user_title">Bienvenido<br>'+user_title+'</h3>\
-                        <a href="#nav-panel" class="ui-btn ui-btn-right ui-btn-icon-left ui-icon-gear ui-corner-all">Opciones</a>\
-                        <div data-role="navbar">\
-                            <ul id="nav">\
-                                <li><a target="profile_page" data-icon="user">Ver Perfil</a></li>\
-                                <li><a target="request_page" data-icon="bullets">Solicitudes</a></li>\
-                                <li><a target="mail_page" data-icon="mail">Notificaciones</a></li>\
-                            </ul>\
-                        </div>\
-                    </div>').trigger('create');
-
-            $('#profile_header').toolbar({theme: 'a', position: 'fixed'});
-            $('#profile_header').show('fold','down').trigger('updatelayout');
-        }
-    });
-
-    $(document).on("pagebeforeshow", ".single_page", function(){
-        if(!$('#profile_header').is(':empty')){
-            $('#profile_header').toolbar('destroy');
-            $('#profile_header').empty().trigger('create');
-            $('#profile_header').removeAttr('data-role');
-            $('#profile_header').removeAttr('class');
-            $('#profile_header').empty();
-            $('#profile_header').hide('fold','up').trigger('updatelayout');
         }
     });
 
@@ -550,23 +530,12 @@ $(document).ready(function(){
 
     $(document).on("click", "#refresh_profile_option", function(){
         activePage = $.mobile.activePage.attr('id');
-        $('#nav-panel').panel('close');
-        next_page = '#' + activePage;
-        next_page_trans = 'flow';
-        load_user_tables();
-    });
-
-    $(document).on("click", "#refresh_profile_option", function(){
-        activePage = $.mobile.activePage.attr('id');
-        $('#nav-panel').panel('close');
         next_page = '#' + activePage;
         next_page_trans = 'flow';
         load_user_tables();
     });
 
     $(document).on("click", "#logout_option", function(){
-        $('#nav-panel').panel('close');
-        
         id_usuario = -1;
         load_data_id = 0;
 
@@ -579,9 +548,4 @@ $(document).ready(function(){
             transition: 'slidefade'
         });
     });
-
-    // $(document).on("click", "#nav_option", function(){
-    //     console.log('abriendo opciones...');
-    //     $('#nav-panel').panel('toggle');
-    // });
 });

@@ -92,7 +92,7 @@
         <div id="register_page" class="single_page" data-role="page" data-theme="d">
             <div data-role="header" data-theme="b">
                 <a id="register_back_btn" href="#login_page" data-transition="flip" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-back ui-corner-all back_btn">Volver</a>
-                <h1>Registro de Usuario</h1>
+                <h1>Registrar Usuario</h1>
             </div>
             <div role="main" class="ui-content">
                 <div class="ui-grid-solo">
@@ -172,15 +172,13 @@
             </div>
             <!-- <div data-role="footer"></div> -->
         </div>
-
-        <div id="profile_header"></div>
-
+        
         <!-- Panel -->
-        <div id="nav-panel" data-role="panel">
-            <h2 class="text-success">Opciones:</h2>
+        <div id="nav-panel" data-role="panel" data-position-fixed="true" data-position="right" data-display="push" data-theme="c">
+            <h2 class="text-success">Opciones:</h2>
             <br>
-            <ul id="option_list">
-                <li data-icon="refresh">
+            <ul id="option_list" data-role="listview" data-theme="c">
+                <li data-icon="refresh">
                     <a id="refresh_profile_option" href="#">Refrescar</a>
                 </li>
                 <li data-icon="edit">
@@ -189,10 +187,13 @@
                 <li>
                     <a id="logout_option" href="#">Cerrar sesi&oacute;n</a>
                 </li>
-            </ul>
+            </ul>
             <br><br>
             <a align="center" data-rel="close" class="ui-btn ui-shadow ui-corner-all ui-btn-a ui-icon-delete ui-btn-icon-right">Cerrar</a>
-        </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div id="profile_header" data-role="header"></div>
 
         <div data-url="profile_page" data-role="page" id="profile_page" class="multi_page" data-dom-cache="true" data-theme="d" data-next="request_page">
             <div id="profile_content" role="main" class="ui-content"></div>
