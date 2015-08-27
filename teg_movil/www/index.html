@@ -55,7 +55,7 @@
                     </div>
                     <div class="ui-grid-a">
                         <div class="ui-block-a">
-                            <a href="#register_page" data-transition="flip" class="ui-btn ui-btn-c ui-corner-all">Registrar</a>
+                            <a href="#register_page" data-transition="flip" class="ui-btn ui-btn-c ui-corner-all ref_btn">Registrar</a>
                         </div>
                         <div class="ui-block-b">
                             <button class="ui-btn ui-btn-d ui-corner-all" type="submit">Entrar</button>
@@ -91,8 +91,8 @@
 
         <div id="register_page" class="single_page" data-role="page" data-theme="d">
             <div data-role="header" data-theme="b">
-                <a id="register_back_btn" href="#login_page" data-transition="flip" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-back ui-corner-all back_btn">Volver</a>
-                <h1>Registro de Usuario</h1>
+                <a id="register_back_btn" href="#login_page" data-transition="flip" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-back ui-corner-all ref_btn">Volver</a>
+                <h1>Registrar Usuario</h1>
             </div>
             <div role="main" class="ui-content">
                 <div class="ui-grid-solo">
@@ -172,15 +172,13 @@
             </div>
             <!-- <div data-role="footer"></div> -->
         </div>
-
-        <div id="profile_header"></div>
-
+        
         <!-- Panel -->
-        <div id="nav-panel" data-role="panel">
-            <h2 class="text-success">Opciones:</h2>
+        <div id="nav-panel" data-role="panel" data-position-fixed="true" data-position="right" data-display="push" data-theme="c">
+            <h2 class="text-success">Opciones:</h2>
             <br>
-            <ul id="option_list">
-                <li data-icon="refresh">
+            <ul id="option_list" data-role="listview" data-theme="c">
+                <li data-icon="refresh">
                     <a id="refresh_profile_option" href="#">Refrescar</a>
                 </li>
                 <li data-icon="edit">
@@ -189,10 +187,13 @@
                 <li>
                     <a id="logout_option" href="#">Cerrar sesi&oacute;n</a>
                 </li>
-            </ul>
+            </ul>
             <br><br>
             <a align="center" data-rel="close" class="ui-btn ui-shadow ui-corner-all ui-btn-a ui-icon-delete ui-btn-icon-right">Cerrar</a>
-        </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div id="profile_header" data-role="header"></div>
 
         <div data-url="profile_page" data-role="page" id="profile_page" class="multi_page" data-dom-cache="true" data-theme="d" data-next="request_page">
             <div id="profile_content" role="main" class="ui-content"></div>
@@ -202,8 +203,8 @@
             <div id="request_list_content" role="main" class="ui-content"></div>
             <div id="request_footer" data-role="footer" data-position="fixed" data-theme="b">
                 <div class="ui-grid-b" align="center">
-                    <div class="ui-block-a"><a href="#claim_page" class="ui-btn ui-corner-all">Reclamo</a></div>
-                    <div class="ui-block-b"><a href="#create_request_page" class="ui-btn ui-corner-all">Crear</a></div>
+                    <div class="ui-block-a"><a href="#claim_page" class="ui-btn ui-corner-all ref_btn">Reclamo</a></div>
+                    <div class="ui-block-b"><a href="#create_request_page" class="ui-btn ui-corner-all ref_btn">Crear</a></div>
                     <div class="ui-block-c"><a href="#" class="ui-btn ui-corner-all">Buscar</a></div>
                 </div>
             </div>
@@ -211,13 +212,21 @@
 
         <div data-url="mail_page" data-role="page" id="mail_page" class="multi_page" data-dom-cache="true" data-theme="d" data-prev="request_page">
             <div id="mail_list_content" role="main" class="ui-content"></div>
-            <!-- <div data-role="footer"></div> -->
+            <div id="mail_footer" data-role="footer" data-position="fixed" data-theme="b">
+                <div class="ui-grid-solo">
+                    <div class="ui-block-a">
+                        <form class="ui-filterable">
+                            <input id="mail_filter" data-type="search" placeholder="Buscar.." data-theme="a">
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Formularios utilizados en el perfil de usuario -->
         <div id="create_request_page" class="single_page" data-role="page" data-theme="d">
             <div data-role="header" data-theme="b">
-                <a href="#request_page" data-transition="fade" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-delete ui-corner-all back_btn">Cancelar</a>
+                <a href="#request_page" data-transition="fade" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-delete ui-corner-all ref_btn">Cancelar</a>
                 <h1>Crear Solicitud</h1>
             </div>
             <div role="main" class="ui-content">
@@ -299,7 +308,7 @@
 
         <div id="mail_content_page" class="single_page" data-role="page" data-theme="d">
             <div data-role="header" data-theme="b">
-                <a href="#mail_page" data-transition="fade" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-back ui-corner-all back_btn">Volver</a>
+                <a href="#mail_page" data-transition="fade" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-back ui-corner-all ref_btn">Volver</a>
                 <h1 id="mail_title"></h1>
             </div>
             <div role="main" class="ui-content">
@@ -312,7 +321,7 @@
 
         <div id="claim_page" class="single_page" data-role="page" data-theme="d">
             <div data-role="header" data-theme="b">
-                <a href="#request_page" data-transition="fade" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-delete ui-corner-all back_btn">Cancelar</a>
+                <a href="#request_page" data-transition="fade" class="ui-btn ui-btn-left ui-btn-icon-left ui-icon-delete ui-corner-all ref_btn">Cancelar</a>
                 <h1>Redacar Reclamo</h1>
             </div>
             <div role="main" class="ui-content">

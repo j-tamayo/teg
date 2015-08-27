@@ -31,15 +31,15 @@ function init_db(){
 	        displayName = 'TEG Mobile';
 	        maxSize = 100 * 1024;
 	        db = openDatabase(shortName, version, displayName, maxSize);
-	        console.log("iniciando carga de la base de datos local...");
+	        console.log('iniciando carga de la base de datos local...');
 			//dropTables();
 			createTables();
 	    }
 	}catch(e){
 	    if(e == 2)
-	        console.log("Versión inválida para la base de datos");
+	        console.log('Versión inválida para la base de datos');
 	    else
-	        console.log("Error desconocido "+e+".");
+	        console.log('Error desconocido '+e+'.');
 	    return;
 	}
 }
@@ -68,14 +68,14 @@ function createTables(){
 }
 
 function loadTables(){
-	console.log("tablas cargadas exitosamente...");
-	console.log("procediendo a cargar registros de la web APP...");
+	console.log('tablas cargadas exitosamente...');
+	console.log('procediendo a cargar registros de la web APP...');
 	
 	load_data_id = 1;
-	$.getJSON("http://192.168.7.126:8000/api/data-inicial/")
+	$.getJSON('http://192.168.1.101:8000/api/data-inicial/')
 	.done(load_json_data)
 	.fail(function(){
-	    console.log("Error de conexión!");
+	    console.log('Error de conexión!');
 	});
 }
 
@@ -120,7 +120,7 @@ function init_data(){
 }
 
 function load_json_data(json){
-	console.log("cargando json en BD...");
+	console.log('cargando json en BD...');
 	console.log(json);
 	db.transaction(function(tx){
 		$.each(json, function(key, value){
@@ -182,7 +182,7 @@ function load_json_data(json){
 
 								tx.executeSql('UPDATE '+table+' SET '+str_up+' where id = '+pk+';', val_up,
 								function(){
-									console.log("registro actualizado exitosamente!");
+									console.log('registro actualizado exitosamente!');
 								},
 								function(tx, err){
 									throw new Error(err.message);
@@ -195,7 +195,7 @@ function load_json_data(json){
 
 							tx.executeSql('INSERT INTO '+table+'('+str_cols+') values ('+str_values+');', val,
 							function(){
-								console.log("registro cargado exitosamente!");
+								console.log('registro cargado exitosamente!');
 							},
 							function(tx, err){
 								throw new Error(err.message);
@@ -234,7 +234,7 @@ function load_json_data(json){
 
 									tx.executeSql('DELETE FROM '+table+' WHERE id = '+row['id']+';', [],
 									function(){
-										console.log("registro borrado exitosamente!");
+										console.log('registro borrado exitosamente!');
 									},
 									function(tx, err){
 										throw new Error(err.message);
@@ -257,14 +257,14 @@ function load_json_data(json){
 
 function load_user_tables(){
 	/* Buscar y guardar información del usuario vía web service */
-	console.log("login extitoso, procediendo a cargar información de usuario...");
+	console.log('login extitoso, procediendo a cargar información de usuario...');
 	
 	load_data_id = 2;
-	$.post("http://192.168.7.126:8000/api/usuario-info/", {'id': id_usuario})
+	$.post('http://192.168.1.101:8000/api/usuario-info/', {'id': id_usuario})
 	.done(load_json_data)
 	.fail(function(){
 		init_data(); //cargando la data localmente...
-	    console.log("Error de conexión!");
+	    console.log('Error de conexión!');
 	});
 }
 
@@ -309,7 +309,7 @@ function login(correo, password, user_info){
 	    			flag_login = true;
 	    		}
 	    		else
-	    			console.log("Usuario inválido...");
+	    			console.log('Usuario inválido...');
 			}
 	    },
 		function(tx, err){
@@ -326,9 +326,9 @@ function login(correo, password, user_info){
 
 function get_data(table, url){
 	$.ajax({
-	    type: "GET",
+	    type: 'GET',
 	    url: url,
-	    dataType: "json",
+	    dataType: 'json',
 	    async: false,
 	    success: function(data){
 	        
@@ -336,7 +336,7 @@ function get_data(table, url){
 
 	    },
 	    error: function(){
-	    	console.log("Error de conexión!");
+	    	console.log('Error de conexión!');
 	    }
 	});
 }
@@ -360,7 +360,7 @@ function insertTable(table, cols, values){
 	db.transaction(function(tx){
 		tx.executeSql('INSERT INTO '+table+'('+str_cols+') values ('+str_values+');', values,
 		function(){
-			console.log("registro cargado exitosamente!");
+			console.log('registro cargado exitosamente!');
 		},
 		function(tx, err){
 			throw new Error(err.message);
@@ -372,9 +372,9 @@ function updateTable(table, cols, values, cond, cond_val){
 	str_cols = '';
 	for(i = 0; i < cols.length; i++){
 		if(i > 0)
-			str_cols = str_cols + ',' + cols[i] + "=?";
+			str_cols = str_cols + ',' + cols[i] + '=?';
 		else
-			str_cols = str_cols + cols[i] + "=?";
+			str_cols = str_cols + cols[i] + '=?';
 	}
 
 	console.log('UPDATE '+table+' SET '+str_cols+' WHERE '+cond+' = '+cond_val+';');
@@ -382,7 +382,7 @@ function updateTable(table, cols, values, cond, cond_val){
 	db.transaction(function(tx){
 		tx.executeSql('UPDATE '+table+' SET '+str_cols+' WHERE '+cond+' = '+cond_val+';', values,
 		function(){
-			console.log("registro actualizado exitosamente!");
+			console.log('registro actualizado exitosamente!');
 		},
 		function(tx, err){
 			throw new Error(err.message);
@@ -395,7 +395,7 @@ function deleteTable(table, cond, cond_val){
 	db.transaction(function(tx){
 		tx.executeSql('DELETE FROM '+table+' WHERE '+cond+' = '+cond_val+';', [],
 		function(){
-			console.log("registro actualizado exitosamente!");
+			console.log('registro actualizado exitosamente!');
 		},
 		function(tx, err){
 			throw new Error(err.message);
@@ -471,10 +471,10 @@ function fill_municipios(sel_estado, query){
 					aux += '<option value="'+row['id']+'">'+row['nombre']+'</option>';
 				}
 				sel_municipio.html(aux);
-				sel_municipio.selectmenu("refresh");
+				sel_municipio.selectmenu('refresh');
 		    },
 			function(tx, err){
-				console.log("error");
+				console.log('error');
 				throw new Error(err.message);
 			});
 		}, errorCB, successCB);
@@ -491,7 +491,7 @@ function fill_tipos_inspeccion(){
 				row = results.rows.item(i);
 				aux += '<option value="'+row['id']+'">'+row['nombre']+'</option>';
 			}
-			$(".tipos_inspeccion").each(function(){
+			$('.tipos_inspeccion').each(function(){
 				$(this).html(aux);
 			});
 	    },
@@ -502,9 +502,9 @@ function fill_tipos_inspeccion(){
 }
 
 function load_profile_info(){
-	$("#profile_content").empty();
-	$("#request_list_content").empty();
-	$("#mail_list_content").empty();
+	$('#profile_content').empty();
+	$('#request_list_content').empty();
+	$('#mail_list_content').empty();
 
 	db.transaction(function(tx){
 
@@ -514,7 +514,7 @@ function load_profile_info(){
 			row = results.rows.item(0);
 			user_title = row['nombres'];
 
-	    	$("#profile_content").html('<h3 class="text-success" style="text-align: center;">Informaci&oacute;n del usuario</h3>\
+	    	$('#profile_content').html('<h3 class="text-success" style="text-align: center;">Informaci&oacute;n del usuario</h3>\
 				<p>Nombre: '+row['nombres']+'</p>\
 				<p>Apellido: '+row['apellidos']+'</p>\
 				<p>C&eacute;dula: '+row['cedula']+'</p>\
@@ -527,7 +527,7 @@ function load_profile_info(){
 			);	/* OJO!!! Falta cargar la información de la poliza... */
 	    },
 		function(tx, err){
-			console.log("error");
+			console.log('error');
 			throw new Error(err.message);
 		});
 		
@@ -599,7 +599,7 @@ function load_profile_info(){
 	    	num = results.rows.length;
 
 	    	if(num > 0){
-	    		aux = '<ul id="notificaciones_usuario" data-role="listview" data-split-icon="delete" data-theme="a" data-split-theme="a" data-inset="false">';
+	    		aux = '<ul id="notificaciones_usuario" data-role="listview" data-split-icon="delete" data-theme="a" data-split-theme="a" data-inset="false" data-filter="true" data-input="#mail_filter">';
 
 				for(i = 0; i < num; i++){
 					row = results.rows.item(i);
@@ -651,7 +651,7 @@ function load_profile_info(){
 
 function load_centros_inspeccion(json, sel){
 	db.transaction(function(tx){
-		sel.children("ul").empty();
+		sel.children('ul').empty();
 		$(json).each(function(key, value){
 			tx.executeSql('SELECT nombre, telefonos, direccion FROM sgt_centroinspeccion WHERE id = '+value['id']+';', [], 
 		    function(tx, results){
@@ -668,14 +668,14 @@ function load_centros_inspeccion(json, sel){
 							</li>';
 				}
 
-				sel.children("ul").append(aux);
-				sel.children("ul").html(function(i,h){
+				sel.children('ul').append(aux);
+				sel.children('ul').html(function(i,h){
 			        return h.replace(/&nbsp;/g,'');
 			    });
-				sel.children("ul").listview("refresh");
+				sel.children('ul').listview("refresh");
 
-				sel.show("fade");
-				$("#prev_request_page").show("fade");
+				sel.show('fade');
+				$('#prev_request_page').show('fade');
 		    },
 			function(tx, err){
 				throw new Error(err.message);
@@ -697,7 +697,7 @@ function load_notificacion(id, id_ref, asunto, fecha){
             	$('#mail_content').append('<br><p align="left">(Recibido el '+fecha +')<p><br><button id="cargar_encuesta" target-notificacion-usuario="'+id_ref+'" target-encuesta="'+row['encuesta']+'" class="ui-btn ui-btn-c ui-corner-all" type="button">Completar encuesta</button>');
 
             $.mobile.changePage('#mail_content_page', {
-	            changeHash: true,
+	            changeHash: false,
 	            transition: 'fade'
 	        });
         },
@@ -744,7 +744,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 						<br><button class="ui-btn ui-btn-c ui-corner-all" type="submit">Enviar</button>\
 					</form>';
 
-			$('#mail_content').html(aux).trigger( "create" );
+			$('#mail_content').html(aux).trigger('create');
         },
         function(tx, err){
             throw new Error(err.message);
@@ -778,7 +778,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
         });
     }, errorCB, function(){
     	console.log('Transacción exitosa!');
-    	$("#encuesta_form").submit(function(event){
+    	$('#encuesta_form').submit(function(event){
 	        event.preventDefault();
 		    formData = $(this).serializeArray();
 		    data = {};
@@ -787,7 +787,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 		        data[obj.name] = obj.value;
 		    });
 
-		    $.post("http://192.168.7.126:8000/api/guardar-respuestas-encuesta/", data)
+		    $.post('http://192.168.1.101:8000/api/guardar-respuestas-encuesta/', data)
 	        .done(function(json){
 	            console.log(json);
 	            next_page = '#mail_page';
