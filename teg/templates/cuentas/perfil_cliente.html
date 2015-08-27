@@ -152,7 +152,7 @@
 								<tr id="notificacion_{{n.id}}">
 									<td>{{n.notificacion.asunto}}</td>
 									<td>{{n.notificacion.tipo_notificacion.descripcion}}</td>
-									<td>{{ n.fecha_creacion|date:"SHORT_DATE_FORMAT" }}</td>
+									<td>{{ n.fecha_creacion }}</td>
 									<td>
 										<span id="marca_{{n.id}}" class="label {% if n.leida %} label-info {% else %} label-warning {% endif %}">{% if n.leida %} Leida {% else %} Nueva {% endif %}</span>
 									</td>

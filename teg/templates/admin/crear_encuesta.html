@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+$('#enviar_confirmar_asistencia'){% extends "base.html" %}
 {% load sgt_tags %}
 
 
@@ -133,7 +133,7 @@
 					<br><br>
 					<div class="row">
 						<div class="col-xs-6">
-							<a href="#" class="btn btn-danger col-xs-12">Volver</a>
+							<a href="{% url 'admin_encuestas' %}" class="btn btn-danger col-xs-12">Volver</a>
 						</div>
 						<div class="col-xs-6">
 							<input type="submit" class="btn btn-primary col-xs-12" value="Guardar">

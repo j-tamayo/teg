@@ -370,7 +370,7 @@ class Notificacion(models.Model):
 class NotificacionUsuario(models.Model):
 	notificacion = models.ForeignKey(Notificacion, related_name='notificacion')
 	usuario = models.ForeignKey(USER_MODEL, related_name='usuario')
-	fecha_creacion = models.DateField(auto_now_add=True)
+	fecha_creacion = models.DateTimeField(auto_now_add=True)
 	leida = models.BooleanField(default=False)
 	borrada = models.BooleanField(default=False)
 	encuesta_respondida = models.BooleanField(default=False)

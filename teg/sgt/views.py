@@ -286,7 +286,7 @@ class BandejaCliente(View):
 		tipo_solicitudes = TipoInspeccion.objects.all()
 		form = SolicitudInspeccionForm(request.POST)
 		poliza = Poliza.objects.filter(usuario = usuario).first()
-		solicitudes = SolicitudInspeccion.objects.filter()
+		solicitudes = SolicitudInspeccion.objects.filter(usuario = usuario)
 		notificaciones = NotificacionUsuario.objects.filter(usuario = usuario, borrada = False).order_by('-leida', '-pk')
 
 		for s in solicitudes:
@@ -1928,6 +1928,11 @@ class TaquillaAccionSolicitud(View):
 				numero_orden.solicitud_inspeccion.estatus = Estatus.objects.get(codigo = 'solicitud_procesada')
 				numero_orden.solicitud_inspeccion.save()
 				numero_orden.save()
+				#Enviar la notificación de asistencia al usuario
+				cliente = numero_orden.solicitud_inspeccion.usuario
+				notificacion = Notificacion.objects.filter(encuesta__tipo_encuesta__codigo = 'ENC_CONF').first()
+				notificacion_usuario = NotificacionUsuario(notificacion=notificacion, usuario=cliente)
+				notificacion_usuario.save()
 
 			else:
 				error_msg = 'Falta algún parámetro'
