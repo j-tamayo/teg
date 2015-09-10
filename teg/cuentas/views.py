@@ -69,7 +69,7 @@ class Registro(View):
                 fecha_nacimiento = registro['fecha_nacimiento'],
                 telefono_local = registro['telefono_local'],
                 telefono_movil = registro['telefono_movil'],
-                sexo = registro['sexo'],
+                sexo = registro['sexo'] if registro['sexo'] else None,
                 rol = rol_cliente)
             
             usuario.set_password(registro['password'])

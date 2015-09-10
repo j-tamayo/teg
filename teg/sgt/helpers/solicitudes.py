@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime
 from sgt.models import *
 import datetime
@@ -72,6 +73,23 @@ def generar_horarios(centro, fecha_asistencia):
 
 	return lista_bloques
 		
+
+def calcular_capacidad_centro(centro):
+	"""Método que calcula la capacidad de un centro a partir de los Peritos 
+	habilitados que tiene, sus horarios y tiempo de atención promedio"""
+	tiempo_atencion = centro.tiempo_atencion
+	
+	cantidad_minutos_manana = diff_times_in_minutes(centro.hora_apertura_manana,centro.hora_cierre_manana)
+	cantidad_minutos_tarde = diff_times_in_minutes(centro.hora_apertura_tarde,centro.hora_cierre_tarde)
+
+	cantidad_bloques_manana = cantidad_minutos_manana / tiempo_atencion
+	cantidad_bloques_tarde = cantidad_minutos_tarde / tiempo_atencion
+
+	cantidad_peritos = centro.peritos.filter(activo = True).count()
+
+	capacidad = (cantidad_bloques_manana + cantidad_bloques_tarde) * cantidad_peritos
+	
+	return capacidad
 
 
 

@@ -52,6 +52,8 @@ class ObtenerCentroInspeccion(View):
 		"""" Vista que retorna en formato JSON los centros de inspección dependiendo del municipio_id recibido """
 		municipio_id = request.GET.get('municipio_id', None)
 		estado_id = request.GET.get('estado_id', None)
+		fecha_asistencia = request.GET.get('fecha_asistencia', datetime.now().date().strftime('%d/%m/%Y'))
+		fecha_asistencia = datetime.strptime(fecha_asistencia, '%d/%m/%Y')
 		centros = []
 		if municipio_id or estado_id:
 			if municipio_id:
@@ -61,8 +63,9 @@ class ObtenerCentroInspeccion(View):
 			
 			#Para calcular la disponibilidad de cada centro
 			for c in centros_query:
-				en_cola = ColaAtencion.objects.filter(centro_inspeccion = c).count()
-				c.disponibilidad = c.capacidad - en_cola
+				en_cola = NumeroOrden.objects.filter(fecha_atencion = fecha_asistencia).count()
+				capacidad = solicitudes.calcular_capacidad_centro(c)
+				c.disponibilidad = capacidad - en_cola
 				# Para calcular la disponibilidad (Alta, media, baja y muy baja)
 				if c.disponibilidad > (3 * c.capacidad)/4:
 					c.etiqueta = 'Alta'
@@ -109,13 +112,15 @@ class GenerarNumeroOrden(View):
 		centro_id = kwargs['centro_id']
 		print centro_id
 		centro_inspeccion = CentroInspeccion.objects.get(id=centro_id)
-		fecha_asistencia = request.GET.get('fecha_asistencia', None)
+		fecha_asistencia = request.GET.get('fecha_asistencia', datetime.now().date().strftime('%d/%m/%Y'))
+		fecha_asistencia = datetime.strptime(fecha_asistencia, '%d/%m/%Y')
 
 		horarios = []
 		
 		centro = []
-		en_cola = ColaAtencion.objects.filter(centro_inspeccion = centro_inspeccion).count()
-		centro_inspeccion.disponibilidad = centro_inspeccion.capacidad - en_cola
+		en_cola = NumeroOrden.objects.filter(fecha_atencion = fecha_asistencia).count()
+		capacidad = solicitudes.calcular_capacidad_centro(c)
+		centro_inspeccion.disponibilidad = capacidad - en_cola
 		# Para calcular la disponibilidad (Alta, media, baja y muy baja)
 		if centro_inspeccion.disponibilidad > (3 * centro_inspeccion.capacidad)/4:
 			centro_inspeccion.etiqueta = 'Alta'
@@ -130,7 +135,7 @@ class GenerarNumeroOrden(View):
 			centro_inspeccion.etiqueta = 'Muy baja'
 			centro_inspeccion.etiqueta_clase = 'danger'
 
-		fecha_asistencia = dates.convert(fecha_asistencia, '%m/%d/%Y', '%Y-%m-%d')
+		fecha_asistencia = dates.convert(fecha_asistencia, '%d/%m/%Y', '%Y-%m-%d')
 		#Falta calcular Informacion para generar numero de orden y hora de asistencia...
 		horarios = []
 		bloques = solicitudes.generar_horarios(centro_inspeccion, fecha_asistencia)
@@ -169,6 +174,8 @@ class CrearSolicitudInspeccion(View):
 		tipo_solicitudes = TipoInspeccion.objects.all()
 		centros = CentroInspeccion.objects.all()
 		municipios = Municipio.objects.filter(estado__id = estado_id)
+		fecha_asistencia = request.GET.get('fecha_asistencia', datetime.now().date().strftime('%d/%m/%Y'))
+		fecha_asistencia = datetime.strptime(fecha_asistencia, '%d/%m/%Y')
 
 		if estado_id:
 			aux = centros.filter(municipio__estado__id = estado_id)
@@ -177,8 +184,9 @@ class CrearSolicitudInspeccion(View):
 
 		#Para calcular la disponibilidad de cada centro
 		for c in centros:
-			en_cola = ColaAtencion.objects.filter(centro_inspeccion = c).count()
-			c.disponibilidad = c.capacidad - en_cola
+			en_cola = NumeroOrden.objects.filter(fecha_atencion = fecha_asistencia).count()
+			capacidad = solicitudes.calcular_capacidad_centro(c)
+			c.disponibilidad = capacidad - en_cola
 			# Para calcular la disponibilidad (Alta, media, baja y muy baja)
 			if c.disponibilidad > (3 * c.capacidad)/4:
 				c.etiqueta = 'Alta'

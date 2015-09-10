@@ -68,7 +68,8 @@ class RegistroForm(forms.Form):
 
 	cedula = forms.CharField(
 		label = u'Cédula',
-		widget=forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
+		widget=forms.TextInput(attrs={'class':'form-control'}),
+		required = False
 	)
 
 	estado = forms.ModelChoiceField(
@@ -85,12 +86,14 @@ class RegistroForm(forms.Form):
 
 	codigo_postal = forms.IntegerField(
 		label = u'Código postal',
-		widget = forms.TextInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
+		widget = forms.TextInput(attrs={'class':'form-control'}),
+		required = False
 	)
 
 	direccion = forms.CharField(
 		label = u'Dirección',
-		widget = forms.Textarea(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
+		widget = forms.Textarea(attrs={'class':'form-control'}),
+		required = False
 	)
 
 	correo = forms.EmailField(
@@ -111,25 +114,29 @@ class RegistroForm(forms.Form):
 	sexo = forms.ChoiceField(
 		label  = u'Sexo',
 		choices = sex_choices,
-		widget = forms.RadioSelect(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
+		widget = forms.RadioSelect(attrs={'class':'form-control'}),
+		required = False
 	)
 
 	telefono_local = forms.CharField(
 		label = u'Teléfono local',
-		widget = forms.TextInput(attrs={'class':'form-control'})
+		widget = forms.TextInput(attrs={'class':'form-control'}),
+		required = False
 	)
 
 	telefono_movil = forms.CharField(
 		label = u'Teléfono móvil',
-		widget = forms.TextInput(attrs={'class':'form-control'})
+		widget = forms.TextInput(attrs={'class':'form-control'}),
+		required = False
 	)
 
 	fecha_nacimiento = forms.DateField(
 		label = u'Fecha de nacimiento',
 		widget = forms.DateInput(
 			format = '%d/%m/%Y',
-			attrs={'class':'col-xs-10','required':'','readonly':'','data-error':'Este campo es obligatorio'},
-		)
+			attrs={'class':'col-xs-9'},
+		),
+		required = False
 	)
 
 	centro_inspeccion = forms.ModelChoiceField(
@@ -155,11 +162,32 @@ class RegistroForm(forms.Form):
 
 		return password2
 
+	def clean_correo(self):
+		correo = self.cleaned_data.get('correo')
+		print "CORREO",self
+
 	def clean(self):
 		cleaned_data = super(RegistroForm, self).clean()
 		centro_inspeccion = cleaned_data.get('centro_inspeccion', None)
-		if self.taquilla > 0 and not centro_inspeccion:
-			self.add_error('centro_inspeccion', 'Este campo es obligatorio')
+		cedula = cleaned_data.get('cedula', None)
+		codigo_postal = cleaned_data.get('codigo_postal', None)
+		direccion = cleaned_data.get('direccion', None)
+		sexo = cleaned_data.get('sexo', None)
+		fecha_nacimiento = cleaned_data.get('fecha_nacimiento', None)
+		if self.taquilla > 0:
+			if not centro_inspeccion:
+				self.add_error('centro_inspeccion', 'Este campo es obligatorio')
+			if not cedula:
+				self.add_error('cedula', 'Este campo es obligatorio')
+			if not codigo_postal:
+				self.add_error('codigo_postal', 'Este campo es obligatorio')
+			if not direccion:
+				self.add_error('direccion', 'Este campo es obligatorio')
+			if not sexo:
+				self.add_error('sexo', 'Este campo es obligatorio')
+			if not fecha_nacimiento:
+				self.add_error('fecha_nacimiento', 'Este campo es obligatorio')
+
 
 
 class RecuperarClaveForm(forms.Form):

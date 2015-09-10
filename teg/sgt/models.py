@@ -34,7 +34,7 @@ class CentroInspeccion(models.Model):
 	tiempo_atencion = models.IntegerField(default=0)
 	municipio = models.ForeignKey(Municipio)
 	peritos = models.ManyToManyField('Perito')
-	numero_orden = models.ManyToManyField('NumeroOrden', through='ColaAtencion')
+	# numero_orden = models.ManyToManyField('NumeroOrden', through='ColaAtencion')
 	hora_apertura_manana = models.TimeField(blank=True, null=True)
 	hora_cierre_manana = models.TimeField(blank=True, null=True)
 	hora_apertura_tarde = models.TimeField(blank=True, null=True)
@@ -322,10 +322,10 @@ class SistemaOperativo(models.Model):
 		return u'%s' % self.nombre
 
 
-class ColaAtencion(models.Model):
-	centro_inspeccion = models.ForeignKey(CentroInspeccion)
-	numero_orden = models.ForeignKey(NumeroOrden)
-	orden = models.IntegerField()
+# class ColaAtencion(models.Model):
+# 	centro_inspeccion = models.ForeignKey(CentroInspeccion)
+# 	numero_orden = models.ForeignKey(NumeroOrden)
+# 	orden = models.IntegerField()
 
 
 class Poliza(models.Model):

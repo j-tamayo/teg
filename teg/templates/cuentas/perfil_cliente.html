@@ -233,6 +233,8 @@
 					  daysOfWeekDisabled: [0,6],
 					  datesDisabled:[]
 					});
+					$('#fecha_asistencia').datepicker('setDate', new Date());
+					$('#fecha_asistencia').datepicker('update');
 					$('#crear_solicitud_form').validator();
 				})
 

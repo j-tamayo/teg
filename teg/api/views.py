@@ -328,6 +328,8 @@ class ObtenerCentros(APIView):
 		"""" Vista que retorna en formato JSON los centros de inspección dependiendo del municipio_id recibido """
 		municipio_id = request.data['municipio_id']
 		estado_id = request.data['estado_id']
+		fecha_asistencia = request.data.get('fecha_asistencia', datetime.now().date().strftime('%d/%m/%Y'))
+		fecha_asistencia = datetime.strptime(fecha_asistencia, '%d/%m/%Y')
 
 		centros = []
 		if municipio_id or estado_id:
@@ -337,8 +339,9 @@ class ObtenerCentros(APIView):
 			
 			#Para calcular la disponibilidad de cada centro
 			for c in centros_query:
-				en_cola = ColaAtencion.objects.filter(centro_inspeccion = c).count()
-				c.disponibilidad = c.capacidad - en_cola
+				en_cola = NumeroOrden.objects.filter(fecha_atencion = fecha_asistencia).count()
+				capacidad = solicitudes.calcular_capacidad_centro(c)
+				c.disponibilidad = capacidad - en_cola
 				# Para calcular la disponibilidad (Alta, media, baja y muy baja)
 				if c.disponibilidad > (3 * c.capacidad)/4:
 					c.etiqueta = 'Alta'
