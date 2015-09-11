@@ -53,6 +53,8 @@ class AutenticacionUsuarioForm(forms.Form):
 
 class RegistroForm(forms.Form):
 	""" Formulario para el registro de usuarios """
+	id = None
+	edicion = 0
 	sex_choices = [('0','Masculino'),('1','Femenino')]
 	taquilla = forms.DecimalField(widget=forms.HiddenInput(), required = False)
 
@@ -103,12 +105,14 @@ class RegistroForm(forms.Form):
 
 	password = forms.CharField(
 		label = u'Contraseña',
-		widget = forms.PasswordInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
+		widget = forms.PasswordInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'}),
+		required = False
 	)
 
 	password_confirm = forms.CharField(
 		label = u'Contraseña',
-		widget = forms.PasswordInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'})
+		widget = forms.PasswordInput(attrs={'class':'form-control','required':'','data-error':'Este campo es obligatorio'}),
+		required = False
 	)
 
 	sexo = forms.ChoiceField(
@@ -148,23 +152,35 @@ class RegistroForm(forms.Form):
 
 	def __init__(self, *args, **kwargs):
 		self.taquilla = kwargs.pop('taquilla', 0)
+		self.id = kwargs.pop('id_usuario', None)
+		self.edicion = kwargs.pop('edicion', 0)
 		super(RegistroForm, self).__init__(*args, **kwargs)
 
 	def clean_password_confirm(self):
 		password1 = self.cleaned_data.get('password')
 		password2 = self.cleaned_data.get('password_confirm')
 
-		if not password2:
-			raise forms.ValidationError(u'Este campo es obligatorio')
+		if self.edicion == 0:
+			if not password2:
+				raise forms.ValidationError(u'Este campo es obligatorio')
 
-		if password1 != password2:
-			raise forms.ValidationError(u'Las contraseñas deben conincidir')
+			if password1 != password2:
+				raise forms.ValidationError(u'Las contraseñas deben conincidir')
 
 		return password2
 
-	def clean_correo(self):
-		correo = self.cleaned_data.get('correo')
-		print "CORREO",self
+	# def clean_correo(self):
+	# 	correo = self.cleaned_data.get('correo')
+	# 	usuario = SgtUsuario.objects.filter(correo = correo)
+	# 	if self.id:
+	# 		if usuario and usuario.pk !=self.id:
+	# 			raise forms.ValidationError(u'Este correo ya está asociado a otro usuario')
+
+	# 	else:
+	# 		if usuario:
+	# 			raise forms.ValidationError(u'Este correo ya está registrado')
+
+	# 	return correo
 
 	def clean(self):
 		cleaned_data = super(RegistroForm, self).clean()
@@ -176,17 +192,27 @@ class RegistroForm(forms.Form):
 		fecha_nacimiento = cleaned_data.get('fecha_nacimiento', None)
 		if self.taquilla > 0:
 			if not centro_inspeccion:
-				self.add_error('centro_inspeccion', 'Este campo es obligatorio')
+				self.add_error('centro_inspeccion', u'Este campo es obligatorio')
 			if not cedula:
-				self.add_error('cedula', 'Este campo es obligatorio')
+				self.add_error('cedula', u'Este campo es obligatorio')
 			if not codigo_postal:
-				self.add_error('codigo_postal', 'Este campo es obligatorio')
+				self.add_error('codigo_postal', u'Este campo es obligatorio')
 			if not direccion:
-				self.add_error('direccion', 'Este campo es obligatorio')
+				self.add_error('direccion', u'Este campo es obligatorio')
 			if not sexo:
-				self.add_error('sexo', 'Este campo es obligatorio')
+				self.add_error('sexo', u'Este campo es obligatorio')
 			if not fecha_nacimiento:
-				self.add_error('fecha_nacimiento', 'Este campo es obligatorio')
+				self.add_error('fecha_nacimiento', u'Este campo es obligatorio')
+
+		correo = self.cleaned_data.get('correo')
+		usuario = SgtUsuario.objects.filter(correo = correo).first()
+		if self.id:
+			if usuario and usuario.pk !=self.id:
+				self.add_error('correo', u'Este correo ya está asociado a otro usuario')
+
+		else:
+			if usuario:
+				self.add_error('correo', u'Este correo ya está registrado')
 
 
 

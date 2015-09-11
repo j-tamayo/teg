@@ -605,7 +605,7 @@ class AdminCrearUsuario(View):
 			return redirect(reverse('admin_usuarios'))
 
 		else:
-			print "ERRORES",form.errors
+			# print "ERRORES",form.errors
 			u_estado_id = request.POST.get('estado', None)
 			u_municipios = []
 			u_centros = []
@@ -697,7 +697,7 @@ class AdminEditarUsuario(View):
 
 		estados = Estado.objects.all()
 		user = SgtUsuario.objects.filter(id=kwargs['user_id']).first()
-		form = CuentasForm.RegistroForm(request.POST)
+		form = CuentasForm.RegistroForm(request.POST, taquilla = 1, id_usuario = user.pk, edicion = 1)
 
 		if form.is_valid():
 			registro = form.cleaned_data
@@ -712,10 +712,11 @@ class AdminEditarUsuario(View):
 			user.telefono_local = registro['telefono_local']
 			user.telefono_movil = registro['telefono_movil']
 			user.sexo = registro['sexo']
+			user.centro_inspeccion = registro['centro_inspeccion']
 
 			user.save()
 
-			return redirect(reverse('admin_centros'))
+			return redirect(reverse('admin_usuarios'))
 
 		else:
 			print "MALLLL", form.errors

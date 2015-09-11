@@ -48,7 +48,7 @@
 							<div class="text-danger">{{form.municipio.errors.as_text}}</div>
 						</div>
 						<div class="form-group">
-							<label class="text-muted">Centro de Inspecci&oacute;n:</label>
+							<label class="text-muted">Centro de Inspecci&oacute;n:</label>{{u_centro_id}}
 							<select id="id_centro_inspeccion" name="centro_inspeccion" class="form-control">
 								<option value="">--Seleccionar--</option>
 								{% for c in u_centros %}
@@ -104,6 +104,7 @@
 							</div>
 							<div class="text-danger">{{form.fecha_nacimiento.errors.as_text}}</div>
 						</div>
+						{% if not editar %}
 						<div class="form-group">
 							<label for="exampleInputPassword1" class="text-muted">Contrase&ntilde;a:</label>
 							{{form.password}}
@@ -114,6 +115,7 @@
 							{{form.password_confirm}}
 							<div class="text-danger">{{form.password_confirm.errors.as_text}}</div>
 						</div>
+						{% endif %}
 					</div> <!-- / .col-xs-6 -->
 				</div> <!-- / .row -->
 				<div class="row">
