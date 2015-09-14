@@ -109,6 +109,12 @@ urlpatterns = \
         ),
 
         url(
+            r'^admin/polizas$',
+            views.AdminBandejaPolizas.as_view(),
+            name='admin_polizas'
+        ),
+
+        url(
             r'^admin/encuestas$',
             views.AdminBandejaEncuestas.as_view(),
             name='admin_encuestas'
@@ -244,6 +250,12 @@ urlpatterns = \
             r'^carga-masiva-centros$',
             views.CargaMasivaCentros.as_view(),
             name='carga_masiva_centros'
+        ),
+
+        url(
+            r'^carga-masiva-polizas$',
+            views.CargaMasivaPolizas.as_view(),
+            name='carga_masiva_polizas'
         ),
 
         url(

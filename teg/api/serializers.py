@@ -76,13 +76,13 @@ class TipoInspeccionSerializer(serializers.ModelSerializer):
 
 
 class NumeroOrdenSerializer(serializers.ModelSerializer):
-	estatus = serializers.ReadOnlyField(source='estatus.id')
+	# estatus = serializers.ReadOnlyField(source='estatus.id')
 	solicitud_inspeccion = serializers.ReadOnlyField(source='solicitud_inspeccion.id')
 	fecha_atencion = serializers.DateField(format='%d-%m-%Y')
 
 	class Meta:
 		model = NumeroOrden
-		fields = ('id','asistencia','solicitud_inspeccion','codigo','fecha_atencion','hora_atencion','estatus')
+		fields = ('id','asistencia','solicitud_inspeccion','codigo','fecha_atencion','hora_atencion')
 
 
 class EstatusSerializer(serializers.ModelSerializer):

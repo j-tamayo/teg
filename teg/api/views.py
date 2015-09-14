@@ -446,11 +446,11 @@ class CrearSolicitud(APIView):
 			numero = codigo_solicitud + '-' + str(total_citas + 1)
 			numero_orden = NumeroOrden(
 				solicitud_inspeccion = solicitud,
-				codigo = numero,
 				fecha_atencion = fecha_asistencia,
-				hora_atencion = hora_asistencia,
-				estatus = estatus
+				hora_atencion = hora_asistencia
 			)
+			numero_orden.save()
+			numero_orden.codigo = numero_orden.pk
 			numero_orden.save()
 
 			#data.append({'sgt_solicitudinspeccion': [SolicitudInspeccionSerializer(solicitud).data]})

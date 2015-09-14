@@ -112,28 +112,28 @@ class GenerarNumeroOrden(View):
 		centro_id = kwargs['centro_id']
 		print centro_id
 		centro_inspeccion = CentroInspeccion.objects.get(id=centro_id)
-		fecha_asistencia = request.GET.get('fecha_asistencia', datetime.now().date().strftime('%d/%m/%Y'))
-		fecha_asistencia = datetime.strptime(fecha_asistencia, '%d/%m/%Y')
+		fecha_asistencia = fecha_asistencia = request.GET.get('fecha_asistencia', None)
+		# fecha_asistencia = datetime.strptime(fecha_asistencia, '%d/%m/%Y')
 
 		horarios = []
 		
 		centro = []
-		en_cola = NumeroOrden.objects.filter(fecha_atencion = fecha_asistencia).count()
-		capacidad = solicitudes.calcular_capacidad_centro(c)
-		centro_inspeccion.disponibilidad = capacidad - en_cola
-		# Para calcular la disponibilidad (Alta, media, baja y muy baja)
-		if centro_inspeccion.disponibilidad > (3 * centro_inspeccion.capacidad)/4:
-			centro_inspeccion.etiqueta = 'Alta'
-			centro_inspeccion.etiqueta_clase = 'success'
-		elif centro_inspeccion.disponibilidad > (2 * centro_inspeccion.capacidad)/4:
-			centro_inspeccion.etiqueta = 'Media'
-			centro_inspeccion.etiqueta_clase = 'warning'
-		elif centro_inspeccion.disponibilidad > (1 * centro_inspeccion.capacidad)/4:
-			centro_inspeccion.etiqueta = 'Baja'
-			centro_inspeccion.etiqueta_clase = 'low'
-		else:
-			centro_inspeccion.etiqueta = 'Muy baja'
-			centro_inspeccion.etiqueta_clase = 'danger'
+		# en_cola = NumeroOrden.objects.filter(fecha_atencion = fecha_asistencia).count()
+		# capacidad = solicitudes.calcular_capacidad_centro(centro_inspeccion)
+		# centro_inspeccion.disponibilidad = capacidad - en_cola
+		# # Para calcular la disponibilidad (Alta, media, baja y muy baja)
+		# if centro_inspeccion.disponibilidad > (3 * centro_inspeccion.capacidad)/4:
+		# 	centro_inspeccion.etiqueta = 'Alta'
+		# 	centro_inspeccion.etiqueta_clase = 'success'
+		# elif centro_inspeccion.disponibilidad > (2 * centro_inspeccion.capacidad)/4:
+		# 	centro_inspeccion.etiqueta = 'Media'
+		# 	centro_inspeccion.etiqueta_clase = 'warning'
+		# elif centro_inspeccion.disponibilidad > (1 * centro_inspeccion.capacidad)/4:
+		# 	centro_inspeccion.etiqueta = 'Baja'
+		# 	centro_inspeccion.etiqueta_clase = 'low'
+		# else:
+		# 	centro_inspeccion.etiqueta = 'Muy baja'
+		# 	centro_inspeccion.etiqueta_clase = 'danger'
 
 		fecha_asistencia = dates.convert(fecha_asistencia, '%d/%m/%Y', '%Y-%m-%d')
 		#Falta calcular Informacion para generar numero de orden y hora de asistencia...
@@ -222,7 +222,7 @@ class CrearSolicitudInspeccion(View):
 		centro_id = request.POST.get('centro',None)
 		centro_inspeccion = CentroInspeccion.objects.filter(id=centro_id).first()
 		fecha_asistencia = request.POST.get('fecha_asistencia', None)
-		fecha_asistencia = dates.str_to_datetime(fecha_asistencia, '%m/%d/%Y')
+		fecha_asistencia = dates.str_to_datetime(fecha_asistencia, '%d/%m/%Y')
 		fecha_asistencia = fecha_asistencia.date()
 		hora_asistencia = request.POST.get('hora_asistencia', None)
 		hora_asistencia = dates.str_to_datetime(hora_asistencia, '%H:%M')
@@ -244,11 +244,12 @@ class CrearSolicitudInspeccion(View):
 
 				numero_orden = NumeroOrden(
 					solicitud_inspeccion = solicitud,
-					codigo = 'XYZ',
 					fecha_atencion = fecha_asistencia,
-					hora_atencion = hora_asistencia,
-					estatus = estatus
+					hora_atencion = hora_asistencia
 				)
+				numero_orden.save()
+				#Actualizamos el codigo del número de orden
+				numero_orden.codigo = str(numero_orden.pk)
 				numero_orden.save()
 
 				#Para guardar el tiempo de atención para esta fecha
@@ -922,6 +923,37 @@ class AdminDeshabilitarPerito(View):
 			return redirect(redirect_url)
 		else:
 			return redirect(redirect_url)
+
+
+class AdminBandejaPolizas(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, *args, **kwargs):
+		return super(AdminBandejaPolizas, self).dispatch(*args, **kwargs)
+
+	def get(self, request, *args, **kwargs):
+		""" Vista que lista las Pólizas """
+		usuario = request.user
+
+		polizas = Poliza.objects.all()
+
+		paginator = Paginator(polizas, 10, request=request)
+		try:
+			page = request.GET.get('page', 1)
+			polizas = paginator.page(page)
+		except PageNotAnInteger:
+			polizas = paginator.page(1)
+			page = 0
+		except EmptyPage:
+			polizas = paginator.page(paginator.num_pages)
+		
+		context = {
+			'admin': True,
+			'polizas': polizas,
+			'seccion_parametros': True,
+			'usuario': usuario,
+		}
+
+		return render(request, 'admin/bandeja_polizas.html', context)
 
 
 class AdminBandejaEncuestas(View):
@@ -2001,6 +2033,34 @@ class CargaMasivaCentros(View):
 		if request.FILES.has_key('archivo_centros'):
 			xlsx_centros = request.FILES['archivo_centros']
 			if utils.cargar_centros_desde_xls(xlsx_centros):
+				valido = True
+			else:
+				error_msg = 'Ha ocurrido un error con el archivo'
+
+		else:
+			error_msg = 'No se ha enviado ningún archivo'
+
+		return HttpResponse(
+		    json.dumps({
+		    	'valido': valido,
+		    	'error_msg': error_msg,
+		    }),
+		    content_type="application/json"
+		)
+
+
+class CargaMasivaPolizas(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, *args, **kwargs):
+		return super(CargaMasivaPolizas, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Vista que se encarga de la carga masiva de polizas provenientes de un xls"""
+		valido = False
+		error_msg = None
+		if request.FILES.has_key('archivo_polizas'):
+			xlsx_polizas = request.FILES['archivo_polizas']
+			if utils.cargar_polizas_desde_xls(xlsx_polizas):
 				valido = True
 			else:
 				error_msg = 'Ha ocurrido un error con el archivo'
