@@ -25,6 +25,12 @@ urlpatterns = \
         ),
 
         url(
+            r'^borrar-solicitud$',
+            views.MarcarSolicitud.as_view(),
+            name='marcar_solicitud'
+        ),
+
+        url(
             r'^bandeja-cliente$',
             views.BandejaCliente.as_view(),
             name='bandeja_cliente'
@@ -106,6 +112,12 @@ urlpatterns = \
             r'^admin/deshabilitar-perito$',
             views.AdminDeshabilitarPerito.as_view(),
             name='admin_deshabilitar_perito'
+        ),
+
+        url(
+            r'^admin/polizas$',
+            views.AdminBandejaPolizas.as_view(),
+            name='admin_polizas'
         ),
 
         url(
@@ -244,6 +256,12 @@ urlpatterns = \
             r'^carga-masiva-centros$',
             views.CargaMasivaCentros.as_view(),
             name='carga_masiva_centros'
+        ),
+
+        url(
+            r'^carga-masiva-polizas$',
+            views.CargaMasivaPolizas.as_view(),
+            name='carga_masiva_polizas'
         ),
 
         url(

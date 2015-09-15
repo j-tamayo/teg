@@ -5,11 +5,16 @@
 {% load i18n %}
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-xs-2 col-xs-offset-10">
-			<a href="{% url 'admin_crear_usuario' %}" class="btn btn-info pull-right">
+		<div class="col-xs-10"><h4>Bandeja de usuarios Taquilla</h4></div>
+		<div class="col-xs-2">
+			<a href="{% url 'admin_crear_usuario' %}" class="btn btn-info btn-block">
 				<i class="fa fa-plus"></i> Agregar
 			</a>
 		</div>
+	</div>
+
+	<div class="row">
+		<div id="mensaje_confirmacion" class="col-xs-12"></div>
 	</div>
 
 	<table class="table">
@@ -42,6 +47,9 @@
 				<td>
 					<a href="{% url 'admin_editar_usuario' u.pk %}" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Editar">
 						<i class="fa fa-pencil"></i>
+					</a>
+					<a href="#" class="btn btn-info btn-sm cambiar-clave" data-toggle="tooltip" data-original-title="Cambiar contraseña" user-id="{{u.pk}}">
+						<i class="fa fa-user-secret"></i>
 					</a>
 					{% if u.is_active %}
 					<a href="#" accion="deshabilitar" class="btn btn-danger btn-sm eliminar" target="{{u.pk}}" data-toggle="tooltip" data-original-title="Deshabilitar">
@@ -97,6 +105,44 @@
 {% csrf_token %}
 <input type="hidden" name="page" value="{{usuarios.number}}">
 </form>
+
+<!-- Modal para el cambio de clave -->
+<div class="modal fade" id="modal_cambio_clave" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title text-success">Cambiar contrase&ntilde;a</h3>
+      </div>
+      <div class="modal-body">
+		<form id="form_cambio_clave" method="POST">
+		{% csrf_token %}
+		<input type="hidden" id="id_usuario" name="id_usuario" value="">
+		<div class="row">
+			<div class="col-xs-12">
+				<label>Nueva clave</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<input type="password" id="input_password" name="password" class="form-control"> 
+				<div id="cambiar_clave_errores" class="text-danger"></div>
+			</div>
+			
+		</div>
+		</form>
+      </div>
+      <div class="modal-footer">
+        <div class="col-xs-6">
+        	<a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>
+        </div>
+        <div class="col-xs-6">
+        	<a href="#" id="enviar_cambio_clave" class="btn btn-primary btn-block">Enviar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 {% block javascripts %}
 	{{ block.super }}
@@ -139,6 +185,41 @@
 		/******* DESHABILITAR USUARIO *********/
 		$(document).on('click', '#confirmar', function(){
 			$('#deshabilitar_usuario').submit();
+		});
+		/******* FIN *******/
+
+		/******* MODAL PARA CAMBIAR CONTRASEÑA USUARIO *********/
+		$(document).on('click', '.cambiar-clave', function(){
+			$('#id_usuario').val($(this).attr('user-id'));
+			$('#input_password').val('');
+			$('#cambiar_clave_errores').html('');
+			$('#modal_cambio_clave').modal();
+		});
+		/******* FIN *******/
+
+		/******* CAMBIAR CONTRASEÑA USUARIO *********/
+		$(document).on('click', '#enviar_cambio_clave', function(){
+			var postData = $('#form_cambio_clave').serializeArray();
+			$.ajax({
+				method: 'POST',
+				url: '{% url "cambiar_clave_usuario" %}',
+				data:postData,
+				dataType: 'json',
+			})
+			.done(function(data){
+				if(data.valido){
+					$('#modal_cambio_clave').modal('hide');
+					$('#mensaje_confirmacion').html(
+					'<div class="alert alert-success alert-dismissible" role="alert">\
+						 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
+						 Se ha cambiado la clave de usuario correctamente\
+					</div>'
+					)
+				}
+				else{
+					$('#cambiar_clave_errores').html(data.error_msg);
+				}
+			})
 		});
 		/******* FIN *******/
 	})

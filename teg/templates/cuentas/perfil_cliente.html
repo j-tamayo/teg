@@ -84,13 +84,14 @@
 			    		<br>
 						<div class="col-xs-10 col-xs-offset-1">
 							{% if solicitudes %}
-			    			<table class="table table-bordered">
+			    			<table class="table table-bordered text-center">
 			    				<thead>
 									<tr>
-									 	<th style="width:30%">Tipo Solicitud</th>
-										<th style="width:20%">N&uacute;mero de Orden</th>
-										<th style="width:30%">Estado</th>
-										<th style="width:20%">Opciones</th>
+									 	<th class="text-center">Tipo Solicitud</th>
+										<th class="text-center">N&uacute;mero de Orden</th>
+										<th class="text-center">Estatus</th>
+										<th class="text-center">Fecha de atenci&oacute;n</th>
+										<th class="text-center">Opciones</th>
 									</tr>
 								</thead>
 								<tbody id="solicitudes_table_body">
@@ -99,7 +100,10 @@
 										<td>{{s.tipo_inspeccion}}</td>
 										<td>{{s.numero_orden.codigo}}</td>
 										<td>{{s.estatus}}</td>
-										<td>...</td>
+										<td>{{s.numero_orden.fecha_atencion}}</td>
+										<td>
+											<a href="#" class="btn btn-danger btn-sm eliminar-solicitud" solicitud-id="{{s.pk}}"><i class="fa fa-times"></i></a>
+										</td>
 									</tr>
 									{% endfor %}
 								</tbody>
@@ -233,11 +237,13 @@
 					  daysOfWeekDisabled: [0,6],
 					  datesDisabled:[]
 					});
+					$('#fecha_asistencia').datepicker('setDate', new Date());
+					$('#fecha_asistencia').datepicker('update');
 					$('#crear_solicitud_form').validator();
 				})
 
 			});
-			/********** END *************/
+			/********** FIN *************/
 
 			$(document).on('click', '#ver_solicitudes', function(){
 				$('#contenedor_solicitudes').show();
@@ -315,7 +321,7 @@
 					cargar_centros('estado', value);
 				}
 			});
-			/********** END *************/
+			/********** FIN *************/
 
 			/********** PARA CARGAR LOS CENTROS DE INSPECCION POR MUNICIPIO EN EL FORMULARIO DE CREACION DE SOLICITUD *************/
 			//$('#select_solicitud_municipio').change(function(){
@@ -366,7 +372,7 @@
 					});
 				}
 			});
-			/********** END *************/
+			/********** FIN *************/
 
 			/********* MOSTRAR MODAL DE CONFIRMACIÓN PARA GENERAR TICKET **********/
 			$(document).on('click','#generar_ticket', function(){
@@ -408,7 +414,7 @@
 				$('#modal_generic').modal('hide');
 				$('#Ticket').modal('show');
 			});
-			/********* END **********/
+			/********* FIN **********/
 
 			/********** CREAR TICKET *************/
 			$(document).on('click','#confirmar_ticket',function(){
@@ -452,7 +458,7 @@
 					console.log('error');
 				});
 			});
-			/********** END *************/
+			/********** FIN *************/
 
 			/********** ABRIR NOTIFICACIÓN *************/
 
@@ -596,7 +602,37 @@
 				});
 			});
 
-			/********** END *************/
+			/********** FIN *************/
+
+			/************ MODAL DE CONFIRMACIÓN DE ELIMINACIÓN DE SOLICITUD ************/
+			$(document).on('click', '.eliminar-solicitud', function(){
+				id_solicitud = $(this).attr('solicitud-id');
+				$('#title_modal_generic').html('Confirmación');
+				$('#body_modal_generic').html(
+					'<div class="row text-center">\
+						<div class="col-xs-12"><h4>¿Está seguro que desea eliminar esta solicitud?</h4></div>\
+					</div>'
+				);
+				$('#footer_modal_generic').html(
+					'<div class="col-xs-6">\
+						<a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>\
+					</div>\
+					<div class="col-xs-6">\
+						<a id="confirmar_eliminacion_solicitud" href="#" class="btn btn-primary btn-block">Aceptar</a>\
+					</div>'
+				);
+				$('#modal_generic').modal({
+					backdrop: 'static',
+					keyboard: false
+				});
+			});
+			/************ FIN **************/
+
+			/************ ENVIAR ELIMINACIÓN DE SOLICITUD ************/
+			$(document).on('click', '#confirmar_eliminacion_solicitud', function(){
+				
+			});
+			/************ FIN **************/
 
 		});
 

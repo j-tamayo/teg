@@ -34,7 +34,7 @@ class CentroInspeccion(models.Model):
 	tiempo_atencion = models.IntegerField(default=0)
 	municipio = models.ForeignKey(Municipio)
 	peritos = models.ManyToManyField('Perito')
-	numero_orden = models.ManyToManyField('NumeroOrden', through='ColaAtencion')
+	# numero_orden = models.ManyToManyField('NumeroOrden', through='ColaAtencion')
 	hora_apertura_manana = models.TimeField(blank=True, null=True)
 	hora_cierre_manana = models.TimeField(blank=True, null=True)
 	hora_apertura_tarde = models.TimeField(blank=True, null=True)
@@ -92,10 +92,9 @@ class SolicitudInspeccion(models.Model):
 class NumeroOrden(models.Model):
 	asistencia = models.IntegerField(default=0)
 	solicitud_inspeccion = models.ForeignKey(SolicitudInspeccion)
-	codigo = models.CharField(max_length=50)
+	codigo = models.CharField(max_length=50, blank = True, null = True)
 	fecha_atencion = models.DateField(blank=True, null=True)
 	hora_atencion = models.TimeField(blank=True, null=True)
-	estatus = models.ForeignKey('Estatus')
 
 	def __unicode__(self):
 		return u'%s' % self.codigo
@@ -184,7 +183,7 @@ class NumeroOrden(models.Model):
 			ws['F'+str(index+2)] = item.solicitud_inspeccion.centro_inspeccion.municipio.estado.nombre
 			ws['G'+str(index+2)] = item.solicitud_inspeccion.centro_inspeccion.municipio.nombre
 
-		ws['A1'].wrap_text = True
+		# ws['A1'].wrap_text = True
 
 		return wb
 
@@ -322,16 +321,18 @@ class SistemaOperativo(models.Model):
 		return u'%s' % self.nombre
 
 
-class ColaAtencion(models.Model):
-	centro_inspeccion = models.ForeignKey(CentroInspeccion)
-	numero_orden = models.ForeignKey(NumeroOrden)
-	orden = models.IntegerField()
+# class ColaAtencion(models.Model):
+# 	centro_inspeccion = models.ForeignKey(CentroInspeccion)
+# 	numero_orden = models.ForeignKey(NumeroOrden)
+# 	orden = models.IntegerField()
 
 
 class Poliza(models.Model):
-	descripcion = models.TextField(blank=True, null=True)
+	cedula_cliente = models.CharField(max_length = 100)
+	fecha_inicio_vigencia = models.DateField()
+	fecha_fin_vigencia = models.DateField()
 	numero = models.IntegerField()
-	usuario = models.ForeignKey(USER_MODEL)
+	usuario = models.ForeignKey(USER_MODEL, blank = True, null = True)
 
 	def __unicode__(self):
 		return u'%s' % self.numero

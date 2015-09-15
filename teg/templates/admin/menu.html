@@ -12,9 +12,15 @@
     </div>
 		<div class="collapse navbar-collapse" id="menu_admin">
 			<ul class="nav navbar-nav">
-				<li {% if seccion_centros %}class="active"{%endif%}><a href="{% url 'admin_centros' %}">Centros <span class="sr-only">(current)</span></a></li>
-				<li {% if seccion_usuarios %}class="active"{%endif%}><a href="{% url 'admin_usuarios' %}">Usuarios</a></li>
-				<li {% if seccion_peritos %}class="active"{%endif%}><a href="{% url 'admin_peritos' %}">Peritos</a></li>
+				<li class="dropdown {% if seccion_reportes %}active{%endif%}">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Par&aacute;metros globales<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a class="active" href="{% url 'admin_centros' %}">Centros</a></li>
+						<li><a href="{% url 'admin_usuarios' %}">Usuarios</a></li>
+						<li><a href="{% url 'admin_peritos' %}">Peritos</a></li>
+						<li><a href="{% url 'admin_polizas' %}">P&oacute;lizas</a></li>
+					</ul>
+				</li>
 				<li {% if seccion_encuestas %}class="active"{%endif%}><a href="{% url 'admin_encuestas' %}">Encuestas</a></li>
 				<li {% if seccion_notificaciones %}class="active"{%endif%}><a href="{% url 'admin_notificaciones' %}">Notificaciones</a></li>
 				<!-- <li {% if seccion_reportes %}class="active"{%endif%}><a href="{% url 'admin_reportes' %}">Consultas</a></li> -->

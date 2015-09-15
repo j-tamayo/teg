@@ -14,7 +14,12 @@
 
 				<div class="col-xs-3 form-group has-error">
 					<label class="text-muted">Tipo de solicitud:</label>
-					{{form.tipo_solicitud}}
+					<select id="id_tipo_solicitud" class="form-control" required name="tipo_solicitud" data-error="Este campo es obligatorio">
+						<option value="">--Seleccionar--</option>
+						{% for ts in tipo_solicitudes %}
+						<option value="{{ts.pk}}">{{ts.nombre}}</option>
+						{% endfor %}
+					</select>
 					<div class="help-block with-errors"></div>
 				</div>
 
@@ -35,7 +40,7 @@
 
 				<div class="col-xs-3 form-group has-error">
 					<label class="text-muted">Fecha de asistencia:</label>
-					<div id="fecha_asistencia" class="input-append date" data-date-start-date="today" data-date-end-date="+3d">
+					<div id="fecha_asistencia" class="input-append date" data-date-start-date="today" data-date-format="dd/mm/yyyy" data-date-end-date="">
 					  {{form.fecha_asistencia}}
 					  <span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
 					</div>

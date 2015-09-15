@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+{% include 'cuentas/modales_usuario.html' %}
+{% load i18n %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-10">
+			<h4>Bandeja de p&oacute;lizas</h4>
+		</div>
+		<div class="col-xs-2">
+			<a id="carga_masiva" href="#" class="btn btn-info btn-block">
+				<i class="fa fa-upload"></i> Cargar
+			</a>
+		</div>
+	</div>
+
+	<div class="row">
+		<div id="mensaje_confirmacion" class="col-xs-12"></div>
+	</div>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>N&uacute;mero</th>
+				<th>Cliente</th>
+				<th>Fecha inicio vigencia</th>
+				<th>Fecha fin vigencia</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for p in polizas.object_list %}
+			<tr>
+				<td>{{p.numero}}</td>
+				<td>{{p.usuario.nombres}} {{p.usuario.apellidos}}</td>
+				<td>{{p.fecha_inicio_vigencia}}</td>
+				<td>{{p.fecha_fin_vigencia}}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<div class="pagination center-block text-center">
+		<div class="row">
+			<ul class="pagination">
+			{% if polizas.has_previous %}
+		        <li>
+		        	<a href="?{{ polizas.previous_page_number.querystring }}" class="prev">&lsaquo;&lsaquo; {% trans "anterior" %}</a>
+		        </li>
+		    {% else %}
+		    	<li class="disabled">
+					<span class="disabled prev">&lsaquo;&lsaquo; {% trans "anterior" %}</span>
+				</li>
+			{% endif %}
+			{% for page in polizas.pages %}
+		        {% if page %}
+		            {% ifequal page polizas.number %}
+		                <li class="active"><span class="current page">{{ page }}</span></li>
+		            {% else %}
+		                <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
+		            {% endifequal %}
+		        {% else %}
+		            <li class="disabled"><a>...</a></li>
+		        {% endif %}
+		    {% endfor %}
+		    {% if polizas.has_next %}
+		        <li>
+		        	<a href="?{{ polizas.next_page_number.querystring }}" class="next">{% trans "siguiente" %} &rsaquo;&rsaquo;</a>
+		        </li>
+		    {% else %}
+		    	<li class="disabled">
+		        	<span class="disabled next">{% trans "siguiente" %} &rsaquo;&rsaquo;</span>
+		        </li>
+		    {% endif %}
+		    </ul>
+		</div>
+	</div>
+</div> <!-- / .container-fluid -->
+<form id="deshabilitar_usuario" method="POST" action="{% url 'admin_deshabilitar_usuario' %}">
+{% csrf_token %}
+<input type="hidden" name="page" value="{{usuarios.number}}">
+</form>
+
+<!-- Modal para el cambio de clave -->
+<div class="modal fade" id="modal_cambio_clave" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title text-success">Cambiar contrase&ntilde;a</h3>
+      </div>
+      <div class="modal-body">
+		<form id="form_cambio_clave" method="POST">
+		{% csrf_token %}
+		<input type="hidden" id="id_usuario" name="id_usuario" value="">
+		<div class="row">
+			<div class="col-xs-12">
+				<label>Nueva clave</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<input type="password" id="input_password" name="password" class="form-control"> 
+				<div id="cambiar_clave_errores" class="text-danger"></div>
+			</div>
+			
+		</div>
+		</form>
+      </div>
+      <div class="modal-footer">
+        <div class="col-xs-6">
+        	<a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>
+        </div>
+        <div class="col-xs-6">
+        	<a href="#" id="enviar_cambio_clave" class="btn btn-primary btn-block">Enviar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de carga de pólizas -->
+<div class="modal fade" id="carga_masiva_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title text-success" id="myModalLabel">Carga de p&oacute;lizas</h3>
+				</div>
+			<div class="modal-body">
+				<form id="carga_masiva_form" action="" method="post" enctype="multipart/form-data">
+				<div class="row">
+					<div class="col-xs-12">
+						
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<label>Archivo xls con las p&oacute;lizas</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<input type="file" name="archivo_polizas" class="form-control" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+						<div id="archivo_poliza_errores" class="text-danger"></div>
+					</div>
+				</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<div class="col-xs-6">
+					<a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>
+				</div>
+				<div class="col-xs-6">
+					<a href="#" id="enviar_archivo_polizas" class="btn btn-primary btn-block">Enviar</button>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block javascripts %}
+	{{ block.super }}
+	{% load staticfiles %}
+
+	<script src="{% static 'js/bootstrap-filestyle/bootstrap-filestyle.min.js' %}" type="application/javascript"></script>
+
+	<script src="{% static 'js/jquery-form/jquery.form.min.js' %}" type="application/javascript"></script>
+
+	<script type="application/javascript">
+	$(function(){
+		var token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+		
+		/************** MODAL PARA REALIZAR LA CARGA MASIVA ***************/
+		$(document).on('click', '#carga_masiva', function(){
+			$(":file").filestyle('clear');
+			$('#archivo_poliza_errores').html('');
+			$('#carga_masiva_modal').modal();
+		});
+		/******* FIN *******/
+
+		/********* INICIALIZACIÓN DEL PLUGIN PARA EL FILEINPUT **********/
+		$(":file").filestyle({
+			icon: false,
+			buttonText: "Subir archivo",
+			buttonName: "btn-primary"
+		});
+		/******* FIN *******/
+
+		/********* PROCESAR ARCHIVOS XLS DE CENTROS ***********/
+		$(document).on('click', '#enviar_archivo_polizas', function(){
+			value = $(':file').val();
+			if(value.length > 0){
+				$('#carga_masiva_form').ajaxSubmit({
+					method: 'POST',
+					headers: { "X-CSRFToken": token},
+					url: '{% url "carga_masiva_polizas" %}',
+					async: false,
+					/*data: $('#carga_masiva_form').serialize(),*/
+					multiple: true,
+					dataType: 'json',
+					beforeSend: function(xhr) {
+					  console.log('heyy');
+					},
+					complete: function(){
+					  /*$('#spinner_form').hide();
+					  $('#crear_solicitud').html('Ver Solicitudes');
+					  $('#crear_solicitud').attr('id','ver_solicitudes');*/
+					},
+					success: function(data){
+						if(data.valido){
+							$('#carga_masiva_modal').modal('hide');
+							/*$('#title_modal_generic').html('Confirmación');
+							$('#body_modal_generic').html(
+								'<div class="row">\
+									<div class="col-xs-12"><h4>La carga se ha realizado satisfactoriamente</h4></div>\
+								</div><br>'
+							);
+							$('#footer_modal_generic').html('');
+							$('#modal_generic').modal()*/
+							$('#mensaje_confirmacion').html(
+							'<div class="alert alert-success alert-dismissible" role="alert">\
+								 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
+								 Se han cargado correctamente las pólizas\
+							</div>'
+							);
+						}
+						else{
+							$('#archivo_poliza_errores').html(data.error_msg);
+						}
+					}
+				});
+				
+			}else{
+
+			}
+		});
+		/******* FIN *******/
+	})
+	</script>
+{% endblock %}

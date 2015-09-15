@@ -1,0 +1,25 @@
+ISSUES surgidos en la reunión con el profesor el 28-08-15
+
+ ☐ Consultar si existe el correo con las APIs de Gmail, Outlook, etc. Esto quedó como opcional, si da tiempo. Se sigue manteniendo el correo como username dentro de la aplicación.
+ ✔ En el registro de clientes poner como no obligatorios los campos de fecha de nacimiento, cédula, dirección, teléfono local, teléfono móvil y sexo. @done (15-09-14 12:09)
+ ✔ No poner Reinspección cómo tipo de solicitud. @done (15-09-14 16:29)
+ ✔ En tipo de solicitud cambiar el nombre de Reclamo a Siniestro. @done (15-09-14 16:29)
+ ✔ El código para los número de orden será el mismo ID del objeto en la BD. @done (15-09-14 16:58)
+ ✔ Para que el usuario pueda pedir una solicitud de Siniestro debe poseer una póliza y esta debe estar vigente. @done (15-09-15 09:53)
+ ☐ Cuando se crea la solicitud se debe enviar una notificación, si se puede también un correo, con un mensaje que diga "Recuerde que su cita ha sido agendada para el día XX a las XX".
+ ☐ Enviar notificación de recordatorio, si se puede también un correo, el día de la cita en la mañana.
+ ☐ Si da tiempo hacer que el móvil maneje varios usuarios.
+ ☐ Permitir reservar solo una solicitud por tipo. Hasta no pase el día y hora de la solicitud o ésta sea cancelada por el usuario, no puede crearse otra del mismo tipo para el mismo usuario.
+ ☐ Enviar notificaciones a usuarios personalizados. Se puede poder enviar notifiaciones para un usuario en específico o un grupo de usuarios. Por ejemplo, enviar una notificación a todos los usuarios que tengan una cita programada en un determinado centro. Otro caso sería enviar una notificación a todo slos usuarios que tengan programada una cita en cualquier centro de un estado o municipio determinado.
+ ☐ La Encuesta de justificación debe llamarse Encuesta de justificación de ausencia.
+ ✔ La Encuesta de conformidad debe llamarse Encuesta de satisfacción. @done (15-09-14 16:25)
+ ✔ Para el registro de usuarios de taquilla todos los campos si deben ser obligatorios. @done (15-09-14 16:25)
+ ☐ Mostrar un mensaje de aviso si no se puede llenar la encuesta por falta de conexión en el móvil.
+ ✔ Ocurrió un error al exportar un reporte. @done (15-09-15 09:20)
+ ✔ En el menú del administrador agrupar Centros, Usuarios, Peritos y Encuestas cómo configuración. @done (15-09-14 16:26)
+ ☐ Poner por centro la cantidad de días para la reserva y las fechas no laborables. Adicionalmente se puede establecer esos parámetros de una manera global para todos los centros.
+ ☐ Ver si se puede poner en un campo por separado en la BD la hora de la notificación.
+ ☐ Poner la hora de atención de los centros de una manera global y particular.
+ ☐ Mostrar bien visible el código de la solicitud.
+ ✔ Traer número de póliza, fecha de inicio vigencia y fecha fin vigencia. @done (15-09-14 16:26)
+ ☐ En el TEG incluir el modelo E/R y el Relacional.

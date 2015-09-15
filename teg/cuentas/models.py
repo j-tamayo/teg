@@ -6,15 +6,15 @@ from django.contrib.auth.models import (
 
 # Create your models here.
 class SgtUsuarioManager(BaseUserManager):
-	def create_user(self, correo, cedula, nombres, apellidos, fecha_nacimiento, sexo, password=None):
+	def create_user(self, correo, nombres, apellidos, password=None):
 		""" Crea un usuario dado su correo, cedula, nombres y apellidos """
 		if not correo:
 			mensaje = u'El usuario debe poseer correo electrónico'
 			raise ValueError(mensaje)
 
-		if not cedula:
-			mensaje = u'El usuario debe poseer cédula'
-			raise ValueError(mensaje)
+		# if not cedula:
+		# 	mensaje = u'El usuario debe poseer cédula'
+		# 	raise ValueError(mensaje)
 
 		if not nombres:
 			mensaje = u'El usuario debe poseer nombres'
@@ -24,21 +24,18 @@ class SgtUsuarioManager(BaseUserManager):
 			mensaje = u'El usuario debe poseer apellidos'
 			raise ValueError(mensaje)
 
-		if not fecha_nacimiento:
-			mensaje = u'EL usuario debe poseer fecha de nacimiento'
-			raise ValueError(mensaje)
+		# if not fecha_nacimiento:
+		# 	mensaje = u'EL usuario debe poseer fecha de nacimiento'
+		# 	raise ValueError(mensaje)
 
-		if not sexo:
-			mensaje = u'El usuario debe poseer sexo'
-			raise ValueError(mensaje)
+		# if not sexo:
+		# 	mensaje = u'El usuario debe poseer sexo'
+		# 	raise ValueError(mensaje)
 
 		user = self.model(
 		    correo=SgtUsuarioManager.normalize_email(correo),
-		    cedula=cedula,
 		    nombres=nombres,
 		    apellidos=apellidos,
-		    fecha_nacimiento=fecha_nacimiento,
-		    sexo=sexo
 		)
 
 		user.set_password(password)
@@ -46,16 +43,13 @@ class SgtUsuarioManager(BaseUserManager):
 		user.save(using=self._db)
 		return user
 
-	def create_superuser(self, correo, cedula, nombres, apellidos, fecha_nacimiento, sexo, password):
+	def create_superuser(self, correo, nombres, apellidos, password):
 		""" Crea un super usuario dado su correo, cedula, nombres y apellidos """
 		user = self.create_user(
 		    correo=correo,
 		    password=password,
-		    cedula=cedula,
 		    nombres=nombres,
 		    apellidos=apellidos,
-		    fecha_nacimiento=fecha_nacimiento,
-		    sexo=sexo
 		)
 
 		user.is_admin = True
@@ -66,18 +60,18 @@ class SgtUsuarioManager(BaseUserManager):
 
 class SgtUsuario(AbstractBaseUser):
 	apellidos = models.CharField(max_length=200)
-	cedula = models.CharField(max_length=100)
+	cedula = models.CharField(max_length=100, blank=True, null=True)
 	correo = models.CharField(max_length=255, unique=True, db_index=True, error_messages={'unique':"Ya existe un usuario registrado con este correo electrónico."})
-	codigo_postal = models.IntegerField()
-	direccion = models.TextField()
+	codigo_postal = models.IntegerField(blank=True, null=True)
+	direccion = models.TextField(blank=True, null=True)
 	is_active = models.BooleanField(default=True)
 	is_admin = models.BooleanField(default=False)
-	fecha_nacimiento = models.DateField()
+	fecha_nacimiento = models.DateField(blank=True, null=True)
 	fecha_registro = models.DateTimeField(auto_now_add=True)
 	municipio = models.ForeignKey('sgt.Municipio', blank=True, null=True)
 	nombres = models.CharField(max_length=200)
 	rol = models.ForeignKey('RolSgt')
-	sexo = models.IntegerField()
+	sexo = models.IntegerField(blank=True, null=True)
 	telefono_local = models.CharField(max_length=100, blank=True, null=True)
 	telefono_movil = models.CharField(max_length=100, blank=True, null=True)
 	centro_inspeccion = models.ForeignKey('sgt.CentroInspeccion', blank=True, null=True)

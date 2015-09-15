@@ -14,6 +14,7 @@ from django.template.loader import get_template
 from django.template import Context
 import string
 import random
+import json
 
 # Create your views here.
 class Ingresar(FormView):
@@ -69,7 +70,7 @@ class Registro(View):
                 fecha_nacimiento = registro['fecha_nacimiento'],
                 telefono_local = registro['telefono_local'],
                 telefono_movil = registro['telefono_movil'],
-                sexo = registro['sexo'],
+                sexo = registro['sexo'] if registro['sexo'] else None,
                 rol = rol_cliente)
             
             usuario.set_password(registro['password'])
@@ -144,6 +145,41 @@ class RecuperarClave(View):
                 'form': form,
             }
             return render(request, 'cuentas/recuperar_clave.html', context)
+
+
+class CambiarClave(View):
+    def dispatch(self, request, *args, **kwargs):
+        return super(CambiarClave, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        id_usuario = request.POST.get('id_usuario', None)
+        nueva_clave = request.POST.get('password', None)
+        valido = True
+        error_msg =""
+        usuario = None
+        if id_usuario:
+            usuario = SgtUsuario.objects.filter(id = id_usuario).first()
+
+        if not usuario:
+            valido = False
+            error_msg = 'No se ha suministrado un usuario'
+        else:
+            if not nueva_clave:
+                valido = False
+                error_msg = 'Este campo es requerido'
+            else:
+                usuario.set_password(nueva_clave)
+                usuario.save()
+
+        respuesta = {
+            'valido': valido,
+            'error_msg': error_msg
+        }
+
+        return HttpResponse(
+            json.dumps(respuesta),
+            content_type="application/json"
+        )
 
 
 class DetectarUsuario(LoginRequiredMixin, View):
