@@ -25,6 +25,12 @@ urlpatterns = \
         ),
 
         url(
+            r'^borrar-solicitud$',
+            views.MarcarSolicitud.as_view(),
+            name='marcar_solicitud'
+        ),
+
+        url(
             r'^bandeja-cliente$',
             views.BandejaCliente.as_view(),
             name='bandeja_cliente'

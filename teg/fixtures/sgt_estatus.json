@@ -1,1 +1,34 @@
-[{"fields": {"nombre": "En proceso", "codigo": "solicitud_en_proceso"}, "model": "sgt.estatus", "pk": 1}, {"fields": {"nombre": "Procesada", "codigo": "solicitud_procesada"}, "model": "sgt.estatus", "pk": 2}, {"fields": {"nombre": "No procesada", "codigo": "solicitud_no_procesada"}, "model": "sgt.estatus", "pk": 3}]
+[
+  {
+    "fields": {
+      "nombre": "En proceso",
+      "codigo": "solicitud_en_proceso"
+    },
+    "model": "sgt.estatus",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "nombre": "Procesada",
+      "codigo": "solicitud_procesada"
+    },
+    "model": "sgt.estatus",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "nombre": "No procesada",
+      "codigo": "solicitud_no_procesada"
+    },
+    "model": "sgt.estatus",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "nombre": "Cancelada",
+      "codigo": "solicitud_cancelada"
+    },
+    "model": "sgt.estatus",
+    "pk": 4
+  }
+]

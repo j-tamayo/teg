@@ -5,7 +5,7 @@ ISSUES surgidos en la reunión con el profesor el 28-08-15
  ✔ No poner Reinspección cómo tipo de solicitud. @done (15-09-14 16:29)
  ✔ En tipo de solicitud cambiar el nombre de Reclamo a Siniestro. @done (15-09-14 16:29)
  ✔ El código para los número de orden será el mismo ID del objeto en la BD. @done (15-09-14 16:58)
- ☐ Para que el usuario pueda pedir una solicitud de Siniestro debe poseer una póliza y esta debe estar vigente.
+ ✔ Para que el usuario pueda pedir una solicitud de Siniestro debe poseer una póliza y esta debe estar vigente. @done (15-09-15 09:53)
  ☐ Cuando se crea la solicitud se debe enviar una notificación, si se puede también un correo, con un mensaje que diga "Recuerde que su cita ha sido agendada para el día XX a las XX".
  ☐ Enviar notificación de recordatorio, si se puede también un correo, el día de la cita en la mañana.
  ☐ Si da tiempo hacer que el móvil maneje varios usuarios.
@@ -15,7 +15,7 @@ ISSUES surgidos en la reunión con el profesor el 28-08-15
  ✔ La Encuesta de conformidad debe llamarse Encuesta de satisfacción. @done (15-09-14 16:25)
  ✔ Para el registro de usuarios de taquilla todos los campos si deben ser obligatorios. @done (15-09-14 16:25)
  ☐ Mostrar un mensaje de aviso si no se puede llenar la encuesta por falta de conexión en el móvil.
- ☐ Ocurrió un error al exportar un reporte.
+ ✔ Ocurrió un error al exportar un reporte. @done (15-09-15 09:20)
  ✔ En el menú del administrador agrupar Centros, Usuarios, Peritos y Encuestas cómo configuración. @done (15-09-14 16:26)
  ☐ Poner por centro la cantidad de días para la reserva y las fechas no laborables. Adicionalmente se puede establecer esos parámetros de una manera global para todos los centros.
  ☐ Ver si se puede poner en un campo por separado en la BD la hora de la notificación.

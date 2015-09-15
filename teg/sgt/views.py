@@ -170,12 +170,23 @@ class CrearSolicitudInspeccion(View):
 		return super(CrearSolicitudInspeccion, self).dispatch(*args, **kwargs)
 
 	def get(self, request, *args, **kwargs):
+		usuario = request.user
 		estado_id = request.GET.get('estado', None)
-		tipo_solicitudes = TipoInspeccion.objects.all()
+		# tipo_solicitudes = TipoInspeccion.objects.all()
 		centros = CentroInspeccion.objects.all()
 		municipios = Municipio.objects.filter(estado__id = estado_id)
 		fecha_asistencia = request.GET.get('fecha_asistencia', datetime.now().date().strftime('%d/%m/%Y'))
 		fecha_asistencia = datetime.strptime(fecha_asistencia, '%d/%m/%Y')
+		poliza = Poliza.objects.filter(usuario = usuario).first()
+		# Para obtener los tipos de solicitudes dependiendo de la póliza del usuario
+		today = datetime.now().date()
+		print "POLIZA", poliza
+		if poliza and poliza.fecha_inicio_vigencia <= today and poliza.fecha_fin_vigencia >= today:
+			tipo_solicitudes = TipoInspeccion.objects.all()
+		
+		else:
+			tipo_solicitudes = TipoInspeccion.objects.all().exclude(codigo = 'SRI')
+			print tipo_solicitudes
 
 		if estado_id:
 			aux = centros.filter(municipio__estado__id = estado_id)
@@ -283,6 +294,39 @@ class CrearSolicitudInspeccion(View):
 				    content_type="application/json"
 				)
 
+
+class MarcarSolicitud(View):
+	def dispatch(self, *args, **kwargs):
+		return super(MarcarSolicitud, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""
+		Marcar solicitudes borradas
+		"""
+		valido = True
+		error_msg = ''
+		solicitud_id = request.POST.get('solicitud_id', 0)
+		solicitud = SolicitudInspeccion.object.filter(id = solicitud_id).first()
+		if solicitud:
+			solicitud.borrada = True
+			if solicitud.estatus.codigo == 'solicitud_en_proceso':
+				solicitud.estatus = Estatus.objects.get(codigo = 'solicitud_cancelada')
+
+			solicitud.save()
+
+		else:
+			valido = False
+			error_msg = 'No se suministró una solicitud válida'
+
+		respuesta = {
+			'valido': valido,
+			'error_msg': error_msg
+		}
+
+		return HttpResponse(
+		    json.dumps(respuesta),
+		    content_type="application/json"
+		)
 
 
 class BandejaCliente(View):
