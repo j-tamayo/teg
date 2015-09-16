@@ -6,12 +6,14 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-10">
-			<h4>Bandeja de p&oacute;lizas</h4>
+			<h3>P&oacute;lizas</h3>
 		</div>
 		<div class="col-xs-2">
+			<h3>
 			<a id="carga_masiva" href="#" class="btn btn-info btn-block">
 				<i class="fa fa-upload"></i> Cargar
 			</a>
+			</h3>
 		</div>
 	</div>
 
@@ -23,7 +25,7 @@
 		<thead>
 			<tr>
 				<th>N&uacute;mero</th>
-				<th>Cliente</th>
+				<th>C&eacute;dula</th>
 				<th>Fecha inicio vigencia</th>
 				<th>Fecha fin vigencia</th>
 			</tr>
@@ -32,13 +34,14 @@
 			{% for p in polizas.object_list %}
 			<tr>
 				<td>{{p.numero}}</td>
-				<td>{{p.usuario.nombres}} {{p.usuario.apellidos}}</td>
+				<td>{{p.cedula_cliente}}</td>
 				<td>{{p.fecha_inicio_vigencia}}</td>
 				<td>{{p.fecha_fin_vigencia}}</td>
 			</tr>
 			{% endfor %}
 		</tbody>
 	</table>
+	{% if polizas.pages.0 > 1 %}
 	<div class="pagination center-block text-center">
 		<div class="row">
 			<ul class="pagination">
@@ -74,6 +77,7 @@
 		    </ul>
 		</div>
 	</div>
+	{% endif %}
 </div> <!-- / .container-fluid -->
 <form id="deshabilitar_usuario" method="POST" action="{% url 'admin_deshabilitar_usuario' %}">
 {% csrf_token %}

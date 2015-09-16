@@ -145,6 +145,7 @@
 				$.ajax({
 					method: 'GET',
 					url: '/sgt/obtener-municipios/'+value,
+					data:{con_centro:1},
 					dataType: "json"
 				})
 				.done(function(data){

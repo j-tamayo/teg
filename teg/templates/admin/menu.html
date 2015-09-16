@@ -12,7 +12,7 @@
     </div>
 		<div class="collapse navbar-collapse" id="menu_admin">
 			<ul class="nav navbar-nav">
-				<li class="dropdown {% if seccion_reportes %}active{%endif%}">
+				<li class="dropdown {% if seccion_parametros %}active{%endif%}">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Par&aacute;metros globales<span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li><a class="active" href="{% url 'admin_centros' %}">Centros</a></li>
@@ -38,7 +38,6 @@
 						</li>
 					</ul>
 				</li>
-				<li {% if seccion_parametros %}class="active"{%endif%}><a href="{% url 'admin_parametros' %}">Par&aacute;metros de cofiguraci&oacute;n</a></li>
 				<li><a href="{% url 'cuentas_logout' %}">Salir</a></li>
 			</ul>
 		</div> <!-- / #menu_admin -->

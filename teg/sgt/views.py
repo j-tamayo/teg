@@ -26,6 +26,7 @@ class ObtenerMunicipios(View):
 			municipios = Municipio.objects.filter(estado__id = estado_id)
 			# Para obtener los municipios que tengan asociado al menos un centro de inspeccion
 			if request.GET.get('con_centro', None):
+				print "ENTRO"
 				centros = CentroInspeccion.objects.filter(municipio__estado__id = estado_id)
 				municipios = municipios.filter(centroinspeccion = centros).distinct('id')
 
@@ -588,7 +589,7 @@ class AdminBandejaUsuarios(View):
 
 		context = {
 			'admin': True,
-			'seccion_usuarios':True,
+			'seccion_parametros':True,
 			'usuarios': usuarios,
 			'usuario': usuario,
 		}
@@ -843,7 +844,7 @@ class AdminBandejaPeritos(View):
 		context = {
 			'admin': True,
 			'peritos': peritos,
-			'seccion_peritos': True,
+			'seccion_parametros': True,
 			'usuario': usuario,
 		}
 
@@ -1146,8 +1147,7 @@ class AdminEditarEncuesta(View):
 		tipos_encuesta = TipoEncuesta.objects.all()
 		
 		aux = Encuesta.objects.filter(tipo_encuesta__codigo="ENC_CONF")
-		if aux:
-			tipos_encuesta = tipos_encuesta.exclude(codigo="ENC_CONF")
+		
 
 		aux = Encuesta.objects.filter(tipo_encuesta__codigo="ENC_JUST")
 		if aux:
@@ -1548,6 +1548,7 @@ class AdminAgregarNotificacion(View):
 			'admin': True,
 			'usuario': usuario,
 			'form': form,
+			'seccion_notificaciones': True,
 			'tipos_notificaciones': tipos_notificaciones
 		}
 
