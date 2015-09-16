@@ -96,13 +96,13 @@
 								</thead>
 								<tbody id="solicitudes_table_body">
 									{% for s in solicitudes %}
-									<tr>
+									<tr id="sol_{{s.pk}}">
 										<td>{{s.tipo_inspeccion}}</td>
 										<td>{{s.numero_orden.codigo}}</td>
 										<td>{{s.estatus}}</td>
 										<td>{{s.numero_orden.fecha_atencion}}</td>
 										<td>
-											<a href="#" class="btn btn-danger btn-sm eliminar-solicitud" solicitud-id="{{s.pk}}"><i class="fa fa-times"></i></a>
+											<a href="#" class="btn btn-danger btn-sm eliminar-solicitud {%if s.estatus.codigo != 'solicitud_en_proceso' %}disabled{%endif%}" solicitud-id="{{s.pk}}"><i class="fa fa-times"></i></a>
 										</td>
 									</tr>
 									{% endfor %}
@@ -210,6 +210,7 @@
 	<script type="application/javascript">
 
 		$(function(){
+			var token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 			/********** PARA CARGAR LA INTERFAZ DE LA CREACIÓN DE SOLICITUD *************/
 			$(document).on('click', '#crear_solicitud', function(){
 				$('#contenedor_solicitudes').hide();
@@ -607,10 +608,16 @@
 			/************ MODAL DE CONFIRMACIÓN DE ELIMINACIÓN DE SOLICITUD ************/
 			$(document).on('click', '.eliminar-solicitud', function(){
 				id_solicitud = $(this).attr('solicitud-id');
+
 				$('#title_modal_generic').html('Confirmación');
 				$('#body_modal_generic').html(
 					'<div class="row text-center">\
 						<div class="col-xs-12"><h4>¿Está seguro que desea eliminar esta solicitud?</h4></div>\
+					</div>\
+					<div class="row">\
+						<div class="col-xs-12 text-center">\
+						<span id="error_eliminar_solicitud" class="text-danger"></span>\
+						</div>\
 					</div>'
 				);
 				$('#footer_modal_generic').html(
@@ -618,7 +625,7 @@
 						<a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>\
 					</div>\
 					<div class="col-xs-6">\
-						<a id="confirmar_eliminacion_solicitud" href="#" class="btn btn-primary btn-block">Aceptar</a>\
+						<a id="confirmar_eliminacion_solicitud" href="#" class="btn btn-primary btn-block" solicitud-id="'+id_solicitud+'">Aceptar</a>\
 					</div>'
 				);
 				$('#modal_generic').modal({
@@ -630,7 +637,32 @@
 
 			/************ ENVIAR ELIMINACIÓN DE SOLICITUD ************/
 			$(document).on('click', '#confirmar_eliminacion_solicitud', function(){
-				
+				id_solicitud = $(this).attr('solicitud-id');
+				console.log(id_solicitud);
+				$.ajax({
+					method: 'POST',
+					headers: { "X-CSRFToken": token},
+					url: '{% url "marcar_solicitud" %}',
+					dataType: 'json',
+					data: {
+						'id_solicitud': id_solicitud,
+					},
+					success:function(data){
+						if(data.valido){
+							$('a[solicitud-id="'+id_solicitud+'"]').attr('disabled',true);
+							estatus_solicitud = $('#sol_'+id_solicitud).children()[2];
+							$(estatus_solicitud).text(data.solicitud.estatus);
+							$('#modal_generic').modal('hide');
+						}
+						else{
+							$('#error_eliminar_solicitud').html(data.error_msg);
+						}
+					},
+				    error: function(data){
+				    	console.log("Error...");
+				    	console.log(data);
+				    }
+				});
 			});
 			/************ FIN **************/
 

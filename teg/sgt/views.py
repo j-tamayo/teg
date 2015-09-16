@@ -306,14 +306,17 @@ class MarcarSolicitud(View):
 		"""
 		valido = True
 		error_msg = ''
-		solicitud_id = request.POST.get('solicitud_id', 0)
-		solicitud = SolicitudInspeccion.object.filter(id = solicitud_id).first()
+		id_solicitud = request.POST.get('id_solicitud', 0)
+		solicitud_resp = None
+
+		solicitud = SolicitudInspeccion.objects.filter(id = id_solicitud).first()
 		if solicitud:
 			solicitud.borrada = True
 			if solicitud.estatus.codigo == 'solicitud_en_proceso':
 				solicitud.estatus = Estatus.objects.get(codigo = 'solicitud_cancelada')
 
 			solicitud.save()
+			solicitud_resp = {'estatus': solicitud.estatus.nombre}
 
 		else:
 			valido = False
@@ -321,7 +324,8 @@ class MarcarSolicitud(View):
 
 		respuesta = {
 			'valido': valido,
-			'error_msg': error_msg
+			'error_msg': error_msg,
+			'solicitud': solicitud_resp if solicitud_resp else ''
 		}
 
 		return HttpResponse(
