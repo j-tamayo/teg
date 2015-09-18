@@ -274,9 +274,12 @@ class CrearSolicitudInspeccion(View):
 					centro_tiempo_anterior.save()
 
 				respuesta['solicitud'] = {
+					'id': solicitud.pk,
 					'tipo_solicitud': solicitud.tipo_inspeccion.nombre,
 					'numero_orden': numero_orden.codigo,
 					'estatus': solicitud.estatus.nombre,
+					'fecha_atencion': numero_orden.fecha_atencion.strftime('%d/%m/%Y'),
+					'hora_atencion': numero_orden.hora_atencion.strftime('%I:%M %p')
 				}
 
 				respuesta['resultado'] = 0
@@ -334,6 +337,21 @@ class MarcarSolicitud(View):
 		)
 
 
+class GuardarReclamo(View):
+	def dispatch(self, *args, **kwargs):
+		return super(GuardarReclamo, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""
+		Vista encargada de registrar los reclamos de los clientes
+		"""
+		usuario = request.user
+		valido = True
+		motivo = request.POST.get('motivo', None)
+		observaciones = request.POST.get('observaciones', None)
+
+
+
 class BandejaCliente(View):
 	def dispatch(self, *args, **kwargs):
 		return super(BandejaCliente, self).dispatch(*args, **kwargs)
@@ -344,7 +362,7 @@ class BandejaCliente(View):
 		tipo_solicitudes = TipoInspeccion.objects.all()
 		form = SolicitudInspeccionForm(request.POST)
 		poliza = Poliza.objects.filter(usuario = usuario).first()
-		solicitudes = SolicitudInspeccion.objects.filter(usuario = usuario)
+		solicitudes = SolicitudInspeccion.objects.filter(usuario = usuario).order_by('-numeroorden__fecha_atencion','-numeroorden__hora_atencion')
 		notificaciones = NotificacionUsuario.objects.filter(usuario = usuario, borrada = False).order_by('-leida', '-pk')
 
 		for s in solicitudes:

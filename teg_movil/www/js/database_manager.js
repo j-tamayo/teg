@@ -53,7 +53,7 @@ function createTables(){
 		tx.executeSql('create table if not exists sgt_tipoinspeccion(id NOT NULL, codigo character varying(50) NOT NULL, descripcion text, nombre character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_estatus(id NOT NULL, nombre character varying(255) NOT NULL, codigo character varying(100) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_solicitudinspeccion(id NOT NULL, fecha_creacion timestamp with time zone NOT NULL, fecha_culminacion timestamp with time zone, perito character varying(200), tipo_inspeccion integer NOT NULL, usuario integer NOT NULL, estatus integer NOT NULL, centro_inspeccion integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (centro_inspeccion) REFERENCES sgt_centroinspeccion (id), FOREIGN KEY (tipo_inspeccion) REFERENCES sgt_tipoinspeccion (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id), FOREIGN KEY (estatus) REFERENCES sgt_estatus (id));');
-		tx.executeSql('create table if not exists sgt_numeroorden(id NOT NULL, asistencia integer NOT NULL, codigo character varying(50) NOT NULL, fecha_atencion date, solicitud_inspeccion integer NOT NULL, hora_atencion time without time zone, estatus integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (solicitud_inspeccion) REFERENCES sgt_solicitudinspeccion (id), FOREIGN KEY (estatus) REFERENCES sgt_estatus (id));');
+		tx.executeSql('create table if not exists sgt_numeroorden(id NOT NULL, asistencia integer NOT NULL, codigo character varying(50) NOT NULL, fecha_atencion date, solicitud_inspeccion integer NOT NULL, hora_atencion time without time zone, PRIMARY KEY (id), FOREIGN KEY (solicitud_inspeccion) REFERENCES sgt_solicitudinspeccion (id));');
 		tx.executeSql('create table if not exists sgt_tipoencuesta(id NOT NULL, codigo character varying(50) NOT NULL, descripcion character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_tiporespuesta(id NOT NULL, codigo character varying(50) NOT NULL, descripcion character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_encuesta(id NOT NULL, descripcion text, nombre character varying(255) NOT NULL, tipo_encuesta integer, PRIMARY KEY (id), FOREIGN KEY (tipo_encuesta) REFERENCES sgt_tipoencuesta (id));');
@@ -72,7 +72,7 @@ function loadTables(){
 	console.log('procediendo a cargar registros de la web APP...');
 	
 	load_data_id = 1;
-	$.getJSON('http://192.168.1.141:8000/api/data-inicial/')
+	$.getJSON('http://192.168.7.126:8000/api/data-inicial/')
 	.done(load_json_data)
 	.fail(function(){
 	    console.log('Error de conexión!');
@@ -260,7 +260,7 @@ function load_user_tables(){
 	console.log('login extitoso, procediendo a cargar información de usuario...');
 	
 	load_data_id = 2;
-	$.post('http://192.168.1.141:8000/api/usuario-info/', {'id': id_usuario})
+	$.post('http://192.168.7.126:8000/api/usuario-info/', {'id': id_usuario})
 	.done(load_json_data)
 	.fail(function(){
 		init_data(); //cargando la data localmente...
@@ -787,7 +787,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 		        data[obj.name] = obj.value;
 		    });
 
-		    $.post('http://192.168.1.141:8000/api/guardar-respuestas-encuesta/', data)
+		    $.post('http://192.168.7.126:8000/api/guardar-respuestas-encuesta/', data)
 	        .done(function(json){
 	            console.log(json);
 	            next_page = '#mail_page';

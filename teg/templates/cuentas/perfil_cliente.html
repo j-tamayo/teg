@@ -100,7 +100,7 @@
 										<td>{{s.tipo_inspeccion}}</td>
 										<td>{{s.numero_orden.codigo}}</td>
 										<td>{{s.estatus}}</td>
-										<td>{{s.numero_orden.fecha_atencion}}</td>
+										<td>{{s.numero_orden.fecha_atencion|date:"d/m/Y"}} {{s.numero_orden.hora_atencion|date:"h:i A"}}</td>
 										<td>
 											<a href="#" class="btn btn-danger btn-sm eliminar-solicitud {%if s.estatus.codigo != 'solicitud_en_proceso' %}disabled{%endif%}" solicitud-id="{{s.pk}}"><i class="fa fa-times"></i></a>
 										</td>
@@ -444,7 +444,10 @@
 								<td>'+data.solicitud.tipo_solicitud+'</td>\
 								<td>'+data.solicitud.numero_orden+'</td>\
 								<td>'+data.solicitud.estatus+'</td>\
-								<td>...</td>\
+								<td>'+data.solicitud.fecha_atencion+' '+data.solicitud.hora_atencion+'</td>\
+								<td>\
+									<a href="#" class="btn btn-danger btn-sm eliminar-solicitud" solicitud-id="'+data.solicitud.id+'"><i class="fa fa-times"></i></a>\
+								</td>\
 							</tr>'
 						);
 						$('#contenedor_crear_solicitud').hide();
