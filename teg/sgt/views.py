@@ -429,7 +429,8 @@ class AdminAgregarCentro(View):
 		form = CentroInspeccionForm(request.POST)
 
 		if form.is_valid():
-			form.save()
+			fechas_no_laborables = request.POST.getlist('fechas_no_laborables', [])
+			form.save(fechas_no_laborables)
 			return redirect(reverse('admin_centros'))
 
 		else:
@@ -482,6 +483,10 @@ class AdminEditarCentro(View):
 			estados = Estado.objects.all()
 			peritos = Perito.objects.filter(activo=True)
 			peritos_asignados = centro.peritos.filter(activo=True).values_list('id',flat=True)
+			fechas_no_laborables_centro = centro.fechas_no_laborables.all()
+			fechas_no_laborables = []
+			for f in fechas_no_laborables_centro:
+				fechas_no_laborables.append(f.fecha.strftime('%d/%m/%Y'))
 
 			context = {
 				'admin': True,
@@ -490,6 +495,7 @@ class AdminEditarCentro(View):
 				'c_municipio_id': c_municipio_id,
 				'centro_id': kwargs['centro_id'],
 				'editar': True,
+				'fechas_no_laborables': fechas_no_laborables,
 				'form': form,
 				'estados': estados,
 				'peritos': peritos,
@@ -516,7 +522,8 @@ class AdminEditarCentro(View):
 		if form.is_valid():
 			print "HEYYYYY",request.POST.getlist('peritos')
 			print form.cleaned_data['municipio']
-			form.save()
+			fechas_no_laborables = request.POST.getlist('fechas_no_laborables', [])
+			form.save(fechas_no_laborables)
 			return redirect(reverse('admin_centros'))
 
 		else:

@@ -39,9 +39,14 @@ class CentroInspeccion(models.Model):
 	hora_cierre_manana = models.TimeField(blank=True, null=True)
 	hora_apertura_tarde = models.TimeField(blank=True, null=True)
 	hora_cierre_tarde = models.TimeField(blank=True, null=True)
+	fechas_no_laborables = models.ManyToManyField('FechaNoLaborable')
 
 	def __unicode__(self):
 		return u'%s' % self.nombre
+
+
+class FechaNoLaborable(models.Model):
+	fecha = models.DateField()
 
 
 class Perito(models.Model):

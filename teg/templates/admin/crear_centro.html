@@ -69,6 +69,18 @@
 							{% endfor %}
 						</select>
 						<span class="text-danger">{{form.peritos.errors.as_text}}</span>
+						<br><br>	
+						<label>Fechas no laborables</label>
+						<div id="sel_fecha" class="input-append date" data-date-format="dd/mm/yyyy">
+							<input type="text" readonly id="fecha_escogida" name="fecha_escogida" class="col-xs-9">
+							<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
+						</div>
+						<br>
+						<select name="fechas_no_laborables" id="fechas_no_laborables" class="form-control select-mul" multiple>
+							{% for f in fechas_no_laborables %}
+							<option value="{{f}}" selected>{{f}}</option>
+							{% endfor %}
+						</select>
 					</div>
 				</div>
 				<br>
@@ -128,6 +140,12 @@
 	{{ block.super }}
 	<script type="application/javascript">
 	$(function(){
+		fechas_no_laborables = [];
+
+		{% for fecha in fechas_no_laborables %}
+		fechas_no_laborables.push('{{fecha}}');
+		{% endfor %}
+
 		//Inicialización del timepicker
 		$('.timepicker').timepicker({
 			minuteStep: 10,
@@ -163,6 +181,26 @@
 			}
 		});
 		/********** FIN  *************/
+
+		/********** AGREGAR FECHA NO LABORABLE ************/
+		$('#sel_fecha').datepicker().on('changeDate', function(e){
+        	fecha = $('#fecha_escogida').val();
+        	if($.inArray(fecha, fechas_no_laborables) < 0){
+        		fechas_no_laborables.push(fecha);
+        		$('#fechas_no_laborables').append('<option value="'+fecha+'" selected>'+fecha+'</option>');
+        		$("#fechas_no_laborables").trigger("chosen:updated");
+        	}
+
+    	});
+		/********** FIN **************/
+
+		$("#fechas_no_laborables").chosen().change(function(event, params) {
+		    deselected_date =params.deselected;
+		    $('#fechas_no_laborables option[value="'+deselected_date+'"]').remove();
+		    $("#fechas_no_laborables").trigger("chosen:updated");
+		    
+		});
+
 
 	});
 	</script>
