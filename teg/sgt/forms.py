@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.auth import authenticate
-from sgt.models import Estado, Municipio, TipoInspeccion, CentroInspeccion, Perito, Encuesta, TipoEncuesta, Pregunta, TipoRespuesta, ValorPosible, Notificacion, TipoNotificacion
+from sgt.models import *
 from datetime import datetime
 from django.core.exceptions import ValidationError
 
@@ -91,12 +91,36 @@ class CentroInspeccionForm(forms.ModelForm):
 			)
 		}
 
-	def save(self):
+	def save(self, fechas_no_laborables):
 		instance = forms.ModelForm.save(self)
 		peritos = self.cleaned_data.get('peritos', [])
 		peritos_viejos = instance.peritos.all()
 		peritos_to_del = set(peritos_viejos).difference(set(peritos))
 		peritos_to_add = set(peritos).difference(set(peritos_viejos))
+		lista_fechas = []
+		fechas = fechas_no_laborables
+		#Agregamos las fechas que no hayan sido registradas
+		for fecha in fechas:
+			fecha_object = datetime.strptime(fecha, '%d/%m/%Y').date()
+			existe_fecha = FechaNoLaborable.objects.filter(fecha = fecha_object).first()
+			if not existe_fecha:
+				existe_fecha = FechaNoLaborable(fecha = fecha_object)
+				existe_fecha.save()
+
+			lista_fechas.append(existe_fecha)
+
+		fechas_viejas = instance.fechas_no_laborables.all()
+		fechas_to_del = set(fechas_viejas).difference(set(lista_fechas))
+		fechas_to_add = set(lista_fechas).difference(set(fechas_viejas))
+
+		#Eliminamos las fechas removidas en el formulario
+		for f in fechas_to_del:
+			instance.fechas_no_laborables.remove(f)
+
+		#Agregamos las fechas nuevas
+		for f in fechas_to_add:
+			instance.fechas_no_laborables.add(f)
+
 		#Eliminamos los peritos removidos en el formulario
 		for p in peritos_to_del:
 			# print "perito elim",p.pk,p
@@ -107,6 +131,8 @@ class CentroInspeccionForm(forms.ModelForm):
 		for perito in peritos_to_add:
 			instance.peritos.add(perito)
 			# print perito.pk,perito.nombres
+
+
 
 	def clean_hora_apertura_manana(self):
 		field = self.cleaned_data.get('hora_apertura_manana', None)

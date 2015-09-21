@@ -5,18 +5,29 @@
 {% load i18n %}
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-xs-8">
+		<div class="col-xs-6">
 			<h3>Centros de inpecci&oacute;n</small></h3>
 		</div>
 		<div class="col-xs-2">
+			<h3>
 			<a href="{% url 'admin_crear_centro' %}" class="btn btn-info btn-block">
 				<i class="fa fa-plus"></i> Agregar
 			</a>
+			</h3>
 		</div>
 		<div class="col-xs-2">
+			<h3>
 			<a id="carga_masiva" href="#" class="btn btn-info btn-block">
 				<i class="fa fa-upload"></i> Cargar masiva
 			</a>
+			</h3>
+		</div>
+		<div class="col-xs-2">
+			<h3>
+			<a id="seleccionar_fechas_no_laborables" href="#" class="btn btn-info btn-block">
+				<i class="fa fa-calendar"></i> Feriados
+			</a>
+			</h3>
 		</div>
 	</div>
 
@@ -43,7 +54,7 @@
 						<a href="{% url 'admin_editar_centro' centro.pk %}" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Editar">
 							<i class="fa fa-pencil"></i>
 						</a>
-						<a href="#" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Gestionar">
+						<a href="#" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Administrar fechas no laborables">
 							<i class="fa fa-cog"></i>
 						</a>
 						<a href="#" class="btn btn-danger btn-sm eliminar" target="{{centro.pk}}" data-toggle="tooltip" data-original-title="Eliminar" >
@@ -104,7 +115,7 @@
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h3 class="modal-title text-success" id="myModalLabel">Carga masiva</h3>
-				</div>
+			</div>
 			<div class="modal-body">
 				<form id="carga_masiva_form" action="" method="post" enctype="multipart/form-data">
 				<div class="row">
@@ -130,7 +141,52 @@
 				</div>
 				<div class="col-xs-6">
 					<a href="#" id="enviar_archivo_centros" class="btn btn-primary btn-block">Enviar</button>
-				</a>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal para las fechas no laborables -->
+<div class="modal fade" id="fechas_no_laborables_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title text-success" id="myModalLabel">Escoger d&iacute;as feriados</h3>
+			</div>
+			<div class="modal-body">
+				<form id="carga_masiva_form" action="" method="post" enctype="multipart/form-data">
+				<div class="row">
+					<div class="col-xs-12">
+						<label>Fechas no laborables</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<div id="sel_fecha" class="input-append date" data-date-format="dd/mm/yyyy">
+							<input type="text" readonly id="fecha_escogida" name="fecha_escogida" class="col-xs-9">
+							<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<select name="fechas_no_laborables" id="fechas_no_laborables" class="form-control select-mul" multiple>
+						</select>
+					</div>
+				</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<div class="col-xs-6">
+					<a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>
+				</div>
+				<div class="col-xs-6">
+					<a href="#" id="enviar_fechas_no_laborables" class="btn btn-primary btn-block">Enviar</button>
+					</a>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -148,6 +204,7 @@
 	$(function(){console.log('hey');
 		var token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 		$('#eliminar_centro').hide();
+
 		/******** MODAL PARA CONFIRMAR LA ELIMINACIÓN DE UN CENTRO DE INSPECCIÓN ********/
 		$(document).on('click', '.eliminar', function(event){
 			event.preventDefault();
@@ -233,6 +290,17 @@
 			}else{
 
 			}
+		});
+		/******* FIN *******/
+
+		/************** MODAL PARA REALIZAR LA CARGA MASIVA ***************/
+		$(document).on('click', '#seleccionar_fechas_no_laborables', function(){
+			$('#fechas_no_laborables_modal').modal();
+			//INcialización de chosen para los selects múltiples
+			$('.select-mul').chosen({
+	  			no_results_text: 'No se encontraron resultados para'
+			});
+			$('.select-mul').chosen('destroy').chosen();
 		});
 		/******* FIN *******/
 	})
