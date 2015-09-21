@@ -17,7 +17,7 @@ ISSUES surgidos en la reunión con el profesor el 28-08-15
  ☐ Mostrar un mensaje de aviso si no se puede llenar la encuesta por falta de conexión en el móvil.
  ✔ Ocurrió un error al exportar un reporte. @done (15-09-15 09:20)
  ✔ En el menú del administrador agrupar Centros, Usuarios, Peritos y Encuestas cómo configuración. @done (15-09-14 16:26)
- ☐ Poner por centro la cantidad de días para la reserva y las fechas no laborables. Adicionalmente se puede establecer esos parámetros de una manera global para todos los centros.
+ ✔ Poner por centro la cantidad de días para la reserva y las fechas no laborables. Adicionalmente se puede establecer esos parámetros de una manera global para todos los centros. @done (15-09-21 16:05)
  ☐ Ver si se puede poner en un campo por separado en la BD la hora de la notificación.
  ☐ Poner la hora de atención de los centros de una manera global y particular.
  ☐ Mostrar bien visible el código de la solicitud.

@@ -31,6 +31,12 @@ urlpatterns = \
         ),
 
         url(
+            r'^fechas-no-laborables$',
+            views.MarcarFechasNoLaborables.as_view(),
+            name='marcar_fechas_no_laborables'
+        ),
+
+        url(
             r'^bandeja-cliente$',
             views.BandejaCliente.as_view(),
             name='bandeja_cliente'

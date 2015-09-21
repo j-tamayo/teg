@@ -337,6 +337,48 @@ class MarcarSolicitud(View):
 		)
 
 
+class MarcarFechasNoLaborables(View):
+	def dispatch(self, *args, **kwargs):
+		return super(MarcarFechasNoLaborables, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""
+		Vista encargada de marcar las fechas no fechas_no_laborables
+		para todos los centros
+		"""
+		valido = True
+		error_msg = ''
+		fechas_no_laborables = request.POST.getlist('fechas_no_laborables', [])
+		if not fechas_no_laborables:
+			valido = False
+			error_msg = 'No se suministró ninguna fecha'
+
+		else:
+			centros = CentroInspeccion.objects.all()
+			for f in fechas_no_laborables:
+				fecha_object = datetime.strptime(f,'%d/%m/%Y').date()
+				#Creo la fecha si no existe
+				fecha = FechaNoLaborable.objects.filter(fecha = fecha_object).first()
+				if not fecha:
+					fecha = FechaNoLaborable(fecha = fecha_object)
+					fecha.save()
+
+				#Agrego las fechas por centro (Solo si no existen)
+				for c in centros:
+					if not c.fechas_no_laborables.filter(fecha = fecha_object).first():
+						c.fechas_no_laborables.add(fecha)
+
+		respuesta = {
+			'valido': valido,
+			'error_msg': error_msg
+		}
+
+		return HttpResponse(
+		    json.dumps(respuesta),
+		    content_type="application/json"
+		)
+
+
 class GuardarReclamo(View):
 	def dispatch(self, *args, **kwargs):
 		return super(GuardarReclamo, self).dispatch(*args, **kwargs)

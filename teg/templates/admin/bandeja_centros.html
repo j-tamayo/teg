@@ -5,31 +5,52 @@
 {% load i18n %}
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-xs-6">
-			<h3>Centros de inpecci&oacute;n</small></h3>
+		<div class="col-xs-4 col-lg-6">
+			<h3>Centros de inpecci&oacute;n</h3>
 		</div>
-		<div class="col-xs-2">
+		<div class="col-xs-2 col-lg-2">
 			<h3>
 			<a href="{% url 'admin_crear_centro' %}" class="btn btn-info btn-block">
 				<i class="fa fa-plus"></i> Agregar
 			</a>
 			</h3>
 		</div>
-		<div class="col-xs-2">
+		<div class="col-xs-3 col-lg-2">
 			<h3>
 			<a id="carga_masiva" href="#" class="btn btn-info btn-block">
 				<i class="fa fa-upload"></i> Cargar masiva
 			</a>
 			</h3>
 		</div>
-		<div class="col-xs-2">
+		<div class="col-xs-3 col-lg-2">
 			<h3>
-			<a id="seleccionar_fechas_no_laborables" href="#" class="btn btn-info btn-block">
-				<i class="fa fa-calendar"></i> Feriados
-			</a>
+			<div class="btn-group btn-block" role="group" aria-label="...">
+				<div class="btn-group btn-block pull-right">
+					<a href="#" class="btn btn-info btn-block dropdown-toggle" data-toggle="dropdown">
+						Atributos globales <span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu  pull-right" role="menu">
+						<li>
+							<a id="seleccionar_fechas_no_laborables" href="#">
+								<i class="fa fa-calendar"></i> Fechas No laborables
+							</a>
+						</li>
+						<li>
+							<a id="" href="#">
+								<i class="fa fa-clock-o"></i> Hora de atenci&oacute;n
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			
 			</h3>
 		</div>
-	</div>
+	</div> <!-- / .row -->
+
+	<div class="row">
+		<div id="mensaje_confirmacion" class="col-xs-12"></div>
+	</div> <!-- / .row -->
 
 	<div class="row">
 		<div class="col-xs-12">
@@ -53,9 +74,6 @@
 					<td>
 						<a href="{% url 'admin_editar_centro' centro.pk %}" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Editar">
 							<i class="fa fa-pencil"></i>
-						</a>
-						<a href="#" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Administrar fechas no laborables">
-							<i class="fa fa-cog"></i>
 						</a>
 						<a href="#" class="btn btn-danger btn-sm eliminar" target="{{centro.pk}}" data-toggle="tooltip" data-original-title="Eliminar" >
 							<i class="fa fa-trash"></i>
@@ -157,12 +175,21 @@
 				<h3 class="modal-title text-success" id="myModalLabel">Escoger d&iacute;as feriados</h3>
 			</div>
 			<div class="modal-body">
-				<form id="carga_masiva_form" action="" method="post" enctype="multipart/form-data">
+				<form id="fechas_no_laborables_form" action="" method="post" enctype="multipart/form-data">
+				<div id="spinner_form" style="display:none">
+					{% load staticfiles %}
+					<center>
+				    	<img src="{% static "img/ajax-loader.gif" %}" alt="Cargando Formulario..."/>
+				    </center>
+				</div> <!-- / #spinner_form -->
+
+				<div id="contenedor_fechas">
 				<div class="row">
 					<div class="col-xs-12">
 						<label>Fechas no laborables</label>
 					</div>
 				</div>
+				<br>
 				<div class="row">
 					<div class="col-xs-12">
 						<div id="sel_fecha" class="input-append date" data-date-format="dd/mm/yyyy">
@@ -171,12 +198,15 @@
 						</div>
 					</div>
 				</div>
+				<br>
 				<div class="row">
 					<div class="col-xs-12">
 						<select name="fechas_no_laborables" id="fechas_no_laborables" class="form-control select-mul" multiple>
 						</select>
+						<div id="fechas_errores" class="text-danger"></div>
 					</div>
 				</div>
+				</div> <!-- / #contenedor_fechas -->
 				</form>
 			</div>
 			<div class="modal-footer">
@@ -201,9 +231,10 @@
 	<script src="{% static 'js/jquery-form/jquery.form.min.js' %}" type="application/javascript"></script>
 
 	<script type="application/javascript">
-	$(function(){console.log('hey');
+	$(function(){
 		var token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 		$('#eliminar_centro').hide();
+		fechas_no_laborables = [];
 
 		/******** MODAL PARA CONFIRMAR LA ELIMINACIÓN DE UN CENTRO DE INSPECCIÓN ********/
 		$(document).on('click', '.eliminar', function(event){
@@ -295,14 +326,76 @@
 
 		/************** MODAL PARA REALIZAR LA CARGA MASIVA ***************/
 		$(document).on('click', '#seleccionar_fechas_no_laborables', function(){
+			$("#fechas_no_laborables").html('');
+			$("#fechas_no_laborables").trigger("chosen:updated");
+			$('#fechas_errores').html('');
 			$('#fechas_no_laborables_modal').modal();
-			//INcialización de chosen para los selects múltiples
-			$('.select-mul').chosen({
-	  			no_results_text: 'No se encontraron resultados para'
-			});
-			$('.select-mul').chosen('destroy').chosen();
 		});
 		/******* FIN *******/
+
+		/******* PARA HACER QUE CHOSEN FUNCIONE EN EL MODAL ************/
+		$('#fechas_no_laborables_modal').on('shown.bs.modal', function () {
+			//INcialización de chosen para los selects múltiples
+			$('.select-mul').chosen({
+				no_results_text: 'No se encontraron resultados para'
+			});
+		});
+		/******* FIN *******/
+
+		/********** AGREGAR FECHA NO LABORABLE ************/
+		$('#sel_fecha').datepicker().on('changeDate', function(e){
+        	fecha = $('#fecha_escogida').val();
+        	if($.inArray(fecha, fechas_no_laborables) < 0){
+        		fechas_no_laborables.push(fecha);
+        		$('#fechas_no_laborables').append('<option value="'+fecha+'" selected>'+fecha+'</option>');
+        		$("#fechas_no_laborables").trigger("chosen:updated");
+        	}
+
+    	});
+		/********** FIN **************/
+
+		/********** PARA QUITAR LA FECHA DESSELECCIONADA DE CHOSEN ************/
+		$(document).on('change', '#fechas_no_laborables', function(){
+			value = $($('#fechas_no_laborables option').not(':selected')[0]).val();
+			$('#fechas_no_laborables option[value="'+value+'"]').remove();
+			$("#fechas_no_laborables").trigger("chosen:updated");
+		});
+		/********** FIN **************/
+
+		/********** PARA ENVIAR LAS FECHAS NO LABORABLES **********/
+		$(document).on('click', '#enviar_fechas_no_laborables', function(){
+			var postData = $('#fechas_no_laborables_form').serializeArray();
+			$.ajax({
+				method: 'POST',
+				headers: { "X-CSRFToken": token},
+				url: '{% url "marcar_fechas_no_laborables" %}',
+				data:postData,
+				dataType: 'json',
+				beforeSend: function(xhr) {
+					$('#contenedor_fechas').hide();
+					$('#spinner_form').show();
+				},
+				complete: function(){
+					$('#spinner_form').hide();
+					$('#contenedor_fechas').show();
+				},
+			})
+			.done(function(data){
+				if(data.valido){
+					$('#fechas_no_laborables_modal').modal('hide');
+					$('#mensaje_confirmacion').html(
+					'<div class="alert alert-success alert-dismissible" role="alert">\
+						 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
+						 Se han agregado correctamente las fechas no laborables\
+					</div>'
+					);
+				}
+				else{
+					$('#fechas_errores').html(data.error_msg);
+				}
+			})
+		});
+		/********** FIN **************/
 	})
 	</script>
 {% endblock %}
