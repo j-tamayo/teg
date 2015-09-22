@@ -267,8 +267,10 @@ class UserInfo(APIView):
 				data.append({'cuentas_sgtusuario': [usuario_serializer.data]})
 
 				poliza = Poliza.objects.filter(usuario=usuario).first()
-				poliza_serializer = PolizaSerializer(poliza)
-				data.append({'sgt_poliza': [poliza_serializer.data]})
+				if poliza:
+					poliza_serializer = PolizaSerializer(poliza)
+					print poliza_serializer
+					data.append({'sgt_poliza': [poliza_serializer.data]})
 				
 				solicitudes = SolicitudInspeccion.objects.filter(usuario=usuario, borrada=False)
 				solicitudes_serializer = SolicitudInspeccionSerializer(solicitudes, many=True)
