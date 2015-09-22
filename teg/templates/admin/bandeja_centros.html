@@ -36,7 +36,7 @@
 							</a>
 						</li>
 						<li>
-							<a id="" href="#">
+							<a id="seleccionar_horarios_atencion" href="#">
 								<i class="fa fa-clock-o"></i> Hora de atenci&oacute;n
 							</a>
 						</li>
@@ -221,6 +221,77 @@
 		</div>
 	</div>
 </div>
+
+<!-- Modal para los horarios de atención -->
+<div class="modal fade" id="horarios_atencion_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title text-success" id="myModalLabel">Establecer horarios de atenci&oacute;n</h3>
+			</div>
+			<div class="modal-body">
+				<form id="horarios_atencion_form" action="" method="post" enctype="multipart/form-data">
+				<div id="spinner_form_horarios" style="display:none">
+					{% load staticfiles %}
+					<center>
+				    	<img src="{% static "img/ajax-loader.gif" %}" alt="Cargando Formulario..."/>
+				    </center>
+				</div> <!-- / #spinner_form -->
+
+				<div id="contenedor_horarios">
+				<div class="row">
+					<div class="col-xs-6">
+						<label>Hora de apertura ma&ntilde;ana</label>
+						<div class="input-append bootstrap-timepicker">
+							<input id="id_hora_apertura_manana" class="form-control timepicker" type="text" name="hora_apertura_manana">
+							<span class="add-on"><i class="icon-time"></i></span>
+						</div>
+						<span class="text-danger"></span>
+					</div>
+					<div class="col-xs-6">
+						<label>Hora de cierre ma&ntilde;ana</label>
+						<div class="input-append bootstrap-timepicker">
+							<input id="id_hora_cierre_manana" class="form-control timepicker" type="text" name="hora_cierre_manana">
+							<span class="add-on"><i class="icon-time"></i></span>
+						</div>
+						<span class="text-danger"></span>
+					</div>
+				</div>	
+				<br>
+				<div class="row">
+					<div class="col-xs-6">
+						<label>Hora de apertura tarde</label>
+						<div class="input-append bootstrap-timepicker">
+							<input id="id_hora_apertura_tarde" class="form-control timepicker" type="text" name="hora_apertura_tarde">
+							<span class="add-on"><i class="icon-time"></i></span>
+						</div>
+						<span class="text-danger"></span>
+					</div>
+					<div class="col-xs-6">
+						<label>Hora de cierre tarde</label>
+						<div class="input-append bootstrap-timepicker">
+							<input id="id_hora_cierre_tarde" class="form-control timepicker" type="text" name="hora_cierre_tarde">
+							<span class="add-on"><i class="icon-time"></i></span>
+						</div>
+						<span class="text-danger"></span>
+					</div>
+				</div>
+				</div> <!-- / #contenedor_horarios -->
+				</form>
+			</div>
+			<div class="modal-footer">
+				<div class="col-xs-6">
+					<a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>
+				</div>
+				<div class="col-xs-6">
+					<a href="#" id="enviar_fechas_no_laborables" class="btn btn-primary btn-block">Enviar</button>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
@@ -235,6 +306,13 @@
 		var token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 		$('#eliminar_centro').hide();
 		fechas_no_laborables = [];
+
+		//Inicialización del timepicker
+		$('.timepicker').timepicker({
+			minuteStep: 10,
+			showMeridian:false,
+			template: 'modal'
+		});
 
 		/******** MODAL PARA CONFIRMAR LA ELIMINACIÓN DE UN CENTRO DE INSPECCIÓN ********/
 		$(document).on('click', '.eliminar', function(event){
@@ -324,7 +402,7 @@
 		});
 		/******* FIN *******/
 
-		/************** MODAL PARA REALIZAR LA CARGA MASIVA ***************/
+		/************** MODAL PARA ESCOGER FECHAS NO LABORABLES ***************/
 		$(document).on('click', '#seleccionar_fechas_no_laborables', function(){
 			$("#fechas_no_laborables").html('');
 			$("#fechas_no_laborables").trigger("chosen:updated");
@@ -396,6 +474,12 @@
 			})
 		});
 		/********** FIN **************/
+
+		/************** MODAL PARA ESCOGER HORARIOS DE ATENCIÓN ***************/
+		$(document).on('click', '#seleccionar_horarios_atencion', function(){
+			$('#horarios_atencion_modal').modal();
+		});
+		/******* FIN *******/
 	})
 	</script>
 {% endblock %}
