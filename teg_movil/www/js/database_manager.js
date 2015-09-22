@@ -2,6 +2,7 @@
 var db;
 var id_usuario = -1;
 var load_data_id = 0;
+var flag_poliza = false;
 
 /* Variables Globales Auxiliares */
 var user_title = '';
@@ -49,6 +50,7 @@ function createTables(){
 		tx.executeSql('create table if not exists sgt_estado(id NOT NULL, nombre character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_municipio(id NOT NULL, nombre character varying(255) NOT NULL, estado integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (estado) REFERENCES sgt_estado (id))');
 		tx.executeSql('create table if not exists cuentas_sgtusuario(id NOT NULL, password character varying(128) NOT NULL, apellidos character varying(200) NOT NULL, cedula character varying(100) NOT NULL, correo character varying(255) NOT NULL, direccion text NOT NULL, fecha_nacimiento date NOT NULL, nombres character varying(200) NOT NULL, sexo integer NOT NULL, telefono_local character varying(100), telefono_movil character varying(100), municipio integer, codigo_postal integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (municipio) REFERENCES sgt_municipio (id), UNIQUE (correo));');
+		tx.executeSql('create table if not exists sgt_poliza(id NOT NULL, numero integer NOT NULL, usuario integer, fecha_fin_vigencia date NOT NULL, fecha_inicio_vigencia date NOT NULL, cedula_cliente character varying(100) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id))');
 		tx.executeSql('create table if not exists sgt_centroinspeccion(id NOT NULL, nombre character varying(255) NOT NULL, direccion text NOT NULL, municipio integer NOT NULL, capacidad integer NOT NULL, tiempo_atencion integer NOT NULL, telefonos character varying(255) NOT NULL, hora_apertura_manana time without time zone, hora_apertura_tarde time without time zone, hora_cierre_manana time without time zone, hora_cierre_tarde time without time zone, PRIMARY KEY (id), FOREIGN KEY (municipio) REFERENCES sgt_municipio (id));');
 		tx.executeSql('create table if not exists sgt_tipoinspeccion(id NOT NULL, codigo character varying(50) NOT NULL, descripcion text, nombre character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_estatus(id NOT NULL, nombre character varying(255) NOT NULL, codigo character varying(100) NOT NULL, PRIMARY KEY (id));');
@@ -72,7 +74,7 @@ function loadTables(){
 	console.log('procediendo a cargar registros de la web APP...');
 	
 	load_data_id = 1;
-	$.getJSON('http://192.168.7.126:8000/api/data-inicial/')
+	$.getJSON('http://192.168.1.106:8000/api/data-inicial/')
 	.done(load_json_data)
 	.fail(function(){
 	    console.log('Error de conexión!');
@@ -96,6 +98,7 @@ function dropTables(){
 		tx.executeSql('drop table sgt_estatus;');
 		tx.executeSql('drop table sgt_tipoinspeccion;');
 		tx.executeSql('drop table sgt_centroinspeccion;');
+		tx.executeSql('drop table sgt_poliza;');
 		tx.executeSql('drop table cuentas_sgtusuario;');
 		tx.executeSql('drop table sgt_municipio;');
 		tx.executeSql('drop table sgt_estado;');
@@ -260,7 +263,7 @@ function load_user_tables(){
 	console.log('login extitoso, procediendo a cargar información de usuario...');
 	
 	load_data_id = 2;
-	$.post('http://192.168.7.126:8000/api/usuario-info/', {'id': id_usuario})
+	$.post('http://192.168.1.106:8000/api/usuario-info/', {'id': id_usuario})
 	.done(load_json_data)
 	.fail(function(){
 		init_data(); //cargando la data localmente...
@@ -483,13 +486,16 @@ function fill_municipios(sel_estado, query){
 
 function fill_tipos_inspeccion(){
 	db.transaction(function(tx){
-		tx.executeSql('SELECT id, nombre FROM sgt_tipoinspeccion;', [], 
+		tx.executeSql('SELECT id, nombre, codigo FROM sgt_tipoinspeccion;', [], 
 	    function(tx, results){
 	    	num = results.rows.length;
 	    	aux = '<option value="">---Seleccione un tipo---</option>';
 			for(i = 0; i < num; i++){
 				row = results.rows.item(i);
-				aux += '<option value="'+row['id']+'">'+row['nombre']+'</option>';
+				if(row['codigo'] == 'SRI' && !flag_poliza)
+					continue;
+				else
+					aux += '<option value="'+row['id']+'">'+row['nombre']+'</option>';
 			}
 			$('.tipos_inspeccion').each(function(){
 				$(this).html(aux);
@@ -515,16 +521,57 @@ function load_profile_info(){
 			user_title = row['nombres'];
 
 	    	$('#profile_content').html('<h3 class="text-success" style="text-align: center;">Informaci&oacute;n del usuario</h3>\
-				<p>Nombre: '+row['nombres']+'</p>\
-				<p>Apellido: '+row['apellidos']+'</p>\
-				<p>C&eacute;dula: '+row['cedula']+'</p>\
-				<p>Estado: '+row['estado']+'</p>\
-				<p>Municipio: '+row['municipio']+'</p>\
-				<p>Direcci&oacute;n: '+row['direccion']+'</p>\
-				<p>Correo: '+row['correo']+'</p>\
-				<hr>\
-				<h3 class="text-success" style="text-align: center;">El usuario no posee<br>póliza asociada</h3>'	
-			);	/* OJO!!! Falta cargar la información de la poliza... */
+										<p>Nombre: '+row['nombres']+'</p>\
+										<p>Apellido: '+row['apellidos']+'</p>\
+										<p>C&eacute;dula: '+row['cedula']+'</p>\
+										<p>Estado: '+row['estado']+'</p>\
+										<p>Municipio: '+row['municipio']+'</p>\
+										<p>Direcci&oacute;n: '+row['direccion']+'</p>\
+										<p>Correo: '+row['correo']+'</p>');
+
+	    	tx.executeSql('SELECT * FROM sgt_poliza WHERE usuario = '+id_usuario+';', [],
+	    	function(tx, results){
+	    		num = results.rows.length;
+	    		aux = '<hr>';
+	    		estatus_poliza = '';
+	  
+	    		if(num > 0){
+	    			row = results.rows.item(0);
+	    			fecha_inicio = row['fecha_inicio_vigencia'].split('-');
+	    			fecha_fin = row['fecha_fin_vigencia'].split('-');
+	    			
+	    			today = new Date();
+	    			date_inicio = new Date(fecha_inicio[0], parseInt(fecha_inicio[1]) - 1, fecha_inicio[2]);
+	    			date_fin = new Date(fecha_fin[0], parseInt(fecha_fin[1]) - 1, fecha_fin[2]);
+
+	    			fecha_inicio = fecha_inicio[2] + '/' +  fecha_inicio[1] + '/' + fecha_inicio[0];
+	    			fecha_fin = fecha_fin[2] + '/' +  fecha_fin[1] + '/' + fecha_fin[0];
+
+	    			aux += '<h3 class="text-success" style="text-align: center;">Datos de la p&oacute;liza</h3>\
+				    		<p>N&uacute;mero: '+row['numero']+'</p>\
+							<p>Fecha de inicio: '+fecha_inicio+'</p>\
+							<p>Fecha de vencimiento: '+fecha_fin+'</p>';
+
+	    			if(today >= date_inicio && today <= date_fin){
+		    			flag_poliza = true;
+		    			aux += '<p>Estatus: Vigente</p>';
+					}
+					else{
+						flag_poliza = false;
+						aux += '<p>Estatus: Vencida</p>';
+					}
+	    		}
+	    		else{
+	    			flag_poliza = false;
+	    			aux += '<h3 class="text-success" style="text-align: center;">El usuario no posee<br>p&oacute;liza asociada</h3>';
+	    		}
+	    			
+	    		$('#profile_content').append(aux);
+	    	},
+	    	function(tx, err){
+				console.log('error');
+				throw new Error(err.message);
+			});
 	    },
 		function(tx, err){
 			console.log('error');
@@ -787,7 +834,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 		        data[obj.name] = obj.value;
 		    });
 
-		    $.post('http://192.168.7.126:8000/api/guardar-respuestas-encuesta/', data)
+		    $.post('http://192.168.1.106:8000/api/guardar-respuestas-encuesta/', data)
 	        .done(function(json){
 	            console.log(json);
 	            next_page = '#mail_page';

@@ -12,6 +12,10 @@ class SgtUsuarioSerializer(serializers.ModelSerializer):
 	# def create(self, validated_data):
 
 	# 	print "h"
+class PolizaSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Poliza
+		fields = ('id','cedula_cliente','fecha_inicio_vigencia','fecha_fin_vigencia','numero','usuario')
 
 
 class LoginSerializer(serializers.Serializer):
@@ -41,12 +45,6 @@ class TipoInspeccionSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = TipoInspeccion
 		feilds = ('id','codigo','descripcion','nombre')
-
-
-class PolizaSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Poliza
-		fields = ('id','descripcion','numero')
 
 
 class SolicitudInspeccionSerializer(serializers.ModelSerializer):
