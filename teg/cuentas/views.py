@@ -12,6 +12,7 @@ from cuentas.forms import *
 from cuentas.models import *
 from django.template.loader import get_template
 from django.template import Context
+from sgt.models import Poliza
 import string
 import random
 import json
@@ -75,6 +76,12 @@ class Registro(View):
             
             usuario.set_password(registro['password'])
             usuario.save()
+
+            #Asignar póliza, si existe
+            poliza = Poliza.objects.filter(cedula_cliente = usuario.cedula).first()
+            if poliza:
+                poliza.usuario = usuario
+                poliza.save()
 
             return HttpResponseRedirect(reverse_lazy('cuentas_login'))
 

@@ -74,7 +74,7 @@
 		    		</div>
 		    		<div class="col-xs-5 col-xs-offset-3">
 		    			<br>
-						<a class="btn btn-danger" data-toggle="modal" data-target="#Reclamo">Presentar Reclamo</a>
+						<a class="btn btn-danger" data-toggle="modal" data-target="#reclamo_modal">Presentar Reclamo</a>
 						<a class="btn btn-primary" id="crear_solicitud">Crear Solicitud</a>
 						<a class="btn btn-success" data-toggle="modal" data-target="#Buscar">Buscar</a>
 		    		</div>
@@ -665,6 +665,55 @@
 				    	console.log("Error...");
 				    	console.log(data);
 				    }
+				});
+			});
+			/************ FIN **************/
+
+			/************ LIMPIAR MODAL DE RECLAMO ***********/
+			$('#reclamo_modal').on('show.bs.modal', function (e) {
+				$('#reclamo_modal input,textarea').val('');
+				$('#motivo_error,#observaciones_error').html('');
+			})
+			/************ FIN **************/
+
+			/************ ENVIAR RECLAMO ***********/
+			$(document).on('click', '#enviar_reclamo', function(){
+				var postData = $('#reclamo_form').serializeArray();
+
+				$.ajax({
+					method: 'POST',
+					headers: { "X-CSRFToken": token},
+					url: '{% url "guardar_reclamo" %}',
+					data:postData,
+					dataType: 'json',
+					/*beforeSend: function(xhr) {
+						$('#contenedor_horarios').hide();
+						$('#spinner_form_horarios').show();
+					},
+					complete: function(){
+						$('#spinner_form_horarios').hide();
+						$('#contenedor_horarios').show();
+					},*/
+				})
+				.done(function(data){
+					$('#motivo_error').html('');
+					$('#observaciones_error').html('');
+					if(data.valido){
+						$('#reclamo_modal').modal('hide');
+						$('#mensaje_confirmacion').html(
+						'<div class="alert alert-success alert-dismissible" role="alert">\
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
+							Se ha registrado correctamente su reclamo\
+						</div>'
+						);
+					}
+					else{
+						if(data.errores.hasOwnProperty('motivo'))
+							$('#motivo_error').html(data.errores.motivo);
+
+						if(data.errores.hasOwnProperty('observaciones'))
+							$('#observaciones_error').html(data.errores.observaciones);
+					}
 				});
 			});
 			/************ FIN **************/

@@ -378,6 +378,59 @@ class MarcarFechasNoLaborables(View):
 		    content_type="application/json"
 		)
 
+class EstablecerHorariosGlobales(View):
+	def dispatch(self, *args, **kwargs):
+		return super(EstablecerHorariosGlobales, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""
+		Vista encargada de establecer los horarios de atención
+		para todos los centros
+		"""
+		valido = True
+		error_msg = ''
+		hora_apertura_manana = request.POST.get('hora_apertura_manana', None)
+		hora_cierre_manana = request.POST.get('hora_cierre_manana', None)
+		hora_apertura_tarde = request.POST.get('hora_apertura_tarde', None)
+		hora_cierre_tarde = request.POST.get('hora_cierre_tarde', None)
+
+		if hora_apertura_manana or hora_cierre_manana or hora_apertura_tarde or hora_cierre_tarde:
+			if hora_apertura_manana:
+				hora_apertura_manana = datetime.strptime(hora_apertura_manana, '%H:%M')
+			if hora_cierre_manana:
+				hora_cierre_manana = datetime.strptime(hora_cierre_manana, '%H:%M')
+			if hora_apertura_tarde:
+				hora_apertura_tarde = datetime.strptime(hora_apertura_tarde, '%H:%M')
+			if hora_cierre_tarde:
+				hora_cierre_tarde = datetime.strptime(hora_cierre_tarde, '%H:%M')
+
+			centros = CentroInspeccion.objects.all()
+			for c in centros:
+				if hora_apertura_manana:
+					c.hora_apertura_manana = hora_apertura_manana
+				if hora_cierre_manana:
+					c.hora_cierre_manana = hora_cierre_manana
+				if hora_apertura_tarde:
+					c.hora_apertura_tarde = hora_apertura_tarde
+				if hora_cierre_tarde:
+					c.hora_cierre_tarde = hora_cierre_tarde
+
+				c.save()
+
+		else:
+			valido = False
+			error_msg = 'No se suministró ningún horario'
+
+		respuesta = {
+			'valido': valido,
+			'error_msg': error_msg
+		}
+
+		return HttpResponse(
+		    json.dumps(respuesta),
+		    content_type="application/json"
+		)
+
 
 class GuardarReclamo(View):
 	def dispatch(self, *args, **kwargs):
@@ -389,9 +442,30 @@ class GuardarReclamo(View):
 		"""
 		usuario = request.user
 		valido = True
+		errores = {}
 		motivo = request.POST.get('motivo', None)
 		observaciones = request.POST.get('observaciones', None)
+		print "HEY",motivo,observaciones,request.POST
+		if not motivo.strip():
+			valido = False
+			errores['motivo'] = 'Este campo es requerido'
 
+		if not observaciones.strip():
+			valido = False
+			errores['observaciones'] = 'Este campo es requerido'
+
+		if valido:
+			Reclamo(usuario=usuario, motivo=motivo, contenido=observaciones).save()
+
+		respuesta = {
+			'valido': valido,
+			'errores': errores
+		}
+
+		return HttpResponse(
+		    json.dumps(respuesta),
+		    content_type="application/json"
+		)
 
 
 class BandejaCliente(View):
@@ -2047,7 +2121,7 @@ class BandejaTaquilla(View):
 		usuario = request.user
 		today = datetime.today().date()
 		print usuario,today
-		numeros_orden = NumeroOrden.objects.filter(fecha_atencion = today, solicitud_inspeccion__centro_inspeccion = usuario.centro_inspeccion).order_by('hora_atencion')
+		numeros_orden = NumeroOrden.objects.filter(fecha_atencion = today, solicitud_inspeccion__centro_inspeccion = usuario.centro_inspeccion).exclude(solicitud_inspeccion__estatus__codigo = 'solicitud_cancelada').order_by('hora_atencion')
 		peritos = Perito.objects.filter(centroinspeccion = usuario.centro_inspeccion)
 		print peritos
 		context = {

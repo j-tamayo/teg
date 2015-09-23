@@ -37,6 +37,18 @@ urlpatterns = \
         ),
 
         url(
+            r'^horarios-atencion$',
+            views.EstablecerHorariosGlobales.as_view(),
+            name='establecer_horarios_atencion'
+        ),
+
+        url(
+            r'^guardar-reclamo$',
+            views.GuardarReclamo.as_view(),
+            name='guardar_reclamo'
+        ),
+
+        url(
             r'^bandeja-cliente$',
             views.BandejaCliente.as_view(),
             name='bandeja_cliente'

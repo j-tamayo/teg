@@ -2,7 +2,7 @@
 <!-- Modales para los formularios de la interfaz de usuario -->
 
 <!-- Formulario de Reclamo -->
-<div class="modal fade" id="Reclamo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="reclamo_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -10,7 +10,7 @@
         <h3 class="modal-title text-success" id="myModalLabel">Reclamo</h3>
       </div>
       <div class="modal-body">
-        <form action="" method="POST">
+        <form id="reclamo_form" action="" method="POST">
           <div class="row">
             <div class="col-xs-12">
               <label>Por favor, indique el motivo de su reclamo</label>
@@ -19,6 +19,7 @@
           <div class="row">
             <div class="col-xs-12">
               <input type="text" name="motivo" class="form-control">
+              <span id="motivo_error" class="text-danger"></span>
             </div>
           </div>
           <br>
@@ -29,7 +30,8 @@
           </div>
           <div class="row">
             <div class="col-xs-12">
-              <input type="text" name="observaciones" class="form-control">
+              <textarea name="observaciones" class="form-control"></textarea>
+              <span id="observaciones_error" class="text-danger"></span>
             </div>
           </div>
         </form>
@@ -39,7 +41,7 @@
           <a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>
         </div>
         <div class="col-xs-6">
-          <a href="#" class="btn btn-primary btn-block">Enviar</a>
+          <a href="#" id="enviar_reclamo" class="btn btn-primary btn-block">Enviar</a>
         </div>
       </div>
     </div>

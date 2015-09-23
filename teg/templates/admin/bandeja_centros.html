@@ -285,7 +285,7 @@
 					<a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>
 				</div>
 				<div class="col-xs-6">
-					<a href="#" id="enviar_fechas_no_laborables" class="btn btn-primary btn-block">Enviar</button>
+					<a href="#" id="enviar_horarios_atencion" class="btn btn-primary btn-block">Enviar</button>
 					</a>
 				</div>
 			</div>
@@ -480,6 +480,41 @@
 			$('#horarios_atencion_modal').modal();
 		});
 		/******* FIN *******/
+
+		/******* ENVIAR LOS HORARIOS DE ATENCIÓN *********/
+		$(document).on('click', '#enviar_horarios_atencion', function(){
+			var postData = $('#horarios_atencion_form').serializeArray();
+			$.ajax({
+				method: 'POST',
+				headers: { "X-CSRFToken": token},
+				url: '{% url "establecer_horarios_atencion" %}',
+				data:postData,
+				dataType: 'json',
+				beforeSend: function(xhr) {
+					$('#contenedor_horarios').hide();
+					$('#spinner_form_horarios').show();
+				},
+				complete: function(){
+					$('#spinner_form_horarios').hide();
+					$('#contenedor_horarios').show();
+				},
+			})
+			.done(function(data){
+				if(data.valido){
+					$('#horarios_atencion_modal').modal('hide');
+					$('#mensaje_confirmacion').html(
+					'<div class="alert alert-success alert-dismissible" role="alert">\
+						 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
+						 Se han establecido correctamente los horarios de atención\
+					</div>'
+					);
+				}
+				else{
+					$('#fechas_errores').html(data.error_msg);
+				}
+			})
+		});
+		/******* FIN ******/
 	})
 	</script>
 {% endblock %}

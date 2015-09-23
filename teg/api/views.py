@@ -49,24 +49,20 @@ class Usuarios(APIView):
 			    fecha_nacimiento = registro['fecha_nacimiento'],
 			    telefono_local = registro['telefono_local'],
 			    telefono_movil = registro['telefono_movil'],
-			    sexo = registro['sexo'],
+			    sexo = registro['sexo'] if registro['sexo'] else None,
 			    rol = rol_cliente)
 
 			usuario.set_password(data['password'])
 			usuario.save()
-			# serializer.data['rol'] = RolSgt.objects.get(codigo='cliente')
-			# usuario_aux = SgtUsuario()
-			# usuario_aux.set_password(serializer.data['password'])
-			# serializer.password = usuario_aux.password
-			# print serializer.data
-			# serializer.save()
-			# print serializer.data, request.data
-			#print serializer.data['password']
-			#serializer.set_password(serializer.data['password'])
-			#print serializer
-			#serializer.save()
+			#Asignar póliza, si existe
+			poliza = Poliza.objects.filter(cedula_cliente = usuario.cedula).first()
+			if poliza:
+			    poliza.usuario = usuario
+			    poliza.save()
+
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class UsuariosEdit(APIView):
 	"""
@@ -142,6 +138,7 @@ class LoginUser(APIView):
 				return Response(status=status.HTTP_404_NOT_FOUND)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class Estados(APIView):
 	"""
 	List all snippets, or create a new snippet.
@@ -155,6 +152,7 @@ class Estados(APIView):
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class Municipios(APIView):
 	"""
 	List all snippets, or create a new snippet.
@@ -167,6 +165,7 @@ class Municipios(APIView):
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class Centros(APIView):
 	"""
@@ -375,6 +374,7 @@ class ObtenerCentros(APIView):
 
 			return Response(respuesta, status=status.HTTP_400_BAD_REQUEST)
 
+
 class Horarios(APIView):
 	"""
 	Obtiene los horarios disponibles para solicitar una inspección
@@ -510,6 +510,9 @@ class MarcarSolicitud(APIView):
 		if solicitud_id:
 			solicitud = SolicitudInspeccion.objects.get(id=solicitud_id)
 			solicitud.borrada = True
+			if solicitud.estatus.codigo == 'solicitud_en_proceso':
+				solicitud.estatus = Estatus.objects.get(codigo = 'solicitud_cancelada')
+
 			solicitud.save()
 
 			respuesta['mensaje'] = 'Solicitud marcada de manera exitosa'
@@ -593,6 +596,7 @@ class GuardarReclamo(APIView):
 			resp_status = status.HTTP_500_INTERNAL_SERVER_ERROR
 
 		return Response(mensaje, status=resp_status)
+
 
 class RecuperarClave(APIView):
 	"""
