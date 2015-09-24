@@ -403,9 +403,9 @@ class Horarios(APIView):
 
 		return Response(horarios, status=status.HTTP_200_OK)
 
-		respuesta = {}
-		respuesta['errores'] = {'causa':'No se envía nada'}
-		return Response(respuesta, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		# respuesta = {}
+		# respuesta['errores'] = {'causa':'No se envía nada'}
+		# return Response(respuesta, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class CrearSolicitud(APIView):

@@ -267,7 +267,6 @@ class TipoRespuesta(models.Model):
 
 class Pregunta(models.Model):
 	enunciado = models.CharField(max_length=255)
-	requerida = models.BooleanField(default=False)
 	tipo_respuesta = models.ForeignKey(TipoRespuesta, null=True)
 
 	def __unicode__(self):

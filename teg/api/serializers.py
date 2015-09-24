@@ -139,7 +139,7 @@ class PreguntaSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Pregunta
-		fields = ('id', 'enunciado', 'requerida', 'tipo_respuesta')
+		fields = ('id', 'enunciado', 'tipo_respuesta')
 
 
 class EncuestaPreguntaSerializer(serializers.Serializer):

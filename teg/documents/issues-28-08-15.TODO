@@ -19,7 +19,7 @@ ISSUES surgidos en la reunión con el profesor el 28-08-15
  ✔ En el menú del administrador agrupar Centros, Usuarios, Peritos y Encuestas cómo configuración. @done (15-09-14 16:26)
  ✔ Poner por centro la cantidad de días para la reserva y las fechas no laborables. Adicionalmente se puede establecer esos parámetros de una manera global para todos los centros. @done (15-09-21 16:05)
  ☐ Ver si se puede poner en un campo por separado en la BD la hora de la notificación.
- ☐ Poner la hora de atención de los centros de una manera global y particular.
+ ✔ Poner la hora de atención de los centros de una manera global y particular. @done (15-09-24 09:02)
  ☐ Mostrar bien visible el código de la solicitud.
  ✔ Traer número de póliza, fecha de inicio vigencia y fecha fin vigencia. @done (15-09-14 16:26)
  ☐ En el TEG incluir el modelo E/R y el Relacional.

@@ -481,16 +481,43 @@ class BandejaCliente(View):
 		solicitudes = SolicitudInspeccion.objects.filter(usuario = usuario).order_by('-numeroorden__fecha_atencion','-numeroorden__hora_atencion')
 		notificaciones = NotificacionUsuario.objects.filter(usuario = usuario, borrada = False).order_by('-leida', '-pk')
 
+		u_estado_id = usuario.municipio.estado.pk
+		u_municipios = Municipio.objects.filter(estado__id = u_estado_id)
+		u_municipio_id = usuario.municipio.pk
+		initial_data = {
+			'nombres': usuario.nombres,
+			'apellidos': usuario.apellidos,
+			'cedula': usuario.cedula,
+			'estado': usuario.municipio.estado.pk,
+			'municipio': usuario.municipio.pk,
+			'codigo_postal': usuario.codigo_postal,
+			'direccion': usuario.direccion,
+			'correo': usuario.correo,
+			'sexo': usuario.sexo,
+			'telefono_local': usuario.telefono_local,
+			'telefono_movil': usuario.telefono_movil,
+			'fecha_nacimiento': usuario.fecha_nacimiento,
+			'centro_inspeccion': usuario.centro_inspeccion,
+		}
+
+		estados_cuenta = Estado.objects.all()
+		form_cuenta = CuentasForm.RegistroForm(initial = initial_data)
+
 		for s in solicitudes:
 			s.numero_orden = NumeroOrden.objects.filter(solicitud_inspeccion = s).first()
 
 		context = {
 		    'usuario': usuario,
 		    'tipo_solicitudes': tipo_solicitudes,
+		    'estados_cuenta': estados_cuenta,
 		    'form': form,
+		    'form_cuenta': form_cuenta,
 		    'poliza': poliza,
 		    'solicitudes': solicitudes,
 		    'notificaciones': notificaciones,
+		    'u_estado_id': u_estado_id,
+		    'u_municipios': u_municipios,
+		    'u_municipio_id': u_municipio_id
 		}
 
 		return render(request,'cuentas/perfil_cliente.html', context)

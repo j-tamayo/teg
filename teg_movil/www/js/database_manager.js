@@ -59,7 +59,7 @@ function createTables(){
 		tx.executeSql('create table if not exists sgt_tipoencuesta(id NOT NULL, codigo character varying(50) NOT NULL, descripcion character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_tiporespuesta(id NOT NULL, codigo character varying(50) NOT NULL, descripcion character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_encuesta(id NOT NULL, descripcion text, nombre character varying(255) NOT NULL, tipo_encuesta integer, PRIMARY KEY (id), FOREIGN KEY (tipo_encuesta) REFERENCES sgt_tipoencuesta (id));');
-		tx.executeSql('create table if not exists sgt_pregunta(id NOT NULL, enunciado character varying(255) NOT NULL, requerida boolean NOT NULL, tipo_respuesta integer, PRIMARY KEY (id), FOREIGN KEY (tipo_respuesta) REFERENCES sgt_tiporespuesta (id));');
+		tx.executeSql('create table if not exists sgt_pregunta(id NOT NULL, enunciado character varying(255) NOT NULL, tipo_respuesta integer, PRIMARY KEY (id), FOREIGN KEY (tipo_respuesta) REFERENCES sgt_tiporespuesta (id));');
 		tx.executeSql('create table if not exists sgt_encuesta_preguntas(id  NOT NULL, encuesta_id integer NOT NULL, pregunta_id integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (encuesta_id) REFERENCES sgt_encuesta (id), FOREIGN KEY (pregunta_id) REFERENCES sgt_pregunta (id), UNIQUE (encuesta_id, pregunta_id))');
 		tx.executeSql('create table if not exists sgt_valorposible(id NOT NULL, valor character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_valorpreguntaencuesta(id NOT NULL, encuesta integer NOT NULL, pregunta integer NOT NULL, valor integer NOT NULL, orden integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (valor) REFERENCES sgt_valorposible (id), FOREIGN KEY (encuesta) REFERENCES sgt_encuesta (id), FOREIGN KEY (pregunta) REFERENCES sgt_pregunta (id));');
@@ -74,7 +74,7 @@ function loadTables(){
 	console.log('procediendo a cargar registros de la web APP...');
 	
 	load_data_id = 1;
-	$.getJSON('http://192.168.1.106:8000/api/data-inicial/')
+	$.getJSON('http://192.168.7.126:8000/api/data-inicial/')
 	.done(load_json_data)
 	.fail(function(){
 	    console.log('Error de conexión!');
@@ -263,7 +263,7 @@ function load_user_tables(){
 	console.log('login extitoso, procediendo a cargar información de usuario...');
 	
 	load_data_id = 2;
-	$.post('http://192.168.1.106:8000/api/usuario-info/', {'id': id_usuario})
+	$.post('http://192.168.7.126:8000/api/usuario-info/', {'id': id_usuario})
 	.done(load_json_data)
 	.fail(function(){
 		init_data(); //cargando la data localmente...
@@ -834,7 +834,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 		        data[obj.name] = obj.value;
 		    });
 
-		    $.post('http://192.168.1.106:8000/api/guardar-respuestas-encuesta/', data)
+		    $.post('http://192.168.7.126:8000/api/guardar-respuestas-encuesta/', data)
 	        .done(function(json){
 	            console.log(json);
 	            next_page = '#mail_page';
