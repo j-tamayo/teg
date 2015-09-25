@@ -131,54 +131,12 @@ class LoginUser(APIView):
 			correo = serializer.data['correo']
 			password = serializer.data['password']
 			usuario = authenticate(correo=correo, password=password)
-			if usuario:
+			if usuario and usuario.es_cliente():
 				user_serializer = SgtUsuarioSerializer(usuario)
 				return Response(user_serializer.data, status=status.HTTP_200_OK)
 			else:
 				return Response(status=status.HTTP_404_NOT_FOUND)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class Estados(APIView):
-	"""
-	List all snippets, or create a new snippet.
-	"""
-	def get(self, request, format = None):
-		estados = Estado.objects.all()
-		serializer = EstadoSerializer(estados, many=True)
-
-		if serializer:
-			return Response(serializer.data, status=status.HTTP_200_OK)
-		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class Municipios(APIView):
-	"""
-	List all snippets, or create a new snippet.
-	"""
-	def get(self, request, format = None):
-		municipios = Municipio.objects.all()
-		serializer = MunicipioSerializer(municipios, many=True)
-
-		if serializer:
-			return Response(serializer.data, status=status.HTTP_200_OK)
-		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class Centros(APIView):
-	"""
-	List all snippets, or create a new snippet.
-	"""
-	def get(self, request, format = None):
-		centros = CentroInspeccion.objects.all()
-		serializer = CentroSerializer(centros, many=True)
-
-		if serializer:
-			return Response(serializer.data, status=status.HTTP_200_OK)
-		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class InitialData(APIView):
@@ -262,9 +220,7 @@ class UserInfo(APIView):
 			usuario = SgtUsuario.objects.filter(id=serializer['id']).first()
 			notificacion_usuario = NotificacionUsuario.objects.filter(usuario__id=serializer['id'], borrada=False)
 			if usuario:
-				usuario_serializer = SgtUsuarioSerializer(usuario)
-				data.append({'cuentas_sgtusuario': [usuario_serializer.data]})
-
+				
 				poliza = Poliza.objects.filter(usuario=usuario).first()
 				if poliza:
 					poliza_serializer = PolizaSerializer(poliza)

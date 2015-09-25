@@ -235,16 +235,6 @@
 									<div class="text-danger"></div>
 								</div>
 								<div class="form-group">
-									<label class="text-muted">Centro de Inspecci&oacute;n:</label>{{u_centro_id}}
-									<select id="id_centro_inspeccion" name="centro_inspeccion" class="form-control">
-										<option value="">--Seleccionar--</option>
-										{% for c in u_centros %}
-										<option value="{{c.pk}}" {% ifequal c.pk u_centro_id %}selected{% endifequal %}>{{c.nombre}}</option>
-										{% endfor %}
-									</select> 
-									<div class="text-danger"></div>
-								</div>
-								<div class="form-group">
 									<label class="text-muted">Direcci&oacute;n:</label>
 									{{form_cuenta.direccion}}
 									<div class="text-danger"></div>
@@ -276,10 +266,10 @@
 										<label class="text-muted">Sexo:</label>
 									</div>
 									<label for="id_sexo_0" class="text-muted radio-inline">
-										<input {%if form.sexo.value == 0 or form.sexo.value == "0"%}checked{%endif%} type="radio" id="id_sexo_0" name="sexo" value="0" data-error="Este campo es obligatorio" required=""> Masculino
+										<input {%if form_cuenta.sexo.value == 0 or form_cuenta.sexo.value == "0"%}checked{%endif%} type="radio" id="id_sexo_0" name="sexo" value="0" data-error="Este campo es obligatorio" required=""> Masculino
 									</label>
 									<label for="id_sexo_1" class="text-muted radio-inline">
-										<input {%if form.sexo.value == 1 or form.sexo.value == "1"%}checked{%endif%} type="radio" id="id_sexo_1" name="sexo" value="1" data-error="Este campo es obligatorio"> Femenino
+										<input {%if form_cuenta.sexo.value == 1 or form_cuenta.sexo.value == "1"%}checked{%endif%} type="radio" id="id_sexo_1" name="sexo" value="1" data-error="Este campo es obligatorio"> Femenino
 									</label>
 									<div class="text-danger">{{form.sexo.errors.as_text}}</div>
 								</div>
@@ -305,6 +295,15 @@
 								{% endif %}
 							</div> <!-- / .col-xs-6 -->
 						</div> <!-- / .row -->
+						<div class="row">
+							<div class="col-xs-6">
+								<a href="#" class="btn btn-danger btn-block">Cancelar</a>
+							</div>
+							<div class="col-xs-6">
+								<a href="#" class="btn btn-primary btn-block">Enviar</a>
+							</div>
+						</div> <!-- / .row -->
+						<br><br>
 					</div>
 				</div>
 		    </div>
