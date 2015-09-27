@@ -33,17 +33,28 @@
 
 		<div class="tab-content" style="margin-top: 3%;">
 		    <div role="tabpanel" class="tab-pane active" id="Perfil">
+		    	<div id="contenedor_ver_perfil">
 		    	<div class="row">
 					<div class="col-xs-5 col-xs-offset-1">
-						<h3 class="text-success">Informaci&oacute;n del usuario</h3>
+						<div class="col-xs-12">
+							<h3 class="text-success">Informaci&oacute;n del usuario</h3>
+						</div>
+						
 						<br>
-						<p>Nombre: {{ usuario.nombres }}</p>
-						<p>Apellido: {{ usuario.apellidos }}</p>
-						<p>C&eacute;dula: {{ usuario.cedula }}</p>
-						<p>Estado: {{ usuario.municipio.estado }}</p>
-						<p>Municipio: {{ usuario.municipio }}</p>
-						<p>Dirección: {{ usuario.direccion }}</p>
-						<p>Correo: {{ usuario.correo }}</p>		
+						<div class="col-xs-12">
+							<p>Nombre: {{ usuario.nombres }}</p>
+							<p>Apellido: {{ usuario.apellidos }}</p>
+							<p>C&eacute;dula: {{ usuario.cedula }}</p>
+							<p>Estado: {{ usuario.municipio.estado }}</p>
+							<p>Municipio: {{ usuario.municipio }}</p>
+							<p>Dirección: {{ usuario.direccion }}</p>
+							<p>Correo: {{ usuario.correo }}</p>	
+						</div>
+						<div class="col-xs-4">
+							<h3>
+							<a  id="mostrar_editar_perfil" href="#" class="btn btn-primary">Editar</a>
+							</h3>
+						</div>	
 					</div>
 					<div class="col-xs-1">
 						<div style="border-left:1px solid #000;height:500px"></div>
@@ -60,6 +71,120 @@
 						{% endif %}
 					</div>  
 		    	</div> <!-- / .row -->
+		    	</div> <!-- / #contenedor_ver_perfil -->
+		    	<div id="contenedor_editar_perfil" style="display:none">
+		    		<div class="row">
+					<div class="col-xs-12">
+						<div class="row">
+							<div class="col-xs-6">
+								<div class="form-group">
+									<label class="text-muted">Nombres:</label>
+									{{form_cuenta.nombres}}
+									<div class="text-danger">{{form_cuenta.nombres.errors.as_text}}</div>
+								</div>
+								<div class="form-group">
+									<label class="text-muted">Apellidos:</label>
+									{{form_cuenta.apellidos}}
+									<div class="text-danger">{{form_cuenta.apellidos.errors.as_text}}</div>
+								</div>
+								<div class="form-group">
+									<label class="text-muted">C&eacute;dula:</label>
+									{{form_cuenta.cedula}}
+									<div class="text-danger">{{form_cuenta.cedula.errors.as_text}}</div>
+								</div>
+								<div class="form-group">
+									<label class="text-muted">Estado:{{u.estado_id}}</label>
+									<select id="id_estado" class="form-control" name="estado">
+										<option value="">--Seleccionar--</option>
+										{% for e in estados_cuenta %}
+										<option {% ifequal e.pk u_estado_id %}selected{%endifequal%} value="{{e.pk}}">{{e.nombre}}</option>
+										{% endfor %}
+									</select>
+									<div class="text-danger"></div>
+								</div>
+								<div class="form-group">
+									<label class="text-muted">Municipio:</label>
+									<select id="id_municipio" name="municipio" class="form-control">
+										<option value="">--Seleccionar--</option>
+										{% for m in u_municipios %}
+										<option value="{{m.pk}}" {% ifequal m.pk u_municipio_id %}selected{% endifequal %}>{{m.nombre}}</option>
+										{% endfor %}
+									</select> 
+									<div class="text-danger"></div>
+								</div>
+								<div class="form-group">
+									<label class="text-muted">Direcci&oacute;n:</label>
+									{{form_cuenta.direccion}}
+									<div class="text-danger"></div>
+								</div>
+							</div> <!-- /.col-xs-6 -->
+							<div class="col-xs-6">
+								<div class="form-group">
+									<label class="text-muted">C&oacute;digo Postal:</label>
+									{{form_cuenta.codigo_postal}}
+									<div class="text-danger"></div>
+								</div>
+								<div class="form-group">
+									<label for="id_telefono_local" class="text-muted">Tel&eacute;fono local:</label>
+									{{form_cuenta.telefono_local}}
+									<div class="text-danger"></div>
+								</div>
+								<div class="form-group">
+									<label for="id_telefono_local" class="text-muted">Tel&eacute;fono m&oacute;vil:</label>
+									{{form_cuenta.telefono_movil}}
+									<div class="text-danger"></div>
+								</div>
+								<div class="form-group">
+									<label for="exampleInputEmail1" class="text-muted">Correo:</label>
+									{{form_cuenta.correo}}
+									<div class="text-danger"></div>
+								</div>
+								<div class="form-group">
+									<div class="form-group">
+										<label class="text-muted">Sexo:</label>
+									</div>
+									<label for="id_sexo_0" class="text-muted radio-inline">
+										<input {%if form_cuenta.sexo.value == 0 or form_cuenta.sexo.value == "0"%}checked{%endif%} type="radio" id="id_sexo_0" name="sexo" value="0" data-error="Este campo es obligatorio" required=""> Masculino
+									</label>
+									<label for="id_sexo_1" class="text-muted radio-inline">
+										<input {%if form_cuenta.sexo.value == 1 or form_cuenta.sexo.value == "1"%}checked{%endif%} type="radio" id="id_sexo_1" name="sexo" value="1" data-error="Este campo es obligatorio"> Femenino
+									</label>
+									<div class="text-danger">{{form.sexo.errors.as_text}}</div>
+								</div>
+								<div class="form-group">
+									<label for="id_fecha_nacimiento" class="text-muted">Fecha de nacimiento:</label>
+									<div class="input-append date" data-date-format="dd/mm/yyyy">
+										{{form_cuenta.fecha_nacimiento}}
+										<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
+									</div>
+									<div class="text-danger"></div>
+								</div>
+								{% if not editar %}
+								<div class="form-group">
+									<label for="exampleInputPassword1" class="text-muted">Contrase&ntilde;a:</label>
+									{{form_cuenta.password}}
+									<div class="text-danger"></div>
+								</div>
+								<div class="form-group">
+									<label for="exampleInputPassword1" class="text-muted">Repetir Contrase&ntilde;a:</label>
+									{{form_cuenta.password_confirm}}
+									<div class="text-danger"></div>
+								</div>
+								{% endif %}
+							</div> <!-- / .col-xs-6 -->
+						</div> <!-- / .row -->
+						<div class="row">
+							<div class="col-xs-6">
+								<a id="mostrar_ver_perfil" href="#" class="btn btn-danger btn-block">Volver</a>
+							</div>
+							<div class="col-xs-6">
+								<a href="#" class="btn btn-primary btn-block">Enviar</a>
+							</div>
+						</div> <!-- / .row -->
+					</div> <!-- / .col-xs-12 -->
+				</div> <!-- / .row -->
+				<br><br>
+		    	</div> <!-- / #contenedor_editar_perfil -->
 		    </div> <!-- / .tab-pane #Perfil -->
 
 		    <div role="tabpanel" class="tab-pane" id="Solicitudes">
@@ -320,6 +445,21 @@
 
 		$(function(){
 			var token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+			/********** MOSTRAR EDITAR PERIL ************/
+			$(document).on('click', '#mostrar_editar_perfil', function(){
+				$('#contenedor_ver_perfil').hide();
+				$('#contenedor_editar_perfil').show();
+			});
+			/********** FIN ***********/
+
+			/********** MOSTRAR VER PERIL ************/
+			$(document).on('click', '#mostrar_ver_perfil', function(){
+				$('#contenedor_editar_perfil').hide();
+				$('#contenedor_ver_perfil').show();
+			});
+			/********** FIN ***********/
+
 			/********** PARA CARGAR LA INTERFAZ DE LA CREACIÓN DE SOLICITUD *************/
 			$(document).on('click', '#crear_solicitud', function(){
 				$('#contenedor_solicitudes').hide();

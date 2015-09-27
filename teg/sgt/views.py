@@ -523,6 +523,16 @@ class BandejaCliente(View):
 		return render(request,'cuentas/perfil_cliente.html', context)
 
 
+class BuscarNotificaciones(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, request, *args, **kwargs):
+		return super(BuscarNotificaciones, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Vista para buscar las notificaciones por el asunto"""
+		pass
+
+
 class AdminBandejaCentros(View):
 	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):

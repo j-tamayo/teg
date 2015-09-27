@@ -11,7 +11,7 @@
 			<label class="text-muted">{{p.enunciado}}</label>
 		</div>
 		{% if p.tipo_respuesta.codigo == 'RESP_DEF' %}
-		<div class="col-xs-12">
+		<div class="col-xs-3">
 			{% for vp in valores_posibles|get_item:p.pk %}
 			<div class="radio {% ifequal vp.valor.pk respuestas|get_item:p.pk %}bg-success{%endifequal%}">
 				<label>
