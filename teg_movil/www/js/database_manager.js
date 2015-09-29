@@ -74,7 +74,7 @@ function loadTables(){
 	console.log('procediendo a cargar registros de la web APP...');
 	
 	load_data_id = 1;
-	$.getJSON('http://192.168.1.106:8000/api/data-inicial/')
+	$.getJSON('http://192.168.1.101:8000/api/data-inicial/')
 	.done(load_json_data)
 	.fail(function(){
 	    console.log('Error de conexión!');
@@ -212,50 +212,146 @@ function load_json_data(json){
 			});
 		});
 	}, errorCB, function(){
-		if(load_data_id == 1 || load_data_id == 2){ 
-			console.log('Buscando datos "basura" en BD movil para realizar limpieza...');
-			json = json.reverse();
-			db.transaction(function(tx){
-				$.each(json, function(key, value){
-					$.each(value, function(table, data){
-						tx.executeSql('SELECT id FROM '+table+';', [],
+		if(load_data_id == 0 || load_data_id == 2){
+			init_data();
+		}
+		else{
+			if(load_data_id == 1)
+				clean_data(json, {});
+			if(load_data_id == 2)
+				filter_user_info(json); 	
+		}
+	});
+}
+
+function filter_user_info(json){
+	id_list_aux = {
+		'cuentas_sgtusuario': [],
+		'sgt_solicitudinspeccion': [],
+		'sgt_numeroorden': [],
+		'sgt_notificacionusuario': [],
+		'sgt_notificacion': [],
+		'sgt_encuesta_preguntas': [],
+		'sgt_encuesta': [],
+		'sgt_pregunta': [],
+		'sgt_valorpreguntaencuesta': [],
+		'sgt_valorposible': []
+	};
+
+	db.transaction(function(tx){
+		tx.executeSql('SELECT id FROM cuentas_sgtusuario WHERE id <> '+id_usuario+';', [],
+		function(tx, results){
+			num = results.rows.length;
+			for(i = 0; i < num; i++){
+				row = results.rows.item(i);
+				id_list_aux['cuentas_sgtusuario'].push(row['id']);
+			}
+
+			$.each(id_list_aux['cuentas_sgtusuario'], function(index1, data1){
+
+				tx.executeSql('SELECT s.id AS solicitud_inspeccion, n.id AS numero_orden FROM sgt_solicitudinspeccion s, sgt_numeroorden n WHERE s.id = n.solicitud_inspeccion AND s.usuario = '+data1+';', [],
+				function(tx, results){
+					num = results.rows.length;
+					for(i = 0; i < num; i++){
+						row = results.rows.item(i);
+						id_list_aux['sgt_solicitudinspeccion'].push(row['solicitud_inspeccion']);
+						id_list_aux['sgt_numeroorden'].push(row['numero_orden']);
+					}
+				},
+				function(tx, err){
+					throw new Error(err.message);
+				});
+
+				tx.executeSql('SELECT nu.id AS notificacion_usuario, n.id AS notificacion, n.encuesta FROM sgt_notificacionusuario nu, sgt_notificacion n WHERE nu.notificacion = n.id AND nu.usuario = '+data1+';', [],
+				function(tx, results){
+					num = results.rows.length;
+					for(i = 0; i < num; i++){
+						row = results.rows.item(i);
+						id_list_aux['sgt_notificacionusuario'].push(row['notificacion_usuario']);
+						if($.inArray(row['notificacion'], id_list_aux['sgt_notificacion']) == -1)
+							id_list_aux['sgt_notificacion'].push(row['notificacion']);
+						if(row['encuesta']){
+							if($.inArray(row['encuesta'], id_list_aux['sgt_encuesta']) == -1)
+								id_list_aux['sgt_encuesta'].push(row['encuesta']);
+						}
+					}
+
+					$.each(id_list_aux['sgt_encuesta'], function(index2, data2){
+						tx.executeSql('SELECT id, pregunta, valor FROM sgt_valorpreguntaencuesta WHERE encuesta = '+data2+';', [],
 						function(tx, results){
-							num_rows = results.rows.length;
-							for(i = 0; i < num_rows; i++){
-								enc = false;
+							num = results.rows.length;
+							for(i = 0; i < num; i++){
 								row = results.rows.item(i);
-								
-								$.each(data, function(parent_key, parent_value){
-									if(row['id'] == parent_value['id']){
-										enc = true;
-										return;
-									}
-								});
-
-								if(!enc){
-									console.log('DELETE FROM '+table+' WHERE id = '+row['id']+';');
-
-									tx.executeSql('DELETE FROM '+table+' WHERE id = '+row['id']+';', [],
-									function(){
-										console.log('registro borrado exitosamente!');
-									},
-									function(tx, err){
-										throw new Error(err.message);
-									});
-								}
+								if($.inArray(row['id'], id_list_aux['sgt_valorpreguntaencuesta']) == -1)
+									id_list_aux['sgt_valorpreguntaencuesta'].push(row['id']);
+								if($.inArray(row['pregunta'], id_list_aux['sgt_pregunta']) == -1)
+									id_list_aux['sgt_pregunta'].push(row['pregunta']);
+								if($.inArray(row['valor'], id_list_aux['sgt_valorposible']) == -1)
+									id_list_aux['sgt_valorposible'].push(row['valor']);
 							}
-						}, 
+						},
 						function(tx, err){
 							throw new Error(err.message);
 						});
 					});
+				},
+				function(tx, err){
+					throw new Error(err.message);
 				});
-			}, errorCB, init_data);
-		}
-		else{
-			init_data();
-		}
+			});
+		},
+		function(tx, err){
+			throw new Error(err.message);
+		});
+	}, errorCB, function(){
+		clean_data(json, id_list_aux);
 	});
+}
+
+function clean_data(json, exclude_dict){
+	console.log('Buscando datos "basura" en BD movil para realizar limpieza...');
+	json = json.reverse();
+	db.transaction(function(tx){
+		$.each(json, function(key, value){
+			$.each(value, function(table, data){
+				tx.executeSql('SELECT id FROM '+table+';', [],
+				function(tx, results){
+					num_rows = results.rows.length;
+					for(i = 0; i < num_rows; i++){
+						flag = false;
+						row = results.rows.item(i);
+						
+						$.each(data, function(parent_key, parent_value){
+							if(row['id'] == parent_value['id']){
+								if(!jQuery.isEmptyObject(exclude_dict)){
+									if($.inArray(row['id'], exclude_dict[table]) > -1)
+										return;
+								}else{
+									flag = true;
+									return;
+								}
+							}
+						});
+
+						if(!flag){
+							console.log('DELETE FROM '+table+' WHERE id = '+row['id']+';');
+
+							tx.executeSql('DELETE FROM '+table+' WHERE id = '+row['id']+';', [],
+							function(){
+								console.log('registro borrado exitosamente!');
+							},
+							function(tx, err){
+								throw new Error(err.message);
+							});
+						}
+					}
+				}, 
+				function(tx, err){
+					throw new Error(err.message);
+				});
+			});
+		});
+	}, errorCB, init_data);
 }
 
 function load_user_tables(){
@@ -263,7 +359,7 @@ function load_user_tables(){
 	console.log('login extitoso, procediendo a cargar información de usuario...');
 	
 	load_data_id = 2;
-	$.post('http://192.168.1.106:8000/api/usuario-info/', {'id': id_usuario})
+	$.post('http://192.168.1.101:8000/api/usuario-info/', {'id': id_usuario})
 	.done(load_json_data)
 	.fail(function(){
 		init_data(); //cargando la data localmente...
@@ -287,7 +383,7 @@ function login(correo, password, user_info){
 	    		col_up = [];
 	    		val_up = [];
 				$.each(row, function(key, value){
-					if(user_info.length){
+					if(!jQuery.isEmptyObject(user_info)){
 						if(value != user_info[key]){
 							col_up.push(key);
 							val_up.push(user_info[key]);
@@ -299,7 +395,7 @@ function login(correo, password, user_info){
 					updateTable('cuentas_sgtusuario', col_up, val_up, 'id', id_usuario);
 	    	}
 	    	else{
-	    		if(user_info){
+	    		if(!jQuery.isEmptyObject(user_info)){
 	    			/* Insertar información del usuario vía web service */
 	    			id_usuario = user_info['id'];
 	    			insertTable('cuentas_sgtusuario', 
@@ -319,23 +415,6 @@ function login(correo, password, user_info){
 			next_page_trans = 'flow';
 			load_user_tables();
 		}
-	});
-}
-
-function get_data(table, url){
-	$.ajax({
-	    type: 'GET',
-	    url: url,
-	    dataType: 'json',
-	    async: false,
-	    success: function(data){
-	        
-	    	/* Función AJAX reservada para solicitar datos a la web APP de manera sincrona a partir de un URL */
-
-	    },
-	    error: function(){
-	    	console.log('Error de conexión!');
-	    }
 	});
 }
 
@@ -399,31 +478,6 @@ function deleteTable(table, cond, cond_val){
 			throw new Error(err.message);
 		});
 	}, errorCB, successCB);
-}
-
-//Pendiente por modificar...
-function selectTable(table, cols){
-	str_cols = '';
-	for(i = 0; i < cols.length; i++){
-		if(i > 0)
-			str_cols = str_cols + ', ' + cols[i];
-		else
-			str_cols = str_cols + cols[i];
-	}
-
-	db.transaction(function(tx){
-	    tx.executeSql('SELECT '+str_cols+' FROM '+table+' WHERE id=1;', [], 
-	    function(tx, results){
-	    	num = results.rows.length;
-			for(i = 0; i < num; i++){
-				row = results.rows.item(i);
-				console.log(row);
-			}
-	    },
-		function(tx, err){
-			throw new Error(err.message);
-		});
-	});
 }
 
 /* Funciones definidas para la carga inicial de datos en la APP móvil */
@@ -829,7 +883,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 		        data[obj.name] = obj.value;
 		    });
 
-		    $.post('http://192.168.1.106:8000/api/guardar-respuestas-encuesta/', data)
+		    $.post('http://192.168.1.101:8000/api/guardar-respuestas-encuesta/', data)
 	        .done(function(json){
 	            console.log(json);
 	            next_page = '#mail_page';
