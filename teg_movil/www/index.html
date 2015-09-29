@@ -101,68 +101,68 @@
                             <input id="usuario_reg" name="usuario" type="hidden">
                             <div class="ui-field-contain">
                                 <label for="nombres_reg">Nombres:</label>
-                                <input name="nombres" id="nombres_reg" type="text" required>
+                                <input name="nombres" id="nombres_reg" class="required_input" type="text">
                             </div>
                             <div class="ui-field-contain">
                                 <label for="apellidos_reg">Apellidos:</label>
-                                <input name="apellidos" id="apellidos_reg" type="text" required>
+                                <input name="apellidos" id="apellidos_reg" class="required_input" type="text">
                             </div>
                             <div class="ui-field-contain">
                                 <label for="fecha_nacimiento_reg">Fecha de nacimiento:</label>
-                                <input name="fecha_nacimiento" id="fecha_nacimiento_reg" class="datepicker" data-role="date" type="text" required>
+                                <input name="fecha_nacimiento" id="fecha_nacimiento_reg" class="datepicker" data-role="date" type="text">
                             </div>
                             <div class="ui-field-contain">
                                 <label for="cedula_reg">C&eacute;dula:</label>
-                                <input name="cedula" id="cedula_reg" type="text" required>
+                                <input name="cedula" id="cedula_reg" class="ci_input" type="text" placeholder="V-12345678">
                             </div>
                             <div class="ui-field-contain">
                                 <label for="estado_reg">Estado:</label>
-                                <select name="estado" id="estado_reg" target="municipio_reg" data-theme="a" data-native-menu="false" class="estados" required>
+                                <select name="estado" id="estado_reg" target="municipio_reg" data-theme="a" data-native-menu="false" class="estados required_input">
                                     <option>---Seleccione un estado---</option>
                                 </select>
                             </div>
                             <div class="ui-field-contain">
                                 <label for="municipio_reg" class="select">Municipio:</label>
-                                <select name="municipio" id="municipio_reg" data-theme="a" data-native-menu="false" class="municipios" required>
+                                <select name="municipio" id="municipio_reg" data-theme="a" data-native-menu="false" class="municipios required_input">
                                     <option>---Seleccione un municipio---</option>
                                 </select>
                             </div>
                             <div class="ui-field-contain">
                                 <label for="direccion_reg">Direcci&oacute;n:</label>
-                                <textarea cols="40" rows="8" name="direccion" id="direccion_reg" required></textarea>
+                                <textarea cols="40" rows="8" name="direccion" id="direccion_reg"></textarea>
                             </div>
                             <div class="ui-field-contain">
                                 <label for="codigo_postal_reg">C&oacute;digo postal:</label>
-                                <input name="codigo_postal" id="codigo_postal_reg" type="text" required>
+                                <input name="codigo_postal" id="codigo_postal_reg" class="cod_post_input" type="text">
                             </div>
                             <div class="ui-field-contain">
                                 <label for="telefono_local_reg">Tel&eacute;fono local:</label>
-                                <input name="telefono_local" id="telefono_local_reg" type="tel" required>
+                                <input name="telefono_local" id="telefono_local_reg" class="tlf_input" type="tel" placeholder="0212-1234567">
                             </div>
                             <div class="ui-field-contain">
                                 <label for="telefono_movil_reg">Tel&eacute;fono m&oacute;vil:</label>
-                                <input name="telefono_movil" id="telefono_movil_reg" type="tel" required>
+                                <input name="telefono_movil" id="telefono_movil_reg" class="tlf_input" type="tel" placeholder="0416-1234567">
                             </div>
                             <div class="ui-field-contain">
                                 <fieldset data-role="controlgroup" data-iconpos="right" data-theme="a">
-                                    <legend>Sexo:</legend>
-                                    <input name="sexo" id="sexo_reg0" value="0" type="radio" required>
+                                    <legend for="sexo_reg">Sexo:</legend>
+                                    <input name="sexo" id="sexo_reg0" value="0" class="check_input" type="radio">
                                     <label for="sexo_reg0">Masculino</label>
-                                    <input name="sexo" id="sexo_reg1" value="1" type="radio">
+                                    <input name="sexo" id="sexo_reg1" value="1" class="check_input" type="radio">
                                     <label for="sexo_reg1">Femenino</label>
                                 </fieldset>
                             </div>
                             <div class="ui-field-contain">
                                 <label for="correo_reg">Correo:</label>
-                                <input name="correo" id="correo_reg" type="text" required>
+                                <input name="correo" id="correo_reg" class="email_input required_input" type="text" placeholder="usuario@dominio.com">
                             </div>
                             <div class="ui-field-contain">
                                 <label for="password_reg">Contrase&ntilde;a:</label>
-                                <input name="password" id="password_reg" autocomplete="off" type="password" required>
+                                <input name="password" id="password_reg" class="required_input" autocomplete="off" type="password">
                             </div>
                             <div class="ui-field-contain">
                                 <label for="password_confirm_reg">Repetir Contrase&ntilde;a:</label>
-                                <input name="password_confirm" id="password_confirm_reg" autocomplete="off" type="password" required>
+                                <input name="password_confirm" id="password_confirm_reg" class="required_input" autocomplete="off" type="password">
                             </div>
                             <br>
                             <button class="ui-btn ui-btn-c ui-corner-all" type="submit">Enviar</button>
@@ -237,28 +237,28 @@
                                 <input name="centro_id" id="centro_id_sol" type="hidden">
                                 <div class="ui-field-contain">
                                     <label for="tipo_sol" class="select">Tipo de solicitud:</label>
-                                    <select name="tipo" id="tipo_sol" data-theme="a" data-native-menu="false" class="tipos_inspeccion" required>
+                                    <select name="tipo" id="tipo_sol" data-theme="a" data-native-menu="false" class="tipos_inspeccion">
                                         <option>---Seleccione un tipo---</option>
                                     </select>
                                 </div>
                                 <br>
                                 <div class="ui-field-contain">
                                     <label for="estado_sol" class="select">Estado:</label>
-                                    <select name="estado" id="estado_sol" data-theme="a" data-native-menu="false" class="estados_centros" target="municipio_sol" required>
+                                    <select name="estado" id="estado_sol" data-theme="a" data-native-menu="false" class="estados_centros" target="municipio_sol">
                                         <option>---Seleccione un estado---</option>
                                     </select>
                                 </div>
                                 <br>
                                 <div class="ui-field-contain">
                                     <label for="municipio_sol" class="select">Municipio:</label>
-                                    <select name="municipio" id="municipio_sol" data-theme="a" data-native-menu="false" class="municipios" required>
+                                    <select name="municipio" id="municipio_sol" data-theme="a" data-native-menu="false" class="municipios">
                                         <option>---Seleccione un municipio---</option>
                                     </select>
                                 </div>
                                 <br>
                                 <div class="ui-field-contain">
                                     <label for="fecha_asistencia_sol">Fecha de asistencia:</label>
-                                    <input name="fecha_asistencia" id="fecha_asistencia_sol" class="datepicker" data-role="date" type="text" required>
+                                    <input name="fecha_asistencia" id="fecha_asistencia_sol" class="datepicker" data-role="date" type="text">
                                 </div>
                             </div>
                             <div id="request_form_page2">
@@ -290,7 +290,7 @@
                                 <br>
                                 <div class="ui-field-contain">
                                     <label for="horario_sol" class="select">Hora aproximada de asistencia:</label>
-                                    <select name="horario" id="horario_sol" data-theme="a" data-native-menu="false" class="horarios" required>
+                                    <select name="horario" id="horario_sol" data-theme="a" data-native-menu="false" class="horarios">
                                         <option>---Seleccione una hora---</option>
                                     </select>
                                 </div>
@@ -330,11 +330,11 @@
                         <form id="reclamo_form">
                             <div class="ui-field-contain">
                                 <label for="motivo_rec">Por favor, indique el motivo de su reclamo:</label>
-                                <input name="motivo" id="motivo_rec" type="text" required>
+                                <input name="motivo" id="motivo_rec" type="text">
                             </div>
                             <div class="ui-field-contain">
                                 <label for="contenido_rec">Observaciones:</label>
-                                <textarea cols="40" rows="40" name="contenido" id="contenido_rec" required></textarea>
+                                <textarea cols="40" rows="40" name="contenido" id="contenido_rec"></textarea>
                             </div>
                             <br>
                             <button class="ui-btn ui-btn-c ui-corner-all" type="submit">Enviar</button>

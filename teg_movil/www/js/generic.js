@@ -185,55 +185,63 @@ $(document).ready(function(){
 
         col_up = [];
         val_up = [];
-        flag = false;
+        flag_edit = false;
+        flag_valid = false;
         url = '/api/usuarios/';
         if($('#usuario_reg').val()){
-            flag = true;
+            flag_edit = true;
             url = '/api/usuarios-edit/';
         }
 
         data = {};
         $(formData).each(function(index, obj){
-            data[obj.name] = obj.value;
-            if(flag){
-                if(obj.name != 'usuario' && obj.name != 'estado' && obj.name != 'fecha_nacimiento' && obj.name != 'password_confirm'){
-                    col_up.push(obj.name);
-                    val_up.push(obj.value);
+            flag_valid = input_validator($('#registro_form [name="' + obj.name + '"]'));
+            if(flag_valid){
+                data[obj.name] = obj.value;
+                if(flag_edit){
+                    if(obj.name != 'usuario' && obj.name != 'estado' && obj.name != 'fecha_nacimiento' && obj.name != 'password_confirm'){
+                        col_up.push(obj.name);
+                        val_up.push(obj.value);
+                    }
                 }
             }
+            else
+                return;
         });
 
-        date_parts = data['fecha_nacimiento'].split('/');
-        data['fecha_nacimiento'] = date_parts[2] + '-' + date_parts[1] + '-' + date_parts[0];
-        if(flag){
-            col_up.push('fecha_nacimiento');
-            val_up.push(data['fecha_nacimiento']);
+        if(flag_valid){
+            date_parts = data['fecha_nacimiento'].split('/');
+            data['fecha_nacimiento'] = date_parts[2] + '-' + date_parts[1] + '-' + date_parts[0];
+            if(flag_edit){
+                col_up.push('fecha_nacimiento');
+                val_up.push(data['fecha_nacimiento']);
+            }
+
+            $.post('http://192.168.1.106:8000'+url, data)
+            .done(function(json){
+                console.log('Usuario guardados exitosamente!');
+                ref = $('#register_back_btn').attr('href');
+                if(flag_edit){
+                    updateTable('cuentas_sgtusuario', col_up, val_up, 'id', id_usuario);
+
+                    next_page = ref;
+                    next_page_trans = 'flip';
+                    load_profile_info();
+                }
+                else{
+                    $.mobile.changePage(ref, {
+                        changeHash: false, 
+                        transition: 'flip'
+                    });
+                }
+            })
+            .fail(function(json) {
+                console.log('Error de carga!');
+                console.log(json.responseText);
+            });
         }
 
         $(this).trigger('reset');
-
-        $.post('http://192.168.1.101:8000'+url, data)
-        .done(function(json){
-            console.log('Usuario guardados exitosamente!');
-            ref = $('#register_back_btn').attr('href');
-            if(flag){
-                updateTable('cuentas_sgtusuario', col_up, val_up, 'id', id_usuario);
-
-                next_page = ref;
-                next_page_trans = 'flip';
-                load_profile_info();
-            }
-            else{
-                $.mobile.changePage(ref, {
-                    changeHash: false, 
-                    transition: 'flip'
-                });
-            }
-        })
-        .fail(function(json) {
-            console.log('Error de carga!');
-            console.log(json.responseText);
-        });
     });
 
     $('#login_form').submit(function(event){
@@ -247,7 +255,7 @@ $(document).ready(function(){
 
         $(this).trigger('reset');
 
-        $.post('http://192.168.1.101:8000/api/login/', data)
+        $.post('http://192.168.1.106:8000/api/login/', data)
         .done(function(json){
             console.log('iniciando sesión...');
             json['password'] = data['password'];
@@ -275,7 +283,7 @@ $(document).ready(function(){
 
         $(this).trigger('reset');
 
-        $.post('http://192.168.1.101:8000/api/recuperar-clave/', data)
+        $.post('http://192.168.1.106:8000/api/recuperar-clave/', data)
         .done(function(json){
             updateTable('cuentas_sgtusuario', ['password'], [json['clave_temporal']], 'correo', '"'+data['correo']+'"');
 
@@ -311,7 +319,7 @@ $(document).ready(function(){
 
         $(this).trigger('reset');
 
-        $.post('http://192.168.1.101:8000/api/guardar-reclamo/', data)
+        $.post('http://192.168.1.106:8000/api/guardar-reclamo/', data)
         .done(function(json){
             console.log(json);
             $.mobile.changePage('#request_page', {
@@ -336,7 +344,7 @@ $(document).ready(function(){
             data['usuario'] = id_usuario;
             $('#request_form').trigger('reset');
             
-            $.post('http://192.168.1.101:8000/api/crear-solicitud/', data)
+            $.post('http://192.168.1.106:8000/api/crear-solicitud/', data)
             .done(function(json){
                 console.log(json);
                 next_page = '#request_page';
@@ -353,7 +361,7 @@ $(document).ready(function(){
                 $('#request_form_page' + page_sol).hide('fade');
 
                 page_sol++;
-                $.post('http://192.168.1.101:8000/api/centros-sol/', {'municipio_id': $('#municipio_sol').val(), 'estado_id':$('#estado_sol').val()})
+                $.post('http://192.168.1.106:8000/api/centros-sol/', {'municipio_id': $('#municipio_sol').val(), 'estado_id':$('#estado_sol').val()})
                 .done(function(json){
                     load_centros_inspeccion(json, $('#request_form_page' + page_sol));
                 })
@@ -365,7 +373,7 @@ $(document).ready(function(){
                 if(page_sol == 2 && $('#centros_inspeccion_sol').find('a').hasClass('ui-btn-active')){
                     $('#request_form_page' + page_sol).hide('fade');
                     page_sol++;
-                    $.post('http://192.168.1.101:8000/api/horarios/', {'id_centro': $('#centro_id_sol').val(), 'fecha': $('#fecha_asistencia_sol').val(), 'id_tipo_inspeccion': $('#tipo_sol').val()})
+                    $.post('http://192.168.1.106:8000/api/horarios/', {'id_centro': $('#centro_id_sol').val(), 'fecha': $('#fecha_asistencia_sol').val(), 'id_tipo_inspeccion': $('#tipo_sol').val()})
                     .done(function(json){
                         $('#preview_centro').text($($('#centros_inspeccion_sol').children('li').find('a.ui-btn-active')).children('h2').text());
                         $('#preview_fecha_sol').text($('#fecha_asistencia_sol').val());
@@ -423,7 +431,7 @@ $(document).ready(function(){
         notificacion_id = $(notificacion_item_str).attr('target-ref');
         fecha = $(notificacion_item_str).attr('fecha').replace(/-/g,'/');
         if(flag_leida == 'false'){
-            $.post('http://192.168.1.101:8000/api/marcar-notificacion/', {'notificacion_usuario_id': notificacion_usuario_id, 'flag_marca': 1})
+            $.post('http://192.168.1.106:8000/api/marcar-notificacion/', {'notificacion_usuario_id': notificacion_usuario_id, 'flag_marca': 1})
             .done(function(json){
                 console.log(json);
                 $(notificacion_item_str).attr('leida', 'true');
@@ -451,7 +459,7 @@ $(document).ready(function(){
             event.preventDefault();
             ref = $(this).attr('href');
             trans = $(this).attr('data-transition');
-            $.post('http://192.168.1.101:8000/api/marcar-notificacion/', {'notificacion_usuario_id': notificacion_usuario_id, 'flag_marca': 2})
+            $.post('http://192.168.1.106:8000/api/marcar-notificacion/', {'notificacion_usuario_id': notificacion_usuario_id, 'flag_marca': 2})
             .done(function(json){
                 console.log(json);
                 next_page = ref;
@@ -485,7 +493,7 @@ $(document).ready(function(){
             event.preventDefault();
             ref = $(this).attr('href');
             trans = $(this).attr('data-transition');
-            $.post('http://192.168.1.101:8000/api/marcar-solicitud/', {'solicitud_id': solicitud_id})
+            $.post('http://192.168.1.106:8000/api/marcar-solicitud/', {'solicitud_id': solicitud_id})
             .done(function(json){
                 console.log(json);
                 next_page = ref;
@@ -552,3 +560,50 @@ $(document).ready(function(){
         });
     });
 });
+
+function input_validator(input_obj){
+    msg = { 
+        'mensaje': '',
+        'error': false 
+    };
+
+    if(input_obj.hasClass('email_input')){
+        regexp = new RegExp("/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/");
+        if(!regexp.test(input_obj.val())){
+            msg['error'] = true;
+            msg['mensaje'] = 'El formato de la cédula es incorrecto';
+        }  
+    }
+    if(input_obj.hasClass('ci_input')){
+        regexp = new RegExp("/^(V|E)-\d{3,9}$/");
+        if(!regexp.test(input_obj.val())){
+            msg['error'] = true;
+            msg['mensaje'] = 'El formato de la cédula es incorrecto';
+        }   
+    }
+    if(input_obj.hasClass('tlf_input')){
+        regexp = new RegExp("/^\d{4}-\d{7}$/");
+        if(!regexp.test(input_obj.val())){
+            msg['error'] = true;
+            msg['mensaje'] = 'El código postal debe ser de 4 números';
+        }
+    }
+    if(input_obj.hasClass('cod_post_input')){
+        regexp = new RegExp("/^\d{4}$/");
+        if(!regexp.test(input_obj.val())){
+            msg['error'] = true;
+            msg['mensaje'] = 'El código postal debe ser de 4 números';
+        }
+    }
+    if(input_obj.hasClass('required_input') && !input_obj.val().trim()){
+        msg['error'] = true;
+        if(input_obj.hasClass('check_input')){
+        
+        }
+        else{
+
+        }
+    }
+
+    return msg;
+}
