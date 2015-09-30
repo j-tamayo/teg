@@ -74,7 +74,7 @@ function loadTables(){
 	console.log('procediendo a cargar registros de la web APP...');
 	
 	load_data_id = 1;
-	$.getJSON('http://192.168.1.106:8000/api/data-inicial/')
+	$.getJSON('http://192.168.1.101:8000/api/data-inicial/')
 	.done(load_json_data)
 	.fail(function(){
 	    console.log('Error de conexión!');
@@ -359,7 +359,7 @@ function load_user_tables(){
 	console.log('login extitoso, procediendo a cargar información de usuario...');
 	
 	load_data_id = 2;
-	$.post('http://192.168.1.106:8000/api/usuario-info/', {'id': id_usuario})
+	$.post('http://192.168.1.101:8000/api/usuario-info/', {'id': id_usuario})
 	.done(load_json_data)
 	.fail(function(){
 		init_data(); //cargando la data localmente...
@@ -402,8 +402,17 @@ function login(correo, password, user_info){
 	    						['id', 'password', 'apellidos', 'cedula', 'correo', 'direccion', 'fecha_nacimiento', 'nombres', 'sexo', 'telefono_local', 'telefono_movil', 'municipio', 'codigo_postal'],
 	    						[user_info['id'], user_info['password'], user_info['apellidos'], user_info['cedula'], user_info['correo'], user_info['direccion'], user_info['fecha_nacimiento'], user_info['nombres'], user_info['sexo'], user_info['telefono_local'], user_info['telefono_movil'], user_info['municipio'], user_info['codigo_postal']]);
 	    		}
-	    		else
-	    			console.log('Usuario inválido...');
+	    		else{
+	    			$('#dialog_header').html('<h3 align="center">Error</h3>');
+                    $('#dialog_content').html('<p align="center">Usuario inválido...</p>\
+                                                <br>\
+                                                <a href="#login_page" data-transition="pop" class="ui-btn ui-btn-b ui-corner-all ref_btn">Aceptar</a>');
+                    
+                    $.mobile.changePage('#dialog_page', {
+                        changeHash: false, 
+                        transition: 'pop'
+                    });
+                }
 			}
 	    },
 		function(tx, err){
@@ -411,6 +420,7 @@ function login(correo, password, user_info){
 		});
 	}, errorCB, function(){
 		if(id_usuario != -1){
+			$('#login_form').trigger('reset');
 			next_page = '#profile_page';
 			next_page_trans = 'flow';
 			load_user_tables();
@@ -883,7 +893,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 		        data[obj.name] = obj.value;
 		    });
 
-		    $.post('http://192.168.1.106:8000/api/guardar-respuestas-encuesta/', data)
+		    $.post('http://192.168.1.101:8000/api/guardar-respuestas-encuesta/', data)
 	        .done(function(json){
 	            console.log(json);
 	            next_page = '#mail_page';

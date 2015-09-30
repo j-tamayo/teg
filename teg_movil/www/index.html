@@ -48,9 +48,9 @@
                     <div class="ui-grid-solo">
                         <div class="ui-block-a">
                             <label for="correo_log">Correo electr&oacute;nico:</label>
-                            <input name="correo" id="correo_log" type="text">
+                            <input name="correo" id="correo_log" class="email_input required_input" type="text">
                             <label for="password_log">Contrase&ntilde;a:</label>
-                            <input name="password" id="password_log" autocomplete="off" type="password">
+                            <input name="password" id="password_log" class="required_input" autocomplete="off" type="password">
                         </div>
                     </div>
                     <div class="ui-grid-a">
@@ -68,7 +68,7 @@
                             <br>
                             <h2 align="center" class="text-success">Recuperar Contrase&ntilde;a</h2>
                             <label for="correo_rec">Correo electr&oacute;nico:</label>
-                            <input name="correo" id="correo_rec" type="text">
+                            <input name="correo" id="correo_rec" class="email_input required_input" type="text">
                         </div>
                     </div>
                     <div class="ui-grid-a">
@@ -141,14 +141,14 @@
                             </div>
                             <div class="ui-field-contain">
                                 <label for="telefono_movil_reg">Tel&eacute;fono m&oacute;vil:</label>
-                                <input name="telefono_movil" id="telefono_movil_reg" class="tlf_input" type="tel" placeholder="0416-1234567">
+                                <input name="telefono_movil" id="telefono_movil_reg" class="cel_input" type="tel" placeholder="0416-1234567">
                             </div>
                             <div class="ui-field-contain">
                                 <fieldset data-role="controlgroup" data-iconpos="right" data-theme="a">
                                     <legend for="sexo_reg">Sexo:</legend>
-                                    <input name="sexo" id="sexo_reg0" value="0" class="check_input" type="radio">
+                                    <input name="sexo" id="sexo_reg0" value="0" class="check_input required_input" type="radio">
                                     <label for="sexo_reg0">Masculino</label>
-                                    <input name="sexo" id="sexo_reg1" value="1" class="check_input" type="radio">
+                                    <input name="sexo" id="sexo_reg1" value="1" class="check_input required_input" type="radio">
                                     <label for="sexo_reg1">Femenino</label>
                                 </fieldset>
                             </div>
@@ -330,11 +330,11 @@
                         <form id="reclamo_form">
                             <div class="ui-field-contain">
                                 <label for="motivo_rec">Por favor, indique el motivo de su reclamo:</label>
-                                <input name="motivo" id="motivo_rec" type="text">
+                                <input name="motivo" id="motivo_rec" class="required_input" type="text">
                             </div>
                             <div class="ui-field-contain">
                                 <label for="contenido_rec">Observaciones:</label>
-                                <textarea cols="40" rows="40" name="contenido" id="contenido_rec"></textarea>
+                                <textarea cols="40" rows="40" name="contenido" id="contenido_rec" class="required_input"></textarea>
                             </div>
                             <br>
                             <button class="ui-btn ui-btn-c ui-corner-all" type="submit">Enviar</button>
