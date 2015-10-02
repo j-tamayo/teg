@@ -253,9 +253,9 @@
 					<div class="col-xs-5 col-xs-offset-1">
 		    			<h3 class="text-success">Notificaciones Recibidas</h3>
 		    		</div>
-		    		<div class="col-xs-2 col-xs-offset-4">
+		    		<div class="col-xs-2 col-xs-offset-3">
 		    			<br>
-						<a class="btn btn-success" data-toggle="modal" data-target="#Buscar">Buscar</a>
+						<a class="btn btn-success btn-block" data-toggle="modal" data-target="#Buscar">Buscar</a>
 		    		</div>
 		    	</div> <!-- / .row -->
 		    	<div id="contenedor_notificacion_encuesta"  class="row">
@@ -277,7 +277,7 @@
 								<tr id="notificacion_{{n.id}}">
 									<td>{{n.notificacion.asunto}}</td>
 									<td>{{n.notificacion.tipo_notificacion.descripcion}}</td>
-									<td>{{ n.fecha_creacion }}</td>
+									<td>{{n.fecha_creacion}}</td>
 									<td>
 										<span id="marca_{{n.id}}" class="label {% if n.leida %} label-info {% else %} label-warning {% endif %}">{% if n.leida %} Leida {% else %} Nueva {% endif %}</span>
 									</td>
@@ -851,6 +851,12 @@
 							$('#observaciones_error').html(data.errores.observaciones);
 					}
 				});
+			});
+			/************ FIN **************/
+
+			/************ BUSCAR NOTIFICACIONES ****************/
+			$(document).on('click', '#enviar_buscar_notificion', function(){
+
 			});
 			/************ FIN **************/
 

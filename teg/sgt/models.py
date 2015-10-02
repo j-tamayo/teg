@@ -317,14 +317,6 @@ class RespuestaDefinida(models.Model):
 		return u'%s' % self.valor_definido
 
 
-class SistemaOperativo(models.Model):
-	nombre = models.CharField(max_length=255)
-	version = models.CharField(max_length=100)
-
-	def __unicode__(self):
-		return u'%s' % self.nombre
-
-
 # class ColaAtencion(models.Model):
 # 	centro_inspeccion = models.ForeignKey(CentroInspeccion)
 # 	numero_orden = models.ForeignKey(NumeroOrden)
@@ -340,16 +332,6 @@ class Poliza(models.Model):
 
 	def __unicode__(self):
 		return u'%s' % self.numero
-
-
-class Dispositivo(models.Model):
-	marca = models.CharField(max_length=255)
-	modelo = models.CharField(max_length=255)
-	sistema_operativo = models.ForeignKey(SistemaOperativo)
-	wifi = models.IntegerField(blank=True, null=True)
-
-	def __unicode__(self):
-		return u'%s - %s' % (self.modelo, self.marca)
 
 
 class Estatus(models.Model):

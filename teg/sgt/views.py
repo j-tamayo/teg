@@ -530,7 +530,30 @@ class BuscarNotificaciones(View):
 
 	def post(self, request, *args, **kwargs):
 		"""Vista para buscar las notificaciones por el asunto"""
-		pass
+		usuario = request.user
+		notificaciones_resp = []
+		asunto = request.POST.get('asunto', None)
+		notificaciones_usuario = NotificacionUsuario.objects.filter(usuario = usuario)
+		if asunto:
+			notificaciones_usuario = notificaciones.filter(notificacion__asunto__icontains = asunto)
+
+		for nu in notificaciones_usuario:
+			notificaciones_resp.append({
+				'id': nu.pk,
+				'asunto': nu.notificacion.asunto,
+				'leida': nu.leida, 
+				'fecha_recibida': '1',
+				'tipo': nu.tipo,
+			})
+
+		respuesta = {
+			'notificaciones': notificaciones_resp
+		}
+
+		return HttpResponse(
+		    json.dumps(respuesta),
+		    content_type="application/json"
+		)
 
 
 class AdminBandejaCentros(View):
