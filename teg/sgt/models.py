@@ -382,7 +382,7 @@ class NotificacionUsuario(models.Model):
 				condiciones.append(Q(usuario__apellidos__icontains = usuario_apellidos))
 
 			if tipo_encuesta:
-				condiciones.append(Q(notificacion__encuesta__tipo__id = tipo_encuesta))
+				condiciones.append(Q(notificacion__encuesta__tipo_encuesta__id = tipo_encuesta))
 
 			if encuesta:
 				condiciones.append(Q(notificacion__encuesta__id = encuesta))

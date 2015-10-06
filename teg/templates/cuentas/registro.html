@@ -82,7 +82,7 @@
 							<div class="form-group">
 								<label for="exampleInputEmail1" class="text-muted">Correo:</label>
 								{{form.correo}}
-								<div class="help-block with-errors"></div>
+								<div class="help-block with-errors"><div class="text-danger">{{form.correo.errors|striptags}}</div></div>
 							</div>
 							<div class="form-group">
 								<div class="form-group">
@@ -114,12 +114,16 @@
 								{{form.password_confirm}}
 								<div class="help-block with-errors">{{form.password_confirm.errors}}</div>
 							</div>
+							<div class="form-group">
+								<div class="help-block with-errors">{{form.non_field_errors}}</div>
+							</div>
 							<div class="pull-right" style="margin-top: 20%;">
 								<a href="{% url 'cuentas_login' %}" class="btn btn-danger">Cancelar</a>
 								<button type="submit" class="btn btn-primary">Guardar</button>
 							</div>
 						</div>
 					</div>
+					<br><br>
 				</form>
 			</div>
 		</div>

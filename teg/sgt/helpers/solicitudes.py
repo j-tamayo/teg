@@ -50,13 +50,13 @@ def generar_horarios(centro, fecha_asistencia):
 	
 	lista_bloques = []
 	contador_horas = hora_inicial_manana
-	print "Bloq man",cantidad_bloques_manana,"bloq tard",cantidad_bloques_tarde
+	# print "Bloq man",cantidad_bloques_manana,"bloq tard",cantidad_bloques_tarde
 
 	for i in range(0,cantidad_bloques_manana):
 		datetime_aux = datetime.datetime(2014,1,1,contador_horas.hour,contador_horas.minute)
 		proxima_hora = (datetime_aux + datetime.timedelta(minutes = tiempo_atencion)).time()
 		bloque = Bloque(contador_horas, proxima_hora)
-		cantidad_citas = NumeroOrden.objects.filter(hora_atencion = contador_horas, fecha_atencion = fecha_asistencia).count()
+		cantidad_citas = NumeroOrden.objects.filter(hora_atencion = contador_horas, fecha_atencion = fecha_asistencia).exclude(solicitud_inspeccion__estatus__codigo = 'solicitud_cancelada').count()
 		bloque.capacidad = centro.peritos.filter(activo=True).count() - cantidad_citas
 		lista_bloques.append(bloque)
 		contador_horas = proxima_hora
@@ -66,7 +66,7 @@ def generar_horarios(centro, fecha_asistencia):
 		datetime_aux = datetime.datetime(2014,1,1,contador_horas.hour,contador_horas.minute)
 		proxima_hora = (datetime_aux + datetime.timedelta(minutes = tiempo_atencion)).time()
 		bloque = Bloque(contador_horas, proxima_hora)
-		cantidad_citas = NumeroOrden.objects.filter(hora_atencion = contador_horas, fecha_atencion = fecha_asistencia).count()
+		cantidad_citas = NumeroOrden.objects.filter(hora_atencion = contador_horas, fecha_atencion = fecha_asistencia).exclude(solicitud_inspeccion__estatus__codigo = 'solicitud_cancelada').count()
 		bloque.capacidad = centro.peritos.filter(activo=True).count() - cantidad_citas
 		lista_bloques.append(bloque)
 		contador_horas = proxima_hora
@@ -88,7 +88,7 @@ def calcular_capacidad_centro(centro):
 	cantidad_peritos = centro.peritos.filter(activo = True).count()
 
 	capacidad = (cantidad_bloques_manana + cantidad_bloques_tarde) * cantidad_peritos
-	
+	# print "YOUU",tiempo_atencion,cantidad_minutos_manana
 	return capacidad
 
 

@@ -223,14 +223,27 @@
 										<td>{{s.estatus}}</td>
 										<td>{{s.numero_orden.fecha_atencion|date:"d/m/Y"}} {{s.numero_orden.hora_atencion|date:"h:i A"}}</td>
 										<td>
-											<a href="#" class="btn btn-danger btn-sm eliminar-solicitud {%if s.estatus.codigo != 'solicitud_en_proceso' %}disabled{%endif%}" solicitud-id="{{s.pk}}"><i class="fa fa-times"></i></a>
+											<a href="#" class="btn btn-danger btn-sm eliminar-solicitud" solicitud-id="{{s.pk}}"><i class="fa fa-times"></i></a>
 										</td>
 									</tr>
 									{% endfor %}
 								</tbody>
 							</table>
 							{% else %}
-							<h4>No hay solicitudes</h4>
+							<table class="table table-bordered">
+			    				<thead>
+									<tr>
+									 	<th class="text-center">Tipo Solicitud</th>
+										<th class="text-center">N&uacute;mero de Orden</th>
+										<th class="text-center">Estatus</th>
+										<th class="text-center">Fecha de atenci&oacute;n</th>
+										<th class="text-center">Opciones</th>
+									</tr>
+								</thead>
+								<tbody id="solicitudes_table_body">
+								</tbody>
+							</table>
+							<h4 id="sin_solicitud_msg" class="text-center">No hay solicitudes para mostrar</h4>
 							{% endif %}
 			    		</div>
 			    	</div> <!-- / .row -->
@@ -575,6 +588,9 @@
 				})
 				.done(function(data){
 					if(data.resultado == 0){
+						if($('#sin_solicitud_msg').length > 0){
+							$('#sin_solicitud_msg').remove();
+						}
 						$('#solicitudes_table_body').prepend(
 							'<tr>\
 								<td>'+data.solicitud.tipo_solicitud+'</td>\
@@ -788,9 +804,17 @@
 					},
 					success:function(data){
 						if(data.valido){
-							$('a[solicitud-id="'+id_solicitud+'"]').attr('disabled',true);
+							/*$('a[solicitud-id="'+id_solicitud+'"]').attr('disabled',true);
 							estatus_solicitud = $('#sol_'+id_solicitud).children()[2];
-							$(estatus_solicitud).text(data.solicitud.estatus);
+							$(estatus_solicitud).text(data.solicitud.estatus);*/
+							$('#sol_'+id_solicitud).remove();
+							// Para eliminar la tabla cuando no hay solicitud que mostrar
+							if(!($('#solicitudes_table_body').children() > 0)){
+								padre_tabla = $('#solicitudes_table_body').parent();
+								abuelo_tabla = $('#solicitudes_table_body').parent().parent();
+								$('#solicitudes_table_body').html('');
+								padre_tabla.after('<h4 id="sin_solicitud_msg" class="text-center">No hay solicitudes</h4>')
+							}
 							$('#modal_generic').modal('hide');
 						}
 						else{

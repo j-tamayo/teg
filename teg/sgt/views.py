@@ -19,6 +19,9 @@ import json
 
 # Create your views here.
 class ObtenerMunicipios(View):
+	def dispatch(self, *args, **kwargs):
+		return super(ObtenerMunicipios, self).dispatch(*args, **kwargs)
+
 	def get(self, request, *args, **kwargs):
 		"""" Vista que retorna en formato JSON los municipios dependiendo del estado_id recibido """
 		estado_id = kwargs['estado_id']
@@ -49,6 +52,10 @@ class ObtenerMunicipios(View):
 
 
 class ObtenerCentroInspeccion(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, *args, **kwargs):
+		return super(ObtenerCentroInspeccion, self).dispatch(*args, **kwargs)
+
 	def get(self, request, *args, **kwargs):
 		"""" Vista que retorna en formato JSON los centros de inspección dependiendo del municipio_id recibido """
 		municipio_id = request.GET.get('municipio_id', None)
@@ -64,17 +71,17 @@ class ObtenerCentroInspeccion(View):
 			
 			#Para calcular la disponibilidad de cada centro
 			for c in centros_query:
-				en_cola = NumeroOrden.objects.filter(fecha_atencion = fecha_asistencia).count()
+				en_cola = NumeroOrden.objects.filter(fecha_atencion = fecha_asistencia).exclude(solicitud_inspeccion__estatus__codigo = 'solicitud_cancelada').count()
 				capacidad = solicitudes.calcular_capacidad_centro(c)
 				c.disponibilidad = capacidad - en_cola
 				# Para calcular la disponibilidad (Alta, media, baja y muy baja)
-				if c.disponibilidad > (3 * c.capacidad)/4:
+				if c.disponibilidad > (3 * capacidad)/4:
 					c.etiqueta = 'Alta'
 					c.etiqueta_clase = 'success'
-				elif c.disponibilidad > (2 * c.capacidad)/4:
+				elif c.disponibilidad > (2 * capacidad)/4:
 					c.etiqueta = 'Media'
 					c.etiqueta_clase = 'warning'
-				elif c.disponibilidad > (1 * c.capacidad)/4:
+				elif c.disponibilidad > (1 * capacidad)/4:
 					c.etiqueta = 'Baja'
 					c.etiqueta_clase = 'low'
 				else:
@@ -109,6 +116,10 @@ class ObtenerCentroInspeccion(View):
 
 
 class GenerarNumeroOrden(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, *args, **kwargs):
+		return super(GenerarNumeroOrden, self).dispatch(*args, **kwargs)
+
 	def get(self, request, *args, **kwargs):
 		centro_id = kwargs['centro_id']
 		print centro_id
@@ -196,17 +207,19 @@ class CrearSolicitudInspeccion(View):
 
 		#Para calcular la disponibilidad de cada centro
 		for c in centros:
-			en_cola = NumeroOrden.objects.filter(fecha_atencion = fecha_asistencia).count()
+			en_cola = NumeroOrden.objects.filter(fecha_atencion = fecha_asistencia).exclude(solicitud_inspeccion__estatus__codigo = 'solicitud_cancelada').count()
 			capacidad = solicitudes.calcular_capacidad_centro(c)
 			c.disponibilidad = capacidad - en_cola
+			if c.disponibilidad < 0:
+				c.disponibilidad = 0
 			# Para calcular la disponibilidad (Alta, media, baja y muy baja)
-			if c.disponibilidad > (3 * c.capacidad)/4:
+			if c.disponibilidad > (3 * capacidad)/4:
 				c.etiqueta = 'Alta'
 				c.etiqueta_clase = 'success'
-			elif c.disponibilidad > (2 * c.capacidad)/4:
+			elif c.disponibilidad > (2 * capacidad)/4:
 				c.etiqueta = 'Media'
 				c.etiqueta_clase = 'warning'
-			elif c.disponibilidad > (1 * c.capacidad)/4:
+			elif c.disponibilidad > (1 * capacidad)/4:
 				c.etiqueta = 'Baja'
 				c.etiqueta_clase = 'low'
 			else:
@@ -300,6 +313,7 @@ class CrearSolicitudInspeccion(View):
 
 
 class MarcarSolicitud(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(MarcarSolicitud, self).dispatch(*args, **kwargs)
 
@@ -338,6 +352,7 @@ class MarcarSolicitud(View):
 
 
 class MarcarFechasNoLaborables(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(MarcarFechasNoLaborables, self).dispatch(*args, **kwargs)
 
@@ -379,6 +394,7 @@ class MarcarFechasNoLaborables(View):
 		)
 
 class EstablecerHorariosGlobales(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(EstablecerHorariosGlobales, self).dispatch(*args, **kwargs)
 
@@ -433,6 +449,7 @@ class EstablecerHorariosGlobales(View):
 
 
 class GuardarReclamo(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(GuardarReclamo, self).dispatch(*args, **kwargs)
 
@@ -469,6 +486,7 @@ class GuardarReclamo(View):
 
 
 class BandejaCliente(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
 		return super(BandejaCliente, self).dispatch(*args, **kwargs)
 
@@ -478,7 +496,7 @@ class BandejaCliente(View):
 		tipo_solicitudes = TipoInspeccion.objects.all()
 		form = SolicitudInspeccionForm(request.POST)
 		poliza = Poliza.objects.filter(usuario = usuario).first()
-		solicitudes = SolicitudInspeccion.objects.filter(usuario = usuario).order_by('-numeroorden__fecha_atencion','-numeroorden__hora_atencion')
+		solicitudes = SolicitudInspeccion.objects.filter(usuario = usuario, borrada = False).order_by('-numeroorden__fecha_atencion','-numeroorden__hora_atencion')
 		notificaciones = NotificacionUsuario.objects.filter(usuario = usuario, borrada = False).order_by('-leida', '-pk')
 
 		u_estado_id = usuario.municipio.estado.pk
@@ -2346,80 +2364,82 @@ class AdminParametros(View):
 
 
 class ConsultarNotificacion(View):
-    def dispatch(self, request, *args, **kwargs):
-        return super(ConsultarNotificacion, self).dispatch(request, *args, **kwargs)
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, request, *args, **kwargs):
+		return super(ConsultarNotificacion, self).dispatch(request, *args, **kwargs)
         
-    def get(self, request, *args, **kwargs):
-        """Consultar Notificación"""
-        usuario = request.user
-        notificacion_usuario_id = request.GET.get('notificacion_usuario_id', None)
+	def get(self, request, *args, **kwargs):
+		"""Consultar Notificación"""
+		usuario = request.user
+		notificacion_usuario_id = request.GET.get('notificacion_usuario_id', None)
 
-        respuesta = {}
-        if notificacion_usuario_id:
-        	notificacion_usuario = NotificacionUsuario.objects.get(id=notificacion_usuario_id)
+		respuesta = {}
+		if notificacion_usuario_id:
+			notificacion_usuario = NotificacionUsuario.objects.get(id=notificacion_usuario_id)
 
-        	if not notificacion_usuario.leida:
-        		notificacion_usuario.leida = True
-        		notificacion_usuario.save()
+			if not notificacion_usuario.leida:
+				notificacion_usuario.leida = True
+				notificacion_usuario.save()
 
-        	if notificacion_usuario.notificacion.encuesta:
-        		encuesta_id = notificacion_usuario.notificacion.encuesta.id
-        	else:
-        		encuesta_id = None
+			if notificacion_usuario.notificacion.encuesta:
+				encuesta_id = notificacion_usuario.notificacion.encuesta.id
+			else:
+				encuesta_id = None
 
-        	respuesta = {
-        		'asunto': notificacion_usuario.notificacion.asunto,
-            	'mensaje':  notificacion_usuario.notificacion.mensaje,
-            	'encuesta_id':  encuesta_id,
-            	'fecha_creacion':  notificacion_usuario.fecha_creacion.strftime('%d/%m/%Y'),
-            }
+			respuesta = {
+				'asunto': notificacion_usuario.notificacion.asunto,
+				'mensaje':  notificacion_usuario.notificacion.mensaje,
+				'encuesta_id':  encuesta_id,
+				'fecha_creacion':  notificacion_usuario.fecha_creacion.strftime('%d/%m/%Y'),
+ 			}
 
-        else:
-            respuesta['mensaje'] = 'No se suministró el id de la notificación'
+		else:
+			respuesta['mensaje'] = 'No se suministró el id de la notificación'
 
 
-        return HttpResponse(
-            json.dumps(respuesta),
-            content_type="application/json"
-        )
+ 		return HttpResponse(
+			json.dumps(respuesta),
+			content_type="application/json"
+		)
 
 class ConsultarEncuesta(View):
-    def dispatch(self, request, *args, **kwargs):
-        return super(ConsultarEncuesta, self).dispatch(request, *args, **kwargs)
-        
-    def get(self, request, *args, **kwargs):
-        """Consultar Encuesta"""
-        usuario = request.user
-        encuesta_id = request.GET.get('encuesta_id', None)
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, request, *args, **kwargs):
+	    return super(ConsultarEncuesta, self).dispatch(request, *args, **kwargs)
+	    
+	def get(self, request, *args, **kwargs):
+	    """Consultar Encuesta"""
+	    usuario = request.user
+	    encuesta_id = request.GET.get('encuesta_id', None)
 
-        respuesta = {}
-        if encuesta_id:
-        	encuesta = Encuesta.objects.get(id=encuesta_id)
-        	preguntas = encuesta.preguntas.all()
+	    respuesta = {}
+	    if encuesta_id:
+	    	encuesta = Encuesta.objects.get(id=encuesta_id)
+	    	preguntas = encuesta.preguntas.all()
 
-        	valores_preguntas_definidas = {}
-        	preguntas_definidas = preguntas.exclude(tipo_respuesta__codigo="RESP_INDEF")
-        	for p in preguntas_definidas:
-        		aux = ValorPreguntaEncuesta.objects.filter(pregunta=p, encuesta=encuesta).order_by('orden')
-        		valores_preguntas_definidas[p.id] = [ {'id': vals.valor.id, 'valor': vals.valor.valor} for vals in aux ]
+	    	valores_preguntas_definidas = {}
+	    	preguntas_definidas = preguntas.exclude(tipo_respuesta__codigo="RESP_INDEF")
+	    	for p in preguntas_definidas:
+	    		aux = ValorPreguntaEncuesta.objects.filter(pregunta=p, encuesta=encuesta).order_by('orden')
+	    		valores_preguntas_definidas[p.id] = [ {'id': vals.valor.id, 'valor': vals.valor.valor} for vals in aux ]
 
-        	preguntas = [ {'id': preg.id, 'enunciado': preg.enunciado, 'tipo_respuesta': preg.tipo_respuesta.codigo} for preg in preguntas ]
+	    	preguntas = [ {'id': preg.id, 'enunciado': preg.enunciado, 'tipo_respuesta': preg.tipo_respuesta.codigo} for preg in preguntas ]
 
-        	respuesta = {
-        		'preguntas': preguntas,
-        		'nombre_encuesta': encuesta.nombre, 
-        		'valores_preguntas_definidas': valores_preguntas_definidas,
-            }
-        else:
-            respuesta['mensaje'] = 'No se suministró el id de la notificación'
+	    	respuesta = {
+	    		'preguntas': preguntas,
+	    		'nombre_encuesta': encuesta.nombre, 
+	    		'valores_preguntas_definidas': valores_preguntas_definidas,
+	        }
+	    else:
+	        respuesta['mensaje'] = 'No se suministró el id de la notificación'
 
 
-        return HttpResponse(
-            json.dumps(respuesta),
-            content_type="application/json"
-        )
+	    return HttpResponse(
+	        json.dumps(respuesta),
+	        content_type="application/json"
+	    )
 
-    def post(self, request, *args, **kwargs):
+	def post(self, request, *args, **kwargs):
 		""" Guardar respuestas de la encuesta """
 		mensaje = {}
 		data = request.POST
