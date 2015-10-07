@@ -15,6 +15,16 @@
 </header>
 
 <div class="container-fluid">
+	{% if mensaje_info %}
+	<div class="row">
+		<div id="contenedor_mensaje_info" class="col-xs-12">
+			<div class="alert alert-success alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				{{mensaje_info}}
+			</div>
+		</div>
+	</div>
+	{% endif %}
 	<div role="tabpanel">
 		<ul class="nav nav-tabs nav-justified">
 			<li role="presentation" class="active"><a href="#Perfil" role="tab" data-toggle="tab">Ver Perfil</a></li>
@@ -73,21 +83,22 @@
 		    		<div class="row">
 					<div class="col-xs-12">
 						<div class="row">
+						<form id="editar_perfil_form" action="" method="POST">
 							<div class="col-xs-6">
 								<div class="form-group">
 									<label class="text-muted">Nombres:</label>
 									{{form_cuenta.nombres}}
-									<div class="text-danger">{{form_cuenta.nombres.errors.as_text}}</div>
+									<div id="error_nombres" class="text-danger editar-error"></div>
 								</div>
 								<div class="form-group">
 									<label class="text-muted">Apellidos:</label>
 									{{form_cuenta.apellidos}}
-									<div class="text-danger">{{form_cuenta.apellidos.errors.as_text}}</div>
+									<div id="error_apellidos" class="text-danger editar-error"></div>
 								</div>
 								<div class="form-group">
 									<label class="text-muted">C&eacute;dula:</label>
 									{{form_cuenta.cedula}}
-									<div class="text-danger">{{form_cuenta.cedula.errors.as_text}}</div>
+									<div id="error_cedula" class="text-danger editar-error"></div>
 								</div>
 								<div class="form-group">
 									<label class="text-muted">Estado:{{u.estado_id}}</label>
@@ -97,7 +108,7 @@
 										<option {% ifequal e.pk u_estado_id %}selected{%endifequal%} value="{{e.pk}}">{{e.nombre}}</option>
 										{% endfor %}
 									</select>
-									<div class="text-danger"></div>
+									<div id="error_estado" class="text-danger editar-error"></div>
 								</div>
 								<div class="form-group">
 									<label class="text-muted">Municipio:</label>
@@ -107,34 +118,34 @@
 										<option value="{{m.pk}}" {% ifequal m.pk u_municipio_id %}selected{% endifequal %}>{{m.nombre}}</option>
 										{% endfor %}
 									</select> 
-									<div class="text-danger"></div>
+									<div id="error_municipio" class="text-danger editar-error"></div>
 								</div>
 								<div class="form-group">
 									<label class="text-muted">Direcci&oacute;n:</label>
 									{{form_cuenta.direccion}}
-									<div class="text-danger"></div>
+									<div id="error_direccion" class="text-danger editar-error"></div>
 								</div>
 							</div> <!-- /.col-xs-6 -->
 							<div class="col-xs-6">
 								<div class="form-group">
 									<label class="text-muted">C&oacute;digo Postal:</label>
 									{{form_cuenta.codigo_postal}}
-									<div class="text-danger"></div>
+									<div id="error_codigo_postal" class="text-danger editar-error"></div>
 								</div>
 								<div class="form-group">
 									<label for="id_telefono_local" class="text-muted">Tel&eacute;fono local:</label>
 									{{form_cuenta.telefono_local}}
-									<div class="text-danger"></div>
+									<div id="error_telefono_local" class="text-danger editar-error"></div>
 								</div>
 								<div class="form-group">
 									<label for="id_telefono_local" class="text-muted">Tel&eacute;fono m&oacute;vil:</label>
 									{{form_cuenta.telefono_movil}}
-									<div class="text-danger"></div>
+									<div id="error_telefono_movil" class="text-danger editar-error"></div>
 								</div>
 								<div class="form-group">
 									<label for="exampleInputEmail1" class="text-muted">Correo:</label>
 									{{form_cuenta.correo}}
-									<div class="text-danger"></div>
+									<div id="error_correo" class="text-danger editar-error"></div>
 								</div>
 								<div class="form-group">
 									<div class="form-group">
@@ -146,7 +157,7 @@
 									<label for="id_sexo_1" class="text-muted radio-inline">
 										<input {%if form_cuenta.sexo.value == 1 or form_cuenta.sexo.value == "1"%}checked{%endif%} type="radio" id="id_sexo_1" name="sexo" value="1" data-error="Este campo es obligatorio"> Femenino
 									</label>
-									<div class="text-danger">{{form.sexo.errors.as_text}}</div>
+									<div id="error_sexo" class="text-danger editar-error"></div>
 								</div>
 								<div class="form-group">
 									<label for="id_fecha_nacimiento" class="text-muted">Fecha de nacimiento:</label>
@@ -154,28 +165,27 @@
 										{{form_cuenta.fecha_nacimiento}}
 										<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
 									</div>
-									<div class="text-danger"></div>
+									<div id="error_fecha_nacimiento" class="text-danger editar-error"></div>
 								</div>
-								{% if not editar %}
 								<div class="form-group">
 									<label for="exampleInputPassword1" class="text-muted">Contrase&ntilde;a:</label>
 									{{form_cuenta.password}}
-									<div class="text-danger"></div>
+									<div id="error_password" class="text-danger editar-error"></div>
 								</div>
 								<div class="form-group">
 									<label for="exampleInputPassword1" class="text-muted">Repetir Contrase&ntilde;a:</label>
 									{{form_cuenta.password_confirm}}
-									<div class="text-danger"></div>
+									<div id="error_password_confirm" class="text-danger editar-error"></div>
 								</div>
-								{% endif %}
 							</div> <!-- / .col-xs-6 -->
+							</form>
 						</div> <!-- / .row -->
 						<div class="row">
 							<div class="col-xs-6">
 								<a id="mostrar_ver_perfil" href="#" class="btn btn-danger btn-block">Volver</a>
 							</div>
 							<div class="col-xs-6">
-								<a href="#" class="btn btn-primary btn-block">Enviar</a>
+								<a href="#" id="enviar_editar_perfil" class="btn btn-primary btn-block">Enviar</a>
 							</div>
 						</div> <!-- / .row -->
 					</div> <!-- / .col-xs-12 -->
@@ -285,7 +295,7 @@
 									<th style="width:10%">Opciones</th>
 								</tr>
 							</thead>
-							<tbody id="solicitudes_table_body">
+							<tbody id="notificaciones_table_body">
 								{% for n in notificaciones %}
 								<tr id="notificacion_{{n.id}}">
 									<td>{{n.notificacion.asunto}}</td>
@@ -307,7 +317,20 @@
 							</tbody>
 						</table>
 						{% else %}
-						<h4>No posee notificaciones</h4>
+						<table class="table table-bordered">
+		    				<thead>
+								<tr>
+								 	<th style="width:40%">Asunto</th>
+									<th style="width:30%">Tipo notificaci&oacute;n</th>
+									<th style="width:15%">Fecha recibida</th>
+									<th style="width:5%">Estado</th>
+									<th style="width:10%">Opciones</th>
+								</tr>
+							</thead>
+							<tbody id="notificaciones_table_body">
+							</tbody>
+						</table>
+						<h4 id="sin_notificacion_msg" class="text-center">No hay notificaciones</h4>
 						{% endif %}
 		    		</div>
 		    	</div> <!-- / #contenedor_notificacion_encuesta -->
@@ -345,6 +368,10 @@
 
 		$(function(){
 			var token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+			/********** OCULTAR MENSAJE DE INFORMACIÓN ***********/
+			setTimeout('$("#contenedor_mensaje_info").fadeOut()', 4000);
+			/********** FIN *************/
 
 			/********** MOSTRAR EDITAR PERIL ************/
 			$(document).on('click', '#mostrar_editar_perfil', function(){
@@ -747,6 +774,12 @@
 						console.log(data);
 						notificacion_target = $('input[name="notificacion_usuario"]').val();
 						$('#notificacion_'+notificacion_target).remove();
+						
+						if($('#notificaciones_table_body').children().length < 1){
+							$('#notificaciones_table_body').parent().after(
+								'<h4 id="sin_notificacion_msg" class="text-center">No hay notificaciones</h4>'
+							);
+						}
 
 						$('#notificacion_encuesta_contenido').hide('fade');
 						$('#contenedor_notificacion_encuesta').show('fade');
@@ -878,9 +911,85 @@
 			});
 			/************ FIN **************/
 
-			/************ BUSCAR NOTIFICACIONES ****************/
-			$(document).on('click', '#enviar_buscar_notificion', function(){
+			/************ ENVIAR EDITAR PERFIL ************/
+			$(document).on('click', '#enviar_editar_perfil', function(){
+				var postData = $('#editar_perfil_form').serializeArray();
 
+				$.ajax({
+					method: 'POST',
+					headers: { "X-CSRFToken": token},
+					url: '{% url "editar_perfil_cliente" %}',
+					data:postData,
+					dataType: 'json',
+				})
+				.done(function(data){
+					if(data.valido){
+						location.href = '{% url "bandeja_cliente" %}';
+					}
+					else{
+						$('.editar-error').html('');
+						errores_form = JSON.parse(data.errores);
+						$.each(errores_form, function(key,val){
+							error_obj = val[0];
+							$('#error_'+key).html(error_obj.message);
+						});
+					}
+				});
+			});
+			/************ FIN **************/
+
+			/************ BUSCAR NOTIFICACIONES ****************/
+			$(document).on('click', '#enviar_buscar_notificaciones', function(){
+				var postData = $('#buscar_notificaciones_form').serializeArray();
+
+				$.ajax({
+					method: 'POST',
+					headers: { "X-CSRFToken": token},
+					url: '{% url "buscar_notificaciones" %}',
+					data:postData,
+					dataType: 'json',
+				})
+				.done(function(data){
+					if(data.valido){
+						$('#notificaciones_table_body').html('');
+
+						if($('#sin_notificacion_msg').length > 0)
+							$('#sin_notificacion_msg').remove();
+
+						if(data.notificaciones.length > 0){
+							$.each(data.notificaciones, function(key, val){
+								if(val.leida)
+									leida_tag = '<span id="marca_'+val.id+'" class="label label-info"> Leida </span>';
+								else
+									leida_tag = '<span id="marca_'+val.id+'" class="label label-warning"> Nueva </span>';
+
+								$('#notificaciones_table_body').append(
+									'<tr id="notificacion_'+val.id+'">\
+										<td>'+val.asunto+'</td>\
+										<td>'+val.tipo_notificacion+'</td>\
+										<td>'+val.fecha_recibida+'</td>\
+										<td>'+leida_tag+'</td>\
+										<td>\
+											<a class="btn btn-primary btn-sm abrir_notificacion" target="'+val.id+'" role="button" title="Abrir notificación"><i class="fa fa-eye"></i></a>\
+											<a class="btn btn-danger btn-sm" role="button" target="'+val.id+'" title="Borrar notificación"><i class="fa fa-trash"></i></a>\
+										</td>\
+									</tr>'
+								);
+							});
+						}
+						else{
+							$('#notificaciones_table_body').parent().after(
+								'<h4 id="sin_notificacion_msg" class="text-center">No se encontraron notificaciones</h4>'
+							);
+						}
+
+						// Esconder el modal
+						$('#Buscar').modal('hide');
+					}
+					else{
+						
+					}
+				});
 			});
 			/************ FIN **************/
 

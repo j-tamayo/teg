@@ -49,6 +49,18 @@ urlpatterns = \
         ),
 
         url(
+            r'^buscar-notificaciones$',
+            views.BuscarNotificaciones.as_view(),
+            name='buscar_notificaciones'
+        ),
+
+        url(
+            r'^editar-perfil-cliente$',
+            views.EditarPerfilCliente.as_view(),
+            name='editar_perfil_cliente'
+        ),
+
+        url(
             r'^bandeja-cliente$',
             views.BandejaCliente.as_view(),
             name='bandeja_cliente'

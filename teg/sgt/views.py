@@ -485,6 +485,100 @@ class GuardarReclamo(View):
 		)
 
 
+class BuscarNotificaciones(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, *args, **kwargs):
+		return super(BuscarNotificaciones, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Vista para buscar las notificaciones por asunto"""
+		usuario = request.user
+		valido = False
+		error_msg = None
+		notificaciones = []
+		asunto = request.POST.get('asunto', None)
+		if asunto:
+			valido = True
+			notificaciones_usuarios = NotificacionUsuario.objects.filter(usuario = usuario, borrada = False, notificacion__asunto__icontains = asunto)
+			for nu in notificaciones_usuarios:
+				notificaciones.append({
+					'id': nu.pk,
+					'asunto': nu.notificacion.asunto,
+					'tipo_notificacion': nu.notificacion.tipo_notificacion.descripcion,
+					'fecha_recibida': nu.fecha_creacion.strftime('%d/%m/%Y %I:%M %p'),
+					'leida': nu.leida
+				})
+
+		else:
+			valido = True
+			notificaciones_usuarios = NotificacionUsuario.objects.filter(usuario = usuario, borrada = False)
+			for nu in notificaciones_usuarios:
+				notificaciones.append({
+					'id': nu.pk,
+					'asunto': nu.notificacion.asunto,
+					'tipo_notificacion': nu.notificacion.tipo_notificacion.descripcion,
+					'fecha_recibida': nu.fecha_creacion.strftime('%d/%m/%Y %I:%M %p'),
+					'leida': nu.leida
+				})
+
+		respuesta = {
+			'valido': valido,
+			'error_msg': error_msg,
+			'notificaciones': notificaciones
+		}
+
+		return HttpResponse(
+		    json.dumps(respuesta),
+		    content_type="application/json"
+		)
+
+
+class EditarPerfilCliente(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, *args, **kwargs):
+		return super(EditarPerfilCliente, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *arg, **kwargs):
+		"""Vista para editar el perfil del Cliente"""
+		usuario = request.user
+		form = CuentasForm.RegistroForm(request.POST, id_usuario = usuario.pk, edicion = 1)
+		valido = False
+		errores = []
+		if form.is_valid():
+			valido = True
+			registro = form.cleaned_data
+			usuario.nombres = registro['nombres']
+			usuario.apellidos = registro['apellidos']
+			usuario.cedula = registro['cedula']
+			usuario.municipio_id = registro['municipio']
+			usuario.direccion = registro['direccion']
+			usuario.codigo_postal = registro['codigo_postal']
+			usuario.correo = registro['correo']
+			usuario.fecha_nacimiento = registro['fecha_nacimiento']
+			usuario.telefono_local = registro['telefono_local']
+			usuario.telefono_movil = registro['telefono_movil']
+			usuario.sexo = registro['sexo']
+			usuario.centro_inspeccion = registro['centro_inspeccion']
+
+			usuario.save()
+
+			request.session['mensaje_info'] = 'Su información ha sido editada correctamente'
+
+		else:
+			# errores = [(k, v[0]) for k, v in form.errors.items()]
+			errores = form.errors.as_json()
+
+		respuesta = {
+			'valido': valido,
+			'errores': errores
+		}
+
+		return HttpResponse(
+		    json.dumps(respuesta),
+		    content_type="application/json"
+		)
+
+
 class BandejaCliente(View):
 	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
 	def dispatch(self, *args, **kwargs):
@@ -499,6 +593,12 @@ class BandejaCliente(View):
 		solicitudes = SolicitudInspeccion.objects.filter(usuario = usuario, borrada = False).order_by('-numeroorden__fecha_atencion','-numeroorden__hora_atencion')
 		notificaciones = NotificacionUsuario.objects.filter(usuario = usuario, borrada = False).order_by('-leida', '-pk')
 
+		mensaje_info = None
+		if request.session.has_key('mensaje_info'):
+			mensaje_info = request.session['mensaje_info']
+			del request.session['mensaje_info']
+
+		print "YOUSUSUS", mensaje_info
 		u_estado_id = usuario.municipio.estado.pk
 		u_municipios = Municipio.objects.filter(estado__id = u_estado_id)
 		u_municipio_id = usuario.municipio.pk
@@ -515,7 +615,7 @@ class BandejaCliente(View):
 			'telefono_local': usuario.telefono_local,
 			'telefono_movil': usuario.telefono_movil,
 			'fecha_nacimiento': usuario.fecha_nacimiento,
-			'centro_inspeccion': usuario.centro_inspeccion,
+			'centro_inspeccion': usuario.centro_inspeccion
 		}
 
 		estados_cuenta = Estado.objects.all()
@@ -535,43 +635,44 @@ class BandejaCliente(View):
 		    'notificaciones': notificaciones,
 		    'u_estado_id': u_estado_id,
 		    'u_municipios': u_municipios,
-		    'u_municipio_id': u_municipio_id
+		    'u_municipio_id': u_municipio_id,
+		    'mensaje_info': mensaje_info
 		}
 
 		return render(request,'cuentas/perfil_cliente.html', context)
 
 
-class BuscarNotificaciones(View):
-	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
-	def dispatch(self, request, *args, **kwargs):
-		return super(BuscarNotificaciones, self).dispatch(*args, **kwargs)
+# class BuscarNotificaciones(View):
+# 	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+# 	def dispatch(self, request, *args, **kwargs):
+# 		return super(BuscarNotificaciones, self).dispatch(*args, **kwargs)
 
-	def post(self, request, *args, **kwargs):
-		"""Vista para buscar las notificaciones por el asunto"""
-		usuario = request.user
-		notificaciones_resp = []
-		asunto = request.POST.get('asunto', None)
-		notificaciones_usuario = NotificacionUsuario.objects.filter(usuario = usuario)
-		if asunto:
-			notificaciones_usuario = notificaciones.filter(notificacion__asunto__icontains = asunto)
+# 	def post(self, request, *args, **kwargs):
+# 		"""Vista para buscar las notificaciones por el asunto"""
+# 		usuario = request.user
+# 		notificaciones_resp = []
+# 		asunto = request.POST.get('asunto', None)
+# 		notificaciones_usuario = NotificacionUsuario.objects.filter(usuario = usuario)
+# 		if asunto:
+# 			notificaciones_usuario = notificaciones.filter(notificacion__asunto__icontains = asunto)
 
-		for nu in notificaciones_usuario:
-			notificaciones_resp.append({
-				'id': nu.pk,
-				'asunto': nu.notificacion.asunto,
-				'leida': nu.leida, 
-				'fecha_recibida': '1',
-				'tipo': nu.tipo,
-			})
+# 		for nu in notificaciones_usuario:
+# 			notificaciones_resp.append({
+# 				'id': nu.pk,
+# 				'asunto': nu.notificacion.asunto,
+# 				'leida': nu.leida, 
+# 				'fecha_recibida': '1',
+# 				'tipo': nu.tipo,
+# 			})
 
-		respuesta = {
-			'notificaciones': notificaciones_resp
-		}
+# 		respuesta = {
+# 			'notificaciones': notificaciones_resp
+# 		}
 
-		return HttpResponse(
-		    json.dumps(respuesta),
-		    content_type="application/json"
-		)
+# 		return HttpResponse(
+# 		    json.dumps(respuesta),
+# 		    content_type="application/json"
+# 		)
 
 
 class AdminBandejaCentros(View):
