@@ -502,7 +502,7 @@ class GuardarRespuestasEncuesta(APIView):
 				pregunta_id = data[aux]
 				pregunta = Pregunta.objects.get(pk=pregunta_id)
 				tipo_respuesta = pregunta.tipo_respuesta.codigo
-				respuesta = Respuesta(encuesta=encuesta, pregunta=pregunta, usuario=usuario, notificacion_usuario = notificacion_usuario)
+				respuesta = Respuesta(encuesta=encuesta, pregunta=pregunta, usuario=usuario, notificacion_usuario=notificacion_usuario)
 				respuesta.save()
 
 				if tipo_respuesta == "RESP_DEF":

@@ -74,7 +74,7 @@ function loadTables(){
 	console.log('procediendo a cargar registros de la web APP...');
 	
 	load_data_id = 1;
-	$.getJSON('http://192.168.1.106:8000/api/data-inicial/')
+	$.getJSON('http://192.168.1.101:8000/api/data-inicial/')
 	.done(load_json_data)
 	.fail(function(){
 	    console.log('Error de conexión!');
@@ -212,15 +212,12 @@ function load_json_data(json){
 			});
 		});
 	}, errorCB, function(){
-		if(load_data_id == 0 || load_data_id == 2){
+		if(load_data_id == 0)
 			init_data();
-		}
-		else{
-			if(load_data_id == 1)
-				clean_data(json, {});
-			if(load_data_id == 2)
-				filter_user_info(json); 	
-		}
+		if(load_data_id == 1)
+			clean_data(json, {});
+		if(load_data_id == 2)
+			filter_user_info(json);
 	});
 }
 
@@ -323,19 +320,13 @@ function clean_data(json, exclude_dict){
 						
 						$.each(data, function(parent_key, parent_value){
 							if(row['id'] == parent_value['id']){
-								if(!jQuery.isEmptyObject(exclude_dict)){
-									if($.inArray(row['id'], exclude_dict[table]) > -1)
-										return;
-								}else{
-									flag = true;
-									return;
-								}
+								flag = true;
+								return false;
 							}
 						});
 
-						if(!flag){
+						if(!flag && $.inArray(row['id'], exclude_dict[table]) == -1){
 							console.log('DELETE FROM '+table+' WHERE id = '+row['id']+';');
-
 							tx.executeSql('DELETE FROM '+table+' WHERE id = '+row['id']+';', [],
 							function(){
 								console.log('registro borrado exitosamente!');
@@ -359,7 +350,7 @@ function load_user_tables(){
 	console.log('login extitoso, procediendo a cargar información de usuario...');
 	
 	load_data_id = 2;
-	$.post('http://192.168.1.106:8000/api/usuario-info/', {'id': id_usuario})
+	$.post('http://192.168.1.101:8000/api/usuario-info/', {'id': id_usuario})
 	.done(load_json_data)
 	.fail(function(){
 		init_data(); //cargando la data localmente...
@@ -893,7 +884,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 		        data[obj.name] = obj.value;
 		    });
 
-		    $.post('http://192.168.1.106:8000/api/guardar-respuestas-encuesta/', data)
+		    $.post('http://192.168.1.101:8000/api/guardar-respuestas-encuesta/', data)
 	        .done(function(json){
 	            console.log(json);
 	            next_page = '#mail_page';
@@ -922,10 +913,14 @@ function load_user_edit_info(next_page, trans){
         	$('#telefono_movil_reg').val(row['telefono_movil']);
         	$('#correo_reg').val(row['correo']);
 
-        	if(row['sexo'] == '0')
+        	if(row['sexo'] == '0'){
         		$('#sexo_reg0').attr('checked', 'checked').trigger('create'); //.checkboxradio('refresh');
-        	if(row['sexo'] == '1')
+        		$("input[name='sexo']").checkboxradio().checkboxradio('refresh');
+        	}
+        	if(row['sexo'] == '1'){
         		$('#sexo_reg1').attr('checked', 'checked').trigger('create'); //.checkboxradio('refresh');
+        		$("input[name='sexo']").checkboxradio().checkboxradio('refresh');
+        	}
 
         	fecha_nacimiento_aux = row['fecha_nacimiento'];
         	fecha_nacimiento_aux = fecha_nacimiento_aux.split('-');
@@ -933,7 +928,8 @@ function load_user_edit_info(next_page, trans){
         	$('#fecha_nacimiento_reg').val(fecha_nacimiento_aux);
 
         	estado_aux = row['estado'];
-        	$('#estado_reg').val(estado_aux) //.selectmenu('refresh');
+        	$('#estado_reg').val(estado_aux); //.selectmenu('refresh');
+        	$('#estado_reg').selectmenu().selectmenu('refresh');
 
         	municipio_aux = row['municipio'];
 
@@ -947,12 +943,12 @@ function load_user_edit_info(next_page, trans){
 					aux += '<option value="'+row['id']+'">'+row['nombre']+'</option>';
 				}
 
-				$('#municipio_reg').html(aux);
+				$('#municipio_reg').html(aux).trigger('create');
 				$('#municipio_reg').val(municipio_aux);
-				//$('#municipio_reg').selectmenu('refresh');
+				$('#municipio_reg').selectmenu().selectmenu('refresh');
 
 				$.mobile.changePage(next_page, {
-			        changeHash: false,
+			        changeHash: true,
 			        transition: trans
 			    });
 			},
