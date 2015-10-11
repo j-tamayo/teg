@@ -74,7 +74,7 @@ function loadTables(){
 	console.log('procediendo a cargar registros de la web APP...');
 	
 	load_data_id = 1;
-	$.getJSON('http://192.168.1.101:8000/api/data-inicial/')
+	$.getJSON('http://192.168.7.140:8000/api/data-inicial/')
 	.done(load_json_data)
 	.fail(function(){
 	    console.log('Error de conexión!');
@@ -350,7 +350,7 @@ function load_user_tables(){
 	console.log('login extitoso, procediendo a cargar información de usuario...');
 	
 	load_data_id = 2;
-	$.post('http://192.168.1.101:8000/api/usuario-info/', {'id': id_usuario})
+	$.post('http://192.168.7.140:8000/api/usuario-info/', {'id': id_usuario})
 	.done(load_json_data)
 	.fail(function(){
 		init_data(); //cargando la data localmente...
@@ -884,7 +884,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 		        data[obj.name] = obj.value;
 		    });
 
-		    $.post('http://192.168.1.101:8000/api/guardar-respuestas-encuesta/', data)
+		    $.post('http://192.168.7.140:8000/api/guardar-respuestas-encuesta/', data)
 	        .done(function(json){
 	            console.log(json);
 	            next_page = '#mail_page';
