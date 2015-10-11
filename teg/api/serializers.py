@@ -158,3 +158,15 @@ class ValorPreguntaEncuestaSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = ValorPreguntaEncuesta
 		fields = ('id', 'valor', 'pregunta', 'encuesta', 'orden')
+
+
+class FechaNoLaborableSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = FechaNoLaborable
+		fields = ('id', 'fecha')
+
+
+class CentroInspFechasNoLabSerializer(serializers.Serializer):
+	id = serializers.IntegerField()
+	centroinspeccion_id = serializers.IntegerField()
+	fechanolaborable_id = serializers.IntegerField()

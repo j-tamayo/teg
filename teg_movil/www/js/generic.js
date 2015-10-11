@@ -1,9 +1,6 @@
 /* Variables Globales Auxiliares */
 var page_sol = 1;
 
-var dateMin = new Date();
-dateMin.setDate(dateMin.getDate() + 3);
-
 $(document).ready(function(){
     init_db();  // cargando BD Móvil...
 
@@ -24,9 +21,9 @@ $(document).ready(function(){
     dia_actual = dias_semana[today.getDay()];
     
     date_max = '+3d';
-    if(dia_actual = 'Sábado')
+    if(dia_actual == 'Sábado')
         date_max = '+4d';
-    if(dia_actual = 'Viernes')
+    if(dia_actual == 'Viernes')
         date_max = '+5d';
 
     $('.datepicker-request').datepicker({

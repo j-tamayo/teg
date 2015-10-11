@@ -67,6 +67,8 @@ function createTables(){
 		tx.executeSql('create table if not exists sgt_tiponotificacion(id NOT NULL, codigo character varying(100) NOT NULL, descripcion character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_notificacion(id NOT NULL, mensaje text NOT NULL, tipo_notificacion integer NOT NULL, encuesta integer, asunto character varying(255) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (tipo_notificacion) REFERENCES sgt_tiponotificacion (id), FOREIGN KEY (encuesta) REFERENCES sgt_encuesta (id));');
 		tx.executeSql('create table if not exists sgt_notificacionusuario(id NOT NULL, fecha_creacion timestamp with time zone NOT NULL, leida boolean NOT NULL, notificacion integer NOT NULL, usuario integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (notificacion) REFERENCES sgt_notificacion (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id));');
+		// tx.executeSql('create table if not exists  sgt_fechanolaborable(id serial NOT NULL, fecha date NOT NULL, PRIMARY KEY (id));');
+		// tx.executeSql('create table if not exists  sgt_centroinspeccion_fechas_no_laborables(id serial NOT NULL, centroinspeccion_id integer NOT NULL, fechanolaborable_id integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (centroinspeccion_id) REFERENCES sgt_centroinspeccion (id), FOREIGN KEY (fechanolaborable_id) REFERENCES sgt_fechanolaborable (id), UNIQUE (centroinspeccion_id, fechanolaborable_id));');
 	}, errorCB, loadTables);
 }
 

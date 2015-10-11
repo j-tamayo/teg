@@ -196,6 +196,20 @@ class InitialData(APIView):
 			#respuesta['sgt_tiponotificacion'] = tipo_notificacion_serializer.data
 			data.append({'sgt_tiponotificacion': tipo_notificacion_serializer.data})
 
+		# fecha_no_laborable = FechaNoLaborable.objects.all()
+		# fecha_no_laborable_serializer = FechaNoLaborableSerializer(fecha_no_laborable, many=True)
+		# if fecha_no_laborable_serializer:
+		# 	data.append({'sgt_fechanolaborable': fecha_no_laborable_serializer.data})
+
+		# centros_fechas_serializer = []
+		# for c in centros:
+		# 	centros_fechas = c.fechas_no_laborables.through.objects.filter(centroinspeccion_id=c.id, fechanolaborable_id__in=c.fechas_no_laborables.values_list('id', flat=True))
+		# 	print centros_fechas
+		# 	centros_fechas_serializer += CentroInspFechasNoLabSerializer(centros_fechas, many=True).data
+		
+		# if centros_fechas_serializer:
+		# 	data.append({'sgt_centroinspeccion_fechas_no_laborables': centros_fechas_serializer})
+
 		if data:
 			return Response(data, status=status.HTTP_200_OK)
 		else:
