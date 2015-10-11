@@ -301,6 +301,12 @@ urlpatterns = \
         ),
 
         url(
+            r'^admin/holgura-reserva$',
+            views.AdminEstablecerHolguraReserva.as_view(),
+            name='admin_establecer_holgura_reserva'
+        ),
+
+        url(
             r'^consultar-notificacion$',
             views.ConsultarNotificacion.as_view(),
             name='consultar_notificacion'

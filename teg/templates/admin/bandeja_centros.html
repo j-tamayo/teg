@@ -31,6 +31,11 @@
 					</a>
 					<ul class="dropdown-menu  pull-right" role="menu">
 						<li>
+							<a id="establecer_holgura_reserva" href="#" data-target="#holgura_reserva_modal" data-toggle="modal">
+								<i class="fa fa-calendar"></i> D&iacute;as de holgura para reserva
+							</a>
+						</li>
+						<li>
 							<a id="seleccionar_fechas_no_laborables" href="#">
 								<i class="fa fa-calendar"></i> Fechas No laborables
 							</a>
@@ -292,6 +297,37 @@
 		</div>
 	</div>
 </div>
+
+<!-- Modal para la holgura de reserva -->
+<div class="modal fade" id="holgura_reserva_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title text-success" id="myModalLabel">Escoger d&iacute;as de holguras para reservas</h3>
+			</div>
+			<div class="modal-body">
+				<form id="dias_holgura_form" action="" method="post">
+				<select id="select_dias_holgura" name="dias_holgura" class="form-control">
+					<option value="">--Seleccionar--</option>
+					<option value="1">1 d&iacute;a</option>
+					<option value="2">2 d&iacute;as</option>
+					<option value="3">3 di&acute;as</option>
+				</select>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<div class="col-xs-6">
+					<a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>
+				</div>
+				<div class="col-xs-6">
+					<a href="#" id="enviar_holgura_reserva" class="btn btn-primary btn-block">Enviar</button>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
@@ -515,6 +551,28 @@
 			})
 		});
 		/******* FIN ******/
+
+		/******* ENVIAR DIAS DE HOLGURA DE RESERVA *********/
+		$(document).on('click', '#enviar_holgura_reserva', function(){
+			var postData = $('#dias_holgura_form').serializeArray();
+			$.ajax({
+				method: 'POST',
+				headers: { "X-CSRFToken": token},
+				url: '{% url "admin_establecer_holgura_reserva" %}',
+				data:postData,
+				dataType: 'json',
+			})
+			.done(function(data){
+				if(data.valido){
+					
+				}
+				else{
+					$('#dias_holgura_errores').html(data.error_msg);
+				}
+			})
+		});
+		/******* FIN ******/
+
 	})
 	</script>
 {% endblock %}

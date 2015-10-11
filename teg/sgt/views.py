@@ -190,6 +190,7 @@ class CrearSolicitudInspeccion(View):
 		fecha_asistencia = request.GET.get('fecha_asistencia', datetime.now().date().strftime('%d/%m/%Y'))
 		fecha_asistencia = datetime.strptime(fecha_asistencia, '%d/%m/%Y')
 		poliza = Poliza.objects.filter(usuario = usuario).first()
+		fechas_no_laborables = []
 		# Para obtener los tipos de solicitudes dependiendo de la póliza del usuario
 		today = datetime.now().date()
 		print "POLIZA", poliza
@@ -226,11 +227,19 @@ class CrearSolicitudInspeccion(View):
 				c.etiqueta = 'Muy baja'
 				c.etiqueta_clase = 'danger'
 
+			#Para agregar las fechas no laborables
+			fechas_no_laborables_centro = c.fechas_no_laborables.all()
+			for f in fechas_no_laborables_centro:
+				fecha_string = f.fecha.strftime('%d/%m/%Y')
+				if fecha_string not in fechas_no_laborables:
+					fechas_no_laborables.append(fecha_string)
+
 		form = SolicitudInspeccionForm(request.GET)
 
 		context = {
 		    'centros': centros,
 		    'form': form,
+		    'fechas_no_laborables': fechas_no_laborables,
 		    'municipios': municipios,
 		    'tipo_solicitudes': tipo_solicitudes,
 		}
@@ -2462,6 +2471,40 @@ class AdminParametros(View):
 		}
 
 		return render(request, 'admin/parametros.html', context)
+
+
+class AdminEstablecerHolguraReserva(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, request, *args, **kwargs):
+		return super(AdminEstablecerHolguraReserva, self).dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Vista que establece los dias de holgura para que los Clientes realicen la solicitud de inspeccion"""
+		valido = False
+		error_msg = None
+		dias_holgura = request.POST.get('dias_holgura', None)
+		if dias_holgura:
+			valido = True
+			dias_holgura_obj = ParametroGenerales.objects.filter('dias_holgura_reserva')
+			if not dias_holgura_obj:
+				dias_holgura_obj = ParametroGenerales(clave = 'dias_holgura_reserva', valor = '1')
+
+			dias_holgura_obj.valor = dias_holgura
+			dias_holgura_obj.save()
+
+		else:
+			error_msg = 'Este campo es requerido'
+
+		respuesta = {
+			'valido': valido,
+			'error_msg': error_msg
+		}
+
+		return HttpResponse(
+		    json.dumps(respuesta),
+		    content_type="application/json"
+		)
+
 
 
 class ConsultarNotificacion(View):

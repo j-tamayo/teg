@@ -365,7 +365,7 @@
 	{{ block.super }}
 
 	<script type="application/javascript">
-
+		fechas_deshabilitadas = [];
 		$(function(){
 			var token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 
@@ -391,6 +391,7 @@
 			$(document).on('click', '#crear_solicitud', function(){
 				$('#contenedor_solicitudes').hide();
 				$('#contenedor_crear_solicitud').show();
+				fechas_deshabilitadas = []
 				$.ajax({
 					method: 'GET',
 					url: '{% url "crear_solicitud" %}',
@@ -412,7 +413,7 @@
 					  language: "es",
 					  startView: 1,
 					  daysOfWeekDisabled: [0,6],
-					  datesDisabled:[]
+					  datesDisabled:fechas_deshabilitadas
 					});
 					$('#fecha_asistencia').datepicker('setDate', new Date());
 					$('#fecha_asistencia').datepicker('update');
