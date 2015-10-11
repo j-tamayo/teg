@@ -1,6 +1,9 @@
 /* Variables Globales Auxiliares */
 var page_sol = 1;
 
+var dateMin = new Date();
+dateMin.setDate(dateMin.getDate() + 3);
+
 $(document).ready(function(){
     init_db();  // cargando BD Móvil...
 
@@ -10,12 +13,28 @@ $(document).ready(function(){
     $('#mail_footer').hide();
 
     /* Inicializando elementos en las interfaces de la APP Móvil */
-    $('.datepicker').datepicker({
+    $('.datepicker-birth').datepicker({
         changeYear: true,
-        yearRange: '1900:2100'
+        minDate: new Date(1900,1-1,1), maxDate: '-18Y',
+        defaultDate: new Date(1990,1-1,1),
+        yearRange: '-110:-18'
+    });
+    
+    today = new Date();
+    dia_actual = dias_semana[today.getDay()];
+    
+    date_max = '+3d';
+    if(dia_actual = 'Sábado')
+        date_max = '+4d';
+    if(dia_actual = 'Viernes')
+        date_max = '+5d';
+
+    $('.datepicker-request').datepicker({
+        minDate: 0, maxDate: date_max,
+        beforeShowDay: $.datepicker.noWeekends
     });
 
-    $('.datepicker').keypress(function(event){
+    $('.datepicker-birth,.datepicker-request').keypress(function(event){
         event.preventDefault();
     });
 
@@ -232,14 +251,19 @@ $(document).ready(function(){
             });
         }
         else{
-            date_parts = data['fecha_nacimiento'].split('/');
-            data['fecha_nacimiento'] = date_parts[2] + '-' + date_parts[1] + '-' + date_parts[0];
-            if(flag_edit){
-                col_up.push('fecha_nacimiento');
-                val_up.push(data['fecha_nacimiento']);
+            if(data['fecha_nacimiento'].trim()){
+                date_parts = data['fecha_nacimiento'].split('/');
+                data['fecha_nacimiento'] = date_parts[2] + '-' + date_parts[1] + '-' + date_parts[0];
+                if(flag_edit){
+                    col_up.push('fecha_nacimiento');
+                    val_up.push(data['fecha_nacimiento']);
+                }
             }
 
-            $.post('http://192.168.7.140:8000'+url, data)
+            if(!data['sexo'])
+                data['sexo'] = '';
+
+            $.post('http://192.168.1.101:8000'+url, data)
             .done(function(json){
                 console.log('Usuario guardados exitosamente!');
                 $('#registro_form').trigger('reset');
@@ -620,6 +644,7 @@ $(document).ready(function(){
 
     $(document).on('click', '#refresh_profile_option', function(){
         activePage = $.mobile.activePage.attr('id');
+        $('#nav-panel').panel( "close" );
         next_page = '#' + activePage;
         next_page_trans = 'flow';
         load_user_tables();
@@ -657,18 +682,18 @@ function input_validator(input_obj){
     // }
 
     /* Se si es un campo del tipo encuesta */
-    // if(input_obj.hasClass('encuesta_check_input')){
-    //     if(!input_obj.is(':checked')){
-    //         validator['error'] = true;
-    //         validator['msg'] = 'Por favor, verifique que todas las preguntas estén respondidas';
-    //     }
-    // }
-    // if(input_obj.hasClass('encuesta_required_input')){
-    //     if(!input_obj.val().trim()){
-    //         validator['error'] = true;
-    //         validator['msg'] = 'Por favor, verifique que todas las preguntas estén respondidas';
-    //     }
-    // }
+    if(input_obj.hasClass('respuesta_def_enc')){
+        if(!input_obj.is(':checked')){
+            validator['error'] = true;
+            validator['msg'] = 'Por favor, verifique que todas las preguntas estén respondidas';
+        }
+    }
+    if(input_obj.hasClass('respuesta_indef_enc')){
+        if(!input_obj.val().trim()){
+            validator['error'] = true;
+            validator['msg'] = 'Por favor, verifique que todas las preguntas estén respondidas';
+        }
+    }
     
     /* Se verifica el contenido de los campos regulares */
     if(!input_obj.hasClass('required_input')){

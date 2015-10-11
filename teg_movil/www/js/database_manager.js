@@ -8,6 +8,7 @@ var flag_poliza = false;
 var user_title = '';
 var next_page = '';
 var next_page_trans = '';
+var preguntas_check = [];
 
 var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 var dias_semana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -49,7 +50,7 @@ function createTables(){
 	db.transaction(function(tx){
 		tx.executeSql('create table if not exists sgt_estado(id NOT NULL, nombre character varying(255) NOT NULL, PRIMARY KEY (id));');
 		tx.executeSql('create table if not exists sgt_municipio(id NOT NULL, nombre character varying(255) NOT NULL, estado integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (estado) REFERENCES sgt_estado (id))');
-		tx.executeSql('create table if not exists cuentas_sgtusuario(id NOT NULL, password character varying(128) NOT NULL, apellidos character varying(200) NOT NULL, cedula character varying(100) NOT NULL, correo character varying(255) NOT NULL, direccion text NOT NULL, fecha_nacimiento date NOT NULL, nombres character varying(200) NOT NULL, sexo integer NOT NULL, telefono_local character varying(100), telefono_movil character varying(100), municipio integer, codigo_postal integer NOT NULL, PRIMARY KEY (id), FOREIGN KEY (municipio) REFERENCES sgt_municipio (id), UNIQUE (correo));');
+		tx.executeSql('create table if not exists cuentas_sgtusuario(id NOT NULL, password character varying(128) NOT NULL, apellidos character varying(200) NOT NULL, cedula character varying(100), correo character varying(255) NOT NULL, direccion text, fecha_nacimiento date, nombres character varying(200) NOT NULL, sexo integer, telefono_local character varying(100), telefono_movil character varying(100), municipio integer NOT NULL, codigo_postal integer, PRIMARY KEY (id), FOREIGN KEY (municipio) REFERENCES sgt_municipio (id), UNIQUE (correo));');
 		tx.executeSql('create table if not exists sgt_poliza(id NOT NULL, numero integer NOT NULL, usuario integer, fecha_fin_vigencia date NOT NULL, fecha_inicio_vigencia date NOT NULL, cedula_cliente character varying(100) NOT NULL, PRIMARY KEY (id), FOREIGN KEY (usuario) REFERENCES cuentas_sgtusuario (id))');
 		tx.executeSql('create table if not exists sgt_centroinspeccion(id NOT NULL, nombre character varying(255) NOT NULL, direccion text NOT NULL, municipio integer NOT NULL, capacidad integer NOT NULL, tiempo_atencion integer NOT NULL, telefonos character varying(255) NOT NULL, hora_apertura_manana time without time zone, hora_apertura_tarde time without time zone, hora_cierre_manana time without time zone, hora_cierre_tarde time without time zone, PRIMARY KEY (id), FOREIGN KEY (municipio) REFERENCES sgt_municipio (id));');
 		tx.executeSql('create table if not exists sgt_tipoinspeccion(id NOT NULL, codigo character varying(50) NOT NULL, descripcion text, nombre character varying(255) NOT NULL, PRIMARY KEY (id));');
@@ -570,6 +571,11 @@ function load_profile_info(){
 			row = results.rows.item(0);
 			user_title = row['nombres'];
 
+			if(!row['cedula'])
+				row['cedula'] = 'N/A';
+			if(!row['direccion'])
+				row['direccion'] = 'N/A';
+			
 	    	$('#profile_content').html('<h3 class="text-success" style="text-align: center;">Informaci&oacute;n del usuario</h3>\
 										<p>Nombre: '+row['nombres']+'</p>\
 										<p>Apellido: '+row['apellidos']+'</p>\
@@ -830,7 +836,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 
 				if(row['tipo'] == 'RESP_INDEF'){
 					aux += '<label for="respuesta_indef_enc_'+index+'">'+row['enunciado']+'</label>\
-							<textarea cols="40" rows="8" name="respuesta_indef_'+row['pregunta']+'" id="respuesta_indef_enc_'+index+'"></textarea>';
+							<textarea cols="40" rows="8" name="respuesta_indef_'+row['pregunta']+'" id="respuesta_indef_enc_'+index+'" class="respuesta_indef_enc"></textarea>';
 					index++;
 				}
 
@@ -851,6 +857,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
         function(tx, results){
         	aux = '';
         	pregunta_index = '';
+        	preguntas_check = [];
 
         	num = results.rows.length;
 			for(i = 0; i < num; i++){
@@ -863,8 +870,10 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 					aux = '<legend>'+row['enunciado']+'</legend>';
 				}
 
-				aux += '<input name="respuesta_def_'+row['pregunta']+'" id="respuesta_def_enc_'+(i + 1)+'" value="'+row['id']+'" type="radio">\
-						<label for="respuesta_def_enc_'+(i + 1)+'">'+row['valor']+'</label>';		
+				aux += '<input name="respuesta_def_'+row['pregunta']+'" id="respuesta_def_enc_'+(i + 1)+'" value="'+row['id']+'" type="radio" class="respuesta_def_enc">\
+						<label for="respuesta_def_enc_'+(i + 1)+'">'+row['valor']+'</label>';
+
+				preguntas_check.push('respuesta_def_'+row['pregunta']);		
 			}
 
 			if(pregunta_index)
@@ -878,22 +887,46 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
     	$('#encuesta_form').submit(function(event){
 	        event.preventDefault();
 		    formData = $(this).serializeArray();
+		    validator = {};
 		    data = {};
 
 		    $(formData).each(function(index, obj){
-		        data[obj.name] = obj.value;
+		    	validator = input_validator($('#encuesta_form [name="'+obj.name+'"]'));
+		    	if(!validator['error'])
+		        	data[obj.name] = obj.value;
+		        else
+		        	return false;
 		    });
 
-		    $.post('http://192.168.7.140:8000/api/guardar-respuestas-encuesta/', data)
-	        .done(function(json){
-	            console.log(json);
-	            next_page = '#mail_page';
-	            next_page_trans = 'fade';
-	            load_user_tables();
-	        })
-	        .fail(function(json) {
-	            console.log(json);
-	        });
+		    for(i = 0; i < preguntas_check.length; i++){
+		    	validator = input_validator($('#encuesta_form [name="'+preguntas_check[i]+'"]'));
+		    	if(validator['error'])
+		    		break;
+		    }
+
+		    if(validator['error']){
+		    	$('#dialog_header').html('<h3 align="center">Error</h3>');
+	            $('#dialog_content').html('<p align="center">'+validator['msg']+'</p>\
+	                                        <br>\
+	                                        <a href="#mail_content_page" data-transition="pop" class="ui-btn ui-btn-b ui-corner-all ref_btn">Aceptar</a>');
+	            
+	            $.mobile.changePage('#dialog_page', {
+	                changeHash: false, 
+	                transition: 'pop'
+	            });
+		    }
+		    else{
+			    $.post('http://192.168.1.101:8000/api/guardar-respuestas-encuesta/', data)
+		        .done(function(json){
+		            console.log(json);
+		            next_page = '#mail_page';
+		            next_page_trans = 'fade';
+		            load_user_tables();
+		        })
+		        .fail(function(json) {
+		            console.log(json);
+		        });
+		    }
 	    });
     });
 }

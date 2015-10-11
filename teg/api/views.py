@@ -71,6 +71,7 @@ class UsuariosEdit(APIView):
 	def post(self, request, format = None):
 		mensaje = {}
 		data = request.data
+		print data
 
 		if data: 	#queda pendiente validar los password...
 			data['municipio'] = Municipio.objects.filter(id=data['municipio']).first()
