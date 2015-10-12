@@ -191,6 +191,18 @@ class CrearSolicitudInspeccion(View):
 		fecha_asistencia = datetime.strptime(fecha_asistencia, '%d/%m/%Y')
 		poliza = Poliza.objects.filter(usuario = usuario).first()
 		fechas_no_laborables = []
+		dias_holgura_reserva = ParametrosGenerales.objects.filter(codigo = 'dias_holgura_reserva').first()
+		
+		# Para no restar los fines de semanas a los dias de gholgura de reserva
+		if dias_holgura_reserva:
+			dias_holgura_reserva = int(dias_holgura_reserva.valor)
+			today = datetime.today()
+			if today.weekday() == 5:
+				dias_holgura_reserva += 1
+			
+			elif today.weekday() == 6:
+				dias_holgura_reserva += 2 
+
 		# Para obtener los tipos de solicitudes dependiendo de la póliza del usuario
 		today = datetime.now().date()
 		print "POLIZA", poliza
@@ -238,6 +250,7 @@ class CrearSolicitudInspeccion(View):
 
 		context = {
 		    'centros': centros,
+		    'dias_holgura_reserva': dias_holgura_reserva if dias_holgura_reserva else 3,
 		    'form': form,
 		    'fechas_no_laborables': fechas_no_laborables,
 		    'municipios': municipios,
@@ -566,7 +579,7 @@ class EditarPerfilCliente(View):
 			usuario.fecha_nacimiento = registro['fecha_nacimiento']
 			usuario.telefono_local = registro['telefono_local']
 			usuario.telefono_movil = registro['telefono_movil']
-			usuario.sexo = registro['sexo']
+			usuario.sexo = registro['sexo'] if registro['sexo'] else None
 			usuario.centro_inspeccion = registro['centro_inspeccion']
 
 			usuario.save()
@@ -607,7 +620,6 @@ class BandejaCliente(View):
 			mensaje_info = request.session['mensaje_info']
 			del request.session['mensaje_info']
 
-		print "YOUSUSUS", mensaje_info
 		u_estado_id = usuario.municipio.estado.pk
 		u_municipios = Municipio.objects.filter(estado__id = u_estado_id)
 		u_municipio_id = usuario.municipio.pk
@@ -2485,9 +2497,9 @@ class AdminEstablecerHolguraReserva(View):
 		dias_holgura = request.POST.get('dias_holgura', None)
 		if dias_holgura:
 			valido = True
-			dias_holgura_obj = ParametroGenerales.objects.filter('dias_holgura_reserva')
+			dias_holgura_obj = ParametrosGenerales.objects.filter(codigo = 'dias_holgura_reserva').first()
 			if not dias_holgura_obj:
-				dias_holgura_obj = ParametroGenerales(clave = 'dias_holgura_reserva', valor = '1')
+				dias_holgura_obj = ParametrosGenerales(codigo = 'dias_holgura_reserva', valor = '1')
 
 			dias_holgura_obj.valor = dias_holgura
 			dias_holgura_obj.save()

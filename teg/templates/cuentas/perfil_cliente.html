@@ -200,13 +200,13 @@
 					<div class="col-xs-3 col-xs-offset-1">
 		    			<h3 class="text-success">Solicitudes Enviadas</h3>
 		    		</div>
-		    		<div class="col-xs-4 col-xs-offset-3">
+		    		<div class="col-xs-7 col-md-5 col-md-offset-2 col-lg-4 col-lg-offset-3">
 		    			<br>
 		    			<div class="col-xs-6">
-							<a class="btn btn-danger btn-block" data-toggle="modal" data-target="#reclamo_modal">Presentar Reclamo</a>
+							<a class="btn btn-primary btn-block" id="crear_solicitud">Crear Solicitud</a>
 		    			</div>
 		    			<div class="col-xs-6">
-							<a class="btn btn-primary btn-block" id="crear_solicitud">Crear Solicitud</a>
+							<a class="btn btn-danger btn-block" data-toggle="modal" data-target="#reclamo_modal">Presentar Reclamo</a>
 		    			</div>
 		    		</div>
 		    	</div> <!-- / .row -->
@@ -229,7 +229,7 @@
 									{% for s in solicitudes %}
 									<tr id="sol_{{s.pk}}">
 										<td>{{s.tipo_inspeccion}}</td>
-										<td>{{s.numero_orden.codigo}}</td>
+										<td style="font-size:x-large;">{{s.numero_orden.codigo}}</td>
 										<td>{{s.estatus}}</td>
 										<td>{{s.numero_orden.fecha_atencion|date:"d/m/Y"}} {{s.numero_orden.hora_atencion|date:"h:i A"}}</td>
 										<td>
@@ -380,7 +380,7 @@
 			});
 			/********** FIN ***********/
 
-			/********** MOSTRAR VER PERIL ************/
+			/********** MOSTRAR VER PERFIL ************/
 			$(document).on('click', '#mostrar_ver_perfil', function(){
 				$('#contenedor_editar_perfil').hide();
 				$('#contenedor_ver_perfil').show();
@@ -622,7 +622,7 @@
 						$('#solicitudes_table_body').prepend(
 							'<tr>\
 								<td>'+data.solicitud.tipo_solicitud+'</td>\
-								<td>'+data.solicitud.numero_orden+'</td>\
+								<td style="font-size:x-large;">'+data.solicitud.numero_orden+'</td>\
 								<td>'+data.solicitud.estatus+'</td>\
 								<td>'+data.solicitud.fecha_atencion+' '+data.solicitud.hora_atencion+'</td>\
 								<td>\
@@ -843,7 +843,7 @@
 							$(estatus_solicitud).text(data.solicitud.estatus);*/
 							$('#sol_'+id_solicitud).remove();
 							// Para eliminar la tabla cuando no hay solicitud que mostrar
-							if(!($('#solicitudes_table_body').children() > 0)){
+							if(!($('#solicitudes_table_body').children().length > 0)){
 								padre_tabla = $('#solicitudes_table_body').parent();
 								abuelo_tabla = $('#solicitudes_table_body').parent().parent();
 								$('#solicitudes_table_body').html('');

@@ -32,7 +32,7 @@
 					<ul class="dropdown-menu  pull-right" role="menu">
 						<li>
 							<a id="establecer_holgura_reserva" href="#" data-target="#holgura_reserva_modal" data-toggle="modal">
-								<i class="fa fa-calendar"></i> D&iacute;as de holgura para reserva
+								<i class="fa fa-calendar-plus-o"></i> D&iacute;as de holgura para reserva
 							</a>
 						</li>
 						<li>
@@ -312,8 +312,9 @@
 					<option value="">--Seleccionar--</option>
 					<option value="1">1 d&iacute;a</option>
 					<option value="2">2 d&iacute;as</option>
-					<option value="3">3 di&acute;as</option>
+					<option value="3">3 d&iacute;as</option>
 				</select>
+				<div id="dias_holgura_errores" class="text-danger"></div>
 				</form>
 			</div>
 			<div class="modal-footer">
@@ -496,6 +497,7 @@
 			})
 			.done(function(data){
 				if(data.valido){
+					$('#mensaje_confirmacion').show();
 					$('#fechas_no_laborables_modal').modal('hide');
 					$('#mensaje_confirmacion').html(
 					'<div class="alert alert-success alert-dismissible" role="alert">\
@@ -503,6 +505,9 @@
 						 Se han agregado correctamente las fechas no laborables\
 					</div>'
 					);
+					setTimeout(function(){
+					  $('#mensaje_confirmacion').fadeOut('1500');
+					}, 2000);
 				}
 				else{
 					$('#fechas_errores').html(data.error_msg);
@@ -537,6 +542,7 @@
 			})
 			.done(function(data){
 				if(data.valido){
+					$('#mensaje_confirmacion').show();
 					$('#horarios_atencion_modal').modal('hide');
 					$('#mensaje_confirmacion').html(
 					'<div class="alert alert-success alert-dismissible" role="alert">\
@@ -544,6 +550,9 @@
 						 Se han establecido correctamente los horarios de atención\
 					</div>'
 					);
+					setTimeout(function(){
+					  $('#mensaje_confirmacion').fadeOut('1500');
+					}, 2000);
 				}
 				else{
 					$('#fechas_errores').html(data.error_msg);
@@ -564,7 +573,17 @@
 			})
 			.done(function(data){
 				if(data.valido){
-					
+					$('#mensaje_confirmacion').show();
+					$('#holgura_reserva_modal').modal('hide');
+					$('#mensaje_confirmacion').html(
+					'<div class="alert alert-success alert-dismissible" role="alert">\
+						 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
+						 Se ha establecido correctamente los días de holgura\
+					</div>'
+					);
+					setTimeout(function(){
+					  $('#mensaje_confirmacion').fadeOut('1500');
+					}, 2000);
 				}
 				else{
 					$('#dias_holgura_errores').html(data.error_msg);
