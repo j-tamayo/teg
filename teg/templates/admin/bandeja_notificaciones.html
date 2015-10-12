@@ -34,10 +34,10 @@
 					<a href="{% url 'admin_editar_notificacion' notificacion.id %}" class="btn btn-info btn-sm" data-toggle="tooltip" data-original-title="Editar">
 						<i class="fa fa-pencil"></i>
 					</a>
-					<a href="#" class="btn btn-info btn-sm enviar" data-toggle="tooltip" target="{{notificacion.id}}" data-original-title="Enviar">
+					<a href="#" class="btn btn-primary btn-sm enviar" data-toggle="tooltip" target="{{notificacion.id}}" data-original-title="Envío masivo">
 						<i class="fa fa-paper-plane"></i>
 					</a>
-					<a href="#" class="btn btn-info btn-sm enviar_personalizado" data-toggle="tooltip" target="{{notificacion.id}}" data-original-title="Enviar">
+					<a class="btn btn-success btn-sm envio_personalizado" data-toggle="tooltip" target="{{notificacion.id}}" data-original-title="Envío personalizado">
 						<i class="fa fa-share"></i>
 					</a>
 					<a href="#" class="btn btn-danger btn-sm eliminar" target="{{notificacion.id}}" data-toggle="tooltip" data-original-title="Eliminar" >
@@ -91,6 +91,71 @@
 	{% csrf_token %}
 	<input type="hidden" name="page" value="{{notificaciones.number}}">
 </form>
+
+<!-- Modal para el envío personalizado -->
+<div class="modal fade" id="envio_personalizado_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title text-success" id="myModalLabel">Env&iacute;o personalizado</h3>
+			</div> <!-- / .modal-header --> 
+			<div class="modal-body">
+				<form id="envio_personalizado_form" action="" method="post">
+				<div class="row">
+					<div class="col-xs-12" align="justify"><small>Esta notificaci&oacute;n ser&aacute; enviada a los Clientes con solicitudes pendientes de acuerdo con los par&aacute;metros seleccionados</small></div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-6">
+						<label>Estado:</label>
+					</div>
+					<div class="col-xs-6">
+						<label>Municipio:</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-6">
+						<select name="estado" id="select_estado" class="form-control">
+						</select>		
+					</div>
+					<div class="col-xs-6">
+						<select name="municipio" id="select_municipio" class="form-control">
+						</select>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-6">
+						<label>Centro de inspecci&oacute;n:</label>
+					</div>
+					<div class="col-xs-6">
+						
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-6">
+						<select name="centro" id="select_centro" class="form-control">
+						</select>
+					</div>
+					<div class="col-xs-6">
+						
+					</div>
+				</div>
+						
+				</form>
+			</div> <!-- / .modal-body -->
+			<div class="modal-footer">
+				<div class="col-xs-6">
+					<a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>
+				</div>
+				<div class="col-xs-6">
+					<a href="#" id="enviar_holgura_reserva" class="btn btn-primary btn-block">Enviar</a>
+				</div>
+			</div> <!-- / .modal-footer -->
+		</div>
+	</div>
+</div>
 
 {% endblock %}
 
@@ -159,6 +224,7 @@
 		});
 
 		$(document).on('click', '#confirmar_envio', function(event){
+			event.preventDefault();
 			$('#modal_generic').modal('hide');
 			$.ajax({
 			    type: 'GET',
@@ -175,6 +241,12 @@
 			    }
 			});
 		});
+
+		/********* LEVANTAR MODAL ENVIO PERSONALIZADO ***********/
+		$(document).on('click', '.envio_personalizado', function(){
+			$('#envio_personalizado_modal').modal();
+		});
+		/********* FIN ***********/
 
 	})
 	</script>
