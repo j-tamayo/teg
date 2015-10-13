@@ -15,6 +15,10 @@
 		</div>
 	</div>
 
+	<div class="row">
+		<div id="mensaje_confirmacion" class="col-xs-12"></div>
+	</div> <!-- / .row -->
+
 	<table class="table">
 		<thead>
 			<tr>
@@ -102,6 +106,7 @@
 			</div> <!-- / .modal-header --> 
 			<div class="modal-body">
 				<form id="envio_personalizado_form" action="" method="post">
+				<input type="hidden" name="notificacion" id="input_notificacion" value="">
 				<div class="row">
 					<div class="col-xs-12" align="justify"><small>Esta notificaci&oacute;n ser&aacute; enviada a los Clientes con solicitudes pendientes de acuerdo con los par&aacute;metros seleccionados</small></div>
 				</div>
@@ -117,10 +122,15 @@
 				<div class="row">
 					<div class="col-xs-6">
 						<select name="estado" id="select_estado" class="form-control">
+							<option value="">--Seleccionar--</option>
+							{% for e in estados %}
+							<option value="{{e.pk}}">{{e.nombre}}</option>
+							{% endfor %}
 						</select>		
 					</div>
 					<div class="col-xs-6">
 						<select name="municipio" id="select_municipio" class="form-control">
+							<option value="">--Seleccionar--</option>
 						</select>
 					</div>
 				</div>
@@ -136,6 +146,7 @@
 				<div class="row">
 					<div class="col-xs-6">
 						<select name="centro" id="select_centro" class="form-control">
+							<option value="">--Seleccionar--</option>
 						</select>
 					</div>
 					<div class="col-xs-6">
@@ -150,7 +161,7 @@
 					<a href="#" class="btn btn-danger btn-block" data-dismiss="modal">Cancelar</a>
 				</div>
 				<div class="col-xs-6">
-					<a href="#" id="enviar_holgura_reserva" class="btn btn-primary btn-block">Enviar</a>
+					<a href="#" id="enviar_not_personalizado" class="btn btn-primary btn-block">Enviar</a>
 				</div>
 			</div> <!-- / .modal-footer -->
 		</div>
@@ -164,6 +175,7 @@
 
 	<script type="application/javascript">
 	$(function(){
+		var token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 		$('#eliminar_notificacion').hide();
 		/******** MODAL PARA CONFIRMAR LA ELIMINACIÓN DE UNA NOTIFICACION ********/
 		$(document).on('click', '.eliminar', function(event){
@@ -244,7 +256,107 @@
 
 		/********* LEVANTAR MODAL ENVIO PERSONALIZADO ***********/
 		$(document).on('click', '.envio_personalizado', function(){
+			$('#input_notificacion').val($(this).attr('target'));
 			$('#envio_personalizado_modal').modal();
+		});
+		/********* FIN ***********/
+
+		/********* CARGAR MUNICIPIOS CON CENTROS **********/
+		$('#select_estado').change(function(){
+			value = $(this).val();
+			$('#select_centro').html('<option value="">--Seleccionar--</option>');
+			if(value.length > 0){
+				// LLamada AJAX para obtener los municipios
+				$.ajax({
+					method: 'GET',
+					url: '/sgt/obtener-municipios/'+value,
+					data:{
+						'con_centro': true
+					},
+					dataType: "json"
+				})
+				.done(function(data){
+					if(!data.hasOwnProperty('error_msg')){
+						// Se reinicia el Select de municipios
+						$('#select_municipio').html('<option value="">--Seleccionar--</option>');
+						$.each(data, function(key, value){
+							$('#select_municipio').append('<option value="'+value.pk+'">'+value.fields.nombre+'</option>');
+						});
+					}
+					else{
+						console.log('Error');
+					}
+				});
+			}
+			else{
+				$('#select_municipio').html('<option value="">--Seleccionar--</option>');
+			}
+		});
+		/********* FIN ***********/
+
+		/********** CARGA DE CENTROS POR MUNICIPIO *************/
+		$(document).on('change', '#select_municipio', function(){
+			data_object = {}
+
+			data_object['municipio_id'] = $('#select_municipio').val();
+
+			if(data_object['municipio_id'].length > 0){
+				// Llamada AJAX para obtener los centros de inspección
+				$.ajax({
+					method: 'GET',
+					url: '/sgt/obtener-centros',
+					data: data_object,
+					dataType: "json"
+				})
+				.done(function(data){
+					if(!data.hasOwnProperty('error_msg')){
+						// Se reinicia los centros de inspeccion
+						$('#select_centro').html('<option value="">--Seleccionar--</option>');
+						
+						$.each(data, function(key, value){
+							$('#select_centro').append('<option value="'+value.pk+'">'+value.nombre+'</option>');
+						});
+					}
+					else{
+						console.lg('Error');
+					}
+				});
+			}
+			else{
+				$('#select_centro').html('<option value="">--Seleccionar--</option>');
+			}
+		});
+		/********** FIN *************/
+
+		/********* HACER EL ENVIO DE LA NOTIFICACIÓN PERSONALIZADA *********/
+		$(document).on('click', '#enviar_not_personalizado', function(){
+			var postData = $('#envio_personalizado_form').serializeArray();
+			console.log(postData);
+			$.ajax({
+				method: 'POST',
+				headers: { "X-CSRFToken": token},
+				url: '{% url "admin_envio_personalizado_notificacion" %}',
+				data:postData,
+				dataType: 'json',
+			})
+			.done(function(data){
+				if(data.valido){
+					$('#mensaje_confirmacion').show();
+					$('#envio_personalizado_modal').modal('hide');
+					$('#mensaje_confirmacion').html(
+					'<div class="alert alert-success alert-dismissible" role="alert">\
+						 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
+						 La notificación ha sido enviada correctamente\
+					</div>'
+					);
+					setTimeout(function(){
+					  $('#mensaje_confirmacion').fadeOut('1500');
+					}, 3000);
+				}
+				else{
+					$('#dias_holgura_errores').html(data.error_msg);
+				}
+			})
 		});
 		/********* FIN ***********/
 

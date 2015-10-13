@@ -1857,6 +1857,8 @@ class AdminBandejaNotificaciones(View):
 	def get(self, request, *args, **kwargs):
 		""" Vista que lista las encuestas al administrador"""
 		usuario = request.user
+		centros_inspeccion = CentroInspeccion.objects.all()
+		estados = Estado.objects.filter(municipio__centroinspeccion__in = centros_inspeccion).distinct('nombre').order_by('nombre')
 
 		notificaciones = Notificacion.objects.all()
 
@@ -1870,6 +1872,7 @@ class AdminBandejaNotificaciones(View):
 
 		context = {
 			'admin': True,
+			'estados': estados,
 			'seccion_notificaciones':True,
 			'notificaciones': notificaciones,
 			'usuario': usuario,
@@ -2031,6 +2034,53 @@ class AdminEnviarNotificacion(View):
 		    json.dumps(respuesta),
 		    content_type="application/json"
 		)
+
+
+class AdminEnvioPersonalizadoNotificacion(View):
+	@method_decorator(login_required(login_url=reverse_lazy('cuentas_login')))
+	def dispatch(self, *args, **kwargs):
+		return super(AdminEnvioPersonalizadoNotificacion, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		"""Vista para realizar el envío personalizado de notificaciones"""
+		usuario = request.user
+		valido = False
+		error_msg = None
+		notificacion_id = request.POST.get('notificacion', None)
+		notificacion = Notificacion.objects.filter(id=notificacion_id).first()
+		estado_id = request.POST.get('estado', None)
+		estado = Estado.objects.filter(id = estado_id).first()
+		municipio_id = request.POST.get('municipio', None)
+		municipio = Municipio.objects.filter(id = municipio_id).first() if municipio_id else None
+		centro_id = request.POST.get('centro', None)
+		centro = CentroInspeccion.objects.filter(id = centro_id).first() if centro_id else None
+		print "DEBUG",notificacion,estado
+		if notificacion and estado:
+			valido = True
+			usuarios_cliente = SgtUsuario.objects.filter(solicitudinspeccion__centro_inspeccion__municipio__estado = estado, solicitudinspeccion__estatus__codigo = 'solicitud_en_proceso').distinct('id')
+			if municipio:
+				usuarios_cliente = usuarios_cliente.filter(solicitudinspeccion__centro_inspeccion__municipio = municipio)
+
+			if centro:
+				usuarios_cliente = usuarios_cliente.filter(solicitudinspeccion__centro_inspeccion = centro)
+
+			for usuario in usuarios_cliente:
+				notificacion_usuario = NotificacionUsuario(notificacion=notificacion, usuario=usuario)
+				notificacion_usuario.save()
+
+		else:
+			error_msg = 'Ocurrió un error'
+
+		respuesta = {
+			'valido': valido,
+			'error_msg': error_msg
+		}
+
+		return HttpResponse(
+		    json.dumps(respuesta),
+		    content_type="application/json"
+		)
+
 
 
 class AdminReportes(View):

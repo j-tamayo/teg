@@ -235,6 +235,12 @@ urlpatterns = \
         ),
 
         url(
+            r'^admin/envio-personalizado-notificacion$',
+            views.AdminEnvioPersonalizadoNotificacion.as_view(),
+            name='admin_envio_personalizado_notificacion'
+        ),
+
+        url(
             r'^admin/consultas$',
             views.AdminReportes.as_view(),
             name='admin_reportes'
