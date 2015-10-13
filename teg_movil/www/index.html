@@ -29,7 +29,8 @@
         <!-- Datepicker -->
         <script type="text/javascript" src="js/jquery.mobile.datepicker.js"></script>
         <script type="text/javascript" src="js/datepicker-es.js"></script>
-        
+        <!-- cordova -->
+        <script type="text/javascript" src="cordova.js"></script>
         <!-- Database -->
         <script type="text/javascript" src="js/database_manager.js"></script>
         <!-- generic -->
@@ -55,10 +56,10 @@
                     </div>
                     <div class="ui-grid-a">
                         <div class="ui-block-a">
-                            <a href="#register_page" data-transition="flip" class="ui-btn ui-btn-c ui-corner-all">Registrar</a>
+                            <button class="ui-btn ui-btn-d ui-corner-all" type="submit">Entrar</button>
                         </div>
                         <div class="ui-block-b">
-                            <button class="ui-btn ui-btn-d ui-corner-all" type="submit">Entrar</button>
+                            <a href="#register_page" data-transition="flip" class="ui-btn ui-btn-c ui-corner-all">Registrar</a>
                         </div>
                     </div>
                 </form>
@@ -203,8 +204,8 @@
             <div id="request_list_content" role="main" class="ui-content"></div>
             <div id="request_footer" data-role="footer" data-position="fixed" data-theme="b">
                 <div class="ui-grid-a" align="center">
-                    <div class="ui-block-a"><a href="#claim_page" class="ui-btn ui-corner-all">Enviar reclamo</a></div>
-                    <div class="ui-block-b"><a href="#create_request_page" class="ui-btn ui-corner-all">Crear solicitud</a></div>
+                    <div class="ui-block-a"><a href="#create_request_page" class="ui-btn ui-corner-all">Crear solicitud</a></div>
+                    <div class="ui-block-b"><a href="#claim_page" class="ui-btn ui-corner-all">Enviar reclamo</a></div>
                 </div>
             </div>
         </div>
