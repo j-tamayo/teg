@@ -54,11 +54,11 @@ def cargar_polizas_desde_xls(file):
 		ws = wb['polizas']
 		print "HEEEY",ws.get_highest_row()
 		for i in range(2,ws.get_highest_row()+1):
-			
 			reg['numero'] = ws['A'+str(i)].value
 			reg['cedula'] = ws['B'+str(i)].value
 			reg['fecha_inicio_vigencia'] = ws['C'+str(i)].value
 			reg['fecha_fin_vigencia'] = ws['D'+str(i)].value
+			print "AUX", reg['fecha_inicio_vigencia'], type(reg['fecha_inicio_vigencia'])
 			reg['fecha_inicio_vigencia'] = datetime.strptime(reg['fecha_inicio_vigencia'], '%d-%m-%Y').date()
 			reg['fecha_fin_vigencia'] = datetime.strptime(reg['fecha_fin_vigencia'], '%d-%m-%Y').date()
 			print type(reg['fecha_fin_vigencia']),reg['fecha_fin_vigencia']

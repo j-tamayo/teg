@@ -32,7 +32,7 @@
 					<ul class="dropdown-menu  pull-right" role="menu">
 						<li>
 							<a id="establecer_holgura_reserva" href="#" data-target="#holgura_reserva_modal" data-toggle="modal">
-								<i class="fa fa-calendar-plus-o"></i> D&iacute;as de holgura para reserva
+								<i class="fa fa-area-chart"></i> D&iacute;as de holgura para reserva
 							</a>
 						</li>
 						<li>
@@ -148,7 +148,7 @@
 				</div>
 				<div class="row">
 					<div class="col-xs-12">
-						<label>Archivo xls con los centros de inspecci&oacute;n</label>
+						<label>Archivo Excel con los centros de inspecci&oacute;n</label>
 					</div>
 				</div>
 				<div class="row">
@@ -422,14 +422,24 @@
 					success: function(data){
 						console.log(data);
 						$('#carga_masiva_modal').modal('hide');
-						$('#title_modal_generic').html('Confirmación');
+						/*$('#title_modal_generic').html('Confirmación');
 						$('#body_modal_generic').html(
 							'<div class="row">\
 								<div class="col-xs-12"><h4>La carga se ha realizado satisfactoriamente</h4></div>\
 							</div><br>'
 						);
 						$('#footer_modal_generic').html('');
-						$('#modal_generic').modal()
+						$('#modal_generic').modal()*/
+						$('#mensaje_confirmacion').show();
+						$('#mensaje_confirmacion').html(
+						'<div class="alert alert-success alert-dismissible" role="alert">\
+							 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
+							 Se han agregado correctamente los centros de inspección\
+						</div>'
+						);
+						setTimeout(function(){
+						  $('#mensaje_confirmacion').fadeOut('1500');
+						}, 3000);
 					}
 				});
 				
@@ -507,7 +517,7 @@
 					);
 					setTimeout(function(){
 					  $('#mensaje_confirmacion').fadeOut('1500');
-					}, 2000);
+					}, 3000);
 				}
 				else{
 					$('#fechas_errores').html(data.error_msg);
@@ -552,7 +562,7 @@
 					);
 					setTimeout(function(){
 					  $('#mensaje_confirmacion').fadeOut('1500');
-					}, 2000);
+					}, 3000);
 				}
 				else{
 					$('#fechas_errores').html(data.error_msg);
@@ -583,7 +593,7 @@
 					);
 					setTimeout(function(){
 					  $('#mensaje_confirmacion').fadeOut('1500');
-					}, 2000);
+					}, 3000);
 				}
 				else{
 					$('#dias_holgura_errores').html(data.error_msg);

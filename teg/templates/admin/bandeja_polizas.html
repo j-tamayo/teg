@@ -212,6 +212,7 @@
 					},
 					success: function(data){
 						if(data.valido){
+							$('#mensaje_confirmacion').show();
 							$('#carga_masiva_modal').modal('hide');
 							/*$('#title_modal_generic').html('Confirmación');
 							$('#body_modal_generic').html(
@@ -227,6 +228,9 @@
 								 Se han cargado correctamente las pólizas\
 							</div>'
 							);
+							setTimeout(function(){
+							  $('#mensaje_confirmacion').fadeOut('1500');
+							}, 3000);
 						}
 						else{
 							$('#archivo_poliza_errores').html(data.error_msg);
