@@ -93,7 +93,7 @@ class UsuariosEdit(APIView):
 				usuario.direccion = data['direccion']
 
 			if usuario.codigo_postal != data['codigo_postal']:
-				usuario.codigo_postal = data['codigo_postal']
+				usuario.codigo_postal = data['codigo_postal'] if data['codigo_postal'] else None
  			
  			if usuario.correo != data['correo']:
 				usuario.correo = data['correo']
@@ -108,7 +108,7 @@ class UsuariosEdit(APIView):
 				usuario.telefono_movil = data['telefono_movil']
 
 			if usuario.sexo != data['sexo']:
-				usuario.sexo = data['sexo']
+				usuario.sexo = data['sexo'] if data['sexo'] else None
 
 			usuario.set_password(data['password'])
 			usuario.save()

@@ -62,7 +62,7 @@
 					<a href="#" class="btn btn-success btn-sm confirmar-asistencia" data-toggle="tooltip" data-original-title="Confirmar asistencia" numero_orden="{{n.pk}}" {%if not n.solicitud_inspeccion.estatus.codigo == "solicitud_en_proceso"%}disabled{%endif%}>
 						<i class="fa fa-check-square-o"></i>
 					</a>
-					<a href="#" class="btn btn-danger btn-sm confirmar-no-asistencia" data-toggle="tooltip" data-original-title="Confirmar no asistencia" numero_orden="{{n.pk}}" {%if not n.solicitud_inspeccion.estatus.codigo == "solicitud_en_proceso"%}disabled{%endif%}>
+					<a href="#" class="btn btn-danger btn-sm confirmar-no-asistencia" data-toggle="tooltip" data-original-title="Confirmar inasistencia" numero_orden="{{n.pk}}" {%if not n.solicitud_inspeccion.estatus.codigo == "solicitud_en_proceso"%}disabled{%endif%}>
 						<i class="fa fa-times-circle"></i>
 					</a>
 				</td>
@@ -167,14 +167,14 @@
 		});
 		/************** FIN ****************/
 
-		/************** DESPLEGAR MODAL DE CONFIRMAR NO ASISTENCIA *************/
+		/************** DESPLEGAR MODAL DE CONFIRMAR INASISTENCIA *************/
 		$(document).on('click','.confirmar-no-asistencia',function(){
 			numero_orden = $(this).attr('numero_orden');
-			$('#title_modal_generic').html('Confirmar no asistencia');
+			$('#title_modal_generic').html('Confirmar inasistencia');
 			$('#body_modal_generic').html(
 				'<div class="row">\
 					<div class="col-xs-12 text-center">\
-					<h4>¿Está seguro de confirmar la no asistencia para esta solicitud?</h4>\
+					<h4>¿Está seguro de confirmar la inasistencia para esta solicitud?</h4>\
 					</div>\
 				</div>'
 			);

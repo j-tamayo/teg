@@ -102,13 +102,13 @@
 			$('#eliminar_encuesta').append('<input type="hidden" name="encuesta_id" value="'+target+'">');
 			$('#title_modal_generic').html('Confirmación');
 			$('#body_modal_generic').html(
-				'<div class="row">\
+				'<div class="row text-center">\
 					<div class="col-xs-12"><h4>¿Está seguro que desea eliminar esta encuesta?</h4></div>\
 				</div><br>'
 			);
 			$('#footer_modal_generic').html(
 				'<div class="col-xs-6">\
-					<a id="cancelar" href="#" class="btn btn-danger col-xs-12">Cancelar</a>\
+					<a id="cancelar" href="#" class="btn btn-danger col-xs-12" data-dismiss="modal">Cancelar</a>\
 				</div>\
 				<div class="col-xs-6">\
 					<a id="confirmar" href="#" class="btn btn-primary col-xs-12">Aceptar</a>\

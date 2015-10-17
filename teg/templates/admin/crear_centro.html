@@ -63,7 +63,7 @@
 						<span class="text-danger">{{form.telefonos.errors.as_text}}</span>
 						<br>
 						<label>Peritos</label>
-						<select multiple id="id_peritos" name="peritos" class="form-control select-mul">
+						<select multiple id="id_peritos" name="peritos" class="form-control select-mul" data-placeholder="Seleccionar peritos">
 							{% for perito in peritos %}
 							<option value="{{perito.pk}}" {% if perito.pk in peritos_asignados %} selected {% endif %}>{{perito.nombres}} {{perito.apellidos}}</option>
 							{% endfor %}
@@ -76,7 +76,7 @@
 							<span class="input-group-addon add-on" ><i class="fa fa-calendar"></i></span>
 						</div>
 						<br>
-						<select name="fechas_no_laborables" id="fechas_no_laborables" class="form-control select-mul" multiple>
+						<select name="fechas_no_laborables" id="fechas_no_laborables" class="form-control select-mul" data-placeholder="Seleccionar fechas no laborables" multiple>
 							{% for f in fechas_no_laborables %}
 							<option value="{{f}}" selected>{{f}}</option>
 							{% endfor %}
@@ -154,6 +154,7 @@
 		//INcialización de chosen para los selects múltiples
 		$('.select-mul').chosen({
   			no_results_text: 'No se encontraron resultados para'
+
 		});
 
 		/********** PARA CARGAR LOS MUNICIPIOS POR ESTADO *************/

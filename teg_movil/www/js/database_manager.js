@@ -116,7 +116,6 @@ function init_data(){
 		console.log('Inicializando páginas...');
 		$('#register_page').bind('pagebeforecreate', fill_estados('SELECT id, nombre FROM sgt_estado;', 0));
 		$('#create_request_page').bind('pagebeforecreate', fill_estados('SELECT DISTINCT e.id, e.nombre FROM sgt_estado e, sgt_municipio m, sgt_centroinspeccion c WHERE m.estado = e.id AND c.municipio =  m.id;', 1));
-		$('#create_request_page').bind('pagebeforecreate', fill_tipos_inspeccion());
 	}
 
 	if(load_data_id == 2){
@@ -747,6 +746,7 @@ function load_profile_info(){
 		
 	}, errorCB, function(){
 		console.log('La información del perfil de usuario ha sido cargada exitosamente...');
+		$('#create_request_page').bind('pagebeforecreate', fill_tipos_inspeccion());
 		$.mobile.changePage(next_page, {
 			changeHash: false, 
 			transition: next_page_trans

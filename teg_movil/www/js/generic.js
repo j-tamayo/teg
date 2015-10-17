@@ -1,13 +1,13 @@
 /* Variables Globales Auxiliares */
 var page_sol = 1;
 
-document.addEventListener("deviceready", onDeviceReady, false);
+// document.addEventListener("deviceready", onDeviceReady, false);
 
-// Cordova is loaded and it is now safe to call Cordova methods
-function onDeviceReady(){
-    // Register the event listener
-    document.addEventListener("backbutton", onBackKeyDown, false);
-}
+// // Cordova is loaded and it is now safe to call Cordova methods
+// function onDeviceReady(){
+//     // Register the event listener
+//     document.addEventListener("backbutton", onBackKeyDown, false);
+// }
 
 // Handle the back button
 function onBackKeyDown(){

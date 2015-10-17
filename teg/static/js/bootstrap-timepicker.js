@@ -302,7 +302,7 @@
             '<div class="modal-content">' +
               '<div class="modal-header">'+
                 '<a href="#" class="close" data-dismiss="modal">×</a>'+
-                '<h3>Pick a Time</h3>'+
+                '<h3>Seleccionar hora</h3>'+
               '</div>'+
               '<div class="modal-body">'+
                 templateContent +
