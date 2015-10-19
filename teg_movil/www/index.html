@@ -59,7 +59,8 @@
                             <a href="#register_page" data-transition="flip" class="ui-btn ui-btn-c ui-corner-all">Registrar</a>
                         </div>
                         <div class="ui-block-b">
-                            <button class="ui-btn ui-btn-d ui-corner-all" type="submit">Entrar</button>
+                            <button class="ui-btn ui-btn-d ui-corner-all show-page-loading-msg" type="submit" data-textonly="false" data-textvisible="true" data-msgtext="Cargando..." data-inline="true">Entrar</button>
+
                         </div>
                     </div>
                 </form>
@@ -77,7 +78,7 @@
                             <a id="volver_login" href="#" class="ui-btn ui-btn-c ui-corner-all">Volver</a>
                         </div>
                         <div class="ui-block-b">
-                            <button class="ui-btn ui-btn-d ui-corner-all" type="submit">Enviar</button>
+                            <button class="ui-btn ui-btn-d ui-corner-all show-page-loading-msg" type="submit" data-textonly="false" data-textvisible="true" data-msgtext="Cargando..." data-inline="true">Enviar</button>
                         </div>
                     </div>
                 </form>
@@ -166,7 +167,7 @@
                                 <input name="password_confirm" id="password_confirm_reg" class="required_input" autocomplete="off" type="password">
                             </div>
                             <br>
-                            <button class="ui-btn ui-btn-c ui-corner-all" type="submit">Enviar</button>
+                            <button class="ui-btn ui-btn-c ui-corner-all show-page-loading-msg" type="submit" data-textonly="false" data-textvisible="true" data-msgtext="Cargando..." data-inline="true">Enviar</button>
                         </form>
                     </div>
                 </div>
@@ -180,7 +181,7 @@
             <br>
             <ul id="option_list" data-role="listview" data-theme="c">
                 <li data-icon="refresh">
-                    <a id="refresh_profile_option" href="#">Refrescar</a>
+                    <a id="refresh_profile_option" href="#" class="show-page-loading-msg" data-textonly="false" data-textvisible="true" data-msgtext="Cargando..." data-inline="true">Refrescar</a>
                 </li>
                 <li data-icon="edit">
                     <a id="edit_profile_option" href="#register_page" data-transition="flip">Editar perfil</a>
@@ -302,7 +303,7 @@
             <div data-role="footer" data-theme="b" data-position="fixed">
                 <h2></h2>
                 <a id="prev_request_page" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-mini footer-button-left ui-btn-icon-left ui-icon-carat-l">Volver</a>
-                <a id="next_request_page" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-mini footer-button-right ui-btn-icon-right ui-icon-carat-r">Siguiente</a>
+                <a id="next_request_page" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-mini footer-button-right ui-btn-icon-right ui-icon-carat-r show-page-loading-msg" data-textonly="false" data-textvisible="false" data-msgtext="" data-inline="true">Siguiente</a>
             </div>
         </div>
 
@@ -337,7 +338,7 @@
                                 <textarea cols="40" rows="40" name="contenido" id="contenido_rec" class="required_input"></textarea>
                             </div>
                             <br>
-                            <button class="ui-btn ui-btn-c ui-corner-all" type="submit">Enviar</button>
+                            <button class="ui-btn ui-btn-c ui-corner-all show-page-loading-msg" type="submit" data-textonly="false" data-textvisible="true" data-msgtext="Cargando..." data-inline="true">Enviar</button>
                         </form>
                     </div>
                 </div>

@@ -33,6 +33,14 @@ class Usuarios(APIView):
 
 	def post(self, request, format = None):
 		data = request.data
+		mensaje = {}
+
+		#Validando existencia del correo electronico...
+		check_correo = SgtUsuario.objects.filter(correo=data['correo']).first()
+		if check_correo:
+			mensaje['mensaje'] = 'El correo ingresado ya se encuentra registrado'
+			return Response(mensaje, status=status.HTTP_400_BAD_REQUEST)
+
 		serializer = SgtUsuarioSerializer(data=request.data)
 		if serializer.is_valid():
 			registro = serializer.data
@@ -49,7 +57,7 @@ class Usuarios(APIView):
 			    fecha_nacimiento = registro['fecha_nacimiento'],
 			    telefono_local = registro['telefono_local'],
 			    telefono_movil = registro['telefono_movil'],
-			    sexo = registro['sexo'] if registro['sexo'] else None,
+			    sexo = registro['sexo'] if registro['sexo'] == 0 or registro['sexo'] == 1 else None,
 			    rol = rol_cliente)
 
 			usuario.set_password(data['password'])
@@ -61,6 +69,7 @@ class Usuarios(APIView):
 			    poliza.save()
 
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -71,8 +80,7 @@ class UsuariosEdit(APIView):
 	def post(self, request, format = None):
 		mensaje = {}
 		data = request.data
-		print data
-
+		print "HAHtohjerthr0eihtyeirhh"
 		if data: 	#queda pendiente validar los password...
 			data['municipio'] = Municipio.objects.filter(id=data['municipio']).first()
 			usuario = SgtUsuario.objects.filter(id=data['usuario']).first()
@@ -96,7 +104,12 @@ class UsuariosEdit(APIView):
 				usuario.codigo_postal = data['codigo_postal'] if data['codigo_postal'] else None
  			
  			if usuario.correo != data['correo']:
-				usuario.correo = data['correo']
+ 				check_correo = SgtUsuario.objects.filter(correo=data['correo']).first()
+				if check_correo:
+					mensaje['mensaje'] = 'El correo ingresado ya se encuentra registrado'
+					return Response(mensaje, status=status.HTTP_400_BAD_REQUEST)
+				else:
+					usuario.correo = data['correo']
 
 			if usuario.fecha_nacimiento != data['fecha_nacimiento']:
 				usuario.fecha_nacimiento = data['fecha_nacimiento']
@@ -107,8 +120,9 @@ class UsuariosEdit(APIView):
 			if usuario.telefono_movil != data['telefono_movil']:
 				usuario.telefono_movil = data['telefono_movil']
 
-			if usuario.sexo != data['sexo']:
-				usuario.sexo = data['sexo'] if data['sexo'] else None
+			if data['sexo'] == '0' or data['sexo'] == '1':
+				if usuario.sexo != data['sexo']:
+					usuario.sexo = data['sexo']
 
 			usuario.set_password(data['password'])
 			usuario.save()

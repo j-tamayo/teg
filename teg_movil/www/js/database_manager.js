@@ -77,7 +77,7 @@ function loadTables(){
 	console.log('procediendo a cargar registros de la web APP...');
 	
 	load_data_id = 1;
-	$.getJSON('http://192.168.1.106:8000/api/data-inicial/')
+	$.getJSON('http://192.168.1.101:8000/api/data-inicial/')
 	.done(load_json_data)
 	.fail(function(){
 	    console.log('Error de conexión!');
@@ -352,7 +352,7 @@ function load_user_tables(){
 	console.log('login extitoso, procediendo a cargar información de usuario...');
 	
 	load_data_id = 2;
-	$.post('http://192.168.1.106:8000/api/usuario-info/', {'id': id_usuario})
+	$.post('http://192.168.1.101:8000/api/usuario-info/', {'id': id_usuario})
 	.done(load_json_data)
 	.fail(function(){
 		init_data(); //cargando la data localmente...
@@ -746,6 +746,7 @@ function load_profile_info(){
 		
 	}, errorCB, function(){
 		console.log('La información del perfil de usuario ha sido cargada exitosamente...');
+		$.mobile.loading("hide");
 		$('#create_request_page').bind('pagebeforecreate', fill_tipos_inspeccion());
 		$.mobile.changePage(next_page, {
 			changeHash: false, 
@@ -846,7 +847,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 			}
 
 			aux += '	<input id="total_preguntas_enc" name="total_preguntas" type="hidden" value="'+num+'">\
-						<br><button class="ui-btn ui-btn-c ui-corner-all" type="submit">Enviar</button>\
+						<br><button class="ui-btn ui-btn-c ui-corner-all show-page-loading-msg" type="submit" data-textonly="false" data-textvisible="true" data-msgtext="Cargando..." data-inline="true">Enviar</button>\
 					</form>';
 
 			$('#mail_content').html(aux).trigger('create');
@@ -918,7 +919,7 @@ function load_encuesta(notificacion_usuario_id, encuesta_id){
 	            });
 		    }
 		    else{
-			    $.post('http://192.168.1.106:8000/api/guardar-respuestas-encuesta/', data)
+			    $.post('http://192.168.1.101:8000/api/guardar-respuestas-encuesta/', data)
 		        .done(function(json){
 		            console.log(json);
 		            next_page = '#mail_page';
@@ -947,6 +948,8 @@ function load_user_edit_info(next_page, trans){
         	$('#telefono_local_reg').val(row['telefono_local']);
         	$('#telefono_movil_reg').val(row['telefono_movil']);
         	$('#correo_reg').val(row['correo']);
+        	$('#password_reg').val('');
+        	$('#password_confirm_reg').val('');
 
         	if(row['sexo'] == '0'){
         		$('#sexo_reg0').attr('checked', 'checked').trigger('create'); //.checkboxradio('refresh');
